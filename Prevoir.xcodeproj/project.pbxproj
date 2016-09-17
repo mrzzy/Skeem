@@ -8,20 +8,22 @@
 
 /* Begin PBXBuildFile section */
 		5A50C72D1D8CD2E50002ACF8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A50C72C1D8CD2E50002ACF8 /* AppDelegate.swift */; };
-		5A50C72F1D8CD2E50002ACF8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A50C72E1D8CD2E50002ACF8 /* ViewController.swift */; };
-		5A50C7321D8CD2E50002ACF8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5A50C7301D8CD2E50002ACF8 /* Main.storyboard */; };
 		5A50C7341D8CD2E50002ACF8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5A50C7331D8CD2E50002ACF8 /* Assets.xcassets */; };
 		5A50C7371D8CD2E50002ACF8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5A50C7351D8CD2E50002ACF8 /* LaunchScreen.storyboard */; };
+		5A50C73F1D8CD4330002ACF8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A50C73E1D8CD4330002ACF8 /* Foundation.framework */; };
+		5A50C7411D8CD4390002ACF8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A50C7401D8CD4390002ACF8 /* UIKit.framework */; };
+		5A50C7431D8CD4750002ACF8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5A50C7421D8CD4750002ACF8 /* Main.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		5A50C7291D8CD2E50002ACF8 /* Prevoir.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Prevoir.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A50C72C1D8CD2E50002ACF8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		5A50C72E1D8CD2E50002ACF8 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		5A50C7311D8CD2E50002ACF8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5A50C7331D8CD2E50002ACF8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5A50C7361D8CD2E50002ACF8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5A50C7381D8CD2E50002ACF8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5A50C73E1D8CD4330002ACF8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		5A50C7401D8CD4390002ACF8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		5A50C7421D8CD4750002ACF8 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,6 +31,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5A50C7411D8CD4390002ACF8 /* UIKit.framework in Frameworks */,
+				5A50C73F1D8CD4330002ACF8 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -38,6 +42,8 @@
 		5A50C7201D8CD2E50002ACF8 = {
 			isa = PBXGroup;
 			children = (
+				5A50C7401D8CD4390002ACF8 /* UIKit.framework */,
+				5A50C73E1D8CD4330002ACF8 /* Foundation.framework */,
 				5A50C72B1D8CD2E50002ACF8 /* Prevoir */,
 				5A50C72A1D8CD2E50002ACF8 /* Products */,
 			);
@@ -55,9 +61,8 @@
 			isa = PBXGroup;
 			children = (
 				5A50C72C1D8CD2E50002ACF8 /* AppDelegate.swift */,
-				5A50C72E1D8CD2E50002ACF8 /* ViewController.swift */,
-				5A50C7301D8CD2E50002ACF8 /* Main.storyboard */,
 				5A50C7331D8CD2E50002ACF8 /* Assets.xcassets */,
+				5A50C7421D8CD4750002ACF8 /* Main.storyboard */,
 				5A50C7351D8CD2E50002ACF8 /* LaunchScreen.storyboard */,
 				5A50C7381D8CD2E50002ACF8 /* Info.plist */,
 			);
@@ -96,6 +101,7 @@
 				TargetAttributes = {
 					5A50C7281D8CD2E50002ACF8 = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = 7K6ZTDFM48;
 					};
 				};
 			};
@@ -122,9 +128,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5A50C7431D8CD4750002ACF8 /* Main.storyboard in Resources */,
 				5A50C7371D8CD2E50002ACF8 /* LaunchScreen.storyboard in Resources */,
 				5A50C7341D8CD2E50002ACF8 /* Assets.xcassets in Resources */,
-				5A50C7321D8CD2E50002ACF8 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -135,7 +141,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5A50C72F1D8CD2E50002ACF8 /* ViewController.swift in Sources */,
 				5A50C72D1D8CD2E50002ACF8 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -143,14 +148,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		5A50C7301D8CD2E50002ACF8 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				5A50C7311D8CD2E50002ACF8 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		5A50C7351D8CD2E50002ACF8 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -249,10 +246,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Prevoir/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = sstinc.Prevoir;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -260,10 +260,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Prevoir/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = sstinc.Prevoir;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -286,6 +289,7 @@
 				5A50C73D1D8CD2E50002ACF8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
