@@ -24,17 +24,34 @@ The void blocks are displayed with a start and stop time.
 The bottom of the screen shows that he is at a schedule tab. There are two
 other tabs which he can select settings and tasks.
 
-1. Refresh (random sort)
+1. Refresh Button/ Shake to Refresh (random sort)
 
+Immediately resorts the tasks randiomly and redisplays to the user.
 
 2. Add a task
+    Adds tasks to storage and immediately schedules the subtasks
+    The user is returned to the previous view. 
+    
+    a. type
+    b. Name
+    c. Task Description
+    d. duration_needed
+    e. Deadline
+    f. recommended_timee
 
 3. Go to settings
+    A Scroll View with settings:
 
-4. Go to task
+    a. Set Void blocks/Time blocks > Scroll View with list of editable Time Blocks/Void Blocks
+    b. Enable disable shake to refresh > Toggle Button/Switch
+    c. Gradual or Even Sorting > Toggle Button/Switch
 
-
-
+4. Go to tasks
+    A Scroll View with Tasks. Tasks are displayed with minimuium information such as name and subject emplisised if too long.
+   
+    - Search Bar
+    a. All Incomplete Tasks
+    b. Completed Today Tasks
 
 HOW TO SORT
 ------------------------------------------------------------------------------
