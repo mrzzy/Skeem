@@ -27,7 +27,9 @@ public class MainActivity extends AppCompatActivity {
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPagerAdapter.addFragment();
+        viewPagerAdapter.addFragment(new ScheduleFragment(), "Schedule");
+        viewPagerAdapter.addFragment(new TaskFragment(), "Tasks");
+        viewPagerAdapter.addFragment(new TimeblockFragment(), "Timeblocks");
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
