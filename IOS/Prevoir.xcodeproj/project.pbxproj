@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5A4083D01DAB68FC0057E896 /* PVRSchduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A4083CF1DAB68FC0057E896 /* PVRSchduler.swift */; };
+		5A4083D01DAB68FC0057E896 /* PVRScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A4083CF1DAB68FC0057E896 /* PVRScheduler.swift */; };
 		5A50C72D1D8CD2E50002ACF8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A50C72C1D8CD2E50002ACF8 /* AppDelegate.swift */; };
 		5A50C7341D8CD2E50002ACF8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5A50C7331D8CD2E50002ACF8 /* Assets.xcassets */; };
 		5A50C7371D8CD2E50002ACF8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5A50C7351D8CD2E50002ACF8 /* LaunchScreen.storyboard */; };
@@ -15,10 +15,11 @@
 		5A50C7411D8CD4390002ACF8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A50C7401D8CD4390002ACF8 /* UIKit.framework */; };
 		5A50C7431D8CD4750002ACF8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5A50C7421D8CD4750002ACF8 /* Main.storyboard */; };
 		5AA4406E1DAF488F005B0E70 /* PVRTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA4406D1DAF488F005B0E70 /* PVRTask.swift */; };
+		5AA440701DAF81B3005B0E70 /* PVRDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA4406F1DAF81B3005B0E70 /* PVRDatabase.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		5A4083CF1DAB68FC0057E896 /* PVRSchduler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRSchduler.swift; sourceTree = "<group>"; };
+		5A4083CF1DAB68FC0057E896 /* PVRScheduler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRScheduler.swift; sourceTree = "<group>"; };
 		5A50C7291D8CD2E50002ACF8 /* Prevoir.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Prevoir.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A50C72C1D8CD2E50002ACF8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5A50C7331D8CD2E50002ACF8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -28,6 +29,7 @@
 		5A50C7401D8CD4390002ACF8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		5A50C7421D8CD4750002ACF8 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		5AA4406D1DAF488F005B0E70 /* PVRTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRTask.swift; sourceTree = "<group>"; };
+		5AA4406F1DAF81B3005B0E70 /* PVRDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRDatabase.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,7 +49,7 @@
 			isa = PBXGroup;
 			children = (
 				5A50C72C1D8CD2E50002ACF8 /* AppDelegate.swift */,
-				5A4083CF1DAB68FC0057E896 /* PVRSchduler.swift */,
+				5A4083CF1DAB68FC0057E896 /* PVRScheduler.swift */,
 			);
 			name = Logic;
 			sourceTree = "<group>";
@@ -103,6 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				5AA4406D1DAF488F005B0E70 /* PVRTask.swift */,
+				5AA4406F1DAF81B3005B0E70 /* PVRDatabase.swift */,
 			);
 			name = Data;
 			sourceTree = "<group>";
@@ -181,7 +184,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				5AA4406E1DAF488F005B0E70 /* PVRTask.swift in Sources */,
-				5A4083D01DAB68FC0057E896 /* PVRSchduler.swift in Sources */,
+				5AA440701DAF81B3005B0E70 /* PVRDatabase.swift in Sources */,
+				5A4083D01DAB68FC0057E896 /* PVRScheduler.swift in Sources */,
 				5A50C72D1D8CD2E50002ACF8 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
