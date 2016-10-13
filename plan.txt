@@ -5,14 +5,12 @@ algorithms and pseudocode and finally a work schedule.
 
 USER STORY
 ------------------------------------------------------------------------------
-| Tutorial
-The first time the user opens the app, there is a tutorial that explains how
-the app works:
-    - 
-
 | Schedule Tab (main)
 The user opens the app and sees a scroll view of the tasks to do for the day.
-The scroll view shows tasks and void blocks.
+The scroll view shows tasks and void blocks. On the top right hand corner, he
+sees a plus button which drop downs two options when clicked: "Add a task" and
+"Add a void/time block". On the top left hand corner, he sees a rewind button
+which refreshes the view.
 
 The tasks are displayed with a the start time at the top left of task, the
 subject name at the bottom of the task. The task name and task description are
@@ -21,37 +19,83 @@ long.
 
 The void blocks are displayed with a start and stop time.
 
-The bottom of the screen shows that he is at a schedule tab. There are two
-other tabs which he can select settings and tasks.
+The bottom of the screen shows that he is at a schedule tab. There are three
+other tabs which he can select: settings, tasks and void/time blocks.
 
 1. Refresh Button/ Shake to Refresh (random sort)
-
-Immediately resorts the tasks randiomly and redisplays to the user.
+Resorts the tasks randomly and redisplays to the user.
 
 2. Add a task
-    Adds tasks to storage and immediately schedules the subtasks
-    The user is returned to the previous view. 
-    
-    a. type
-    b. Name
-    c. Task Description
-    d. duration_needed
-    e. Deadline
-    f. recommended_timee
+    The user is presented with a form to create a task. There is no tab seen
+    at the bottom of the screen. (at least for Android)
 
-3. Go to settings
+    The form contains:
+    - Name
+    - Subject
+    - Type (switch)
+        If the type is repetitive, add:
+        - Repeated days button
+            Goes to checklist of week days
+    - Duration needed (date)
+    - Minimum Time Period (switch)
+        If true, add:
+        - Minimum Time Period (time)
+    - Deadline (date)
+    - Deadline time (switch)
+        If true, add:
+        - Deadline time (time)
+    - Task Description
+
+    The user is then returned to the previous view.
+
+3. Add a void/time block
+    The user is presented with a form to create a void/time block. There is no
+    tab seen at the bottom of the screen. (at least for Android)
+
+    The form contains:
+    - Name (if void block)
+    - From time (date time)
+    - To time (date time)
+
+    The user is then returned to the previous view.
+
+4. Go to settings
     A Scroll View with settings:
 
-    a. Set Void blocks/Time blocks > Scroll View with list of editable Time Blocks/Void Blocks
-    b. Enable disable shake to refresh > Toggle Button/Switch
-    c. Gradual or Even Sorting > Toggle Button/Switch
+    - Enable disable shake to refresh (switch)
+    - Gradual or Even Sorting (switch)
 
-4. Go to tasks
-    A Scroll View with Tasks. Tasks are displayed with minimuium information such as name and subject emplisised if too long.
-   
-    - Search Bar
-    a. All Incomplete Tasks
-    b. Completed Today Tasks
+5. Go to tasks
+    The user sees a scroll view with the tasks displayed. Each task is
+    displayed with a name on top and a description below. Both of which are
+    ellipsized if they are too long. At the bottom of the screen, the user
+    also sees that the tab "tasks" is selected.
+
+    The user sees a search bar at the top where he is able to type in and
+    search for his task by name, subject and description.
+
+    The user then sees the list of tasks below it. The list of tasks are
+    sorted by the earliest due date first. At the bottom of the list of tasks
+    to do, the user sees a second section which shows the tasks that he has
+    completed on that day.
+
+    When the user taps on any task, they are moved to a form just like the
+    form for adding a task but is prefilled with the current information from
+    the task.
+
+6. Go to void/time blocks
+    The user sees a scroll view with the void/time blocks displayed. At the
+    bottom of the screen, the user also sees that the tab "void/time block" is
+    selected.
+
+    The void/time blocks are displayed in order of time, the earliest first.
+
+    When the user taps on a void/time block, he will be brought to a form like
+    the form for adding a void/time block but is prefilled with the current
+    information from the void/time block.
+
+When the user quits the app, all of the scheduled items are recalculated and
+saved.
 
 HOW TO SORT
 ------------------------------------------------------------------------------
@@ -60,7 +104,7 @@ Task
     - Due date (and time)
     - Duration needed
     - Type (onetime or repetitive)
-    - User recommended time
+    - User minimum time period
 Timeblocks
     - Time start
     - Time end
@@ -76,7 +120,7 @@ for each time block:
 # If it is gradual
 if split_even is false
     # get the amount of time to set
-    set time_to_set = max(task.recommended_time,
+    set time_to_set = max(task.min_time_period,
                           (task.duration_needed**2)/total_time_to_schedule)
     set time_to_set_per_timeblock = time_to_set/num_timeblock
 
@@ -108,7 +152,33 @@ if split_even is false
                 fill timeblock.duration
 # Evenly split
 else:
-    
+    set total_time = total_time_to_schedule
+    set time_per_block = total_time_to_schedule/num_timeblock
+
+    set timeblocks as list t
+    sort t by duration, shortest first
+    while total_time:
+        if t[0].duration shorter than (<) time_per_block:
+            time_per_block += t[0].duration/(len(t)-1)
+            total_time -= t[0].duration
+            fill t[0]
+            remove index 0 from t
+        else:
+            add task to t[0]
+            total_time -= time_per_block
+
+FURTHER ADDONS
+------------------------------------------------------------------------------
+- Display all unshown tasks option in schedule
+- Always display more tasks than time block. Display random tasks
+- Time needed > certain amount - Alert to split up
+- Subjects have an associated colour, recommend a pallete and allow all colours
+- Link to Google Account?
+- Notify that time blocks do not include breaks
+- Statistics
+- Search algorithm
+- Percentage done on tasks in background
+- Tutorial
 
 WORK SCHEDULE
 ------------------------------------------------------------------------------
