@@ -20,7 +20,7 @@ long.
 The void blocks are displayed with a start and stop time.
 
 The bottom of the screen shows that he is at a schedule tab. There are three
-other tabs which he can select: settings, tasks and void/time blocks.
+other tabs which he can select: schedule, tasks and void/time blocks.
 
 1. Refresh Button/ Shake to Refresh (random sort)
 Resorts the tasks randomly and redisplays to the user.
