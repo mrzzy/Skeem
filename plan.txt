@@ -1,0 +1,100 @@
+INTRODUCTION
+------------------------------------------------------------------------------
+This document describes how the app will work, including a user story, sorting
+algorithms and pseudocode and finally a work schedule.
+
+USER STORY
+------------------------------------------------------------------------------
+| Tutorial
+The first time the user opens the app, there is a tutorial that explains how
+the app works:
+    - 
+
+| Schedule Tab (main)
+The user opens the app and sees a scroll view of the tasks to do for the day.
+The scroll view shows tasks and void blocks.
+
+The tasks are displayed with a the start time at the top left of task, the
+subject name at the bottom of the task. The task name and task description are
+on the left of the two items, both of which are ellipsized when it is too
+long.
+
+The void blocks are displayed with a start and stop time.
+
+The bottom of the screen shows that he is at a schedule tab. There are two
+other tabs which he can select settings and tasks.
+
+1. Refresh (random sort)
+
+
+2. Add a task
+
+3. Go to settings
+
+4. Go to task
+
+
+
+
+HOW TO SORT
+------------------------------------------------------------------------------
+| Properties
+Task
+    - Due date (and time)
+    - Duration needed
+    - Type (onetime or repetitive)
+    - User recommended time
+Timeblocks
+    - Time start
+    - Time end
+    - Duration
+
+| Pseudocode for each task
+let num_timeblock = number of timeblocks before task due date
+# Get total time to schedule
+set total_time_to_schedule = 0
+for each time block:
+    total_time_to_schedule += timeblock.duration
+
+# If it is gradual
+if split_even is false
+    # get the amount of time to set
+    set time_to_set = max(task.recommended_time,
+                          (task.duration_needed**2)/total_time_to_schedule)
+    set time_to_set_per_timeblock = time_to_set/num_timeblock
+
+    set carry_over = 0
+    while time_to_set > 0:
+        for each timeblock:
+            # If the time block is used up
+            if time_block.filled:
+                continue
+
+            # Add carry_over
+            if carry_over shorter than (<) timeblock.duration:
+                add carry_over to timeblock
+                set timeblock.duration -= carry_over
+            else:
+                set carry_over += time_to_set_per_timeblock -
+                                  timeblock.duration
+                fill timeblock.duration
+                continue
+
+            if time_to_set_per_timeblock shorter than (<) timeblock.duration:
+                add task to timeblock
+                set timeblock.duration -= time_to_set_per_timeblock
+                set time_to_set -= time_to_set_per_timeblock
+            else:
+                set carry_over = time_to_set_per_timeblock - 
+                                 timeblock.duration
+                set time_to_set -= timeblock.duration
+                fill timeblock.duration
+# Evenly split
+else:
+    
+
+WORK SCHEDULE
+------------------------------------------------------------------------------
+Tuesday Peer checking
+Thursday Peer prototype checking
+Monday Presentation with slides
