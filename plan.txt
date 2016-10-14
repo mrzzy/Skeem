@@ -9,8 +9,8 @@ USER STORY
 The user opens the app and sees a scroll view of the tasks to do for the day.
 The scroll view shows tasks and void blocks. On the top right hand corner, he
 sees a plus button which drop downs two options when clicked: "Add a task" and
-"Add a void/time block". On the top left hand corner, he sees a rewind button
-which refreshes the view.
+"Add a void block". On the top left hand corner, he sees a rewind button which
+refreshes the view as described in 1.
 
 The tasks are displayed with a the start time at the top left of task, the
 subject name at the bottom of the task. The task name and task description are
@@ -20,7 +20,7 @@ long.
 The void blocks are displayed with a start and stop time.
 
 The bottom of the screen shows that he is at a schedule tab. There are three
-other tabs which he can select: schedule, tasks and void/time blocks.
+other tabs which he can select: schedule, tasks and void blocks.
 
 1. Refresh Button/ Shake to Refresh (random sort)
 Resorts the tasks randomly and redisplays to the user.
@@ -48,12 +48,12 @@ Resorts the tasks randomly and redisplays to the user.
 
     The user is then returned to the previous view.
 
-3. Add a void/time block
-    The user is presented with a form to create a void/time block. There is no
+3. Add a void block
+    The user is presented with a form to create a void block. There is no
     tab seen at the bottom of the screen. (at least for Android)
 
     The form contains:
-    - Name (if void block)
+    - Name
     - From time (date time)
     - To time (date time)
 
@@ -83,16 +83,15 @@ Resorts the tasks randomly and redisplays to the user.
     form for adding a task but is prefilled with the current information from
     the task.
 
-6. Go to void/time blocks
-    The user sees a scroll view with the void/time blocks displayed. At the
-    bottom of the screen, the user also sees that the tab "void/time block" is
-    selected.
+6. Go to void blocks
+    The user sees a scroll view with the void blocks displayed. At the bottom
+    of the screen, the user also sees that the tab "void block" is selected.
 
-    The void/time blocks are displayed in order of time, the earliest first.
+    The void blocks are displayed in order of time, the earliest first.
 
-    When the user taps on a void/time block, he will be brought to a form like
-    the form for adding a void/time block but is prefilled with the current
-    information from the void/time block.
+    When the user taps on a void block, he will be brought to a form like the
+    form for adding a void block but is prefilled with the current information
+    from the void block.
 
 When the user quits the app, all of the scheduled items are recalculated and
 saved.
@@ -111,6 +110,7 @@ Timeblocks
     - Duration
 
 | Pseudocode for each task
+# The timeblocks are calculated from the void blocks
 let num_timeblock = number of timeblocks before task due date
 # Get total time to schedule
 set total_time_to_schedule = 0
