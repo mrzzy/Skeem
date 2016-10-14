@@ -8,12 +8,30 @@
 
 import UIKit
 
+public enum PVRUserDefaultKey:String {
+    case suite = "pvr_ud_suite"
+    case use = "pvr_ud_use"
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
+    
+    //UI
     var window: UIWindow?
+    
+    //App Status
+    var use_cnt:Int = 0
 
-
+    //Storage
+    var ud:UserDefaults!
+    
+    //MARK:App Delegate
+    func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
+        self.loadAppStatus()
+        
+        return true
+    }
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         return true
@@ -40,7 +58,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
-
+    
+    //MARK:Additional Methods
+    public func loadAppStatus()
+    {
+        //Load user Defaults
+        if let ud = UserDefaults(suiteName: PVRUserDefaultKey.suite.rawValue)
+        {
+            self.ud = ud
+            self.use_cnt = ud.integer(forKey: PVRUserDefaultKey.use.rawValue)
+        }
+        else
+        {
+            //No Suite for User Defaults
+            UserDefaults().addSuite(named: PVRUserDefaultKey.suite.rawValue)
+            let ud = UserDefaults(suiteName: PVRUserDefaultKey.suite.rawValue)!
+            self.ud = ud
+        }
+        
+        //Update
+        self.use_cnt += 1
+    }
+    
+    public func commitAppStatus()
+    {
+        //Save App Status
+        ud.set(self.use_cnt, forKey: PVRUserDefaultKey.use.rawValue)
+        
+        self.ud.synchronize()
+    }
 }
 
