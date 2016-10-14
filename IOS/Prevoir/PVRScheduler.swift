@@ -8,7 +8,6 @@
 
 import UIKit
 
-class PVRSchduler: NSObject
+public class PVRScheduler: NSObject
 {
-    
 }

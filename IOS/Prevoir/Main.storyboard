@@ -723,7 +723,7 @@
                 <pinchGestureRecognizer id="19t-jq-1mm"/>
                 <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="qKO-NW-ics"/>
             </objects>
-            <point key="canvasLocation" x="813.75" y="330.63380281690144"/>
+            <point key="canvasLocation" x="813.60000000000002" y="330.58470764617692"/>
         </scene>
         <!--Task-->
         <scene sceneID="0zQ-b2-zbq">
