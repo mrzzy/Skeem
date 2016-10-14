@@ -2,12 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="sstinc.prevoir.TimeblockFragment">
+    tools:context="sstinc.prevoir.SettingFragment">
 
-    <!-- This is where the timeblocks will be -->
+    <!-- This is the fragment for settings -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Timeblock Fragment" />
+        android:text="Settings fragment" />
 
 </FrameLayout>

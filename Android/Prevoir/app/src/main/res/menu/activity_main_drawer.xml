@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:id="@+id/nav_main_group"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_schedule"
+            android:icon="@drawable/ic_bookmark_border_black_24dp"
+            android:title="@string/menu_schedule" />
+        <item
+            android:id="@+id/nav_tasks"
+            android:icon="@drawable/ic_mode_edit_black_24dp"
+            android:title="@string/menu_tasks" />
+        <item
+            android:id="@+id/nav_voidblocks"
+            android:icon="@drawable/ic_border_all_black_24dp"
+            android:title="@string/menu_voidblocks" />
+    </group>
+
+    <group
+        android:id="@+id/nav_others_group"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings_black_24dp"
+            android:title="@string/menu_settings" />
+    </group>
+</menu>

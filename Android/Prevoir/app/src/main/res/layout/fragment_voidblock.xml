@@ -2,12 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="sstinc.prevoir.TaskFragment">
+    tools:context="sstinc.prevoir.VoidblockFragment">
 
-    <!-- This is the fragment for the tasks -->
+    <!-- This is the fragment for the voidblocks -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Task fragment" />
+        android:text="Voidblocks fragment" />
 
 </FrameLayout>
