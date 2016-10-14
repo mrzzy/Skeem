@@ -169,6 +169,7 @@ else:
 
 FURTHER ADDONS
 ------------------------------------------------------------------------------
+- Rename void blocks on the ui to something the user can understand better
 - Display all unshown tasks option in schedule
 - Always display more tasks than time block. Display random tasks
 - Time needed > certain amount - Alert to split up
