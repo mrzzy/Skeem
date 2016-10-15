@@ -3,7 +3,7 @@ package sstinc.prevoir;
 import java.util.Calendar;
 
 public class Deadline {
-    private int taskId;
+    private long taskId;
     Calendar deadline;
     boolean hasDueTime;
 
@@ -12,7 +12,11 @@ public class Deadline {
         this.hasDueTime = hasDueTime;
     }
 
-    public void setId(int newId) {
+    public void setId(long newId) {
         this.taskId = newId;
+    }
+
+    public long getId() {
+        return this.taskId;
     }
 }
