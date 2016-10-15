@@ -14,6 +14,12 @@ public enum PVRDBKey:String
     case cache = "pvrdb_cache"
 }
 
+public enum PVRDBError:Error
+{
+    case entry_exist
+    case entry_not_exist
+}
+
 public class PVRDatabase:NSObject
 {
     //Data
@@ -27,12 +33,10 @@ public class PVRDatabase:NSObject
     var pst_file_path:String
     var pst_file_data:NSMutableData!
     var pst_ach:NSKeyedArchiver!
-    var pst_modified:Bool = false
 
     var tmp_file_path:String
     var tmp_file_data:NSMutableData!
     var tmp_ach:NSKeyedArchiver!
-    var tmp_modified:Bool = false
     
     //Init
     
@@ -72,13 +76,12 @@ public class PVRDatabase:NSObject
             self.stage = true
         }
         
-        if file_path == self.pst_file_path, self.pst_modified == true
+        if file_path == self.pst_file_path
         {
             self.pst_ach.encode(val, forKey: key.rawValue)
             
         }
-        else if file_path == self.tmp_file_path, self.pst_modified == true
-        {
+        else if file_path == self.tmp_file_path        {
             self.tmp_ach.encode(val, forKey: key.rawValue)
         }
         
@@ -154,6 +157,4 @@ public class PVRDatabase:NSObject
             self.cache = (cch as! [String:NSCoding])
         }
     }
-    
-    //Data Manipulation
 }
