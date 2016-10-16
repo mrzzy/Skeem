@@ -1,14 +1,12 @@
 package sstinc.prevoir;
 
-import java.util.Calendar;
-
-public class Voidblock {
-    long id;
+class Voidblock {
+    private long id;
     String name;
-    Calendar from;
-    Calendar to;
+    Datetime from;
+    Datetime to;
 
-    public Voidblock(String name, Calendar from, Calendar to) {
+    public Voidblock(String name, Datetime from, Datetime to) {
         this.name = name;
         this.from = from;
         this.to = to;

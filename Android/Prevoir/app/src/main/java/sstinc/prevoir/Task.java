@@ -1,12 +1,12 @@
 package sstinc.prevoir;
 
 import java.util.ArrayList;
-import javax.xml.datatype.Duration;
 
-public class Task {
+class Task{
     private long id;
     String name;
     String subject;
+
     enum TaskType {ONETIME, REPETITIVE}
     enum WeekDay {MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY}
     TaskType type;
@@ -16,7 +16,7 @@ public class Task {
     Duration duration;
     Duration min_time_period;
 
-    public Task(String name, String subject, ArrayList<WeekDay> weekdays,
+    Task(String name, String subject, ArrayList<WeekDay> weekdays,
                 Deadline deadline, String description, Duration duration) {
         this.name = name;
         this.subject = subject;
@@ -24,9 +24,10 @@ public class Task {
         this.deadline = deadline;
         this.description = description;
         this.duration = duration;
+        this.min_time_period = new Duration();
     }
 
-    public Task(String name, String subject, ArrayList<WeekDay> weekdays,
+    Task(String name, String subject, ArrayList<WeekDay> weekdays,
                 Deadline deadline, String description, Duration duration,
                 Duration min_time_period) {
         this.name = name;

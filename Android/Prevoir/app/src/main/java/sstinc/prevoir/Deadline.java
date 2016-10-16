@@ -1,22 +1,20 @@
 package sstinc.prevoir;
 
-import java.util.Calendar;
-
-public class Deadline {
+class Deadline {
     private long taskId;
-    Calendar deadline;
+    Datetime deadline;
     boolean hasDueTime;
 
-    public Deadline(Calendar deadline, Boolean hasDueTime) {
+    Deadline(Datetime deadline) {
         this.deadline = deadline;
-        this.hasDueTime = hasDueTime;
+        this.hasDueTime = deadline.hasTime();
     }
 
-    public void setId(long newId) {
+    void setId(long newId) {
         this.taskId = newId;
     }
 
-    public long getId() {
+    long getId() {
         return this.taskId;
     }
 }
