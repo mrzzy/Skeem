@@ -10,8 +10,14 @@ import UIKit
 
 public enum PVRDBKey:String
 {
+    //Persistent File
     case task = "pvrdb_task"
+
+    //Temp File
     case cache = "pvrdb_cache"
+
+    //Not Saved
+    case mcache = "pvrdb_mcache"
 }
 
 public enum PVRDBError:Error
@@ -20,141 +26,272 @@ public enum PVRDBError:Error
     case entry_not_exist
 }
 
+public enum PVRDBFileError:Error
+{
+    case file_not_exist
+    case file_exist
+    case file_unreadable
+    case data_staged
+}
+
+public class PVRDBFile:NSObject
+{
+    //Storage
+    public var file_path:String
+    private var data:NSMutableData = NSMutableData()
+    private var unach:NSKeyedUnarchiver!
+    private var ach:NSKeyedArchiver!
+
+    //Status
+    var staged:Bool = false
+
+    init(file_path:String)
+    {
+        self.file_path = file_path
+
+        super.init()
+
+        do
+        {
+            try self.load()
+        }
+        catch PVRDBFileError.file_not_exist
+        {
+            print("Info:PVRDBFile: File does not exist, assumming new file")
+        }
+        catch PVRDBFileError.file_unreadable
+        {
+            print("FATAL:PVRDBFile: File not readable")
+            abort()
+        }
+        catch
+        {
+            print("FATAL:PVRDBFile: Unknown Error")
+            abort()
+        }
+
+    }
+
+    public func stage(key:PVRDBKey,val:Any)
+    {
+        if self.staged == false
+        {
+            //New Stage
+            self.data = NSMutableData()
+            self.ach = NSKeyedArchiver(forWritingWith: self.data)
+            self.staged = true
+        }
+
+        self.ach.encode(val, forKey: key.rawValue)
+    }
+
+    public func retrieve(key:PVRDBKey) throws -> Any
+    {
+        if self.staged == true
+        {
+            throw PVRDBFileError.data_staged
+        }
+
+        return self.unach.decodeObject(forKey: key.rawValue)
+    }
+
+    public func commit()
+    {
+        if self.staged == true
+        {
+            if FileManager.default.fileExists(atPath: self.file_path)
+            {
+                try! FileManager.default.removeItem(atPath: self.file_path)
+            }
+
+            //Write Data
+            self.ach.finishEncoding()
+            self.data.write(toFile: self.file_path, atomically: true)
+            self.staged = false
+        }
+    }
+
+    public func load() throws
+    {
+        if self.staged == true
+        {
+            throw PVRDBFileError.data_staged
+        }
+
+        if FileManager.default.fileExists(atPath: self.file_path) == true
+        {
+            if let dat = NSMutableData(contentsOfFile: self.file_path)
+            {
+                //Data Read Successful
+                self.data = dat
+                self.unach = NSKeyedUnarchiver(forReadingWith: (self.data as Data))
+            }
+            else
+            {
+                throw PVRDBFileError.file_unreadable
+            }
+        }
+        else
+        {
+            throw PVRDBFileError.file_not_exist
+        }
+    }
+}
+
+
 public class PVRDatabase:NSObject
 {
     //Data
     var task:[String:PVRTask] = [:] //Tasks
     var mcache:[String:Any] = [:]  //In-Memory Cache
     var cache:[String:NSCoding] = [:]//Cache
-    
-    //Storage
-    var stage:Bool = false
-    
-    var pst_file_path:String
-    var pst_file_data:NSMutableData!
-    var pst_ach:NSKeyedArchiver!
 
-    var tmp_file_path:String
-    var tmp_file_data:NSMutableData!
-    var tmp_ach:NSKeyedArchiver!
-    
+    //Storage
+    var pst_file:PVRDBFile
+    var tmp_file:PVRDBFile
+
     //Init
-    
     override init()
     {
         //Persistent Storage
         let doc_path = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0]
-        self.pst_file_path = "\(doc_path)/pvr_db.plist"
+        self.pst_file = PVRDBFile(file_path: "\(doc_path)/pvr_pst.plist")
 
         //Cache (Tmp Storage)
         let tmp_path = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.cachesDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0]
-        self.tmp_file_path = "\(tmp_path)/pvr_cache.plist"
+        self.tmp_file = PVRDBFile(file_path: "\(tmp_path)/pvr_cache.plist")
 
         super.init()
-        
-        self.load()
-    }
-    
-    //Staging
-    
-    public func stage_data(key:PVRDBKey,val:Any,file_path:String)
-    {
-        if self.stage == false
-        {
-            //New Stage
-            if file_path == self.pst_file_path
-            {
-                self.pst_file_data = NSMutableData()
-                self.pst_ach = NSKeyedArchiver(forWritingWith: self.pst_file_data)
-            }
-            else if file_path == self.tmp_file_path
-            {
-                self.tmp_file_data = NSMutableData()
-                self.tmp_ach = NSKeyedArchiver(forWritingWith: self.tmp_file_data)
-            }
-            
-            self.stage = true
-        }
-        
-        if file_path == self.pst_file_path
-        {
-            self.pst_ach.encode(val, forKey: key.rawValue)
-            
-        }
-        else if file_path == self.tmp_file_path        {
-            self.tmp_ach.encode(val, forKey: key.rawValue)
-        }
-        
-    }
-    
-    //I/O
-
-    public func load_data(key:PVRDBKey,file_path:String) -> Any?
-    {
-        if FileManager.default.fileExists(atPath: file_path)
-        {
-            if let ua = NSKeyedUnarchiver.unarchiveObject(withFile: file_path) as? NSKeyedUnarchiver
-            {
-                return ua.decodeObject(forKey: key.rawValue)
-            }
-        }
-        
-        return nil
     }
 
-    
-    public func commit_data(file_path:String)
+    //I/O 
+    public func load()
     {
-        //Remove Old File
-        if FileManager.default.fileExists(atPath: file_path)
+        //Persistent Storage
+        try! self.pst_file.load()
+        self.task = (try! self.pst_file.retrieve(key: PVRDBKey.task) as! [String : PVRTask])
+        //Temporary Storage
+        do
         {
-            try! FileManager.default.removeItem(atPath: file_path)
+            try self.tmp_file.load()
+            if let cch = (try? self.tmp_file.retrieve(key: PVRDBKey.cache) as! [String:NSCoding])
+            {
+                self.cache = cch
+            }
+            else
+            {
+                self.cache = [:]
+            }
         }
-        
-        if file_path == self.pst_file_path
+        catch PVRDBFileError.file_not_exist
         {
-            self.pst_ach.finishEncoding()
-            self.pst_file_data.write(toFile: file_path, atomically: true)
-            
-            self.stage = false
+            self.cache = [:]
         }
-        else
+        catch
         {
-            self.tmp_ach.finishEncoding()
-            self.tmp_file_data.write(toFile: file_path, atomically: true)
-            
-            self.stage = false
+            abort()
         }
+
     }
 
     public func commit()
     {
-        self.stage_data(key: PVRDBKey.task, val: self.task, file_path: self.pst_file_path)
-        self.stage_data(key: PVRDBKey.cache, val: self.cache, file_path: self.tmp_file_path)
-        
-        self.commit_data(file_path: self.pst_file_path)
-        self.commit_data(file_path: self.tmp_file_path)
+        //Persistent File
+        self.pst_file.stage(key: PVRDBKey.task, val: self.task)
+        self.pst_file.commit()
+
+        //Temporary File
+        self.pst_file.stage(key: PVRDBKey.cache, val: self.cache)
+        self.tmp_file.commit()
     }
-    
-    public func load()
+
+    public func createEntry(locKey:PVRDBKey,key:String,val:Any) throws
     {
-        //Persistent Storage
-        if (UIApplication.shared.delegate as! AppDelegate).use_cnt > 1
+        if locKey == PVRDBKey.task
         {
-            if let tsk = self.load_data(key: PVRDBKey.task, file_path: self.pst_file_path)
+            if self.task[key] == nil
             {
-                self.task = (tsk as! [String : PVRTask])
+                self.task[key] = (val as! PVRTask)
             }
             else
             {
-                abort() //Task List Failed to Load
+                throw PVRDBError.entry_exist
             }
         }
-        
-        //Cache (Tmp Storage)
-        if (UIApplication.shared.delegate as! AppDelegate).use_cnt > 1, let cch = self.load_data(key: PVRDBKey.cache, file_path: self.tmp_file_path)
+        else if locKey == PVRDBKey.cache
         {
-            self.cache = (cch as! [String:NSCoding])
+            if self.cache[key] == nil
+            {
+                self.cache[key] = (val as! NSCoding)
+            }
+            else
+            {
+                throw PVRDBError.entry_exist
+            }
+        }
+        else if locKey == PVRDBKey.mcache
+        {
+            if self.mcache[key] == nil
+            {
+                self.mcache[key] = val
+            }
+            else
+            {
+                throw PVRDBError.entry_exist
+            }
+        }
+    }
+
+    public func updateEntry(lockey:PVRDBKey,key:String,val:Any) throws
+    {
+        if lockey == PVRDBKey.task
+        {
+            if self.task[key] != nil
+            {
+                self.task[key] = (val as! PVRTask)
+            }
+            else
+            {
+                throw PVRDBError.entry_not_exist
+            }
+        }
+        else if lockey == PVRDBKey.cache
+        {
+            if self.cache[key] != nil
+            {
+                self.cache[key] = (val as! PVRTask)
+            }
+            else
+            {
+                throw PVRDBError.entry_not_exist
+            }
+        }
+        else if lockey == PVRDBKey.mcache
+        {
+            if self.mcache[key] != nil
+            {
+                self.mcache[key] = (val as! PVRTask)
+            }
+            else
+            {
+                throw PVRDBError.entry_not_exist
+            }
+        }
+    }
+
+    public func deleteEntry(lockey:PVRDBKey,key:String)
+    {
+        if lockey == PVRDBKey.task
+        {
+            self.task[key] = nil
+        }
+        else if lockey == PVRDBKey.cache
+        {
+            self.cache[key] = nil
+        }
+        else if lockey == PVRDBKey.mcache
+        {
+            self.mcache[key] = nil
         }
     }
 }
