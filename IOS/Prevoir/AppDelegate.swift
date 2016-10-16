@@ -8,6 +8,8 @@
 
 import UIKit
 
+var DB:PVRDatabase!
+
 public enum PVRUserDefaultKey:String {
     case suite = "pvr_ud_suite"
     case use = "pvr_ud_use"
@@ -28,7 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     //MARK:App Delegate
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
         self.loadAppStatus()
-        
+        DB = PVRDatabase()
         return true
     }
     
@@ -87,5 +89,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         self.ud.synchronize()
     }
+
+
 }
 
