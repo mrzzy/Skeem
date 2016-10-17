@@ -20,14 +20,18 @@ class Datetime {
     Datetime(String datetime_string) {
         String[] datetime = datetime_string.split(" ");
         String[] date = datetime[0].split("-");
-        String[] time = datetime[1].split(":");
 
         this.year = Integer.parseInt(date[0]);
         this.month = Integer.parseInt(date[1]);
         this.day = Integer.parseInt(date[2]);
 
-        this.hour = Integer.parseInt(time[0]);
-        this.minute = Integer.parseInt(time[1]);
+        this.hour = -1;
+        this.minute = -1;
+        if (datetime.length > 1) {
+            String[] time = datetime[1].split(":");
+            this.hour = Integer.parseInt(time[0]);
+            this.minute = Integer.parseInt(time[1]);
+        }
     }
 
     boolean hasTime() {

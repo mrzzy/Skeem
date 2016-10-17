@@ -99,8 +99,6 @@ class DbAdapter {
     // Command to create table
     private static final String DAYS_TABLE_CREATE = "CREATE TABLE " + DAYS_TABLE + "("
             + DAYS_TABLE_COL_TASK_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + DAYS_TABLE + " INTEGER NOT NULL, "
-            + DAYS_TABLE_COL_TASK_ID + " INTEGER NOT NULL, "
             + DAYS_TABLE_COL_MONDAY + " INTEGER NOT NULL, "
             + DAYS_TABLE_COL_TUESDAY + " INTEGER NOT NULL, "
             + DAYS_TABLE_COL_WEDNESDAY + " INTEGER NOT NULL, "
@@ -220,6 +218,7 @@ class DbAdapter {
     private Deadline getDeadline(long taskId) {
         Cursor cursor = SQLdb.query(DEADLINES_TABLE, DEADLINES_TABLE_COLUMNS,
                 DEADLINES_TABLE_COL_TASK_ID + " = " + taskId, null, null, null, null);
+        cursor.moveToFirst();
         Deadline deadline = new Deadline(new Datetime(cursor.getString(1)));
         cursor.close();
         return deadline;
@@ -228,6 +227,7 @@ class DbAdapter {
     private ArrayList<Task.WeekDay> getDays(long taskId) {
         Cursor cursor = SQLdb.query(DAYS_TABLE, DAYS_TABLE_COLUMNS,
                 DAYS_TABLE_COL_TASK_ID + " = " + taskId, null, null, null, null);
+        cursor.moveToFirst();
         ArrayList<Task.WeekDay> weekDays = new ArrayList<>();
         Task.WeekDay[] weekDayIndex = Task.WeekDay.values();
         for (int i=1; i<8; i++) {
@@ -243,6 +243,7 @@ class DbAdapter {
         // Get task information
         Cursor cursor = SQLdb.query(TASKS_TABLE, TASKS_TABLE_COLUMNS,
                 TASKS_TABLE_COL_ID + " = " + taskId , null, null, null, null);
+        cursor.moveToFirst();
         String name = cursor.getString(1);
         String subject = cursor.getString(2);
         String description = cursor.getString(3);
@@ -290,6 +291,7 @@ class DbAdapter {
     Voidblock getVoidblock(long voidblockId) {
         Cursor cursor = SQLdb.query(VOIDBLOCKS_TABLE, VOIDBLOCKS_TABLE_COLUMNS,
                 VOIDBLOCKS_TABLE_COL_ID + " = " + voidblockId, null, null, null, null);
+        cursor.moveToFirst();
         String name = cursor.getString(1);
         Datetime from = new Datetime(cursor.getString(2));
         Datetime to = new Datetime(cursor.getString(3));
@@ -392,6 +394,14 @@ class DbAdapter {
 
     void deleteVoidblock(long voidblockId) {
         SQLdb.delete(VOIDBLOCKS_TABLE, VOIDBLOCKS_TABLE_COL_ID + "=" + voidblockId, null);
+    }
+
+    void deleteAll() {
+        SQLdb.execSQL("DROP TABLE IF EXISTS " + TASKS_TABLE);
+        SQLdb.execSQL("DROP TABLE IF EXISTS " + DEADLINES_TABLE);
+        SQLdb.execSQL("DROP TABLE IF EXISTS " + DAYS_TABLE);
+        SQLdb.execSQL("DROP TABLE IF EXISTS " + VOIDBLOCKS_TABLE);
+        dbHelper.onCreate(SQLdb);
     }
 
     // Database Helper

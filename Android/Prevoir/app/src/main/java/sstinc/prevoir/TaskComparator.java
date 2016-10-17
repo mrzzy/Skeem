@@ -23,8 +23,6 @@ public class TaskComparator implements Comparator<Task> {
                 return mul_val*o1.name.compareTo(o2.name);
             case SUBJECT:
                 return mul_val*o1.subject.compareTo(o2.subject);
-            case TASKTYPE:
-                return mul_val*o1.type.compareTo(o2.type);
             case DEADLINE:
                 return mul_val*o1.deadline.toString().compareTo(o2.deadline.toString());
             case DURATION:

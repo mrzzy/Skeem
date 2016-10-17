@@ -1,15 +1,17 @@
 package sstinc.prevoir;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+
 import java.util.ArrayList;
 
-class Task{
+class Task implements Parcelable {
     private long id;
     String name;
     String subject;
 
-    enum TaskType {ONETIME, REPETITIVE}
     enum WeekDay {MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY}
-    TaskType type;
     ArrayList<WeekDay> weekDays;
     Deadline deadline;
     String description;
@@ -46,5 +48,55 @@ class Task{
 
     public long getId() {
         return this.id;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        // Write to parcel
+        out.writeString(name);
+        out.writeString(subject);
+        // Convert weekDays to string
+        ArrayList<String> arrayList_string_weekDays = new ArrayList<>();
+        for (WeekDay weekDay : weekDays) {
+            arrayList_string_weekDays.add(weekDay.toString());
+        }
+        String[] string_weekDays = new String[arrayList_string_weekDays.size()];
+        string_weekDays = arrayList_string_weekDays.toArray(string_weekDays);
+        out.writeStringArray(string_weekDays);
+        out.writeString(deadline.deadline.toString());
+        out.writeString(description);
+        out.writeString(duration.toString());
+        out.writeString(min_time_period.toString());
+    }
+
+    public static final Parcelable.Creator<Task> CREATOR = new Parcelable.Creator<Task>() {
+        public Task createFromParcel(Parcel in) {
+            return new Task(in);
+        }
+
+        public Task[] newArray(int size) {
+            return new Task[size];
+        }
+    };
+
+    private Task(Parcel in) {
+        // Read from parcel
+        this.name = in.readString();
+        this.subject = in.readString();
+        Log.w(this.getClass().getName(), "Subject: " + this.subject);
+        this.weekDays = new ArrayList<WeekDay>();
+        String[] string_weekDays = in.createStringArray();
+        for (String string_weekday : string_weekDays) {
+            this.weekDays.add(WeekDay.valueOf(string_weekday));
+        }
+        this.deadline = new Deadline(new Datetime(in.readString()));
+        this.description = in.readString();
+        this.duration = new Duration(in.readString());
+        this.min_time_period = new Duration(in.readString());
     }
 }

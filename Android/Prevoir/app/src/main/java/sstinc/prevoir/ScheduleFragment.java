@@ -28,6 +28,11 @@ public class ScheduleFragment extends Fragment {
                 Snackbar.make(v, "Hey there!", Snackbar.LENGTH_LONG).setAction("YAY", null).show();
             }
         });
+
+        // Show shuffle button
+        MainActivity.menu_show = true;
+        getActivity().invalidateOptionsMenu();
+
     }
 
     @Override

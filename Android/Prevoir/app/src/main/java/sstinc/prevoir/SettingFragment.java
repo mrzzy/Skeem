@@ -14,6 +14,15 @@ public class SettingFragment extends Fragment {
         // Required empty public constructor
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        // Hide shuffle button
+        MainActivity.menu_show = false;
+        getActivity().invalidateOptionsMenu();
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
