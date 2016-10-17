@@ -201,7 +201,7 @@ public class PVRDatabase:NSObject
         self.pst_file.commit()
 
         //Temporary File
-        self.pst_file.stage(key: PVRDBKey.cache, val: self.cache)
+        self.tmp_file.stage(key: PVRDBKey.cache, val: self.cache)
         self.tmp_file.commit()
     }
 
