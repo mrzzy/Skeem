@@ -117,6 +117,17 @@ public class PVRRepeatVoidDuration: PVRVoidDuration
         aCoder.encode(self.repeat_deadline, forKey: "repeat_deadline")
     }
 
-    
-
+    public override func vaild() -> Bool
+    {
+        if self.repeat_enabled == false || self.repeat_deadline.compare(Date()) != ComparisonResult.orderedDescending
+        {
+            return false
+        }
+        else
+        {
+            return true
+        }
+    }
 }
+
+public class PVR

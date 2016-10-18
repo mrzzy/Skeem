@@ -328,6 +328,4 @@ public class PVRDatabase:NSObject
             self.mcache[key] = nil
         }
     }
-}
-
-   
+}   
