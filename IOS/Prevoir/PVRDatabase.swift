@@ -12,6 +12,7 @@ public enum PVRDBKey:String
 {
     //Persistent File
     case task = "pvrdb_task"
+    case void_duration = "pvrdb_voidduration"
 
     //Temp File
     case cache = "pvrdb_cache"
@@ -142,9 +143,10 @@ public class PVRDBFile:NSObject
 public class PVRDatabase:NSObject
 {
     //Data
-    var task:[String:PVRTask] = [:] //Tasks
-    var mcache:[String:Any] = [:]  //In-Memory Cache
-    var cache:[String:NSCoding] = [:]//Cache
+    var task:[String:PVRTask] //Tasks
+    var voidDuration:[String:PVRVoidDuration] //Void Duration
+    var mcache:[String:Any]  //In-Memory Cache
+    var cache:[String:NSCoding]//Cache
 
     //Storage
     var pst_file:PVRDBFile
@@ -160,6 +162,11 @@ public class PVRDatabase:NSObject
         //Cache (Tmp Storage)
         let tmp_path = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.cachesDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0]
         self.tmp_file = PVRDBFile(file_path: "\(tmp_path)/pvr_cache.plist")
+
+        self.task = [:]
+        self.voidDuration = [:]
+        self.mcache = [:]
+        self.cache = [:]
 
         super.init()
     }
@@ -198,6 +205,7 @@ public class PVRDatabase:NSObject
     {
         //Persistent File
         self.pst_file.stage(key: PVRDBKey.task, val: self.task)
+        self.pst_file.stage(key: PVRDBKey.void_duration, val: self.voidDuration)
         self.pst_file.commit()
 
         //Temporary File
@@ -212,6 +220,17 @@ public class PVRDatabase:NSObject
             if self.task[key] == nil
             {
                 self.task[key] = (val as! PVRTask)
+            }
+            else
+            {
+                throw PVRDBError.entry_exist
+            }
+        }
+        else if locKey == PVRDBKey.void_duration
+        {
+            if self.voidDuration[key] == nil
+            {
+                self.voidDuration[key] = (val as! PVRVoidDuration)
             }
             else
             {
@@ -255,11 +274,22 @@ public class PVRDatabase:NSObject
                 throw PVRDBError.entry_not_exist
             }
         }
+        else if lockey == PVRDBKey.void_duration
+        {
+            if self.voidDuration[key] != nil
+            {
+                self.voidDuration[key] = (val as! PVRVoidDuration)
+            }
+            else
+            {
+                throw PVRDBError.entry_not_exist
+            }
+        }
         else if lockey == PVRDBKey.cache
         {
             if self.cache[key] != nil
             {
-                self.cache[key] = (val as! PVRTask)
+                self.cache[key] = (val as! NSCoding)
             }
             else
             {
@@ -270,7 +300,7 @@ public class PVRDatabase:NSObject
         {
             if self.mcache[key] != nil
             {
-                self.mcache[key] = (val as! PVRTask)
+                self.mcache[key] = val
             }
             else
             {
@@ -285,6 +315,10 @@ public class PVRDatabase:NSObject
         {
             self.task[key] = nil
         }
+        else if lockey == PVRDBKey.void_duration
+        {
+            self.voidDuration[key] = nil
+        }
         else if lockey == PVRDBKey.cache
         {
             self.cache[key] = nil
@@ -295,3 +329,5 @@ public class PVRDatabase:NSObject
         }
     }
 }
+
+   
