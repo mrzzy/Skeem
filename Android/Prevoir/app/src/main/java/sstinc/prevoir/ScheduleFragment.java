@@ -42,7 +42,7 @@ public class ScheduleFragment extends Fragment {
         });
 
         // Show shuffle button
-        MainActivity.menu_show = true;
+        MainActivity.menu_shuffle = true;
         getActivity().invalidateOptionsMenu();
 
     }

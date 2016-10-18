@@ -46,4 +46,17 @@
     <string name="checkbox_friday">Friday</string>
     <string name="checkbox_saturday">Saturday</string>
     <string name="checkbox_sunday">Sunday</string>
+
+    <!-- Menu main.xml -->
+    <string name="nav_shuffle">Shuffle</string>
+    <string name="nav_continue">Continue</string>
+    <string name="nav_done">Finish</string>
+    <string name="nav_copy">Duplicate</string>
+    <string name="nav_delete">Delete</string>
+
+    <!-- Strings for the dialog box -->
+    <string name="dialog_confirm_delete_message">Are you sure you want to delete all the selected
+    Tasks?</string>
+    <string name="dialog_confirm_delete_positive">Yes</string>
+    <string name="dialog_confirm_delete_negative">No</string>
 </resources>

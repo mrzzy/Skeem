@@ -19,7 +19,7 @@ public class VoidblockFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         // Hide shuffle button
-        MainActivity.menu_show = false;
+        MainActivity.menu_shuffle = false;
         getActivity().invalidateOptionsMenu();
     }
 
