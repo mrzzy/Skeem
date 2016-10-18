@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
@@ -15,12 +16,12 @@ import static android.app.Activity.RESULT_OK;
 
 public class TaskFragment extends ListFragment {
 
-    public final static String EXTRA_TASK = "sstinc.prevoir.EXTRA_TASK";
+    public static final String EXTRA_TASK = "sstinc.prevoir.EXTRA_TASK";
 
     static final int createTaskRequestCode = 100;
+    static final int updateTaskRequestCode = 200;
 
     ArrayList<Task> tasks;
-    TaskArrayAdapter taskArrayAdapter;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -34,7 +35,7 @@ public class TaskFragment extends ListFragment {
         tasks = dbAdapter.getTasks();
         dbAdapter.close();
 
-        taskArrayAdapter = new TaskArrayAdapter(getActivity(), tasks);
+        TaskArrayAdapter taskArrayAdapter = new TaskArrayAdapter(getActivity(), tasks);
         setListAdapter(taskArrayAdapter);
 
         // Set Floating Action Button
@@ -60,15 +61,28 @@ public class TaskFragment extends ListFragment {
                 dbAdapter.insertTask(task);
                 dbAdapter.close();
             }
+        } else if (requestCode == updateTaskRequestCode) {
+            if (resultCode == RESULT_OK) {
+                // Update to database and view again
+                Task task = data.getParcelableExtra(EXTRA_TASK);
+                DbAdapter dbAdapter = new DbAdapter(getActivity().getApplicationContext());
+                dbAdapter.open();
+                dbAdapter.updateTask(task.getId(), task);
+                Log.w(this.getClass().getName(), "Id of task: " + task.getId());
+                dbAdapter.close();
+            }
         }
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int pos, long id) {
         super.onListItemClick(l, v, pos, id);
-        // TODO: Add edit view
+        // Add edit view
         Task task = (Task) getListAdapter().getItem(pos);
-        Snackbar.make(v, "You clicked on " + task.name, Snackbar.LENGTH_LONG).show();
+        Intent intent = new Intent(getActivity(), TaskCreateActivity.class);
+        intent.putExtra(TaskFragment.EXTRA_TASK, task);
+        Log.w(this.getClass().getName(), "Selected ID: " + task.getId());
+        startActivityForResult(intent, updateTaskRequestCode);
     }
 
 }

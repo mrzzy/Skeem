@@ -1,7 +1,7 @@
 package sstinc.prevoir;
 
 class Deadline {
-    private long taskId;
+    private long taskId = -1;
     Datetime deadline;
     boolean hasDueTime;
 

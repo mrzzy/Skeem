@@ -180,6 +180,7 @@ FURTHER ADDONS
 - Search algorithm
 - Percentage done on tasks in background
 - Tutorial
+- Add overdue tasks
 
 WORK SCHEDULE
 ------------------------------------------------------------------------------

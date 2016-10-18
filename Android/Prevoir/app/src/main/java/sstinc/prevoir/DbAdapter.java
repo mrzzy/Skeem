@@ -27,6 +27,8 @@ Void block
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.MatrixCursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -110,12 +112,6 @@ class DbAdapter {
                 TASKS_TABLE + "(" + TASKS_TABLE_COL_ID + ")"
             + ");";
 
-    /*
-    Void block
-    - Name (String)
-    - from (datetime)
-    - to (datetime)
-     */
     // Constants for Voidblocks Table
     private static final String VOIDBLOCKS_TABLE = "voidblocks";
     private static final String VOIDBLOCKS_TABLE_COL_ID = "id";
@@ -330,11 +326,11 @@ class DbAdapter {
         ContentValues values = new ContentValues();
 
         // Tasks Table
-        values.put(DbAdapter.TASKS_TABLE_COL_NAME, newTask.name);
-        values.put(DbAdapter.TASKS_TABLE_COL_SUBJECT, newTask.subject);
-        values.put(DbAdapter.TASKS_TABLE_COL_DESCRIPTION, newTask.description);
-        values.put(DbAdapter.TASKS_TABLE_COL_DURATION, newTask.duration.toString());
-        values.put(DbAdapter.TASKS_TABLE_COL_MIN_TIME_PERIOD, newTask.min_time_period.toString());
+        values.put(TASKS_TABLE_COL_NAME, newTask.name);
+        values.put(TASKS_TABLE_COL_SUBJECT, newTask.subject);
+        values.put(TASKS_TABLE_COL_DESCRIPTION, newTask.description);
+        values.put(TASKS_TABLE_COL_DURATION, newTask.duration.toString());
+        values.put(TASKS_TABLE_COL_MIN_TIME_PERIOD, newTask.min_time_period.toString());
         SQLdb.update(TASKS_TABLE, values, TASKS_TABLE_COL_ID + "=" + taskId, null);
 
         // Deadlines Table
@@ -405,7 +401,7 @@ class DbAdapter {
     }
 
     // Database Helper
-    private static class DbHelper extends SQLiteOpenHelper {
+    static class DbHelper extends SQLiteOpenHelper {
         DbHelper(Context ctx) {
             super(ctx, DATABASE_NAME, null, DATABASE_VERSION);
         }
@@ -428,6 +424,55 @@ class DbAdapter {
             db.execSQL("DROP TABLE IF EXISTS " + DAYS_TABLE);
             db.execSQL("DROP TABLE IF EXISTS " + VOIDBLOCKS_TABLE);
             onCreate(db);
+        }
+        public ArrayList<Cursor> getData(String Query){
+            //get writable database
+            SQLiteDatabase sqlDB = this.getWritableDatabase();
+            String[] columns = new String[] { "mesage" };
+            //an array list of cursor to save two cursors one has results from the query
+            //other cursor stores error message if any errors are triggered
+            ArrayList<Cursor> alc = new ArrayList<Cursor>(2);
+            MatrixCursor Cursor2= new MatrixCursor(columns);
+            alc.add(null);
+            alc.add(null);
+
+
+            try{
+                String maxQuery = Query ;
+                //execute the query results will be save in Cursor c
+                Cursor c = sqlDB.rawQuery(maxQuery, null);
+
+
+                //add value to cursor2
+                Cursor2.addRow(new Object[] { "Success" });
+
+                alc.set(1,Cursor2);
+                if (null != c && c.getCount() > 0) {
+
+
+                    alc.set(0,c);
+                    c.moveToFirst();
+
+                    return alc ;
+                }
+                return alc;
+            } catch(SQLException sqlEx){
+                Log.d("printing exception", sqlEx.getMessage());
+                //if any exceptions are triggered save the error message to cursor an return the arraylist
+                Cursor2.addRow(new Object[] { ""+sqlEx.getMessage() });
+                alc.set(1,Cursor2);
+                return alc;
+            } catch(Exception ex){
+
+                Log.d("printing exception", ex.getMessage());
+
+                //if any exceptions are triggered save the error message to cursor an return the arraylist
+                Cursor2.addRow(new Object[] { ""+ex.getMessage() });
+                alc.set(1,Cursor2);
+                return alc;
+            }
+
+
         }
     }
 }

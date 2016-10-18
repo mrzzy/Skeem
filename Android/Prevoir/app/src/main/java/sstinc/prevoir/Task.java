@@ -7,7 +7,7 @@ import android.util.Log;
 import java.util.ArrayList;
 
 class Task implements Parcelable {
-    private long id;
+    private long id = -1;
     String name;
     String subject;
 
@@ -72,6 +72,7 @@ class Task implements Parcelable {
         out.writeString(description);
         out.writeString(duration.toString());
         out.writeString(min_time_period.toString());
+        out.writeLong(this.getId());
     }
 
     public static final Parcelable.Creator<Task> CREATOR = new Parcelable.Creator<Task>() {
@@ -98,5 +99,6 @@ class Task implements Parcelable {
         this.description = in.readString();
         this.duration = new Duration(in.readString());
         this.min_time_period = new Duration(in.readString());
+        setId(in.readLong());
     }
 }

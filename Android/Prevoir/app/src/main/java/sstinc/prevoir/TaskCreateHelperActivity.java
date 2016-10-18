@@ -30,6 +30,7 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
     public static final String EXTRA_CURRENT_DAYS = "sstinc.prevoir.EXTRA_CURRENT_DAYS";
 
     static boolean show_done = true;
+    static boolean edit = false;
 
     // Values of the task
     private ArrayList<Task.WeekDay> weekDays = new ArrayList<>();
@@ -59,6 +60,13 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
         // Repeat Yes/No Toggle Button
         ToggleButton toggleButton_onetime_repetitive = (ToggleButton) findViewById(
                 R.id.field_toggle_onetime_repetitive);
+        Button setDaysButton = (Button) findViewById(R.id.button_repetitions);
+        setDaysButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getDayValues();
+            }
+        });
         toggleButton_onetime_repetitive.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -157,6 +165,46 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
         spinner_min_time_period_minutes.setAdapter(minuteArrayAdapter);
         // TODO: set item selected listeners
 
+        // Set values if it is edit
+        Task task = getIntent().getParcelableExtra(TaskFragment.EXTRA_TASK);
+        if (task != null) {
+            edit = true;
+            // Set weekDays
+            weekDays = task.weekDays;
+            if (!weekDays.isEmpty()) {
+                toggleButton_onetime_repetitive.setChecked(true);
+                setDaysButton.setText(getTextToSet());
+                setDaysButton.setVisibility(View.VISIBLE);
+            }
+            // Set duration
+            spinner_duration_hours.setSelection(
+                    hourArrayAdapter.getPosition(Integer.toString(task.duration.getHours())));
+            spinner_duration_minutes.setSelection(
+                    minuteArrayAdapter.getPosition(Integer.toString(task.duration.getMinutes())));
+
+            // Minimum Time Period
+            if (task.min_time_period.getHours() != -1) {
+                toggleButton_min_time_period.setChecked(true);
+                spinner_min_time_period_hours.setSelection(hourArrayAdapter.getPosition(
+                        Integer.toString(task.min_time_period.getHours())));
+                spinner_min_time_period_minutes.setSelection(minuteArrayAdapter.getPosition(
+                        Integer.toString(task.min_time_period.getMinutes())));
+                spinner_min_time_period_hours.setVisibility(View.VISIBLE);
+                spinner_min_time_period_minutes.setVisibility(View.VISIBLE);
+            }
+
+            // Deadline
+            datePicker_deadline.updateDate(task.deadline.deadline.getYear(),
+                    task.deadline. deadline.getMonth(), task.deadline.deadline.getDay());
+            if (task.deadline.hasDueTime) {
+                toggleButton_deadline_time.setChecked(true);
+                spinner_min_time_period_hours.setSelection(hourArrayAdapter.getPosition(
+                        Integer.toString(task.deadline.deadline.getHour())));
+                spinner_min_time_period_minutes.setSelection(minuteArrayAdapter.getPosition(
+                        Integer.toString(task.deadline.deadline.getMinute())));
+            }
+        }
+
     }
 
     private void getDayValues() {
@@ -242,15 +290,37 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
             datetime.setMonth(datePicker_deadline.getMonth());
             datetime.setDay(datePicker_deadline.getDayOfMonth());
             if (toggleButton_add_time.isChecked()) {
-                datetime.setHour(timePicker_deadline.getHour());
-                datetime.setMinute(timePicker_deadline.getMinute());
+                datetime.setHour(timePicker_deadline.getCurrentHour());
+                datetime.setMinute(timePicker_deadline.getCurrentMinute());
             }
+
             intent.putExtra(TaskCreateActivity.EXTRA_DEADLINE, datetime.toString());
+
+            // Return ID
+            Log.w(this.getClass().getName(),
+                    "Returning ID: " + getIntent().getLongExtra(TaskCreateActivity.EXTRA_TASK_ID, -1));
+            intent.putExtra(TaskCreateActivity.EXTRA_TASK_ID, getIntent().getLongExtra(
+                    TaskCreateActivity.EXTRA_TASK_ID, -1));
             setResult(RESULT_OK, intent);
             finish();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private String getTextToSet() {
+        String textToSet = "";
+        for (Task.WeekDay weekDay : weekDays) {
+            textToSet += weekDay.toString().substring(0, 3);
+            textToSet += ", ";
+        }
+        if (!textToSet.equals("")) {
+            textToSet = textToSet.substring(0, textToSet.length()-2);
+        } else {
+            textToSet = getString(R.string.button_repetitions_unset);
+        }
+
+        return textToSet;
     }
 
     @Override
@@ -265,23 +335,7 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
 
                 // Set button text
                 Button setWeekDaysButton = (Button) findViewById(R.id.button_repetitions);
-                String textToSet = "";
-                for (Task.WeekDay weekDay : weekDays) {
-                    textToSet += weekDay.toString().substring(0, 3);
-                    textToSet += ", ";
-                }
-                if (textToSet != "") {
-                    textToSet = textToSet.substring(0, textToSet.length()-2);
-                } else {
-                    textToSet = getString(R.string.button_repetitions_unset);
-                }
-                setWeekDaysButton.setText(textToSet);
-                setWeekDaysButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        getDayValues();
-                    }
-                });
+                setWeekDaysButton.setText(getTextToSet());
                 setWeekDaysButton.setVisibility(View.VISIBLE);
             } else {
                 invalidateOptionsMenu();

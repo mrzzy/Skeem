@@ -20,7 +20,9 @@
         </activity>
         <activity android:name=".TaskCreateActivity" />
         <activity android:name=".TaskCreateHelperActivity" />
-        <activity android:name=".TaskCreateDaysActivity"></activity>
+        <activity android:name=".TaskCreateDaysActivity" />
+        <activity android:name="sstinc.prevoir.AndroidDatabaseManager"
+            android:theme="@style/Theme.AppCompat.Light"/>
     </application>
 
 </manifest>
