@@ -1,7 +1,9 @@
 package sstinc.prevoir;
 
 
+import android.app.AlertDialog;
 import android.app.ListFragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -47,6 +49,10 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
         super.onActivityCreated(savedInstanceState);
         // Set options menu
         setHasOptionsMenu(true);
+
+        // Reset menu
+        menu_multi = false;
+        getActivity().invalidateOptionsMenu();
 
         // Hide shuffle button
         MainActivity.menu_shuffle = false;
@@ -153,16 +159,7 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        // Iterate through each task's view
-        for (int i=getListAdapter().getCount()-1; i>=0; i--) {
-            View v = getViewByPosition(i, getListView());
-            CheckBox checkBox = (CheckBox) v.findViewById(R.id.list_item_checkBox);
-            checkBox.setVisibility(View.VISIBLE);
-        }
-
-        // Set the checkboxes visible, change each of the views to toggle checkbox
-        // When all the checkboxes are unchecked, make checkboxes invisible, invalidate menu
-        // Set the views back to edit mode.
+        // Iterate through each view
         for (int i = getListAdapter().getCount()-1; i>=0; i--) {
             View v = getViewByPosition(i, getListView());
             // Set checkBox to be visible
@@ -209,8 +206,6 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
         menu_multi = true;
         getActivity().invalidateOptionsMenu();
 
-        // Check the currently selected item
-        Log.w(getClass().getName(), "Name of view: " + ((TextView) view.findViewById(R.id.list_item_task_title)).getText().toString());
         ((CheckBox) view.findViewById(R.id.list_item_checkBox)).setChecked(true);
         (view.findViewById(R.id.list_item_checkBox)).setVisibility(View.VISIBLE);
         return true;
@@ -259,30 +254,74 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
                 .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                // Disable menu
-                menu_multi = false;
-                getActivity().invalidateOptionsMenu();
+                if (getCheckedCheckBoxes() == 1) {
+                    // Disable menu
+                    menu_multi = false;
+                    getActivity().invalidateOptionsMenu();
 
-                // Duplicate all the selected tasks
-                DbAdapter dbAdapter = new DbAdapter(getActivity());
-                dbAdapter.open();
-                for (int i=getListAdapter().getCount()-1; i>=0; i--) {
-                    // Get CheckBox
-                    View view = getViewByPosition(i, getListView());
-                    CheckBox checkBox = (CheckBox) view.findViewById(
-                            R.id.list_item_checkBox);
+                    // Delete immediately
+                    DbAdapter dbAdapter = new DbAdapter(getActivity());
+                    for (int i=getListAdapter().getCount()-1; i>=0; i--) {
+                        View view = getViewByPosition(i, getListView());
+                        CheckBox checkBox = (CheckBox) view.findViewById(R.id.list_item_checkBox);
 
-                    if (checkBox.isChecked()) {
-                        dbAdapter.deleteTask(((Task) getListAdapter().getItem(i)).getId());
+                        if (checkBox.isChecked()) {
+                            dbAdapter.open();
+                            dbAdapter.deleteTask(((Task) getListAdapter().getItem(i)).getId());
+                            break;
+                        }
                     }
+                    ArrayList<Task> tasks = dbAdapter.getTasks();
+                    dbAdapter.close();
+                    setListAdapter(new TaskArrayAdapter(getActivity(), tasks));
+
+                    // Return to normal OnItemClickListener
+                    getListView().setOnItemClickListener(editItemClickListener);
+                    dbAdapter.close();
+                    return false;
                 }
+                // Confirm delete
+                new AlertDialog.Builder(getActivity())
+                        .setTitle(R.string.dialog_confirm_delete_title)
+                        .setMessage(R.string.dialog_confirm_delete_message)
+                        .setPositiveButton(R.string.dialog_confirm_delete_positive,
+                                new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Disable menu
+                                menu_multi = false;
+                                getActivity().invalidateOptionsMenu();
 
-                ArrayList<Task> tasks = dbAdapter.getTasks();
-                dbAdapter.close();
-                setListAdapter(new TaskArrayAdapter(getActivity(), tasks));
+                                // Duplicate all the selected tasks
+                                DbAdapter dbAdapter = new DbAdapter(getActivity());
+                                dbAdapter.open();
+                                for (int i=getListAdapter().getCount()-1; i>=0; i--) {
+                                    // Get CheckBox
+                                    View view = getViewByPosition(i, getListView());
+                                    CheckBox checkBox = (CheckBox) view.findViewById(
+                                            R.id.list_item_checkBox);
 
-                // Return to normal OnItemClickListener
-                getListView().setOnItemClickListener(editItemClickListener);
+                                    if (checkBox.isChecked()) {
+                                        dbAdapter.deleteTask(
+                                                ((Task) getListAdapter().getItem(i)).getId());
+                                    }
+                                }
+
+                                ArrayList<Task> tasks = dbAdapter.getTasks();
+                                dbAdapter.close();
+                                setListAdapter(new TaskArrayAdapter(getActivity(), tasks));
+
+                                // Return to normal OnItemClickListener
+                                getListView().setOnItemClickListener(editItemClickListener);
+                            }
+                        })
+                        .setNegativeButton(R.string.dialog_confirm_delete_negative,
+                                new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        })
+                        .show();
+
                 return false;
             }
         });
