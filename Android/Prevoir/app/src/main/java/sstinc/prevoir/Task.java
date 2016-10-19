@@ -7,6 +7,8 @@ import android.util.Log;
 import java.util.ArrayList;
 
 class Task implements Parcelable {
+    boolean checked = false;
+
     private long id = -1;
     String name;
     String subject;
@@ -17,17 +19,6 @@ class Task implements Parcelable {
     String description;
     Duration duration;
     Duration min_time_period;
-
-    Task(String name, String subject, ArrayList<WeekDay> weekdays,
-                Deadline deadline, String description, Duration duration) {
-        this.name = name;
-        this.subject = subject;
-        this.weekDays = weekdays;
-        this.deadline = deadline;
-        this.description = description;
-        this.duration = duration;
-        this.min_time_period = new Duration();
-    }
 
     Task(String name, String subject, ArrayList<WeekDay> weekdays,
                 Deadline deadline, String description, Duration duration,
@@ -90,7 +81,7 @@ class Task implements Parcelable {
         this.name = in.readString();
         this.subject = in.readString();
         Log.w(this.getClass().getName(), "Subject: " + this.subject);
-        this.weekDays = new ArrayList<WeekDay>();
+        this.weekDays = new ArrayList<>();
         String[] string_weekDays = in.createStringArray();
         for (String string_weekday : string_weekDays) {
             this.weekDays.add(WeekDay.valueOf(string_weekday));

@@ -6,13 +6,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -20,14 +23,13 @@ import java.util.ArrayList;
 import static android.app.Activity.RESULT_OK;
 
 public class TaskFragment extends ListFragment implements AdapterView.OnItemLongClickListener {
+    // Extra constants for intents
     public static final String EXTRA_TASK = "sstinc.prevoir.EXTRA_TASK";
-
+    // Request codes for receiving and sending data
     static final int createTaskRequestCode = 100;
     static final int updateTaskRequestCode = 200;
-
-    ArrayList<Task> tasks;
-
-    boolean menu_multi = false;
+    // Boolean to show if menu shows duplicate and delete buttons
+    static boolean menu_multi = false;
 
     AdapterView.OnItemClickListener editItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
@@ -43,24 +45,26 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        // Set options menu
         setHasOptionsMenu(true);
 
         // Hide shuffle button
         MainActivity.menu_shuffle = false;
         getActivity().invalidateOptionsMenu();
+
+        // Get the tasks from database
         DbAdapter dbAdapter = new DbAdapter(getActivity().getApplicationContext());
         dbAdapter.open();
-        tasks = dbAdapter.getTasks();
+        ArrayList<Task> tasks = dbAdapter.getTasks();
         dbAdapter.close();
 
-        TaskArrayAdapter taskArrayAdapter = new TaskArrayAdapter(getActivity(), tasks);
-        setListAdapter(taskArrayAdapter);
-
-        // Set listener
+        // Set Long Click Listener
         getListView().setOnItemLongClickListener(this);
-        getListView().setOnItemClickListener(editItemClickListener);
 
-        // Set Floating Action Button
+        // Display the tasks from the database
+        setListAdapter(new TaskArrayAdapter(getActivity(), tasks));
+
+        // Floating Action Button for adding new tasks
         FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,38 +76,45 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
         });
     }
 
-    private void refreshListAdapter() {
-        // TODO: Reuse code below
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == createTaskRequestCode) {
+            // Request code received after task creation
             if (resultCode == RESULT_OK) {
-                // Add to database and view again
+                // Get the new task from the activity
                 Task task = data.getParcelableExtra(EXTRA_TASK);
+
+                // Add task to database
                 DbAdapter dbAdapter = new DbAdapter(getActivity().getApplicationContext());
                 dbAdapter.open();
                 dbAdapter.insertTask(task);
-                tasks = dbAdapter.getTasks();
+                ArrayList<Task> tasks = dbAdapter.getTasks();
                 dbAdapter.close();
+
+                // Reset the list adapter to show the new task
                 setListAdapter(new TaskArrayAdapter(getActivity(), tasks));
             }
         } else if (requestCode == updateTaskRequestCode) {
+            // Request code received after editing an existing task
             if (resultCode == RESULT_OK) {
-                // TODO: Reuse code here
                 // Update to database and view again
+                // Get the edited task from the activity
                 Task task = data.getParcelableExtra(EXTRA_TASK);
+
+                // Update the task in the database
                 DbAdapter dbAdapter = new DbAdapter(getActivity().getApplicationContext());
                 dbAdapter.open();
                 dbAdapter.updateTask(task.getId(), task);
-                tasks = dbAdapter.getTasks();
-                Log.w(this.getClass().getName(), "Id of task: " + task.getId());
+                ArrayList<Task> tasks = dbAdapter.getTasks();
                 dbAdapter.close();
+
+                // Reset the list adapter to show the updated task
                 setListAdapter(new TaskArrayAdapter(getActivity(), tasks));
             }
         }
     }
+
+
 
     private int getCheckedCheckBoxes() {
         int count = 0;
@@ -127,9 +138,28 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
         }
     }
 
+    public View getViewByPosition(int pos, ListView listView) {
+        final int firstListItemPosition = listView.getFirstVisiblePosition();
+        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
+
+        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
+            return listView.getAdapter().getView(pos, null, listView);
+        } else {
+            final int childIndex = pos - firstListItemPosition;
+            return listView.getChildAt(childIndex);
+        }
+    }
+
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        // Iterate through each task's view
+        for (int i=getListAdapter().getCount()-1; i>=0; i--) {
+            View v = getViewByPosition(i, getListView());
+            CheckBox checkBox = (CheckBox) v.findViewById(R.id.list_item_checkBox);
+            checkBox.setVisibility(View.VISIBLE);
+        }
+
         // Set the checkboxes visible, change each of the views to toggle checkbox
         // When all the checkboxes are unchecked, make checkboxes invisible, invalidate menu
         // Set the views back to edit mode.
@@ -180,6 +210,7 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
         getActivity().invalidateOptionsMenu();
 
         // Check the currently selected item
+        Log.w(getClass().getName(), "Name of view: " + ((TextView) view.findViewById(R.id.list_item_task_title)).getText().toString());
         ((CheckBox) view.findViewById(R.id.list_item_checkBox)).setChecked(true);
         (view.findViewById(R.id.list_item_checkBox)).setVisibility(View.VISIBLE);
         return true;
@@ -214,7 +245,7 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
                     }
                 }
 
-                tasks = dbAdapter.getTasks();
+                ArrayList<Task> tasks = dbAdapter.getTasks();
                 dbAdapter.close();
                 setListAdapter(new TaskArrayAdapter(getActivity(), tasks));
 
@@ -246,7 +277,7 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
                     }
                 }
 
-                tasks = dbAdapter.getTasks();
+                ArrayList<Task> tasks = dbAdapter.getTasks();
                 dbAdapter.close();
                 setListAdapter(new TaskArrayAdapter(getActivity(), tasks));
 

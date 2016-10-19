@@ -18,21 +18,50 @@ public class TaskComparator implements Comparator<Task> {
     @Override
     public int compare(Task o1, Task o2) {
         int mul_val = isAscending ? 1 : -1;
+        int c;
         switch (this.orderBy) {
             case NAME:
-                return mul_val*o1.name.compareTo(o2.name);
+                c = mul_val*o1.name.compareTo(o2.name);
+                if (c == 0) {
+                    c = mul_val*o1.subject.compareTo(o2.subject);
+                }
             case SUBJECT:
-                return mul_val*o1.subject.compareTo(o2.subject);
+                c = mul_val*o1.subject.compareTo(o2.subject);
+                if (c == 0) {
+                    c = mul_val*o1.name.compareTo(o2.name);
+                }
             case DEADLINE:
-                return mul_val*o1.deadline.toString().compareTo(o2.deadline.toString());
+                c = mul_val*o1.deadline.toString().compareTo(o2.deadline.toString());
+                if (c == 0) {
+                    c = mul_val*o1.name.compareTo(o2.name);
+                }
+                if (c == 0) {
+                    c = mul_val*o1.subject.compareTo(o2.subject);
+                }
             case DURATION:
-                return mul_val*o1.duration.toString().compareTo(o2.duration.toString());
+                c = mul_val*o1.duration.toString().compareTo(o2.duration.toString());
+                if (c == 0) {
+                    c = mul_val*o1.name.compareTo(o2.name);
+                }
+                if (c == 0) {
+                    c = mul_val*o1.subject.compareTo(o2.subject);
+                }
             case MIN_TIME_PERIOD:
-                return mul_val*o1.min_time_period.toString().compareTo(
+                c = mul_val*o1.min_time_period.toString().compareTo(
                         o2.min_time_period.toString());
+                if (c == 0) {
+                    c = mul_val*o1.name.compareTo(o2.name);
+                }
+                if (c == 0) {
+                    c = mul_val*o1.subject.compareTo(o2.subject);
+                }
             default:
                 // Default to name
-                return mul_val*o1.name.compareTo(o2.name);
+                c = mul_val*o1.name.compareTo(o2.name);
+                if (c == 0) {
+                    c = mul_val*o1.subject.compareTo(o2.subject);
+                }
         }
+        return c;
     }
 }
