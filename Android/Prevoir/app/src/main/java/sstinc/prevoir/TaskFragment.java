@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -57,6 +58,13 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
         // Hide shuffle button
         MainActivity.menu_shuffle = false;
         getActivity().invalidateOptionsMenu();
+
+        // Set bottom padding
+        getListView().setClipToPadding(false);
+        float fab_margin = getResources().getDimension(R.dimen.fab_margin);
+        getListView().setPadding(0, 0, 0, (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_SP, 56 + (fab_margin*2/3),
+                getActivity().getResources().getDisplayMetrics()));
 
         // Get the tasks from database
         DbAdapter dbAdapter = new DbAdapter(getActivity().getApplicationContext());
