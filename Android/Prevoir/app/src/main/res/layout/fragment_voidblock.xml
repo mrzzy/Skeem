@@ -3,11 +3,5 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="sstinc.prevoir.VoidblockFragment">
-
     <!-- This is the fragment for the voidblocks -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Voidblocks fragment" />
-
 </FrameLayout>

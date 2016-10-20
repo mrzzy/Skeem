@@ -25,6 +25,11 @@ import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
 
+//TODO: Remake UI to separate deadline
+//TODO: Add dividers into view
+//TODO: Repeat without deadline
+//TODO: Repeat with deadline
+
 public class TaskFragment extends ListFragment implements AdapterView.OnItemLongClickListener {
     // Extra constants for intents
     public static final String EXTRA_TASK = "sstinc.prevoir.EXTRA_TASK";
@@ -73,6 +78,7 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
         dbAdapter.close();
 
         // Set Long Click Listener
+        getListView().setOnItemClickListener(editItemClickListener);
         getListView().setOnItemLongClickListener(this);
 
         // Display the tasks from the database

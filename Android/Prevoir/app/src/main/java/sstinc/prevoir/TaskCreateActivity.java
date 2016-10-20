@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.ScrollView;
 
 import java.util.ArrayList;
 
@@ -17,10 +18,13 @@ public class TaskCreateActivity extends AppCompatActivity {
     public final static String EXTRA_MIN_TIME_PERIOD = "sstinc.prevoir.EXTRA_MIN_TIME_PERIOD";
     public static final String EXTRA_TASK_ID = "sstinc.prevoir.EXTRA_TASK_ID";
 
+    public static final String EXTRA_HAS_OLD_INFORMATION = "sstinc.prevoir.EXTRA_HAS_OLD_INFORMATION";
+
     static final int createTaskHelperRequestCode = 101;
 
     boolean show_continue = true;
     boolean edit = false;
+    Task cont_task = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +77,9 @@ public class TaskCreateActivity extends AppCompatActivity {
                 Task task = getIntent().getParcelableExtra(TaskFragment.EXTRA_TASK);
                 intent.putExtra(TaskFragment.EXTRA_TASK, task);
                 intent.putExtra(EXTRA_TASK_ID, task.getId());
+            } else if (cont_task != null) {
+                intent.putExtra(TaskFragment.EXTRA_TASK, cont_task);
+                intent.putExtra(EXTRA_HAS_OLD_INFORMATION, true);
             }
             startActivityForResult(intent, createTaskHelperRequestCode);
         }
@@ -112,7 +119,21 @@ public class TaskCreateActivity extends AppCompatActivity {
 
                 setResult(RESULT_OK, intent);
                 finish();
-            } else {
+            } else if (resultCode == RESULT_CANCELED) {
+                // Get Week Days
+                ArrayList<String> stringWeekDays = data.getStringArrayListExtra(EXTRA_WEEKDAYS);
+                ArrayList<Task.WeekDay> weekDays = new ArrayList<>();
+                for (String weekDay : stringWeekDays) {
+                    weekDays.add(Task.WeekDay.valueOf(weekDay));
+                }
+                // Get Deadline
+                Deadline deadline = new Deadline(new Datetime(data.getStringExtra(EXTRA_DEADLINE)));
+                // Get duration and min_tim_period
+                Duration duration = new Duration(data.getStringExtra(EXTRA_DURATION));
+                Duration min_time_period = new Duration(data.getStringExtra(EXTRA_MIN_TIME_PERIOD));
+
+                cont_task = new Task("", "", weekDays, deadline, "", duration, min_time_period);
+
                 show_continue = true;
                 invalidateOptionsMenu();
             }
