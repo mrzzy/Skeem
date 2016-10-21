@@ -8,7 +8,7 @@
 
 import UIKit
 
-public enum PVRDatCtrlTaskSort
+public enum PVRDataSort
 {
     case date
     case name
@@ -79,7 +79,7 @@ public class PVRDataController: NSObject {
         }
         catch PVRDBError.entry_exist
         {
-            print("ERR:PVRDataController: Failed to Create task, entry already exists in database.")
+            print("ERR:PVRDataController: Failed to create task, entry already exists in database.")
             return false
         }
         catch
@@ -181,17 +181,17 @@ public class PVRDataController: NSObject {
         }
     }
 
-    public func sortedTask(sorder:PVRDatCtrlTaskSort) -> [PVRTask]
+    public func sortedTask(sorder:PVRDataSort) -> [PVRTask]
     {
         switch sorder {
-        case PVRDatCtrlTaskSort.date:
+        case PVRDataSort.date:
             let srt_date_task = self.DB.task.values.sorted(by: {(task1:PVRTask,task2:PVRTask) -> Bool in
                 return task1.deadline.compare(task2.deadline as Date) == ComparisonResult.orderedAscending
                 })
 
             return srt_date_task
 
-        case PVRDatCtrlTaskSort.name:
+        case PVRDataSort.name:
             let srt_name_task = self.DB.task.values.sorted(by: {(task1:PVRTask,task2:PVRTask) -> Bool in
                 return task1.name < task2.name
             })
@@ -200,7 +200,117 @@ public class PVRDataController: NSObject {
         }
     }
 
+    public func createVoidDuration(name:String,duration:Int,asserted:Bool) -> Bool
+    {
+        let crt_voidd = PVRVoidDuration(begin: NSDate(), duration:duration , name: name, asserted: asserted)
 
+        do
+        {
+            try self.DB.createEntry(locKey: PVRDBKey.void_duration, key: crt_voidd.name, val:  crt_voidd)
+        }
+        catch PVRDBError.entry_exist
+        {
+            print("ERR:PVRDataController: Failed to create void duration, entry already exists in database.")
+            return false
+        }
+        catch
+        {
+            abort()
+        }
 
+        return true
+    }
 
+    public func createRepeatVoidDuration(name:String,duration:Int,repeat_loop:[TimeInterval],repeat_deadline:NSDate,asserted:Bool) -> Bool
+    {
+        let crt_rptvoidd = PVRRepeatVoidDuration(begin: NSDate(), duration: duration, name: name, repeat_loop: repeat_loop, deadline: repeat_deadline, asserted: asserted)
+
+        do
+        {
+            try self.DB.createEntry(locKey: PVRDBKey.void_duration, key: crt_rptvoidd.name, val:  crt_rptvoidd)
+        }
+        catch PVRDBError.entry_exist
+        {
+            print("ERR:PVRDataController: Failed to create void duration, entry already exists in database.")
+            return false
+        }
+        catch
+        {
+            abort()
+        }
+
+        return true
+    }
+
+    public func deleteVoidDuration(name:String) -> Bool
+    {
+        if let _ = self.DB.voidDuration[name]
+        {
+            self.DB.deleteEntry(lockey: PVRDBKey.void_duration, key: name)
+            return true
+        }
+        else
+        {
+            print("ERR:PVRDataController: Failed to delete task, Task does not exist.")
+            return false
+        }
+    }
+
+    public func sortedVoidDuration(sorder:PVRDataSort) -> [PVRVoidDuration]
+    {
+        switch sorder {
+        case PVRDataSort.date:
+            let srt_date_voidd = self.DB.voidDuration.values.sorted(by: {(void1:PVRVoidDuration,void2:PVRVoidDuration) -> Bool in
+                return NSDate(timeInterval: Double(void1.duration), since: void1.begin as Date).compare(NSDate(timeInterval: Double(void2.duration), since: void2.begin as Date) as Date) == ComparisonResult.orderedAscending
+            })
+
+            return srt_date_voidd
+
+        case PVRDataSort.name:
+            let srt_name_voidd = self.DB.voidDuration.values.sorted(by: {(void1:PVRVoidDuration,void2:PVRVoidDuration) ->
+                Bool in
+                return void1.name < void2.name
+            })
+
+            return srt_name_voidd
+        }
+    }
+    
+    public func commitSchedule(schedule:[PVRTask]) -> Bool
+    {
+        do
+        {
+            try self.DB.updateEntry(lockey: PVRDBKey.cache, key: "schedule", val: schedule)
+        }
+        catch PVRDBError.entry_not_exist
+        {
+            do
+            {
+                try self.DB.createEntry(locKey: PVRDBKey.cache, key:"schedule", val: schedule)
+            }
+            catch
+            {
+                return false
+            }
+        }
+        catch
+        {
+            return false
+        }
+
+        return true
+    }
+
+    public func retrieveSchedule() -> [PVRTask]?
+    {
+        if let sch = (self.DB.cache["schedule"] as! [PVRTask]?)
+        {
+            return sch
+        }
+        else
+        {
+            print("ERR:PVRDataController: Failed to retrieve schdule, entry does not exist.")
+            return nil
+        }
+    }
 }

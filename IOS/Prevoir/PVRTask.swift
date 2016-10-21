@@ -156,7 +156,7 @@ public class PVRRepeatTask: PVRTask
 
             //Compute Next Deadline
             self.repeat_index += 1
-            let tint = self.repeat_loop[self.repeat_index % self.repeat_index]
+            let tint = self.repeat_loop[self.repeat_index % self.repeat_loop.count]
             self.deadline = NSDate(timeInterval: tint, since: self.deadline as Date)
         }
     }

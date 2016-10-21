@@ -146,7 +146,7 @@ public class PVRDatabase:NSObject
     var task:[String:PVRTask] //Tasks
     var voidDuration:[String:PVRVoidDuration] //Void Duration
     var mcache:[String:Any]  //In-Memory Cache
-    var cache:[String:NSCoding]//Cache
+    var cache:[String:NSCoding] //Cache
 
     //Storage
     var pst_file:PVRDBFile
@@ -171,12 +171,14 @@ public class PVRDatabase:NSObject
         super.init()
     }
 
-    //I/O 
+    //I/O
     public func load()
     {
         //Persistent Storage
         try! self.pst_file.load()
         self.task = (try! self.pst_file.retrieve(key: PVRDBKey.task) as! [String : PVRTask])
+        self.voidDuration = (try! self.pst_file.retrieve(key: PVRDBKey.void_duration) as! [String:PVRDuration] as! [String : PVRVoidDuration])
+
         //Temporary Storage
         do
         {
@@ -260,7 +262,6 @@ public class PVRDatabase:NSObject
             }
         }
     }
-
     public func updateEntry(lockey:PVRDBKey,key:String,val:Any) throws
     {
         if lockey == PVRDBKey.task
@@ -328,4 +329,4 @@ public class PVRDatabase:NSObject
             self.mcache[key] = nil
         }
     }
-}   
+}

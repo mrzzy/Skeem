@@ -72,6 +72,11 @@ public class PVRVoidDuration: PVRDuration
             return false
         }
     }
+
+    public func nextVoid()
+    {
+
+    }
 }
 
 public class PVRRepeatVoidDuration: PVRVoidDuration
@@ -128,6 +133,14 @@ public class PVRRepeatVoidDuration: PVRVoidDuration
             return true
         }
     }
-}
 
-public class PVR
+    public override func nextVoid()
+    {
+        if NSDate(timeInterval: Double(self.duration), since: self.begin as Date).compare(Date()) != ComparisonResult.orderedDescending
+        {
+            self.repeat_index += 1
+            let tint = self.repeat_loop[self.repeat_index %  self.repeat_loop.count]
+            self.begin = NSDate(timeInterval: tint, since: (self.begin as Date))
+        }
+    }
+}
