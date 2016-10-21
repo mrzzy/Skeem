@@ -170,27 +170,30 @@
 
         <!-- Deadline -->
         <TextView
+            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_row="7"
             android:layout_column="0"
             android:layout_columnSpan="2"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:textColor="@color/colorFontPrimary"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/text_view_deadline" />
 
         <Switch
             android:id="@+id/switch_deadline"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_row="7"
             android:layout_column="2"
             android:layout_columnSpan="2"
             android:layout_gravity="end"
+            android:checked="true"
             android:visibility="invisible"/>
 
         <TextView
+            android:id="@+id/text_view_deadline_time"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_row="8"

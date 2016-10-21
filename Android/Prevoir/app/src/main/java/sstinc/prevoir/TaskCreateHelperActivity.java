@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -17,8 +18,6 @@ import android.widget.Switch;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-
-import static android.view.View.GONE;
 
 public class TaskCreateHelperActivity extends AppCompatActivity {
 
@@ -56,7 +55,7 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
 
         // Set toggle button actions
         // Repeat Yes/No Toggle Button
-        Switch toggleButton_onetime_repetitive = (Switch) findViewById(
+        Switch switch_onetime_repetitive = (Switch) findViewById(
                 R.id.switch_onetime_repetitive);
         Button setDaysButton = (Button) findViewById(R.id.button_repetitions);
         setDaysButton.setOnClickListener(new View.OnClickListener() {
@@ -65,31 +64,36 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
                 getDayValues();
             }
         });
-        toggleButton_onetime_repetitive.setOnClickListener(new View.OnClickListener() {
+        switch_onetime_repetitive.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // If it is repetitive
-                Switch toggleButton_onetime_repetitive = (Switch) findViewById(
+                Switch switch_onetime_repetitive = (Switch) findViewById(
                         R.id.switch_onetime_repetitive);
                 Button setDaysButton = (Button) findViewById(R.id.button_repetitions);
-                if (toggleButton_onetime_repetitive.isChecked()) {
+                Switch switch_deadline = (Switch) findViewById(R.id.switch_deadline);
+
+                if (switch_onetime_repetitive.isChecked()) {
                     if (weekDays.isEmpty()) {
                         getDayValues();
                     } else {
                         setDaysButton.setVisibility(View.VISIBLE);
                     }
+                    switch_deadline.setVisibility(View.VISIBLE);
                 } else {
+                    switch_deadline.setVisibility(View.INVISIBLE);
+                    switch_deadline.setChecked(true);
                     setDaysButton.setVisibility(View.GONE);
                 }
             }
         });
         // Minimum Time Period Yes/No Toggle Button
-        Switch toggleButton_min_time_period = (Switch) findViewById(
+        Switch switch_min_time_period = (Switch) findViewById(
                 R.id.switch_min_time_period);
-        toggleButton_min_time_period.setOnClickListener(new View.OnClickListener() {
+        switch_min_time_period.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Switch toggleButton_min_time_period = (Switch) findViewById(
+                Switch switch_min_time_period = (Switch) findViewById(
                         R.id.switch_min_time_period);
                 Spinner spinner_min_time_period_hours = (Spinner) findViewById(
                         R.id.spinner_min_time_period_hours);
@@ -100,7 +104,7 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
                 TextView textView_min_time_period_minutes = (TextView) findViewById(
                         R.id.text_view_min_time_period_minutes);
                 // Set minimum time period
-                if (toggleButton_min_time_period.isChecked()) {
+                if (switch_min_time_period.isChecked()) {
                     spinner_min_time_period_hours.setVisibility(View.VISIBLE);
                     spinner_min_time_period_minutes.setVisibility(View.VISIBLE);
                     textView_min_time_period_hours.setVisibility(View.VISIBLE);
@@ -113,25 +117,59 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
                 }
             }
         });
-        // Deadline Time With/Without Toggle Button
-        Switch toggleButton_deadline_time = (Switch) findViewById(
+        // Deadline Time Switch
+        Switch switch_deadline_time = (Switch) findViewById(
                 R.id.switch_deadline_add_time);
-        toggleButton_deadline_time.setOnClickListener(new View.OnClickListener() {
+        switch_deadline_time.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Switch toggleButton_deadline_time = (Switch) findViewById(
+                Switch switch_deadline_time = (Switch) findViewById(
                         R.id.switch_deadline_add_time);
                 TimePicker timePicker_deadline = (TimePicker) findViewById(
                         R.id.time_picker_deadline);
                 // Set deadline time
-                if (toggleButton_deadline_time.isChecked()) {
+                if (switch_deadline_time.isChecked()) {
                     timePicker_deadline.setVisibility(View.VISIBLE);
                 } else {
                     timePicker_deadline.setVisibility(View.GONE);
                 }
             }
         });
+        // Deadline Switch
+        Switch switch_deadline = (Switch) findViewById(R.id.switch_deadline);
+        switch_deadline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                // Time Text View
+                TextView textView_deadline_time = (TextView) findViewById(
+                        R.id.text_view_deadline_time);
+                // Time Switch
+                Switch switch_deadline_time = (Switch) findViewById(
+                        R.id.switch_deadline_add_time);
+                // Date Picker
+                DatePicker datePicker_deadline = (DatePicker) findViewById(
+                        R.id.date_picker_deadline);
+                // Time Picker
+                TimePicker timePicker_deadline = (TimePicker) findViewById(
+                        R.id.time_picker_deadline);
 
+                if (compoundButton.isChecked()) {
+                    // Make components visible
+                    textView_deadline_time.setVisibility(View.VISIBLE);
+                    switch_deadline_time.setVisibility(View.VISIBLE);
+                    datePicker_deadline.setVisibility(View.VISIBLE);
+                    if (switch_deadline_time.isChecked()) {
+                        timePicker_deadline.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    // Make components invisible
+                    textView_deadline_time.setVisibility(View.GONE);
+                    switch_deadline_time.setVisibility(View.GONE);
+                    datePicker_deadline.setVisibility(View.GONE);
+                    timePicker_deadline.setVisibility(View.GONE);
+                }
+            }
+        });
 
 
         // Set spinner values
@@ -170,7 +208,7 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
             // Set weekDays
             weekDays = task.weekDays;
             if (!weekDays.isEmpty()) {
-                toggleButton_onetime_repetitive.setChecked(true);
+                switch_onetime_repetitive.setChecked(true);
                 setDaysButton.setText(getTextToSet());
                 setDaysButton.setVisibility(View.VISIBLE);
             }
@@ -182,7 +220,7 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
 
             // Minimum Time Period
             if (task.min_time_period.getHours() != -1) {
-                toggleButton_min_time_period.setChecked(true);
+                switch_min_time_period.setChecked(true);
                 spinner_min_time_period_hours.setSelection(hourArrayAdapter.getPosition(
                         Integer.toString(task.min_time_period.getHours())));
                 spinner_min_time_period_minutes.setSelection(minuteArrayAdapter.getPosition(
@@ -198,7 +236,7 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
                 ScrollableTimePicker timePicker_deadline = (ScrollableTimePicker) findViewById(
                         R.id.time_picker_deadline);
 
-                toggleButton_deadline_time.setChecked(true);
+                switch_deadline_time.setChecked(true);
                 timePicker_deadline.setVisibility(View.VISIBLE);
 
                 // Set time for time picker
@@ -258,12 +296,12 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
                 R.id.spinner_min_time_period_hours);
         Spinner spinner_min_time_period_minutes = (Spinner) findViewById(
                 R.id.spinner_min_time_period_minutes);
-        Switch toggleButton_min_time_period = (Switch) findViewById(
+        Switch switch_min_time_period = (Switch) findViewById(
                 R.id.switch_min_time_period);
         int min_time_period_hours = -1;
         int min_time_period_minutes = -1;
 
-        if (toggleButton_min_time_period.isChecked()) {
+        if (switch_min_time_period.isChecked()) {
             min_time_period_hours = Integer.parseInt(
                     (String) spinner_min_time_period_hours.getSelectedItem());
             min_time_period_minutes = Integer.parseInt(
@@ -272,21 +310,25 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
 
         intent.putExtra(TaskCreateActivity.EXTRA_MIN_TIME_PERIOD,
                 (new Duration(min_time_period_hours, min_time_period_minutes).toString()));
+
         // Deadline Date
         ScrollableDatePicker datePicker_deadline = (ScrollableDatePicker) findViewById(
                 R.id.date_picker_deadline);
         ScrollableTimePicker timePicker_deadline = (ScrollableTimePicker) findViewById(
                 R.id.time_picker_deadline);
-        Switch toggleButton_add_time = (Switch) findViewById(
+        Switch switch_add_time = (Switch) findViewById(
                 R.id.switch_deadline_add_time);
+        Switch switch_deadline = (Switch) findViewById(R.id.switch_deadline);
 
         Datetime datetime = new Datetime();
-        datetime.setYear(datePicker_deadline.getYear());
-        datetime.setMonth(datePicker_deadline.getMonth());
-        datetime.setDay(datePicker_deadline.getDayOfMonth());
-        if (toggleButton_add_time.isChecked()) {
-            datetime.setHour(timePicker_deadline.getCurrentHour());
-            datetime.setMinute(timePicker_deadline.getCurrentMinute());
+        if (switch_deadline.isChecked()) {
+            datetime.setYear(datePicker_deadline.getYear());
+            datetime.setMonth(datePicker_deadline.getMonth());
+            datetime.setDay(datePicker_deadline.getDayOfMonth());
+            if (switch_add_time.isChecked()) {
+                datetime.setHour(timePicker_deadline.getCurrentHour());
+                datetime.setMinute(timePicker_deadline.getCurrentMinute());
+            }
         }
 
         intent.putExtra(TaskCreateActivity.EXTRA_DEADLINE, datetime.toString());

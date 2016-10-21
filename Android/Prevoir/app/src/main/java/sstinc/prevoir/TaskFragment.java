@@ -29,6 +29,7 @@ import static android.app.Activity.RESULT_OK;
 //TODO: Add dividers into view
 //TODO: Repeat without deadline
 //TODO: Repeat with deadline
+//TODO: Time picker in landscape
 
 public class TaskFragment extends ListFragment implements AdapterView.OnItemLongClickListener {
     // Extra constants for intents

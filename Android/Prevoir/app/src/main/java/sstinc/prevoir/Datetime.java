@@ -18,6 +18,15 @@ class Datetime {
     }
 
     Datetime(String datetime_string) {
+        if (datetime_string.isEmpty()) {
+            this.year = -1;
+            this.month = -1;
+            this.day = -1;
+
+            this.hour = -1;
+            this.minute = -1;
+            return;
+        }
         String[] datetime = datetime_string.split(" ");
         String[] date = datetime[0].split("-");
 
