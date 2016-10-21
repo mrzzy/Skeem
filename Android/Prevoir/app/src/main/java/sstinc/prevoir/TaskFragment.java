@@ -25,10 +25,6 @@ import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
 
-//TODO: Remake UI to separate deadline
-//TODO: Add dividers into view
-//TODO: Repeat without deadline
-//TODO: Repeat with deadline
 //TODO: Time picker in landscape
 
 public class TaskFragment extends ListFragment implements AdapterView.OnItemLongClickListener {

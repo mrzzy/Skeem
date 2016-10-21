@@ -76,10 +76,12 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
                 if (switch_onetime_repetitive.isChecked()) {
                     if (weekDays.isEmpty()) {
                         getDayValues();
+                        if (!weekDays.isEmpty()) {
+                            switch_deadline.setVisibility(View.VISIBLE);
+                        }
                     } else {
                         setDaysButton.setVisibility(View.VISIBLE);
                     }
-                    switch_deadline.setVisibility(View.VISIBLE);
                 } else {
                     switch_deadline.setVisibility(View.INVISIBLE);
                     switch_deadline.setChecked(true);
@@ -373,6 +375,13 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
                 weekDays = new ArrayList<>();
                 for (String day : days) {
                     weekDays.add(Task.WeekDay.valueOf(day.toUpperCase()));
+                }
+
+                Switch switch_deadline = (Switch) findViewById(R.id.switch_deadline);
+                if (!weekDays.isEmpty()) {
+                    switch_deadline.setVisibility(View.VISIBLE);
+                } else {
+                    switch_deadline.setVisibility(View.INVISIBLE);
                 }
 
                 // Set button text
