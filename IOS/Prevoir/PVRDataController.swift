@@ -9,17 +9,6 @@
 import UIKit
 
 /*
- * public enum PVRDataSort
- * - Defines methods available for sorting data
-*/
-public enum PVRDataSort
-{
-    case date /*Sort by Date*/
-    case name /*Sort by Name*/
-    case priority /*Sort by Pirority*/
-}
-
-/*
  * public class PVRDataController: NSObject
  * - Defines an adaptor between the database and other objects
  * - Suppliments functionality provided by database
@@ -71,7 +60,7 @@ public class PVRDataController: NSObject
     */
     public func pruneTask()
     {
-        for (name,task) in self.DB.task
+        for (name,task) in (self.DB.retrieveAllEntry(lockey: PVRDBKey.task) as! [String:PVRTask])
         {
             if task.status_complete() == true
             {
@@ -86,9 +75,13 @@ public class PVRDataController: NSObject
     */
     public func updateTask()
     {
-        for (_,task) in self.DB.task
+        for (name,_) in (self.DB.retrieveAllEntry(lockey: PVRDBKey.task) as! [String:PVRTask])
         {
-            task.nextTask()
+            if let task = try? (self.DB.retrieveEntry(lockey: PVRDBKey.task, key:name) as! PVRTask)
+            {
+                task.nextTask()
+                try! self.DB.updateEntry(lockey: PVRDBKey.task, key: name, val: task)
+            }
         }
     }
 
@@ -169,7 +162,7 @@ public class PVRDataController: NSObject
     */
     public func completeTask(name:String) -> Bool
     {
-        if let comp_task = self.DB.task[name]
+        if let comp_task = try? (self.DB.retrieveEntry(lockey: PVRDBKey.task, key: name) as! PVRTask)
         {
             comp_task.complete()
             return true
@@ -191,7 +184,7 @@ public class PVRDataController: NSObject
     */
     public func deleteTask(name:String) -> Bool
     {
-        if let del_task = self.DB.task[name]
+        if let del_task = try? (self.DB.retrieveEntry(lockey: PVRDBKey.task, key: name) as! PVRTask)
         {
             del_task.complete()
             self.DB.deleteEntry(lockey: PVRDBKey.task, key: name)
@@ -218,7 +211,7 @@ public class PVRDataController: NSObject
     */
     public func updateTaskStatus(name:String,duration:Int,completion:Double) -> Bool
     {
-        if let up_task = self.DB.task[name]
+        if let up_task = try? (self.DB.retrieveEntry(lockey: PVRDBKey.task, key: name) as! PVRTask)
         {
             up_task.duration = duration
             up_task.completion = completion
@@ -255,7 +248,7 @@ public class PVRDataController: NSObject
     */
     public func adjustTaskStatus(name:String, duration:Int, completion:Double) -> Bool
     {
-        if let ad_task = self.DB.task[name]
+        if let ad_task = try? (self.DB.retrieveEntry(lockey: PVRDBKey.task, key: name) as! PVRTask)
         {
             ad_task.duration += duration
             ad_task.completion += completion
@@ -279,31 +272,7 @@ public class PVRDataController: NSObject
         }
     }
 
-    public func sortedTask(sorder:PVRDataSort) -> [PVRTask]
-    {
-        switch sorder {
-        case PVRDataSort.date:
-            let srt_date_task = self.DB.task.values.sorted(by: {(task1:PVRTask,task2:PVRTask) -> Bool in
-                return task1.deadline.compare(task2.deadline as Date) == ComparisonResult.orderedAscending
-                })
-
-            return srt_date_task
-
-        case PVRDataSort.name:
-            let srt_name_task = self.DB.task.values.sorted(by: {(task1:PVRTask,task2:PVRTask) -> Bool in
-                return task1.name < task2.name
-            })
-
-            return srt_name_task
-
-        case PVRDataSort.priority:
-            let srt_pri_task = self.DB.task.values.sorted(by: {(task1:PVRTask,task2:PVRTask) -> Bool in
-                return self.priorityTask(task: task1) < self.priorityTask(task: task2)
-            })
-
-            return srt_pri_task
-        }
-    }
+    //public func sortedTask(sorder:PVRDataSort) -> [PVRTask]
 
     /*
      * public func createVoidDuration(name:String,duration:Int,asserted:Bool) -> Bool
@@ -380,80 +349,18 @@ public class PVRDataController: NSObject
     */
     public func deleteVoidDuration(name:String) -> Bool
     {
-        if let _ = self.DB.voidDuration[name]
+        if let _ = try? (self.DB.retrieveEntry(lockey: PVRDBKey.void_duration, key: name) as! PVRVoidDuration)
         {
             self.DB.deleteEntry(lockey: PVRDBKey.void_duration, key: name)
             return true
         }
         else
         {
-            print("ERR:PVRDataController: Failed to delete task, Task does not exist.")
+            print("ERR:PVRDataController: Failed to delete void duration , void duration does not exist.")
             return false
         }
     }
 
-    public func sortedVoidDuration(sorder:PVRDataSort) -> [PVRVoidDuration]
-    {
-        switch sorder {
-        case PVRDataSort.date:
-            let srt_date_voidd = self.DB.voidDuration.values.sorted(by: {(void1:PVRVoidDuration,void2:PVRVoidDuration) -> Bool in
-                return NSDate(timeInterval: Double(void1.duration), since: void1.begin as Date).compare(NSDate(timeInterval: Double(void2.duration), since: void2.begin as Date) as Date) == ComparisonResult.orderedAscending
-            })
+    //public func sortedVoidDuration(sorder:PVRDataSort) -> [PVRVoidDuration]
 
-            return srt_date_voidd
-
-        case PVRDataSort.name:
-            let srt_name_voidd = self.DB.voidDuration.values.sorted(by: {(void1:PVRVoidDuration,void2:PVRVoidDuration) ->
-                Bool in
-                return void1.name < void2.name
-            })
-            return srt_name_voidd
-
-        case PVRDataSort.priority:
-            let srt_pri_voidd = self.DB.voidDuration.values.sorted(by: {(void1:PVRVoidDuration,void2:PVRVoidDuration) -> Bool in
-                return self.priorityVoidDuration(voidd: void1) < self.priorityVoidDuration(voidd: void2)
-            })
-
-            return srt_pri_voidd
-        }
-    }
-    
-
-    public func commitSchedule(schedule:[PVRTask]) -> Bool
-    {
-        do
-        {
-            try self.DB.updateEntry(lockey: PVRDBKey.cache, key: "schedule", val: schedule)
-        }
-        catch PVRDBError.entry_not_exist
-        {
-            do
-            {
-                try self.DB.createEntry(locKey: PVRDBKey.cache, key:"schedule", val: schedule)
-            }
-            catch
-            {
-                return false
-            }
-        }
-        catch
-        {
-            return false
-        }
-
-        return true
-    }
-
-    public func retrieveSchedule() -> [PVRTask]?
-    {
-        if let sch = (self.DB.cache["schedule"] as! [PVRTask]?)
-        {
-            return sch
-        }
-        else
-        {
-            print("ERR:PVRDataController: Failed to retrieve schdule, entry does not exist.")
-            return nil
-        }
-    }
 }

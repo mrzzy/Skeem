@@ -143,10 +143,10 @@ public class PVRDBFile:NSObject
 public class PVRDatabase:NSObject
 {
     //Data
-    var task:[String:PVRTask] //Tasks
-    var voidDuration:[String:PVRVoidDuration] //Void Duration
-    var mcache:[String:Any]  //In-Memory Cache
-    var cache:[String:NSCoding] //Cache
+    private var task:[String:PVRTask] //Tasks
+    private var voidDuration:[String:PVRVoidDuration] //Void Duration
+    private var mcache:[String:Any]  //In-Memory Cache
+    private var cache:[String:NSCoding] //Cache
 
     //Storage
     var pst_file:PVRDBFile
@@ -327,6 +327,82 @@ public class PVRDatabase:NSObject
         else if lockey == PVRDBKey.mcache
         {
             self.mcache[key] = nil
+        }
+    }
+
+    public func retrieveEntry(lockey:PVRDBKey,key:String) throws -> Any
+    {
+        if lockey == PVRDBKey.task
+        {
+            if let rst = self.task[key]
+            {
+                return rst
+            }
+            else
+            {
+                throw PVRDBError.entry_not_exist
+            }
+        }
+        else if lockey == PVRDBKey.void_duration
+        {
+            if let rst = self.voidDuration[key]
+            {
+                return rst
+            }
+            else
+            {
+                throw PVRDBError.entry_not_exist
+            }
+        }
+        else if lockey == PVRDBKey.cache
+        {
+            if let rst = self.cache[key]
+            {
+                return rst
+            }
+            else
+            {
+                throw PVRDBError.entry_not_exist
+            }
+        }
+        else if lockey == PVRDBKey.mcache
+        {
+            if let rst = self.mcache[key]
+            {
+                return rst
+            }
+            else
+            {
+                throw PVRDBError.entry_not_exist
+            }
+        }
+        else
+        {
+            abort()
+        }
+    }
+
+    public func retrieveAllEntry(lockey:PVRDBKey) -> Any
+    {
+        if lockey == PVRDBKey.task
+        {
+            return self.task //Returns Copy
+        }
+        else if lockey == PVRDBKey.void_duration
+        {
+            return self.voidDuration //Returns Copy
+        }
+        else if lockey == PVRDBKey.cache
+        {
+            return self.cache //Returns Copy
+        }
+        else if lockey == PVRDBKey.mcache
+        {
+            return self.mcache //Returns Copy
+        }
+        else
+        {
+            abort()
         }
     }
 }
