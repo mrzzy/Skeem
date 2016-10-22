@@ -8,16 +8,35 @@
 
 import UIKit
 
+/*
+ * public enum PVRDataSort
+ * - Defines methods available for sorting data
+*/
 public enum PVRDataSort
 {
-    case date
-    case name
+    case date /*Sort by Date*/
+    case name /*Sort by Name*/
+    case priority /*Sort by Pirority*/
 }
 
-public class PVRDataController: NSObject {
+/*
+ * public class PVRDataController: NSObject
+ * - Defines an adaptor between the database and other objects
+ * - Suppliments functionality provided by database
+*/
+public class PVRDataController: NSObject
+{
+    //Properties
+    public weak var DB:PVRDatabase! /* Links PVRDataController to Database
+                                     * NOTE: Will terminate execuable if Database is missing
+                                    */
 
-    public weak var DB:PVRDatabase! //Crashes When Database is missing
-
+    //Methods
+    /*
+     * init(db:PVRDatabase)
+     * [Argument]
+     * db - Data to link to
+    */
     init(db:PVRDatabase)
     {
         self.DB = db
@@ -29,6 +48,26 @@ public class PVRDataController: NSObject {
     }
 
     //Data
+    public func priorityTask(task:PVRTask) -> Double
+    {
+        let base = (task.deadline.timeIntervalSince(Date()) - TimeInterval(task.duration))
+        let factor = pow((TimeInterval(task.duration)),2)
+
+        return base/factor
+    }
+
+    public func priorityVoidDuration(voidd:PVRVoidDuration) -> Double
+    {
+        let base = (voidd.begin.timeIntervalSince(Date())  - TimeInterval(voidd.duration))
+        let factor = pow(TimeInterval(voidd.duration), 2)
+
+        return base/factor
+    }
+
+    /*
+     * public func pruneTask()
+     * - Remove completed tasks
+    */
     public func pruneTask()
     {
         for (name,task) in self.DB.task
@@ -40,6 +79,10 @@ public class PVRDataController: NSObject {
         }
     }
 
+    /*
+     * public func updateTask()
+     * - Update tasks data for subsequent task
+    */
     public func updateTask()
     {
         for (_,task) in self.DB.task
@@ -48,6 +91,18 @@ public class PVRDataController: NSObject {
         }
     }
 
+    /*
+     * public func createOneshotTask(name:String,subject:String,description:String,deadline:NSDate,duration:Int) -> Bool
+     * - Create Single time Task
+     * [Argument]
+     * name - name of the task
+     * subject - subject of the task
+     * description - description of the task
+     * deadline - Date/Time that the task must be completed
+     * duration - Duration need in seconds to complete task
+     * [Return]
+     * Bool - true if successful in creating task, false otherwise
+    */
     public func createOneshotTask(name:String,subject:String,description:String,deadline:NSDate,duration:Int) -> Bool
     {
         let crt_task = PVRTask(name: name, deadline: deadline, duration: duration , subject: subject,description:description)
@@ -69,7 +124,19 @@ public class PVRDataController: NSObject {
         return true
     }
 
-    public func createRepeativeTask(name:String,subject:String,description:String,repeat_loop:[TimeInterval],duration:Int) -> Bool
+    /*
+     * public func createRepeativeTask(name:String,subject:String,description:String,repeat_loop:[TimeInterval],duration:Int) -> Bool
+     * - Create Repeatable task
+     * [Argument]
+     * name - name of the task
+     * subject - subject of the task
+     * description - description of the task
+     * deadline = nil - Date/Time repeat stops
+     * duration - Duration need in seconds to complete task
+     * [Return]
+     * Bool - true if successful in creating task, false otherwise
+    */
+    public func createRepeativeTask(name:String,subject:String,description:String,repeat_loop:[TimeInterval],deadline:NSDate? = nil,duration:Int) -> Bool
     {
         let crt_rttask = PVRRepeatTask(name: name, duration: duration, repeat_loop: repeat_loop, subject: subject,description:description)
 
@@ -90,6 +157,14 @@ public class PVRDataController: NSObject {
         return true
     }
 
+    /*
+     * public func comleteTask(name:String) -> Bool
+     * - Mark task specified by name as complete
+     * [Argument]
+     * name - name of the task to mark as complete
+     * [Return]
+     * Bool - true if successful in marking task as complete, false if task does not exist.
+    */
     public func completeTask(name:String) -> Bool
     {
         if let comp_task = self.DB.task[name]
@@ -99,11 +174,19 @@ public class PVRDataController: NSObject {
         }
         else
         {
-            print("ERR:PVRDataController: Failed to complete taks, task does not exists.")
+            print("ERR:PVRDataController: Failed to complete task, task does not exists.")
             return false
         }
     }
 
+    /*
+     * public func deleteTask(name:String) -> Bool
+     * - Deletes task specified by name
+     * [Argument]
+     * name - name of the task to delete
+     * [Return]
+     * Bool - true if successful in deleting task, false if task does not exist.
+    */
     public func deleteTask(name:String) -> Bool
     {
         if let del_task = self.DB.task[name]
@@ -120,7 +203,17 @@ public class PVRDataController: NSObject {
         }
     }
 
-
+    /*
+     * public func updateTaskStatus(name:String,duration:Int,completion:Double) -> Bool
+     * - Reset task duration and completion to new values
+     * NOTE: Will terminate execuable if unknown database error occurs
+     * [Argument]
+     * name - name of the task
+     * duration - duration to reset to
+     * completion - completion to reset to
+     * [Return]
+     * Bool - true if successful in updating task, false if task does not exist.
+    */
     public func updateTaskStatus(name:String,duration:Int,completion:Double) -> Bool
     {
         if let up_task = self.DB.task[name]
@@ -132,14 +225,10 @@ public class PVRDataController: NSObject {
             {
                 try self.DB.updateEntry(lockey: PVRDBKey.task, key: name, val: up_task)
             }
-            catch PVRDBError.entry_not_exist
-            {
-                print("ERR:PVRDataController: Failed to update task, Task does not exist.")
-                return false
-            }
             catch
             {
-                abort()
+                //Unknown Error
+                abort() //Terminates executable
             }
 
             return true
@@ -151,6 +240,14 @@ public class PVRDataController: NSObject {
         }
     }
 
+    /*
+     * public func adjustTaskStatus(name:String, duration:Int, completion:Double) -> Bool
+     * - Admend Task duration and completion relative to current values
+     * [Argument]
+     * name - Name of the task
+     * duration - duration to be added to the current duration
+     * completion - completion to added to the current duration
+    */
     public func adjustTaskStatus(name:String, duration:Int, completion:Double) -> Bool
     {
         if let ad_task = self.DB.task[name]
@@ -197,6 +294,13 @@ public class PVRDataController: NSObject {
             })
 
             return srt_name_task
+
+        case PVRDataSort.priority:
+            let srt_pri_task = self.DB.task.values.sorted(by: {(task1:PVRTask,task2:PVRTask) -> Bool in
+                return self.priorityTask(task: task1) < self.priorityTask(task: task2)
+            })
+
+            return srt_pri_task
         }
     }
 
@@ -271,12 +375,18 @@ public class PVRDataController: NSObject {
                 Bool in
                 return void1.name < void2.name
             })
-
             return srt_name_voidd
+
+        case PVRDataSort.priority:
+            let srt_pri_voidd = self.DB.voidDuration.values.sorted(by: {(void1:PVRVoidDuration,void2:PVRVoidDuration) -> Bool in
+                return self.priorityTask(task: task1) < self.priorityTask(task: void2)
+            })
+
+            return srt_pri_voidd
         }
     }
     
-    public func commitSchedule(schedule:[PVRTask]) -> Bool
+     public func commitSchedule(schedule:[PVRTask]) -> Bool
     {
         do
         {

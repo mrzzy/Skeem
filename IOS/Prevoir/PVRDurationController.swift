@@ -11,4 +11,5 @@ import UIKit
 public class PVRDurationController: NSObject
 {
     var voidDuration:[PVRVoidDuration]
+    var duration:[PVRDuration]
 }
