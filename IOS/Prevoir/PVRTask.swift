@@ -76,6 +76,13 @@ public class PVRTask: NSObject,NSCoding,PVRTaskProt{
     public func nextTask() {
         //Do Nothing
     }
+
+    public func priority() -> Double
+    {
+        let factor = Double(self.duration)
+        let base = self.deadline.timeIntervalSinceNow - TimeInterval(self.duration)
+        return factor / base
+    }
 }
 
 /*
@@ -156,9 +163,68 @@ public class PVRRepeatTask: PVRTask
 
             //Compute Next Deadline
             self.repeat_index += 1
-            let tint = self.repeat_loop[self.repeat_index % self.repeat_index]
+            let tint = self.repeat_loop[self.repeat_index % self.repeat_loop.count]
             self.deadline = NSDate(timeInterval: tint, since: self.deadline as Date)
         }
     }
 
+}
+
+/*
+ * public enum PVRTaskSort
+ * - Defines constants to specify sort attribute
+*/
+public enum PVRTaskSort
+{
+    case name //Sort by name
+    case deadline //Sort by deadline date/time
+    case duration //Sort by duration
+    case priority //Sort by priority
+}
+
+/*
+ * public struct PVRTaskSortFunc
+ * - Defines functions for use in sorting PVRTask
+*/
+public struct PVRTaskSortFunc
+{
+    /*
+     * public func name(task1:PVRTask,task2:PVRTask) -> Bool
+     * - Defines sort by name. Sort Stable.    
+    */
+    public static func name(task1:PVRTask,task2:PVRTask) -> Bool
+    {
+        //if task1.name <= task2.name, task1 should before task2
+        return task1.name <= task2.name
+    }
+
+    /*
+     * public func deadline(task1:PVRTask,task2:PVRTask) -> Bool
+     * - Defines sort by deadline.Sort Stable.
+    */
+    public static func deadline(task1:PVRTask,task2:PVRTask) -> Bool
+    {
+        //if task.deadline <= task2.deadline, task1 should be before task2
+        return task1.deadline.compare((task2.deadline as Date)) != ComparisonResult.orderedDescending
+    }
+
+    /*
+     * public func duration(task1:PVRTask,task2:PVRTask) -> Bool
+     * - Defines sort by duration of task. Sort Stable.
+    */
+    public static func duration(task1:PVRTask,task2:PVRTask) -> Bool
+    {
+        //if task1.duration <= task2.duration, task1 should be before task2
+        return task1.duration <= task2.duration
+    }
+
+    /*
+     * public func priority(task1:PVRTask,task2:PVRTask) -> Bool
+     * - Defines sort by priority defined by task. Sort Stable.
+    */
+    public static func priority(task1:PVRTask,task2:PVRTask) -> Bool
+    {
+        //if task.deadline <= task2.deadline, task1 shoudl be before task2
+        return task1.priority() <= task2.priority()
+    }
 }
