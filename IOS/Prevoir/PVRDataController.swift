@@ -64,6 +64,7 @@ public class PVRDataController: NSObject
         return base/factor
     }
 
+    //Data - Tasks
     /*
      * public func pruneTask()
      * - Remove completed tasks
@@ -131,6 +132,7 @@ public class PVRDataController: NSObject
      * name - name of the task
      * subject - subject of the task
      * description - description of the task
+     * repeat_loop - a loop of intervals of time to increment for each repeat.
      * deadline = nil - Date/Time repeat stops
      * duration - Duration need in seconds to complete task
      * [Return]
@@ -158,7 +160,7 @@ public class PVRDataController: NSObject
     }
 
     /*
-     * public func comleteTask(name:String) -> Bool
+     * public func completeTask(name:String) -> Bool
      * - Mark task specified by name as complete
      * [Argument]
      * name - name of the task to mark as complete
@@ -243,10 +245,13 @@ public class PVRDataController: NSObject
     /*
      * public func adjustTaskStatus(name:String, duration:Int, completion:Double) -> Bool
      * - Admend Task duration and completion relative to current values
+     * NOTE: Will terminate executable if unknown database error occurs
      * [Argument]
      * name - Name of the task
      * duration - duration to be added to the current duration
      * completion - completion to added to the current duration
+     * [Return]
+     * Bool - true if successful in adjusting task, false if task does not exist.
     */
     public func adjustTaskStatus(name:String, duration:Int, completion:Double) -> Bool
     {
@@ -259,14 +264,10 @@ public class PVRDataController: NSObject
             {
                 try self.DB.updateEntry(lockey: PVRDBKey.task,key: name, val: ad_task)
             }
-            catch PVRDBError.entry_not_exist
-            {
-                print("ERR:PVRDataController: Failed to adjust task, Task does not exist.")
-                return false
-            }
             catch
             {
-                abort()
+                //Unkown Error
+                abort() //Terminates executable
             }
 
             return true
@@ -304,6 +305,17 @@ public class PVRDataController: NSObject
         }
     }
 
+    /*
+     * public func createVoidDuration(name:String,duration:Int,asserted:Bool) -> Bool
+     * - Create single time void duration
+     * NOTE: Will terminate executable if unknown database error occurs
+     * [Argument]
+     * name - name of Void Duration
+     * duration - duration of void duration in seconds
+     * asserted - Whether void duration asserts to not have task scheduled during the "Duration of Time", true if void duration asserts
+     * [Return]
+     * Bool - true if successful in creating void duration, false if entry already exists in database.
+    */
     public func createVoidDuration(name:String,duration:Int,asserted:Bool) -> Bool
     {
         let crt_voidd = PVRVoidDuration(begin: NSDate(), duration:duration , name: name, asserted: asserted)
@@ -325,6 +337,18 @@ public class PVRDataController: NSObject
         return true
     }
 
+    /* public func createRepeatVoidDuration(name:Stirn,duration:Int,repeat_loop:[TimeInterval],repeat_deadline:NSDate,asserted:Bool) -> Bool
+     * - Create Repeatable Void Duration
+     * NOTE: Will terminate executable if unknown database error occurs
+     * [Argument]
+     * name - name of the void duration
+     * duration - duration of void duration in seconds
+     * repeat_loop - a loop of intervals of time to increment for each repeat
+     * deadline - date/time to stop repeat
+     * asserted - Whether void duration asserts to not have task scheduled during the "Duration of Time", true if void duration asserts
+     * [Return]
+     * Bool - true if successful in creating void duration, false if entry already exists in database.
+    */
     public func createRepeatVoidDuration(name:String,duration:Int,repeat_loop:[TimeInterval],repeat_deadline:NSDate,asserted:Bool) -> Bool
     {
         let crt_rptvoidd = PVRRepeatVoidDuration(begin: NSDate(), duration: duration, name: name, repeat_loop: repeat_loop, deadline: repeat_deadline, asserted: asserted)
@@ -346,6 +370,14 @@ public class PVRDataController: NSObject
         return true
     }
 
+    /*
+     * public func deleteVoidDuration(name:String) -> Bool
+     * - Deletes the void duration specifed by name
+     * [Argument]
+     * name - name of the void duration
+     * [Return]
+     * Bool - true if successful in deleting void duration, false if void duration does not exist.
+    */
     public func deleteVoidDuration(name:String) -> Bool
     {
         if let _ = self.DB.voidDuration[name]
@@ -379,14 +411,15 @@ public class PVRDataController: NSObject
 
         case PVRDataSort.priority:
             let srt_pri_voidd = self.DB.voidDuration.values.sorted(by: {(void1:PVRVoidDuration,void2:PVRVoidDuration) -> Bool in
-                return self.priorityTask(task: task1) < self.priorityTask(task: void2)
+                return self.priorityVoidDuration(voidd: void1) < self.priorityVoidDuration(voidd: void2)
             })
 
             return srt_pri_voidd
         }
     }
     
-     public func commitSchedule(schedule:[PVRTask]) -> Bool
+
+    public func commitSchedule(schedule:[PVRTask]) -> Bool
     {
         do
         {
