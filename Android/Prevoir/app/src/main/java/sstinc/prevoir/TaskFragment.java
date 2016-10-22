@@ -9,17 +9,15 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -31,8 +29,8 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
     // Extra constants for intents
     public static final String EXTRA_TASK = "sstinc.prevoir.EXTRA_TASK";
     // Request codes for receiving and sending data
-    static final int createTaskRequestCode = 100;
-    static final int updateTaskRequestCode = 200;
+    static final int createTaskRequestCode = 110;
+    static final int updateTaskRequestCode = 120;
     // Boolean to show if menu shows duplicate and delete buttons
     static boolean menu_multi = false;
 
@@ -42,7 +40,7 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
             // Add edit view
             Task task = (Task) getListAdapter().getItem(pos);
             Intent intent = new Intent(getActivity(), TaskCreateActivity.class);
-            intent.putExtra(TaskFragment.EXTRA_TASK, task);
+            intent.putExtra(EXTRA_TASK, task);
             startActivityForResult(intent, updateTaskRequestCode);
         }
     };
@@ -50,6 +48,29 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        getView().setFocusableInTouchMode(true);
+
+        // When back button is pressed, if in multi-selection mode, disable it.
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    if (menu_multi) {
+                        Log.w(this.getClass().getName(), "Undoing checks...");
+                        for (int i=getListAdapter().getCount()-1; i>=0; i--) {
+                            Log.w(this.getClass().getName(), "i = " + i);
+                            View view = getViewByPosition(i, getListView());
+                            CheckBox checkBox = (CheckBox) view.findViewById(
+                                    R.id.list_item_task_checkBox);
+                            checkBox.setChecked(false);
+                        }
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
+
         // Set options menu
         setHasOptionsMenu(true);
 
@@ -137,7 +158,7 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
         int count = 0;
         for (int i=getListAdapter().getCount()-1; i>=0; i--) {
             View view = getViewByPosition(i, getListView());
-            CheckBox checkBox = (CheckBox) view.findViewById(R.id.list_item_checkBox);
+            CheckBox checkBox = (CheckBox) view.findViewById(R.id.list_item_task_checkBox);
             if (checkBox.isChecked()) {
                 count++;
             }
@@ -149,7 +170,7 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
         for (int i=getListAdapter().getCount()-1; i>=0; i--) {
             View view = getViewByPosition(i, getListView());
             // Make it invisible and uncheck
-            CheckBox checkBox = (CheckBox) view.findViewById(R.id.list_item_checkBox);
+            CheckBox checkBox = (CheckBox) view.findViewById(R.id.list_item_task_checkBox);
             checkBox.setVisibility(View.GONE);
             checkBox.setChecked(false);
         }
@@ -174,13 +195,13 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
         for (int i = getListAdapter().getCount()-1; i>=0; i--) {
             View v = getViewByPosition(i, getListView());
             // Set checkBox to be visible
-            CheckBox checkBox = (CheckBox) v.findViewById(R.id.list_item_checkBox);
+            CheckBox checkBox = (CheckBox) v.findViewById(R.id.list_item_task_checkBox);
             checkBox.setVisibility(View.VISIBLE);
 
             // Set onClickListener for checkBoxes
-            checkBox.setOnClickListener(new View.OnClickListener() {
+            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onClick(View v) {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (getCheckedCheckBoxes() == 0) {
                         hideCheckBoxes();
                         menu_multi = false;
@@ -197,7 +218,7 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
                     // Change it to check when clicked
                     // Get checkbox
                     CheckBox inner_view_checkBox = (CheckBox) inner_view.findViewById(
-                            R.id.list_item_checkBox);
+                            R.id.list_item_task_checkBox);
                     if (inner_view_checkBox.isChecked()) {
                         inner_view_checkBox.setChecked(false);
                         if (getCheckedCheckBoxes() == 0) {
@@ -217,8 +238,8 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
         menu_multi = true;
         getActivity().invalidateOptionsMenu();
 
-        ((CheckBox) view.findViewById(R.id.list_item_checkBox)).setChecked(true);
-        (view.findViewById(R.id.list_item_checkBox)).setVisibility(View.VISIBLE);
+        ((CheckBox) view.findViewById(R.id.list_item_task_checkBox)).setChecked(true);
+        (view.findViewById(R.id.list_item_task_checkBox)).setVisibility(View.VISIBLE);
         return true;
     }
 
@@ -244,7 +265,7 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
                 for (int i=getListAdapter().getCount()-1; i>=0; i--) {
                     // Get CheckBox
                     View view = getViewByPosition(i, getListView());
-                    CheckBox checkBox = (CheckBox) view.findViewById(R.id.list_item_checkBox);
+                    CheckBox checkBox = (CheckBox) view.findViewById(R.id.list_item_task_checkBox);
 
                     if (checkBox.isChecked()) {
                         dbAdapter.insertTask((Task) getListAdapter().getItem(i));
@@ -274,7 +295,7 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
                     DbAdapter dbAdapter = new DbAdapter(getActivity());
                     for (int i=getListAdapter().getCount()-1; i>=0; i--) {
                         View view = getViewByPosition(i, getListView());
-                        CheckBox checkBox = (CheckBox) view.findViewById(R.id.list_item_checkBox);
+                        CheckBox checkBox = (CheckBox) view.findViewById(R.id.list_item_task_checkBox);
 
                         if (checkBox.isChecked()) {
                             dbAdapter.open();
@@ -309,7 +330,7 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
                                     // Get CheckBox
                                     View view = getViewByPosition(i, getListView());
                                     CheckBox checkBox = (CheckBox) view.findViewById(
-                                            R.id.list_item_checkBox);
+                                            R.id.list_item_task_checkBox);
 
                                     if (checkBox.isChecked()) {
                                         dbAdapter.deleteTask(

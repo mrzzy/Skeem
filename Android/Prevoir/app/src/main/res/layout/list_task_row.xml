@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:paddingStart="10dp"
-    android:paddingEnd="10dp"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:paddingStart="@dimen/activity_horizontal_margin"
+    android:paddingEnd="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
         android:id="@+id/list_item_task_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_row="0"
-        android:layout_column="0"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:maxLines="1"
         android:ellipsize="end"
-        android:layout_gravity="fill_horizontal"
         android:textColor="@color/colorFontPrimary"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -23,22 +22,18 @@
         android:id="@+id/list_item_task_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_row="1"
-        android:layout_column="0"
         android:maxLines="1"
         android:ellipsize="end"
-        android:layout_gravity="fill_horizontal"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_below="@+id/list_item_task_title"
+        android:layout_alignParentStart="true" />
 
     <CheckBox
-        android:id="@+id/list_item_checkBox"
+        android:id="@+id/list_item_task_checkBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_row="0"
-        android:layout_column="1"
-        android:layout_rowSpan="2"
-        android:layout_gravity="end|center_vertical"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
         android:focusable="false"
-        android:visibility="gone" />
-
-</GridLayout>
+        android:visibility="visible" />
+</RelativeLayout>

@@ -55,4 +55,11 @@
     Tasks?</string>
     <string name="dialog_confirm_delete_positive">Yes</string>
     <string name="dialog_confirm_delete_negative">No</string>
+
+    <!-- Create voidblock Activity -->
+    <string name="field_text_voidblock_name_hint">Name</string>
+    <string name="text_view_from">From:</string>
+    <string name="text_view_to">To:</string>
+    <string name="text_view_hint_timespan_unset">Tap to Set</string>
+    <string name="text_view_error_time">Invalid Time Given</string>
 </resources>

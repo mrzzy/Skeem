@@ -1,7 +1,6 @@
 package sstinc.prevoir;
 
 import android.app.Activity;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,75 +9,18 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 class TaskArrayAdapter extends ArrayAdapter<Task> {
-
-//    static class ViewHolder {
-//        TextView title;
-//        TextView description;
-//    }
-
-//    TaskArrayAdapter(Context context, ArrayList<Task> tasks) {
-//        super(context, 0, tasks);
-//    }
-
-//    @Override
-//    public View getView(int position, View convertView, ViewGroup parent) {
-//        Task task = getItem(position);
-//
-//        ViewHolder viewHolder;
-//
-//        if (convertView == null) {
-//            viewHolder = new ViewHolder();
-//
-//            convertView = LayoutInflater.from(getContext()).inflate(
-//                    R.layout.list_task_row, parent, false);
-//
-//            viewHolder.title = (TextView) convertView.findViewById(R.id.list_item_task_title);
-//            viewHolder.description = (TextView) convertView.findViewById(
-//                    R.id.list_item_task_description);
-//
-//            convertView.setTag(viewHolder);
-//        } else {
-//            viewHolder = (ViewHolder) convertView.getTag();
-//        }
-//
-//        viewHolder.title.setText(task.name);
-//        viewHolder.description.setText(task.description);
-//
-//        return convertView;
-//    }
-
-//    @Override
-//    public View getView(int position, View convertView, ViewGroup parent) {
-//        Task task = getItem(position);
-//
-//        if (convertView == null) {
-//            convertView = LayoutInflater.from(getContext()).inflate(
-//                    R.layout.list_task_row, parent, false);
-//        }
-//
-//        TextView title = (TextView) convertView.findViewById(R.id.list_item_task_title);
-//        TextView description = (TextView) convertView.findViewById(R.id.list_item_task_description);
-//
-//        title.setText(task.name);
-//        description.setText(task.description);
-//
-//        return convertView;
-//    }
-
     // List to contain all the tasks
     private final List<Task> list;
 
     TaskArrayAdapter(Activity context, List<Task> list) {
         super(context, R.layout.list_task_row, list);
-        //this.context = context;
         this.list = list;
     }
 
-    static class ViewHolder {
+    private static class ViewHolder {
         TextView title;
         TextView description;
         CheckBox checkbox;
@@ -102,10 +44,11 @@ class TaskArrayAdapter extends ArrayAdapter<Task> {
             viewHolder.title = (TextView) convertView.findViewById(R.id.list_item_task_title);
             viewHolder.description = (TextView) convertView.findViewById(
                     R.id.list_item_task_description);
-            viewHolder.checkbox = (CheckBox) convertView.findViewById(R.id.list_item_checkBox);
+            viewHolder.checkbox = (CheckBox) convertView.findViewById(R.id.list_item_task_checkBox);
 
             // Set on checked change listener for checkbox
-            viewHolder.checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            viewHolder.checkbox.setOnCheckedChangeListener(
+                    new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     // Get position of checkbox

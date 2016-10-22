@@ -189,7 +189,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_gravity="center_vertical"
-                android:textColor="@color/colorFontWhite"
+                android:textColor="@color/colorFontWhitePrimary"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/text_view_deadline" />
             <Switch
@@ -246,7 +246,7 @@
                 android:layout_row="10"
                 android:layout_column="0"
                 android:layout_columnSpan="4"
-                android:visibility="visible" />
+                android:visibility="gone" />
         </GridLayout>
     </LinearLayout>
 </ScrollView>

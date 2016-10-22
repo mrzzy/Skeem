@@ -21,7 +21,7 @@ import java.util.Calendar;
 
 public class TaskCreateHelperActivity extends AppCompatActivity {
 
-    static final int createTaskDaysRequestCode = 102;
+    static final int createTaskDaysRequestCode = 112;
 
     public static final String EXTRA_DAYS = "sstinc.prevoir.EXTRA_DAYS";
     public static final String EXTRA_CURRENT_DAYS = "sstinc.prevoir.EXTRA_CURRENT_DAYS";

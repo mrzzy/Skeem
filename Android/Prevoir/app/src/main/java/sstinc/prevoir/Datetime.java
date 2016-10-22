@@ -1,6 +1,7 @@
 package sstinc.prevoir;
 
 class Datetime {
+
     private int year;
     private int month;
     private int day;
@@ -28,7 +29,7 @@ class Datetime {
             return;
         }
         String[] datetime = datetime_string.split(" ");
-        String[] date = datetime[0].split("-");
+        String[] date = datetime[0].split("/");
 
         this.year = Integer.parseInt(date[0]);
         this.month = Integer.parseInt(date[1]);
@@ -49,7 +50,40 @@ class Datetime {
 
     @Override
     public String toString() {
-        return this.year + "-" + this.month + "-" + this.day + " " + this.hour + ":" + this.minute;
+        return this.year + "/" + this.month + "/" + this.day + " " + this.hour + ":" + this.minute;
+    }
+
+    private String value_format(String value, int length) {
+        if (value.length() < length) {
+            String padding = "";
+            for (int i=0; i<length-value.length(); i++) {
+                padding += "0";
+            }
+            return padding + value;
+        } else {
+            return value;
+        }
+    }
+
+    public String toFormattedString() {
+        String formattedString = "";
+        if (this.hour != -1 && this.minute != -1) {
+            formattedString += value_format(Integer.toString(this.hour), 2);
+            formattedString += ":";
+            formattedString += value_format(Integer.toString(this.minute), 2);
+        }
+
+        if (this.year != -1 && this.month != -1 && this.day != -1) {
+            if (!formattedString.isEmpty()) {
+                formattedString += " ";
+            }
+            formattedString += value_format(Integer.toString(this.day), 2);
+            formattedString += "/";
+            formattedString += value_format(Integer.toString(this.month), 2);
+            formattedString += "/";
+            formattedString += this.year;
+        }
+        return formattedString;
     }
 
     // Getters and setters

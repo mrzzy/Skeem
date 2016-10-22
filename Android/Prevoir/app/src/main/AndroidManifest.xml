@@ -21,8 +21,11 @@
         <activity android:name=".TaskCreateActivity" />
         <activity android:name=".TaskCreateHelperActivity" />
         <activity android:name=".TaskCreateDaysActivity" />
-        <activity android:name="sstinc.prevoir.AndroidDatabaseManager"
-            android:theme="@style/Theme.AppCompat.Light"/>
+        <activity
+            android:name=".AndroidDatabaseManager"
+            android:theme="@style/Theme.AppCompat.Light" />
+        <activity android:name=".VoidblockCreateActivity" />
+        <activity android:name=".VoidblockCreateDatetimeActivity"></activity>
     </application>
 
 </manifest>

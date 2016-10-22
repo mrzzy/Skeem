@@ -20,7 +20,7 @@ public class TaskCreateActivity extends AppCompatActivity {
 
     public static final String EXTRA_HAS_OLD_INFORMATION = "sstinc.prevoir.EXTRA_HAS_OLD_INFORMATION";
 
-    static final int createTaskHelperRequestCode = 101;
+    static final int createTaskHelperRequestCode = 111;
 
     boolean show_continue = true;
     boolean edit = false;
@@ -31,7 +31,7 @@ public class TaskCreateActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_create);
 
-        // Set back button
+        // Set back button and title
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("Create New Task");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

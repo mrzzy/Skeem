@@ -10,8 +10,8 @@ class Task implements Parcelable {
     boolean checked = false;
 
     private long id = -1;
-    String name;
-    String subject;
+    String name = "";
+    String subject = "";
 
     enum WeekDay {MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY}
     ArrayList<WeekDay> weekDays;
