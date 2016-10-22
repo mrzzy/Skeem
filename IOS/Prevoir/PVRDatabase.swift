@@ -8,46 +8,69 @@
 
 import UIKit
 
+/*
+ * public enum PVRDBKey:String
+ * - Defines key of virtual storage Locations
+*/
 public enum PVRDBKey:String
 {
     //Persistent File
-    case task = "pvrdb_task"
-    case void_duration = "pvrdb_voidduration"
+    case task = "pvrdb_task" //Task Location
+    case void_duration = "pvrdb_voidduration" //Void Duration Location
 
     //Temp File
-    case cache = "pvrdb_cache"
+    case cache = "pvrdb_cache" //Cache Location
 
     //Not Saved
-    case mcache = "pvrdb_mcache"
+    case mcache = "pvrdb_mcache" //Memory Only Cache
 }
 
+/* 
+ * public enum PVRDBError:Error
+ * - Defines errors that may occur when using PVRDatabase
+*/
 public enum PVRDBError:Error
 {
-    case entry_exist
-    case entry_not_exist
-    case entry_modified
+    case entry_exist //Entry already exist
+    case entry_not_exist //Entry does not exist
+    case entry_modified //An Entry has been modified but not safed
 }
 
+/*
+ * public enum PVRDBFileError:Error
+ * - Defines errors that may occur when using PVRDBFile
+*/
 public enum PVRDBFileError:Error
 {
-    case file_not_exist
-    case file_exist
-    case file_unreadable
-    case data_staged
+    case file_not_exist //File does not exist
+    case file_exist //File Already exists
+    case file_unreadable //File is not readable. An unkown I/O error occured.
+    case data_staged //Data has already been staged
 }
 
+/*
+ * public class PVRDBFile:NSObject
+ * - Defines an object that represents a database file
+ * - Performs I/O Operations
+*/
 public class PVRDBFile:NSObject
 {
+    //Properties
     //Storage
-    public var file_path:String
-    private var data:NSMutableData = NSMutableData()
-    private var unach:NSKeyedUnarchiver!
-    private var ach:NSKeyedArchiver!
+    public var file_path:String //Path to file of the object
+    private var data:NSMutableData = NSMutableData() //Data of the archive
+    private var unach:NSKeyedUnarchiver! //Unarchiver
+    private var ach:NSKeyedArchiver! //Archiver
 
     //Status
-    var staged:Bool = false
+    var staged:Bool = false //Whether data has been staged
 
-    init(file_path:String)
+    /*
+     * init(file_path:String)
+     * [Argument]
+     * file_path - Path to file of the object.
+    */
+    init(file_path:String = "")
     {
         self.file_path = file_path
 
@@ -74,7 +97,14 @@ public class PVRDBFile:NSObject
 
     }
 
-    public func stage(key:PVRDBKey,val:Any)
+    /*
+     * public func stage(key:PVRDBKey,data:Any)
+     * - Stage data for writing
+     * [Arguments]
+     * key - Virtual Storage Location to store data
+     * data - Data to store for key
+     */
+    public func stage(key:PVRDBKey,data:Any)
     {
         if self.staged == false
         {
@@ -84,9 +114,19 @@ public class PVRDBFile:NSObject
             self.staged = true
         }
 
-        self.ach.encode(val, forKey: key.rawValue)
+        self.ach.encode(data, forKey: key.rawValue)
     }
 
+    /*
+     * public func retrieve(key:PVRDBKey) throws -> Any
+     * - Retrieve data from virtual storage location
+     * [Argument]
+     * key - Virtual storage location to retrieve from
+     * [Return]
+     * Any - Data retrieved
+     * [Exception]
+     * PVRDBFileError.data_staged - Changes have been staged
+     */
     public func retrieve(key:PVRDBKey) throws -> Any
     {
         if self.staged == true
@@ -97,6 +137,10 @@ public class PVRDBFile:NSObject
         return self.unach.decodeObject(forKey: key.rawValue)
     }
 
+    /*
+     * public func commit()
+     * - (Over)Write changes staged to disk
+    */
     public func commit()
     {
         if self.staged == true
@@ -113,6 +157,14 @@ public class PVRDBFile:NSObject
         }
     }
 
+    /*
+     * public func load() throws
+     * - Load data from disk
+     * [Error]
+     * PVRDBFileError.data_staged - Changes have been staged
+     * PVRDBFileError.file_unreadable - File is unreadable, an unknown I/O error occured
+     * PVRDBFileError.file_not_exist - File does not exist
+    */
     public func load() throws
     {
         if self.staged == true
@@ -143,6 +195,7 @@ public class PVRDBFile:NSObject
 
 public class PVRDatabase:NSObject
 {
+    //Properties
     //Data
     private var task:[String:PVRTask] //Tasks
     private var voidDuration:[String:PVRVoidDuration] //Void Duration
@@ -156,6 +209,7 @@ public class PVRDatabase:NSObject
     //Status
     var modified:Bool
 
+    //Methods
     //Init
     override init()
     {
@@ -179,6 +233,12 @@ public class PVRDatabase:NSObject
     }
 
     //I/O
+    /*
+     * public func load() throws
+     * - Loads all data from PVRDBFile, or inits data
+     * [Exception]
+     * PVRDBError.entry_modified - An Entry has been modified
+    */
     public func load() throws
     {
         if self.modified == false
@@ -216,21 +276,34 @@ public class PVRDatabase:NSObject
         }
     }
 
+    /*
+     * public func commit()
+     * - Commit changes to disk.
+     */
     public func commit()
     {
         if self.modified == true
         {
             //Persistent File
-            self.pst_file.stage(key: PVRDBKey.task, val: self.task)
-            self.pst_file.stage(key: PVRDBKey.void_duration, val: self.voidDuration)
+            self.pst_file.stage(key: PVRDBKey.task, data: self.task)
+            self.pst_file.stage(key: PVRDBKey.void_duration, data: self.voidDuration)
             self.pst_file.commit()
 
             //Temporary File
-            self.tmp_file.stage(key: PVRDBKey.cache, val: self.cache)
+            self.tmp_file.stage(key: PVRDBKey.cache, data: self.cache)
             self.tmp_file.commit()
         }
     }
-
+    /*
+     * public func createEntry(locKey:PVRDBKey,key:String,val:Any) throws
+     * - Creates an entry in the virtual storage location specifed by loc key
+     * [Argument]
+     * lockey - Virtual storage location to store entry
+     * key - Unique Identifier for the entry
+     * val - Value of the entry
+     * [Exception]
+     * PVRDBError.entry_exist - An entry already exists under the key
+     */
     public func createEntry(locKey:PVRDBKey,key:String,val:Any) throws
     {
         if locKey == PVRDBKey.task
@@ -280,6 +353,17 @@ public class PVRDatabase:NSObject
 
         self.modified = true
     }
+
+    /*
+     public func updateEntry(lockey:PVRDBKey,key:String,val:Any) throws
+     - Update value of entry specified by key in the virtual storage location specifed by lockey
+     * [Argument]
+     * lockey - Virtual storage location of the entry
+     * key - Identifier for the entry
+     * val - Value to update the entry
+     * [Exception]
+     *  PVRDBError.entry_not_exist - Entry specifed by key does not exist
+    */
     public func updateEntry(lockey:PVRDBKey,key:String,val:Any) throws
     {
         if lockey == PVRDBKey.task
@@ -330,6 +414,13 @@ public class PVRDatabase:NSObject
         self.modified = true
     }
 
+    /*
+     * public func deleteEntry(lockey:PVRDBKey,key:String)
+     * - Deletes entry specifed by key in the virtual storage location specifed by lockey
+     * [Argument]
+     * lockey - Virtual storage location of the entry
+     * key - Identifier of the entry
+    */
     public func deleteEntry(lockey:PVRDBKey,key:String)
     {
         if lockey == PVRDBKey.task
@@ -352,6 +443,18 @@ public class PVRDatabase:NSObject
         self.modified = true
     }
 
+    /*
+     * public func retrieveEntry(lockey:PVRDBKey,key:String) throws -> Any
+     * - Retrieves the data of the entry specified key located in the virtual storage location specfied by lockey
+     * NOTE: Might Terminate executable
+     * [Argument]
+     * lockey - Virtual storage location of the entry
+     * key - Identifier of the entry
+     * [Return]
+     * Any - Data of the entry
+     * [Exception]
+     * PVRDBError.entry_not_exist - Entry does not exist
+    */
     public func retrieveEntry(lockey:PVRDBKey,key:String) throws -> Any
     {
         if lockey == PVRDBKey.task
@@ -400,11 +503,21 @@ public class PVRDatabase:NSObject
         }
         else
         {
-            abort()
+            //Should not happen
+            abort() //Terminates Executable
         }
     }
 
-    public func retrieveAllEntry(lockey:PVRDBKey) -> Any
+    /*
+     * public func retrieveAllEntry(lockey:PVRDBKey) -> Any
+     * - Retrieves all entries located in the virtual storage location specified by lockey
+     * NOTE: Might Terminate Executable
+     * [Argument]
+     * lockey - Specfies the Virtual Storage location to retrieve all entrues
+     * [Return]
+     * Dictionary[String,Any] - Dictionary of entryies in virtual storage location
+    */
+    public func retrieveAllEntry(lockey:PVRDBKey) -> [String:Any]
     {
         if lockey == PVRDBKey.task
         {
@@ -424,7 +537,8 @@ public class PVRDatabase:NSObject
         }
         else
         {
-            abort()
+            //Should not happen
+            abort() //Terminates Executable
         }
     }
 }
