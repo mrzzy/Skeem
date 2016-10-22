@@ -51,7 +51,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
-        DB.load()
+        try? DB.load()
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {

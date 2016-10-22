@@ -272,7 +272,38 @@ public class PVRDataController: NSObject
         }
     }
 
-    //public func sortedTask(sorder:PVRDataSort) -> [PVRTask]
+    /*
+     * public func sortedTask(sorder:PVRTaskSort) -> [PVRTask]
+     * - Sorts task based on specifed attribute
+     * NOTE: Will terminate executable if unknown database error occurs
+     * [Argument]
+     * sattr - Attribute to sort by
+     * [Return]
+     * Array<PVRTask] - Sorted Array of tasks
+    */
+    public func sortedTask(sattr:PVRTaskSort) -> [PVRTask]
+    {
+        if let task = (self.DB.retrieveAllEntry(lockey:PVRDBKey.task) as? [String:PVRTask])?.values
+        {
+            switch sattr
+            {
+            case PVRTaskSort.name:
+                return task.sorted(by:PVRTaskSortFunc.name)
+            case PVRTaskSort.deadline:
+                return task.sorted(by:PVRTaskSortFunc.deadline)
+            case PVRTaskSort.duration:
+                return task.sorted(by:PVRTaskSortFunc.duration)
+            case PVRTaskSort.priority:
+                return task.sorted(by:PVRTaskSortFunc.priority)
+            }
+        }
+        else
+        {
+            //Task is missing, should not happen
+            abort() //Terminates Executable
+        }
+    }
+
 
     /*
      * public func createVoidDuration(name:String,duration:Int,asserted:Bool) -> Bool
@@ -356,11 +387,37 @@ public class PVRDataController: NSObject
         }
         else
         {
-            print("ERR:PVRDataController: Failed to delete void duration , void duration does not exist.")
+            print("ERR:PVRDataController: Failed to delete void duration, void duration does not exist.")
             return false
         }
     }
 
-    //public func sortedVoidDuration(sorder:PVRDataSort) -> [PVRVoidDuration]
+    /*
+     * public func sortedVoidDuration(sattr:PVRVoidDurationSort) -> [PVRVoidDuration]
+     * - Sorts stored Void Duration based on specifed attribute
+     * NOTE: Will terminate executable if unknown database error occurs
+     * [Argument]
+     * sattr - Attriute to sort by
+     * [Return]
+     * Array<PVRVoidDuration> - Sorted array of Void Duration.
+    */
+    public func sortedVoidDuration(sattr:PVRVoidDurationSort) -> [PVRVoidDuration]
+    {
+        if let voidd = (self.DB.retrieveAllEntry(lockey: PVRDBKey.void_duration) as? [String:PVRVoidDuration])?.values
+        {
+            switch sattr
+            {
+            case PVRVoidDurationSort.name:
+                return voidd.sorted(by: PVRVoidDurationSortFunc.name)
+            case PVRVoidDurationSort.begin:
+                return voidd.sorted(by: PVRVoidDurationSortFunc.begin)
+            }
+        }
+        else
+        {
+            //Void Duration is Missing, should not happen.
+            abort() //Terminates executable
+        }
+    }
 
 }

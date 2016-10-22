@@ -111,9 +111,9 @@
 		5AA4406C1DAF4873005B0E70 /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				5AA4406D1DAF488F005B0E70 /* PVRTask.swift */,
 				5AA4406F1DAF81B3005B0E70 /* PVRDatabase.swift */,
 				5AD59A9F1DB4DD130076FF0B /* PVRDataController.swift */,
+				5AA4406D1DAF488F005B0E70 /* PVRTask.swift */,
 				5A2755231DB5F0BE00213D60 /* PVRDuration.swift */,
 			);
 			name = Data;

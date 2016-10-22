@@ -25,6 +25,7 @@ public enum PVRDBError:Error
 {
     case entry_exist
     case entry_not_exist
+    case entry_modified
 }
 
 public enum PVRDBFileError:Error
@@ -152,6 +153,9 @@ public class PVRDatabase:NSObject
     var pst_file:PVRDBFile
     var tmp_file:PVRDBFile
 
+    //Status
+    var modified:Bool
+
     //Init
     override init()
     {
@@ -168,51 +172,63 @@ public class PVRDatabase:NSObject
         self.mcache = [:]
         self.cache = [:]
 
+
+        self.modified = false
+
         super.init()
     }
 
     //I/O
-    public func load()
+    public func load() throws
     {
-        //Persistent Storage
-        try! self.pst_file.load()
-        self.task = (try! self.pst_file.retrieve(key: PVRDBKey.task) as! [String : PVRTask])
-        self.voidDuration = (try! self.pst_file.retrieve(key: PVRDBKey.void_duration) as! [String:PVRDuration] as! [String : PVRVoidDuration])
-
-        //Temporary Storage
-        do
+        if self.modified == false
         {
-            try self.tmp_file.load()
-            if let cch = (try? self.tmp_file.retrieve(key: PVRDBKey.cache) as! [String:NSCoding])
+            //Persistent Storage
+            try! self.pst_file.load()
+            self.task = (try! self.pst_file.retrieve(key: PVRDBKey.task) as! [String : PVRTask])
+            self.voidDuration = (try! self.pst_file.retrieve(key: PVRDBKey.void_duration) as! [String:PVRDuration] as! [String : PVRVoidDuration])
+
+            //Temporary Storage
+            do
             {
-                self.cache = cch
+                try self.tmp_file.load()
+                if let cch = (try? self.tmp_file.retrieve(key: PVRDBKey.cache) as! [String:NSCoding])
+                {
+                    self.cache = cch
+                }
+                else
+                {
+                    self.cache = [:]
+                }
             }
-            else
+            catch PVRDBFileError.file_not_exist
             {
                 self.cache = [:]
             }
+            catch
+            {
+                abort()
+            }
         }
-        catch PVRDBFileError.file_not_exist
+        else
         {
-            self.cache = [:]
+            throw PVRDBError.entry_modified
         }
-        catch
-        {
-            abort()
-        }
-
     }
 
     public func commit()
     {
-        //Persistent File
-        self.pst_file.stage(key: PVRDBKey.task, val: self.task)
-        self.pst_file.stage(key: PVRDBKey.void_duration, val: self.voidDuration)
-        self.pst_file.commit()
+        if self.modified == true
+        {
+            //Persistent File
+            self.pst_file.stage(key: PVRDBKey.task, val: self.task)
+            self.pst_file.stage(key: PVRDBKey.void_duration, val: self.voidDuration)
+            self.pst_file.commit()
 
-        //Temporary File
-        self.tmp_file.stage(key: PVRDBKey.cache, val: self.cache)
-        self.tmp_file.commit()
+            //Temporary File
+            self.tmp_file.stage(key: PVRDBKey.cache, val: self.cache)
+            self.tmp_file.commit()
+        }
     }
 
     public func createEntry(locKey:PVRDBKey,key:String,val:Any) throws
@@ -261,6 +277,8 @@ public class PVRDatabase:NSObject
                 throw PVRDBError.entry_exist
             }
         }
+
+        self.modified = true
     }
     public func updateEntry(lockey:PVRDBKey,key:String,val:Any) throws
     {
@@ -308,6 +326,8 @@ public class PVRDatabase:NSObject
                 throw PVRDBError.entry_not_exist
             }
         }
+
+        self.modified = true
     }
 
     public func deleteEntry(lockey:PVRDBKey,key:String)
@@ -328,6 +348,8 @@ public class PVRDatabase:NSObject
         {
             self.mcache[key] = nil
         }
+
+        self.modified = true
     }
 
     public func retrieveEntry(lockey:PVRDBKey,key:String) throws -> Any

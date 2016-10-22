@@ -221,3 +221,40 @@ public class PVRRepeatVoidDuration: PVRVoidDuration
         }
     }
 }
+
+/*
+ * public enum PVRVoidDurationSort
+ * - Defines constants that specify sort atttriable.
+*/
+public enum PVRVoidDurationSort
+{
+    case name //Sort by name
+    case begin //Sort by begin date/time
+}
+
+/*
+ * public struct PVRVoidDurationSortFunc
+ * - Defines functions for use in sorting PVRVoidDuration
+*/
+public struct PVRVoidDurationSortFunc
+{
+    /*
+     * public func name(voidd1:PVRVoidDuration,voidd2:PVRVoidDuartion) -> Bool
+     * - Defines sort by name. Sort Stable.
+    */
+    public static func name(voidd1:PVRVoidDuration,voidd2:PVRVoidDuration) -> Bool
+    {
+        //if voidd1.name <= void2.name, voidd1 before voidd2
+        return voidd1.name <= voidd2.name
+    }
+
+    /*
+     * public func begin(voidd1:PVRVoidDuration,voidd2:PVRVoidDuartion) -> Bool
+     * - Define sort by begin date. Sort Stable.
+    */
+    public static func begin(voidd1:PVRVoidDuration,voidd2:PVRVoidDuration) -> Bool
+    {
+        //if voidd1.begin <= voidd2.begin, voidd1 before voidd2
+        return voidd1.begin.compare((voidd2.begin as Date)) != ComparisonResult.orderedDescending
+    }
+}
