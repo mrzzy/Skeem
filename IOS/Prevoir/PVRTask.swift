@@ -91,11 +91,16 @@ public class PVRTask: NSObject,NSCoding
     }
 
     /*
-     * public func nextTask()
-     * - Reset task to describe the next task in seqence
-    */
-    public func nextTask() {
-        //Do Nothing
+     * public func update(date:NSDate)
+     * - Update task data with date as virtual current date
+     *
+     * [Argument]
+     * date - virtual current date
+     * PVRTask::nextVoid() - Does not do anything
+     */
+    public func update(date:NSDate)
+    {
+
     }
 
     /*
@@ -146,7 +151,6 @@ public class PVRRepeatTask: PVRTask
         self.repeat_deadline = deadline
 
         super.init(name: name, deadline: NSDate(), duration:duration , subject:subject,description:description)
-        self.nextTask()
     }
 
     //NSCoding
@@ -192,33 +196,49 @@ public class PVRRepeatTask: PVRTask
     public override func vaild() -> Bool {
         if self.repeat_enabled == false || self.repeat_deadline?.compare(Date()) != ComparisonResult.orderedDescending
         {
-            return true
+            return false
         }
         else
         {
-            return false
+            return true
         }
     }
 
     /*
-     * public override func nextTask() 
-     * - Resets task data for next task in sequence
-    */
-    public override func nextTask() {
-        //Update Only if deadline is outdated
-        if self.deadline.compare(Date()) != ComparisonResult.orderedDescending
+     * public func update(date:NSDate)
+     * - Update task data with date as virtual current date
+     *
+     * [Argument]
+     * date - virtual current date
+     * PVRRepeatTask::update() - Updates based on date as current date
+     */
+    public override func update(date: NSDate)
+    {
+        if self.deadline.compare(date as Date) == ComparisonResult.orderedAscending
         {
-            //Reset Variables
-            self.duration = self.repeat_duration
-            self.completion = 0.0
-
-            //Compute Next Deadline
-            self.repeat_index += 1
-            let tint = self.repeat_loop[self.repeat_index % self.repeat_loop.count]
-            self.deadline = NSDate(timeInterval: tint, since: self.deadline as Date)
+            //current deadline earlier than virtual current date
+            //Update Forwards in Time
+            while self.deadline.compare(date as Date) == ComparisonResult.orderedAscending
+            {
+                //Update Void Duration Data
+                self.repeat_index = self.repeat_index &+ 1 //Overflow Addition
+                let tint = self.repeat_loop[self.repeat_index % self.repeat_loop.count]
+                self.deadline = NSDate(timeInterval: tint, since: (self.deadline as Date))
+            }
+        }
+        else if self.deadline.compare(date as Date) == ComparisonResult.orderedDescending
+        {
+            //current deadline is later than virtual current date
+            //Update Backwards in Time
+            while self.deadline.compare(date as Date) == ComparisonResult.orderedDescending
+            {
+                //Update Void Duration Data
+                self.repeat_index = self.repeat_index &- 1 //Overflow Subtraction
+                let tint = -(self.repeat_loop[self.repeat_index % self.repeat_loop.count]) //Negative Time Interval
+                self.deadline = NSDate(timeInterval: tint, since: (self.deadline as Date))
+            }
         }
     }
-
 }
 
 /*
@@ -241,7 +261,8 @@ public struct PVRTaskSortFunc
 {
     /*
      * public func name(task1:PVRTask,task2:PVRTask) -> Bool
-     * - Defines sort by name. Sort Stable.    
+     * - Defines sort by name. Sort Stable.   
+     * - Smaller Alphanumeric First
     */
     public static func name(task1:PVRTask,task2:PVRTask) -> Bool
     {
@@ -252,6 +273,7 @@ public struct PVRTaskSortFunc
     /*
      * public func deadline(task1:PVRTask,task2:PVRTask) -> Bool
      * - Defines sort by deadline.Sort Stable.
+     * - Earlier deadline first
     */
     public static func deadline(task1:PVRTask,task2:PVRTask) -> Bool
     {
@@ -262,6 +284,7 @@ public struct PVRTaskSortFunc
     /*
      * public func duration(task1:PVRTask,task2:PVRTask) -> Bool
      * - Defines sort by duration of task. Sort Stable.
+     * - Smaller Duration First
     */
     public static func duration(task1:PVRTask,task2:PVRTask) -> Bool
     {
@@ -272,6 +295,7 @@ public struct PVRTaskSortFunc
     /*
      * public func priority(task1:PVRTask,task2:PVRTask) -> Bool
      * - Defines sort by priority defined by task. Sort Stable.
+     * - Smaller Duration First
     */
     public static func priority(task1:PVRTask,task2:PVRTask) -> Bool
     {

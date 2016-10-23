@@ -33,36 +33,20 @@ public class PVRDataController: NSObject
         super.init()
 
         self.pruneTask()
-        self.updateTask()
+        self.pruneVoidDuration()
     }
 
     //Data
-    public func priorityTask(task:PVRTask) -> Double
-    {
-        let base = (task.deadline.timeIntervalSince(Date()) - TimeInterval(task.duration))
-        let factor = pow((TimeInterval(task.duration)),2)
-
-        return base/factor
-    }
-
-    public func priorityVoidDuration(voidd:PVRVoidDuration) -> Double
-    {
-        let base = (voidd.begin.timeIntervalSince(Date())  - TimeInterval(voidd.duration))
-        let factor = pow(TimeInterval(voidd.duration), 2)
-
-        return base/factor
-    }
-
     //Data - Tasks
     /*
      * public func pruneTask()
-     * - Remove completed tasks
+     * - Remove all invaild tasks
     */
     public func pruneTask()
     {
         for (name,task) in (self.DB.retrieveAllEntry(lockey: PVRDBKey.task) as! [String:PVRTask])
         {
-            if task.status_complete() == true
+            if task.vaild() == false
             {
                 self.DB.deleteEntry(lockey: PVRDBKey.task, key: name)
             }
@@ -71,17 +55,14 @@ public class PVRDataController: NSObject
 
     /*
      * public func updateTask()
-     * - Update tasks data for subsequent task
+     * - Update tasks data for subsequent task for current date
     */
     public func updateTask()
     {
-        for (name,_) in (self.DB.retrieveAllEntry(lockey: PVRDBKey.task) as! [String:PVRTask])
+        for (name,task) in (self.DB.retrieveAllEntry(lockey: PVRDBKey.task) as! [String:PVRTask])
         {
-            if let task = try? (self.DB.retrieveEntry(lockey: PVRDBKey.task, key:name) as! PVRTask)
-            {
-                task.nextTask()
-                try! self.DB.updateEntry(lockey: PVRDBKey.task, key: name, val: task)
-            }
+            task.update(date: NSDate()) //Update for current date/time
+            try! self.DB.updateEntry(lockey: PVRDBKey.task, key: name, val: task)
         }
     }
 
@@ -304,6 +285,33 @@ public class PVRDataController: NSObject
         }
     }
 
+    /*
+     * public func pruneVoidDuration()
+     * - Remove all invaild Void Duration
+     */
+    public func pruneVoidDuration()
+    {
+        for (name,voidd) in (self.DB.retrieveAllEntry(lockey: PVRDBKey.void_duration) as! [String:PVRVoidDuration])
+        {
+            if voidd.vaild() == false
+            {
+                self.DB.deleteEntry(lockey: PVRDBKey.void_duration, key: name)
+            }
+        }
+    }
+
+    /*
+     * public func updateVoidDuration()
+     * - Update PVRVoidDuration data for current date
+     */
+    public func updateVoidDuration()
+    {
+        for (name,voidd) in (self.DB.retrieveAllEntry(lockey: PVRDBKey.void_duration) as! [String:PVRTask])
+        {
+            voidd.update(date: NSDate()) //Update for current date/time
+            try? self.DB.updateEntry(lockey: PVRDBKey.void_duration, key: name, val: voidd)
+        }
+    }
 
     /*
      * public func createVoidDuration(name:String,duration:Int,asserted:Bool) -> Bool

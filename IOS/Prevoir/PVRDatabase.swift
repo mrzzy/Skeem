@@ -197,17 +197,17 @@ public class PVRDatabase:NSObject
 {
     //Properties
     //Data
-    private var task:[String:PVRTask] //Tasks
-    private var voidDuration:[String:PVRVoidDuration] //Void Duration
-    private var mcache:[String:Any]  //In-Memory Cache
-    private var cache:[String:NSCoding] //Cache
+    internal var task:[String:PVRTask] //Tasks
+    internal var voidDuration:[String:PVRVoidDuration] //Void Duration
+    internal var mcache:[String:Any]  //In-Memory Cache
+    internal var cache:[String:NSCoding] //Cache
 
     //Storage
-    var pst_file:PVRDBFile
-    var tmp_file:PVRDBFile
+    internal var pst_file:PVRDBFile
+    internal var tmp_file:PVRDBFile
 
     //Status
-    var modified:Bool
+    internal var modified:Bool
 
     //Methods
     //Init

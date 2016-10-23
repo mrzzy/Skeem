@@ -111,12 +111,13 @@ public class PVRVoidDuration: PVRDuration
     }
 
     /*
-     * public func nextVoid()
-     * - Update begin date for the next void duration is sequence
-     * 
+     * public func update(date:NSDate)
+     * - Reset Void Duration with date as the  virtual current date
      * PVRVoidDuration::nextVoid() - Does not do anything.
+     * [Argument]
+     * date - Virtual current date
     */
-    public func nextVoid()
+    public func update(date:NSDate)
     {
         //Do Nothing
     }
@@ -206,18 +207,38 @@ public class PVRRepeatVoidDuration: PVRVoidDuration
 
 
     /*
-     * public func nextVoid()
-     * - Update begin date for the next void duration is sequence
+     * public func update(date:NSDate)
+     * - Update Void Duration data with date as virtual current date
      *
-     * PVRRepeatVoidDuration::nextVoid() - Updates begin date based on next time interval in repeat_loop if repeat_is enable.
+     * [Argument]
+     * date - virtual current date
+     * PVRRepeatVoidDuration::nextVoid() - Updates based on date as current date
      */
-    public override func nextVoid()
+    public override func update(date: NSDate)
     {
-        if NSDate(timeInterval: Double(self.duration), since: self.begin as Date).compare(Date()) != ComparisonResult.orderedDescending
+        if self.begin.compare(date as Date) == ComparisonResult.orderedAscending
         {
-            self.repeat_index += 1
-            let tint = self.repeat_loop[self.repeat_index %  self.repeat_loop.count]
-            self.begin = NSDate(timeInterval: tint, since: (self.begin as Date))
+            //current begin earlier than virtual current date
+            //Update Forwards in Time
+            while self.begin.compare(date as Date) == ComparisonResult.orderedAscending
+            {
+                //Update Void Duration Data
+                self.repeat_index = self.repeat_index &+ 1 //Overflow Addition
+                let tint = self.repeat_loop[self.repeat_index % self.repeat_loop.count]
+                self.begin = NSDate(timeInterval: tint, since: (self.begin as Date))
+            }
+        }
+        else if self.begin.compare(date as Date) == ComparisonResult.orderedDescending
+        {
+            //current begin is later than virtual current date
+            //Update Backwards in Time
+            while self.begin.compare(date as Date) == ComparisonResult.orderedDescending
+            {
+                //Update Void Duration Data
+                self.repeat_index = self.repeat_index &- 1 //Overflow Subtraction
+                let tint = -(self.repeat_loop[self.repeat_index % self.repeat_loop.count]) //Negative Time Interval
+                self.begin = NSDate(timeInterval: tint, since: (self.begin as Date))
+            }
         }
     }
 }
@@ -241,6 +262,7 @@ public struct PVRVoidDurationSortFunc
     /*
      * public func name(voidd1:PVRVoidDuration,voidd2:PVRVoidDuartion) -> Bool
      * - Defines sort by name. Sort Stable.
+     * - Smaller Alphanumeric Order first
     */
     public static func name(voidd1:PVRVoidDuration,voidd2:PVRVoidDuration) -> Bool
     {
@@ -251,6 +273,7 @@ public struct PVRVoidDurationSortFunc
     /*
      * public func begin(voidd1:PVRVoidDuration,voidd2:PVRVoidDuartion) -> Bool
      * - Define sort by begin date. Sort Stable.
+     * - Earlier begin date first
     */
     public static func begin(voidd1:PVRVoidDuration,voidd2:PVRVoidDuration) -> Bool
     {
