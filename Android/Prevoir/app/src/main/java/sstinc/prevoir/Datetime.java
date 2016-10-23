@@ -48,6 +48,40 @@ class Datetime {
         return this.hour != -1;
     }
 
+    Datetime add(Duration duration) {
+        int year = this.year + duration.getYears();
+        int month = this.month + duration.getMonths();
+        int day = this.day + duration.getDays();
+
+        int hour = this.hour + duration.getHours();
+        int minute = this.minute + duration.getMinutes();
+        Datetime added_datetime = new Datetime();
+        added_datetime.setYear(year);
+        added_datetime.setMonth(month);
+        added_datetime.setDay(day);
+
+        added_datetime.setHour(hour);
+        added_datetime.setMinute(minute);
+        return added_datetime;
+    }
+
+    Datetime subtract(Duration duration) {
+        int year = this.year - duration.getYears();
+        int month = this.month - duration.getMonths();
+        int day = this.day - duration.getDays();
+
+        int hour = this.hour - duration.getHours();
+        int minute = this.minute - duration.getMinutes();
+        Datetime subtracted_datetime = new Datetime();
+        subtracted_datetime.setYear(year);
+        subtracted_datetime.setMonth(month);
+        subtracted_datetime.setDay(day);
+
+        subtracted_datetime.setHour(hour);
+        subtracted_datetime.setMinute(minute);
+        return subtracted_datetime;
+    }
+
     @Override
     public String toString() {
         return this.year + "/" + this.month + "/" + this.day + " " + this.hour + ":" + this.minute;

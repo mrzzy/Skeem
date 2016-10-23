@@ -43,9 +43,8 @@ public class VoidblockCreateDatetimeActivity extends AppCompatActivity {
         ScrollableTimePicker timePicker = (ScrollableTimePicker) findViewById(
                 R.id.time_picker_voidblock);
 
-        String asdf = getIntent().getStringExtra(
-                VoidblockCreateActivity.EXTRA_VOIDBLOCK_DATETIME);
-        Datetime datetime = new Datetime(asdf);
+        Datetime datetime = new Datetime(getIntent().getStringExtra(
+                VoidblockCreateActivity.EXTRA_VOIDBLOCK_DATETIME));
 
         // Set minimum date
         Calendar cal = Calendar.getInstance();
@@ -58,7 +57,7 @@ public class VoidblockCreateDatetimeActivity extends AppCompatActivity {
                     datetime.getHour(), datetime.getMinute());
         } else if (min_max.equals("MAX")) {
             Calendar max_cal = Calendar.getInstance();
-            max_cal.set(datetime.getYear(), datetime.getMonth(), datetime.getDay(),
+            max_cal.set(datetime.getYear(), datetime.getMonth(), datetime.getDay()+1,
                     datetime.getHour(), datetime.getMinute());
             datePicker.setMaxDate(max_cal.getTimeInMillis());
         }

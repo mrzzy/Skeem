@@ -1,25 +1,27 @@
 package sstinc.prevoir;
+//TODO: Check for overlaps
 //TODO: long press
 
 import android.app.ListFragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.design.widget.FloatingActionButton;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
 
-public class VoidblockFragment extends ListFragment {
+public class VoidblockFragment extends ListFragment implements AdapterView.OnItemClickListener,
+        AdapterView.OnItemLongClickListener {
     // Request codes
     public static final int createVoidblockRequestCode = 210;
     public static final int updateVoidblockRequestCode = 220;
@@ -76,13 +78,18 @@ public class VoidblockFragment extends ListFragment {
                 TypedValue.COMPLEX_UNIT_SP, 56 + (fab_margin*2/3),
                 getActivity().getResources().getDisplayMetrics()));
 
+
         // Get voidblocks from database
         DbAdapter dbAdapter = new DbAdapter(getActivity());
         dbAdapter.open();
         ArrayList<Voidblock> voidblocks = dbAdapter.getVoidblocks();
         dbAdapter.close();
 
-        // Set the sample data
+        // Set onClickListeners
+        getListView().setOnItemClickListener(this);
+        getListView().setOnItemLongClickListener(this);
+
+        // Set the data
         setListAdapter(new VoidblockArrayAdapter(getActivity(), voidblocks));
 
         // Floating Action Button for adding new tasks
@@ -103,12 +110,163 @@ public class VoidblockFragment extends ListFragment {
         menu.findItem(R.id.nav_done).setVisible(menu_finish);
         menu.findItem(R.id.nav_copy).setVisible(menu_duplicate);
         menu.findItem(R.id.nav_delete).setVisible(menu_delete);
+
+        menu.findItem(R.id.nav_copy).setOnMenuItemClickListener(
+                new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                // Reset menu
+                menu_duplicate = false;
+                menu_delete = false;
+                getActivity().invalidateOptionsMenu();
+
+                ArrayList<Voidblock> voidblocks_to_copy = new ArrayList<>();
+                // Get voidblocks selected
+                for (int i=getListAdapter().getCount()-1; i>=0; i--) {
+                    View v = getViewByPosition(i, getListView());
+                    CheckBox checkBox = (CheckBox) v.findViewById(
+                            R.id.list_item_voidblock_checkbox);
+                    if (checkBox.isChecked()) {
+                        voidblocks_to_copy.add((Voidblock) getListAdapter().getItem(i));
+                    }
+                }
+                // Copy
+                DbAdapter dbAdapter = new DbAdapter(getActivity());
+                dbAdapter.open();
+                for (Voidblock voidblock : voidblocks_to_copy) {
+                    dbAdapter.insertVoidblock(voidblock);
+                }
+                ArrayList<Voidblock> voidblocks = dbAdapter.getVoidblocks();
+                dbAdapter.close();
+
+                setListAdapter(new VoidblockArrayAdapter(getActivity(), voidblocks));
+                getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                                            int position, long id) {
+                        editVoidblock(position);
+                    }
+                });
+                return true;
+            }
+        });
+
+        menu.findItem(R.id.nav_delete).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                // Reset menu
+                menu_duplicate = false;
+                menu_delete = false;
+                getActivity().invalidateOptionsMenu();
+
+                ArrayList<Voidblock> voidblocks_to_delete = new ArrayList<>();
+                // Get voidblocks selected
+                for (int i=getListAdapter().getCount()-1; i>=0; i--) {
+                    View v = getViewByPosition(i, getListView());
+                    CheckBox checkBox = (CheckBox) v.findViewById(
+                            R.id.list_item_voidblock_checkbox);
+                    if (checkBox.isChecked()) {
+                        voidblocks_to_delete.add((Voidblock) getListAdapter().getItem(i));
+                    }
+                }
+                // Delete
+                DbAdapter dbAdapter = new DbAdapter(getActivity());
+                dbAdapter.open();
+                for (Voidblock voidblock : voidblocks_to_delete) {
+                    dbAdapter.deleteVoidblock(voidblock.getId());
+                }
+                ArrayList<Voidblock> voidblocks = dbAdapter.getVoidblocks();
+                dbAdapter.close();
+
+                setListAdapter(new VoidblockArrayAdapter(getActivity(), voidblocks));
+                getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                                            int position, long id) {
+                        editVoidblock(position);
+                    }
+                });
+                return true;
+            }
+        });
     }
 
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        editVoidblock(position);
+    }
 
+    private int getCheckedCheckBoxes() {
+        int count = 0;
+        for (int i=getListAdapter().getCount()-1; i>=0; i--) {
+            View v = getViewByPosition(i, getListView());
+            CheckBox checkBox = (CheckBox) v.findViewById(R.id.list_item_voidblock_checkbox);
+            if (checkBox.isChecked()) {
+                count += 1;
+            }
+        }
+        return count;
+    }
+
+    private void setCheckBoxes(boolean show) {
+        for (int i=getListAdapter().getCount()-1; i>=0; i--) {
+            View v = getViewByPosition(i, getListView());
+            CheckBox checkBox = (CheckBox) v.findViewById(R.id.list_item_voidblock_checkbox);
+            if (show) {
+                checkBox.setVisibility(View.VISIBLE);
+            } else {
+                checkBox.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        // Reset menu
+        menu_duplicate = true;
+        menu_delete = true;
+        getActivity().invalidateOptionsMenu();
+
+        getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                CheckBox checkBox = (CheckBox) view.findViewById(R.id.list_item_voidblock_checkbox);
+                checkBox.toggle();
+            }
+        });
+        for (int i=getListAdapter().getCount()-1; i>=0; i--) {
+            View v = getViewByPosition(i, getListView());
+            CheckBox checkBox = (CheckBox) v.findViewById(R.id.list_item_voidblock_checkbox);
+
+                    checkBox.setChecked(false);
+            checkBox.setVisibility(View.VISIBLE);
+            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (!isChecked) {
+                        if (getCheckedCheckBoxes() == 0) {
+                            setCheckBoxes(false);
+                            menu_duplicate = false;
+                            menu_delete = false;
+                            getActivity().invalidateOptionsMenu();
+                            getListView().setOnItemClickListener(
+                                    new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view,
+                                                        int position, long id) {
+                                    editVoidblock(position);
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+        }
+
+        CheckBox checkBox = (CheckBox) view.findViewById(R.id.list_item_voidblock_checkbox);
+        checkBox.setChecked(true);
+
+        return true;
     }
 
     @Override

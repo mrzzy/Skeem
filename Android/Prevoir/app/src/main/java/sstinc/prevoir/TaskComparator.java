@@ -5,7 +5,7 @@ import java.util.Comparator;
 public class TaskComparator implements Comparator<Task> {
 
     private Order orderBy = Order.NAME;
-    private boolean isAscending;
+    private boolean isAscending = false;
 
     enum Order {NAME, SUBJECT, TASKTYPE, DEADLINE, DURATION, MIN_TIME_PERIOD};
 

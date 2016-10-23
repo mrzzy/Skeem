@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.ScrollView;
 
 import java.util.ArrayList;
+//TODO: Update and retain information
 
 public class TaskCreateActivity extends AppCompatActivity {
 

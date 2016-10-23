@@ -191,6 +191,17 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        // Set new onClickListener
+        getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                CheckBox checkBox = (CheckBox) view.findViewById(R.id.list_item_task_checkBox);
+                // Change it to check when clicked
+                checkBox.toggle();
+            }
+        });
+
         // Iterate through each view
         for (int i = getListAdapter().getCount()-1; i>=0; i--) {
             View v = getViewByPosition(i, getListView());
@@ -206,30 +217,8 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
                         hideCheckBoxes();
                         menu_multi = false;
                         getActivity().invalidateOptionsMenu();
-                    }
-                }
-            });
-
-            // Set new onClickListener
-            getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View inner_view,
-                                        int position, long id) {
-                    // Change it to check when clicked
-                    // Get checkbox
-                    CheckBox inner_view_checkBox = (CheckBox) inner_view.findViewById(
-                            R.id.list_item_task_checkBox);
-                    if (inner_view_checkBox.isChecked()) {
-                        inner_view_checkBox.setChecked(false);
-                        if (getCheckedCheckBoxes() == 0) {
-                            hideCheckBoxes();
-                            menu_multi = false;
-                            getActivity().invalidateOptionsMenu();
-                            // Return to normal OnItemClickListener
-                            getListView().setOnItemClickListener(editItemClickListener);
-                        }
-                    } else {
-                        inner_view_checkBox.setChecked(true);
+                        // Return to normal OnItemClickListener
+                        getListView().setOnItemClickListener(editItemClickListener);
                     }
                 }
             });
@@ -239,7 +228,6 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
         getActivity().invalidateOptionsMenu();
 
         ((CheckBox) view.findViewById(R.id.list_item_task_checkBox)).setChecked(true);
-        (view.findViewById(R.id.list_item_task_checkBox)).setVisibility(View.VISIBLE);
         return true;
     }
 
@@ -309,7 +297,6 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
 
                     // Return to normal OnItemClickListener
                     getListView().setOnItemClickListener(editItemClickListener);
-                    dbAdapter.close();
                     return false;
                 }
                 // Confirm delete

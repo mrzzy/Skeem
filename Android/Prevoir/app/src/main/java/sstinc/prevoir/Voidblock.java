@@ -6,10 +6,9 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-class Voidblock implements Parcelable {
+class Voidblock extends Schedulable implements Parcelable {
     boolean checked = false;
 
-    private long id;
     String name;
     Datetime from;
     Datetime to;
@@ -18,14 +17,6 @@ class Voidblock implements Parcelable {
         this.name = name;
         this.from = from;
         this.to = to;
-    }
-
-    public void setId(long newId) {
-        this.id = newId;
-    }
-
-    public long getId() {
-        return this.id;
     }
 
     @Override

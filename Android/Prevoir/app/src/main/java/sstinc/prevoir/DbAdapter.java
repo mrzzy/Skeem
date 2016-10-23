@@ -318,6 +318,11 @@ class DbAdapter {
         }
         cursor.close();
 
+        // Sort the voidblocks, latest first
+        VoidblockComparator voidblockComparator = new VoidblockComparator();
+        voidblockComparator.setSortBy(VoidblockComparator.Order.START_DATETIME, true);
+        Collections.sort(voidblocks, voidblockComparator);
+
         return voidblocks;
     }
 

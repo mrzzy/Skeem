@@ -62,4 +62,7 @@
     <string name="text_view_to">To:</string>
     <string name="text_view_hint_timespan_unset">Tap to Set</string>
     <string name="text_view_error_time">Invalid Time Given</string>
+
+    <!-- Schedule Fragment -->
+    <string name="text_view_schedule_voidblock_label">- Voidblock -</string>
 </resources>

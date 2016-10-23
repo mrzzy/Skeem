@@ -30,6 +30,7 @@ public class VoidblockCreateActivity extends AppCompatActivity {
     boolean menu_duplicate = false;
     boolean menu_delete = false;
     // Voidblock information
+    long voidblock_id = -1;
     Datetime voidblock_from_datetime = new Datetime();
     Datetime voidblock_to_datetime = new Datetime();
 
@@ -67,8 +68,8 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                 intent.putExtra(EXTRA_VOIDBLOCK_DATETIME_MIN_MAX, "");
 
                 if (voidblock_to_datetime.getYear() != -1) {
-                    intent.putExtra(EXTRA_VOIDBLOCK_DATETIME_MIN_MAX, "MIN");
-                    intent.putExtra(EXTRA_VOIDBLOCK_DATETIME, voidblock_from_datetime.toString());
+                    intent.putExtra(EXTRA_VOIDBLOCK_DATETIME_MIN_MAX, "MAX");
+                    intent.putExtra(EXTRA_VOIDBLOCK_DATETIME, voidblock_to_datetime.toString());
                 }
                 startActivityForResult(intent, createVoidblockFromRequestCode);
             }
@@ -85,8 +86,8 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                 intent.putExtra(EXTRA_VOIDBLOCK_DATETIME, "");
                 intent.putExtra(EXTRA_VOIDBLOCK_DATETIME_MIN_MAX, "");
                 if (voidblock_from_datetime.getYear() != -1) {
-                    intent.putExtra(EXTRA_VOIDBLOCK_DATETIME_MIN_MAX, "MAX");
-                    intent.putExtra(EXTRA_VOIDBLOCK_DATETIME, voidblock_to_datetime.toString());
+                    intent.putExtra(EXTRA_VOIDBLOCK_DATETIME_MIN_MAX, "MIN");
+                    intent.putExtra(EXTRA_VOIDBLOCK_DATETIME, voidblock_from_datetime.toString());
                 }
                 startActivityForResult(intent, createVoidblockToRequestCode);
             }
@@ -96,8 +97,20 @@ public class VoidblockCreateActivity extends AppCompatActivity {
         Voidblock voidblock = getIntent().getParcelableExtra(
                 VoidblockFragment.EXTRA_UPDATE_VOIDBLOCK);
         if (voidblock != null) {
+            // Get the elements
+            TextView textView_from_datetime = (TextView) findViewById(
+                    R.id.text_view_voidblock_from);
+            TextView textView_to_datetime = (TextView) findViewById(
+                    R.id.text_view_voidblock_to);
+
             // Set the values of the fields
             editText_name.setText(voidblock.name);
+            textView_from_datetime.setText(voidblock.from.toFormattedString());
+            textView_to_datetime.setText(voidblock.to.toFormattedString());
+            // Set local voidblock times
+            voidblock_from_datetime = voidblock.from;
+            voidblock_to_datetime = voidblock.to;
+            voidblock_id = voidblock.getId();
         }
     }
 
@@ -130,9 +143,14 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
             }
 
+            Voidblock voidblock = new Voidblock(name, voidblock_from_datetime,
+                    voidblock_to_datetime);
+            if (voidblock_id != -1) {
+                voidblock.setId(voidblock_id);
+            }
+
             Intent intent = new Intent();
-            intent.putExtra(EXTRA_VOIDBLOCK,
-                    new Voidblock(name, voidblock_from_datetime, voidblock_to_datetime));
+            intent.putExtra(EXTRA_VOIDBLOCK, voidblock);
             setResult(RESULT_OK, intent);
             finish();
         }

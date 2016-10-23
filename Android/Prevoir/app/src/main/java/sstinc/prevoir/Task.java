@@ -6,10 +6,12 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-class Task implements Parcelable {
+class Task extends Schedulable implements Parcelable {
     boolean checked = false;
 
-    private long id = -1;
+    Datetime scheduled_start;
+    Datetime scheduled_end;
+
     String name = "";
     String subject = "";
 
@@ -19,6 +21,18 @@ class Task implements Parcelable {
     String description;
     Duration duration;
     Duration min_time_period;
+
+    Task(Task task) {
+        this.name = task.name;
+        this.subject = task.subject;
+        this.weekDays = task.weekDays;
+        this.deadline = task.deadline;
+        this.description = task.description;
+        this.duration = task.duration;
+        this.min_time_period = task.min_time_period;
+        this.scheduled_start = task.scheduled_start;
+        this.scheduled_end = task.scheduled_end;
+    }
 
     Task(String name, String subject, ArrayList<WeekDay> weekdays,
                 Deadline deadline, String description, Duration duration,
@@ -32,13 +46,10 @@ class Task implements Parcelable {
         this.min_time_period = min_time_period;
     }
 
+    @Override
     public void setId(long newId) {
         this.id = newId;
         this.deadline.setId(newId);
-    }
-
-    public long getId() {
-        return this.id;
     }
 
     @Override

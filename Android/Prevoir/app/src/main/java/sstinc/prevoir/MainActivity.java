@@ -10,6 +10,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+//TODO: Create copy constructors
+//TODO: Check for assumed copy
+//TODO: Move menu status to static class
+//TODO: Expired tasks and voidblocks etc.
+//TODO: Date addition is wrong
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -22,6 +28,7 @@ public class MainActivity extends AppCompatActivity
 
         // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        toolbar.setTitle(R.string.menu_schedule);
         setSupportActionBar(toolbar);
 
         // Navigation Drawer
