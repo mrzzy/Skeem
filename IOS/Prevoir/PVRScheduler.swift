@@ -79,7 +79,7 @@ public class PVRScheduler: NSObject
             throw PVRSchedulerError.DataMissing
         }
 
-        self.dataView.loadFromDB(db: self.dataCtrl.DB) //Reset Data View
+        self.dataView.loadFromDB() //Reset Data View
         let last_date = self.lastTaskDate()
         var current_time = NSDate()
         var current_voidd = self.dataViewCtrl.sortedVoidDuration(sattr: PVRVoidDurationSort.begin).last!

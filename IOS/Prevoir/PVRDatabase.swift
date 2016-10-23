@@ -521,19 +521,19 @@ public class PVRDatabase:NSObject
     {
         if lockey == PVRDBKey.task
         {
-            return self.task //Returns Copy
+            return self.task
         }
         else if lockey == PVRDBKey.void_duration
         {
-            return self.voidDuration //Returns Copy
+            return self.voidDuration
         }
         else if lockey == PVRDBKey.cache
         {
-            return self.cache //Returns Copy
+            return self.cache
         }
         else if lockey == PVRDBKey.mcache
         {
-            return self.mcache //Returns Copy
+            return self.mcache
         }
         else
         {

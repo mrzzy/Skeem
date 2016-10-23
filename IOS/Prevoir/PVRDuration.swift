@@ -12,7 +12,7 @@ import UIKit
  * public class PVRDuration: NSObject,NSCoding
  * - Defines a Duration of Time
 */
-public class PVRDuration: NSObject,NSCoding
+public class PVRDuration: NSObject,NSCoding,NSCopying
 {
     //Properties
     public var begin:NSDate /*Defines the start date/time of "Duration of time"*/
@@ -43,6 +43,12 @@ public class PVRDuration: NSObject,NSCoding
     public func encode(with aCoder: NSCoder) {
         aCoder.encode(self.begin, forKey: "begin")
         aCoder.encode(self.duration, forKey: "duration")
+
+    }
+
+    //NSCopying
+    public func copy(with zone: NSZone? = nil) -> Any {
+        return PVRDuration(begin: self.begin, duration: self.duration)
     }
 }
 
@@ -88,6 +94,11 @@ public class PVRVoidDuration: PVRDuration
         let asserted = aDecoder.decodeBool(forKey: "asserted")
 
         self.init(begin:begin, duration:duration, name:name, asserted:asserted)
+    }
+
+    //NSCopying
+    public override func copy(with zone: NSZone?) -> Any {
+        return PVRVoidDuration(begin: self.begin, duration: self.duration, name: self.name, asserted: self.asserted)
     }
 
     //Data
@@ -183,6 +194,11 @@ public class PVRRepeatVoidDuration: PVRVoidDuration
         aCoder.encode(self.repeat_index, forKey: "repeat_index")
         aCoder.encode(self.repeat_loop, forKey: "repeat_loop")
         aCoder.encode(self.repeat_deadline, forKey: "repeat_deadline")
+    }
+
+    //NSCopying
+    public override func copy(with zone: NSZone?) -> Any {
+        return PVRRepeatVoidDuration(begin: self.begin, duration: self.duration, name: self.name, repeat_loop: self.repeat_loop, deadline: self.repeat_deadline, asserted: self.asserted)
     }
 
     //Data

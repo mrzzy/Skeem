@@ -12,7 +12,7 @@ import UIKit
  * public class PVRTask: NSObject,NSCoding
  * - Defines an objects that represents a task
 */
-public class PVRTask: NSObject,NSCoding
+public class PVRTask: NSObject,NSCoding,NSCopying
 {
     //Properties
     //Data
@@ -61,6 +61,11 @@ public class PVRTask: NSObject,NSCoding
         aCoder.encode(self.duration , forKey: "duration")
         aCoder.encode(self.completion, forKey: "completion")
         aCoder.encode(self.descript, forKey: "descript")
+    }
+
+    //NSCopying
+    public func copy(with zone: NSZone? = nil) -> Any {
+        return PVRTask(name: self.name, deadline: self.deadline, duration: self.duration, subject: self.subject, description: self.descript)
     }
 
     /*
@@ -185,6 +190,11 @@ public class PVRRepeatTask: PVRTask
         aCoder.encode(self.descript, forKey: "descript")
     }
 
+    //NSCopying
+    public override func copy(with zone: NSZone?) -> Any {
+        return PVRRepeatTask(name: self.name, duration: self.duration, repeat_loop: self.repeat_loop, subject: self.subject, description: self.description, deadline: self.deadline)
+    }
+    
     //Data
 
     /*

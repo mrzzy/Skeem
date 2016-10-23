@@ -20,6 +20,10 @@ public enum PVRDataViewError:Error
 }
 public class PVRDataView: PVRDatabase
 {
+    //Properties
+    weak var DB:PVRDatabase!
+
+
     //Methods
 
     /*
@@ -29,7 +33,11 @@ public class PVRDataView: PVRDatabase
     */
     init(db:PVRDatabase)
     {
-        self.loadFromDB(db: db)
+        self.DB = db
+
+        super.init()
+        
+        self.loadFromDB()
     }
 
     //Disabled Methods
@@ -45,18 +53,23 @@ public class PVRDataView: PVRDatabase
 
     //Data
     /*
-     * public func loadFromDB(db:PVRDatabase)
-     * - Copies data from Database db
-     * [Argument]
-     * db - The Database to copy from
+     * public func loadFromDB()
+     * - Copies data from Database
     */
-    public func loadFromDB(db:PVRDatabase)
+    public func loadFromDB()
     {
         //Copy Database data
-        self.task = db.task
-        self.voidDuration = db.voidDuration
-        self.cache = db.cache
-        self.mcache = db.mcache
+        for (name,task) in self.DB.task
+        {
+            self.task[name] = (task.copy() as! PVRTask)
+        }
+        for (name,voidd) in self.DB.voidDuration
+        {
+            self.voidDuration[name] = (voidd.copy() as! PVRVoidDuration)
+        }
+
+        self.cache = self.DB.cache
+        self.mcache = self.DB.mcache
     }
 
     //Simulation
