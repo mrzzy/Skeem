@@ -8,24 +8,30 @@
 
 import UIKit
 
-public protocol PVRTaskProt
+/*
+ * public class PVRTask: NSObject,NSCoding
+ * - Defines an objects that represents a task
+*/
+public class PVRTask: NSObject,NSCoding
 {
-    //Status Func
-    func status_complete() -> Bool
+    //Properties
+    //Data
+    var name:String /*name of tha task*/
+    var subject:String /*subject of the task*/
+    var descript:String /*description of the task*/
+    var deadline:NSDate /*date/time task must be finished*/
+    var duration:Int /*duration that the task takes to complete in seconds*/
+    var completion:Double = 0.0 /*0.0<=x<=1.0, where x represents how much of the task is completed*/
 
-    //Manipulation Func
-    func complete()
-    func nextTask()
-}
-
-public class PVRTask: NSObject,NSCoding,PVRTaskProt{
-    var name:String
-    var subject:String
-    var descript:String
-    var deadline:NSDate
-    var duration:Int
-    var completion:Double = 0.0
-    
+    /*
+     * init(name:String, deadline:NSDate, duration:Int, subject:String,description:String)
+     * [Argument]
+     * name - name of the task
+     * deadline - date/time task must be finished
+     * duration - duration of time in seconds that the task needs to complete
+     * subject - subject of the task
+     * description - description of the task
+    */
     init(name:String, deadline:NSDate, duration:Int, subject:String,description:String)
     {
         self.name = name
@@ -34,7 +40,8 @@ public class PVRTask: NSObject,NSCoding,PVRTaskProt{
         self.duration = duration
         self.descript = description
     }
-    
+
+    //NSCoding
     required public convenience init?(coder aDecoder: NSCoder) {
         let name = (aDecoder.decodeObject(forKey: "name") as! String)
         let subject = (aDecoder.decodeObject(forKey: "subject") as! String)
@@ -56,7 +63,13 @@ public class PVRTask: NSObject,NSCoding,PVRTaskProt{
         aCoder.encode(self.descript, forKey: "descript")
     }
 
-    public func status_complete() -> Bool
+    /*
+     * public func vaild() -> Bool
+     * - Determines if the task is still vaild
+     * [Return]
+     * Bool - true if task is vaild, false otherwise
+    */
+    public func vaild() -> Bool
     {
         if self.deadline.compare(Date()) != ComparisonResult.orderedDescending && self.completion != 1.0
         {
@@ -68,15 +81,29 @@ public class PVRTask: NSObject,NSCoding,PVRTaskProt{
         }
     }
 
+    /*
+     * public func complete()
+     * - Mark task as complete (invailate)
+    */
     public func complete()
     {
         self.completion = 1.0
     }
 
+    /*
+     * public func nextTask()
+     * - Reset task to describe the next task in seqence
+    */
     public func nextTask() {
         //Do Nothing
     }
 
+    /*
+     * public func priority() -> Double
+     * - Returns task priority based on task.duration and task.deadline
+     * [Return]
+     * Double - Priority of task
+    */
     public func priority() -> Double
     {
         let factor = Double(self.duration)
@@ -86,19 +113,30 @@ public class PVRTask: NSObject,NSCoding,PVRTaskProt{
 }
 
 /*
- PVRRepeatTask describes an repeatitive task, with the following admendments to the following variables
- | PVRRepeatTask.deadline points to the next due date
- | PVRRepeatTask.duration and PVRRepeatTask.point to current task
-
-*/
+ * public class PVRRepeatTask: PVRTask
+ * - Defines an object that represents a task that repeats
+ */
 public class PVRRepeatTask: PVRTask
 {
-    var repeat_duration:Int
-    var repeat_loop:[TimeInterval]  //Repeat Run Loop
-    var repeat_index:Int
-    var repeat_enabled:Bool
-    var repeat_deadline:NSDate?
+    //Properties
+    //Repeat
+    var repeat_duration:Int /* Duration of each repeat of the task */
+    var repeat_loop:[TimeInterval] /* List of time intervals to increment per repeat of task */
+    var repeat_index:Int /* Current position in repeat_loop */
+    var repeat_enabled:Bool /* Whether repeat is enabled */
+    var repeat_deadline:NSDate? /* date/time when repeat will terminate. */
 
+    //Init
+    /*
+     * init(name:String, deadline:NSDate, duration:Int, subject:String,description:String)
+     * [Argument]
+     * name - name of the task
+     * duration - duration of time in seconds that the task needs to complete
+     * repeat_loop - List of time intervals to increment per repeat of task
+     * subject - subject of the task
+     * description - description of the task
+     * deadline - date/time task must be finished
+     */
     init(name:String, duration:Int, repeat_loop:[TimeInterval],subject:String,description:String,deadline:NSDate? = nil)
     {
         self.repeat_loop = repeat_loop
@@ -111,6 +149,7 @@ public class PVRRepeatTask: PVRTask
         self.nextTask()
     }
 
+    //NSCoding
     required public convenience init?(coder aDecoder: NSCoder) {
         let name = (aDecoder.decodeObject(forKey: "name") as! String)
         let subject = (aDecoder.decodeObject(forKey: "subject") as! String)
@@ -142,7 +181,15 @@ public class PVRRepeatTask: PVRTask
         aCoder.encode(self.descript, forKey: "descript")
     }
 
-    public override func status_complete() -> Bool {
+    //Data
+
+    /*
+     * public func vaild() -> Bool
+     * - Determines if the task is still vaild
+     * [Return]
+     * Bool - true if task is vaild, false otherwise
+     */
+    public override func vaild() -> Bool {
         if self.repeat_enabled == false || self.repeat_deadline?.compare(Date()) != ComparisonResult.orderedDescending
         {
             return true
@@ -153,6 +200,10 @@ public class PVRRepeatTask: PVRTask
         }
     }
 
+    /*
+     * public override func nextTask() 
+     * - Resets task data for next task in sequence
+    */
     public override func nextTask() {
         //Update Only if deadline is outdated
         if self.deadline.compare(Date()) != ComparisonResult.orderedDescending

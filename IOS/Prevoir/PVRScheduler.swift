@@ -8,7 +8,14 @@
 
 import UIKit
 
+/*
+ * public class PVRScheduler : NSObject
+ * - Determines Schedulable time from void duration
+ * - Schedules Tasks based on attribute
+*/
 public class PVRScheduler: NSObject
 {
-
+    //Properties
+    var sch_duration:[PVRDuration] /* Duration where we can schedule tasks*/
+    var sch_list:[PVRTask] /* Tasks determined pirority */
 }
