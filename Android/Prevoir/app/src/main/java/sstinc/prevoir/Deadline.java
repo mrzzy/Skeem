@@ -1,20 +1,35 @@
 package sstinc.prevoir;
 
 class Deadline {
-    private long taskId = -1;
-    Datetime deadline;
-    boolean hasDueTime;
+    private long taskId;
+    private Datetime deadline;
+    private boolean hasDueTime;
+
+    Deadline() {
+        this.deadline = new Datetime();
+        this.hasDueTime = false;
+        this.taskId = -1;
+    }
 
     Deadline(Datetime deadline) {
         this.deadline = deadline;
         this.hasDueTime = deadline.hasTime();
+        this.taskId = -1;
     }
 
-    void setId(long newId) {
-        this.taskId = newId;
+    Deadline(Deadline deadline) {
+        this.deadline = deadline.getDeadline();
+        this.hasDueTime = deadline.getHasDueTime();
+        this.taskId = deadline.getId();
     }
 
-    long getId() {
-        return this.taskId;
+    void setDeadline(Datetime deadline) {
+        this.deadline = deadline;
+        this.hasDueTime = this.deadline.hasTime();
     }
+
+    void setId(long id) { this.taskId = id; }
+    Datetime getDeadline() { return this.deadline; }
+    boolean getHasDueTime() { return this.hasDueTime; }
+    long getId() { return this.taskId; }
 }

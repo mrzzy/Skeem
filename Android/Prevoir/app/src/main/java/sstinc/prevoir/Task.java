@@ -70,7 +70,7 @@ class Task extends Schedulable implements Parcelable {
         String[] string_weekDays = new String[arrayList_string_weekDays.size()];
         string_weekDays = arrayList_string_weekDays.toArray(string_weekDays);
         out.writeStringArray(string_weekDays);
-        out.writeString(deadline.deadline.toString());
+        out.writeString(deadline.getDeadline().toString());
         out.writeString(description);
         out.writeString(duration.toString());
         out.writeString(min_time_period.toString());

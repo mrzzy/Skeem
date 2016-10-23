@@ -167,7 +167,7 @@ class DbAdapter {
         values.put(DbAdapter.DEADLINES_TABLE_COL_TASK_ID, task.getId());
 
         values.put(DbAdapter.DEADLINES_TABLE_COL_DEADLINE_DATETIME,
-                task.deadline.deadline.toString());
+                task.deadline.getDeadline().toString());
         SQLdb.insert(DbAdapter.DEADLINES_TABLE, null, values);
 
         // Days Table
@@ -341,7 +341,7 @@ class DbAdapter {
         // Deadlines Table
         values = new ContentValues();
         values.put(DbAdapter.DEADLINES_TABLE_COL_DEADLINE_DATETIME,
-                newTask.deadline.deadline.toString());
+                newTask.deadline.getDeadline().toString());
         SQLdb.update(DbAdapter.DEADLINES_TABLE, values,
                 DEADLINES_TABLE_COL_TASK_ID + "=" + taskId, null);
 

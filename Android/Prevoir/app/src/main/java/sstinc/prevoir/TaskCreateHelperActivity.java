@@ -232,9 +232,9 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
             }
 
             // Deadline
-            datePicker_deadline.updateDate(task.deadline.deadline.getYear(),
-                    task.deadline. deadline.getMonth(), task.deadline.deadline.getDay());
-            if (task.deadline.hasDueTime) {
+            datePicker_deadline.updateDate(task.deadline.getDeadline().getYear(),
+                    task.deadline.getDeadline().getMonth(), task.deadline.getDeadline().getDay());
+            if (task.deadline.getHasDueTime()) {
                 ScrollableTimePicker timePicker_deadline = (ScrollableTimePicker) findViewById(
                         R.id.time_picker_deadline);
 
@@ -242,8 +242,8 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
                 timePicker_deadline.setVisibility(View.VISIBLE);
 
                 // Set time for time picker
-                timePicker_deadline.setCurrentHour(task.deadline.deadline.getHour());
-                timePicker_deadline.setCurrentMinute(task.deadline.deadline.getMinute());
+                timePicker_deadline.setCurrentHour(task.deadline.getDeadline().getHour());
+                timePicker_deadline.setCurrentMinute(task.deadline.getDeadline().getMinute());
             }
         }
     }
