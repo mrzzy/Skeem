@@ -21,6 +21,7 @@ public class PVRTask: NSObject,NSCoding,NSCopying
     var descript:String /*description of the task*/
     var deadline:NSDate /*date/time task must be finished*/
     var duration:Int /*duration that the task takes to complete in seconds*/
+    var duration_affinity:Int /* User desired subtask length*/
     var completion:Double = 0.0 /*0.0<=x<=1.0, where x represents how much of the task is completed*/
 
     /*
@@ -29,15 +30,17 @@ public class PVRTask: NSObject,NSCoding,NSCopying
      * name - name of the task
      * deadline - date/time task must be finished
      * duration - duration of time in seconds that the task needs to complete
+     * duration_affinity - user desired subtask length
      * subject - subject of the task
      * description - description of the task
     */
-    init(name:String, deadline:NSDate, duration:Int, subject:String,description:String)
+    init(name:String, deadline:NSDate, duration:Int,duration_affinity:Int, subject:String,description:String)
     {
         self.name = name
         self.subject = subject
         self.deadline = deadline
         self.duration = duration
+        self.duration_affinity = duration_affinity
         self.descript = description
     }
 
@@ -47,10 +50,11 @@ public class PVRTask: NSObject,NSCoding,NSCopying
         let subject = (aDecoder.decodeObject(forKey: "subject") as! String)
         let deadline = (aDecoder.decodeObject(forKey: "deadline") as! NSDate)
         let duration = aDecoder.decodeInteger(forKey: "duration")
+        let duration_affinity = aDecoder.decodeInteger(forKey: "duration_affinity")
         let completion = aDecoder.decodeDouble(forKey: "completion")
         let descript = (aDecoder.decodeObject(forKey: "descript") as! String)
 
-        self.init(name: name, deadline: deadline, duration: duration, subject: subject,description:descript)
+        self.init(name: name, deadline: deadline, duration: duration, duration_affinity:duration_affinity, subject: subject,description:descript)
         self.completion = completion
     }
     
@@ -59,13 +63,14 @@ public class PVRTask: NSObject,NSCoding,NSCopying
         aCoder.encode(self.subject, forKey: "subject")
         aCoder.encode(self.deadline, forKey: "deadline")
         aCoder.encode(self.duration , forKey: "duration")
+        aCoder.encode(self.duration_affinity, forKey: "duration_affinity")
         aCoder.encode(self.completion, forKey: "completion")
         aCoder.encode(self.descript, forKey: "descript")
     }
 
     //NSCopying
     public func copy(with zone: NSZone? = nil) -> Any {
-        return PVRTask(name: self.name, deadline: self.deadline, duration: self.duration, subject: self.subject, description: self.descript)
+        return PVRTask(name: self.name, deadline: self.deadline, duration: self.duration, duration_affinity: self.duration_affinity, subject: self.subject, description: self.descript)
     }
 
     /*
@@ -142,12 +147,13 @@ public class PVRRepeatTask: PVRTask
      * [Argument]
      * name - name of the task
      * duration - duration of time in seconds that the task needs to complete
+     * duration_affinity - user desired subtask length
      * repeat_loop - List of time intervals to increment per repeat of task
      * subject - subject of the task
      * description - description of the task
      * deadline - date/time task must be finished
      */
-    init(name:String, duration:Int, repeat_loop:[TimeInterval],subject:String,description:String,deadline:NSDate? = nil)
+    init(name:String, duration:Int,duration_affinity:Int, repeat_loop:[TimeInterval],subject:String,description:String,deadline:NSDate? = nil)
     {
         self.repeat_loop = repeat_loop
         self.repeat_enabled = true
@@ -155,7 +161,7 @@ public class PVRRepeatTask: PVRTask
         self.repeat_duration = duration
         self.repeat_deadline = deadline
 
-        super.init(name: name, deadline: NSDate(), duration:duration , subject:subject,description:description)
+        super.init(name: name, deadline: NSDate(), duration:duration, duration_affinity:duration_affinity, subject:subject,description:description)
     }
 
     //NSCoding
@@ -164,6 +170,7 @@ public class PVRRepeatTask: PVRTask
         let subject = (aDecoder.decodeObject(forKey: "subject") as! String)
         let deadline = (aDecoder.decodeObject(forKey: "deadline") as! NSDate)
         let duration = aDecoder.decodeInteger(forKey: "duration")
+        let duration_affinity = aDecoder.decodeInteger(forKey: "duration_affinity")
         let completion = aDecoder.decodeDouble(forKey: "completion")
         let repeat_loop = (aDecoder.decodeObject(forKey: "repeat_loop") as! [TimeInterval])
         let repeat_enabled = aDecoder.decodeBool(forKey: "repeat_enabled")
@@ -171,7 +178,7 @@ public class PVRRepeatTask: PVRTask
         let repeat_duration = aDecoder.decodeInteger(forKey: "repeat_duration")
         let descript = (aDecoder.decodeObject(forKey: "descript") as! String)
 
-        self.init(name: name, duration: duration,repeat_loop: repeat_loop, subject: subject,description: descript,deadline: deadline)
+        self.init(name: name, duration: duration,duration_affinity:duration_affinity, repeat_loop: repeat_loop, subject: subject,description: descript,deadline: deadline)
         self.completion = completion
         self.repeat_enabled = repeat_enabled
         self.repeat_index = repeat_index
@@ -183,6 +190,7 @@ public class PVRRepeatTask: PVRTask
         aCoder.encode(self.subject, forKey: "subject")
         aCoder.encode(self.deadline, forKey: "deadline")
         aCoder.encode(self.duration , forKey: "duration")
+        aCoder.encode(self.duration_affinity, forKey: "duration_affinity")
         aCoder.encode(self.completion, forKey: "completion")
         aCoder.encode(self.repeat_loop, forKey: "repeat_loop")
         aCoder.encode(self.repeat_enabled, forKey: "repeat_enabled")
@@ -192,7 +200,7 @@ public class PVRRepeatTask: PVRTask
 
     //NSCopying
     public override func copy(with zone: NSZone?) -> Any {
-        return PVRRepeatTask(name: self.name, duration: self.duration, repeat_loop: self.repeat_loop, subject: self.subject, description: self.description, deadline: self.deadline)
+        return PVRRepeatTask(name: self.name, duration: self.duration, duration_affinity:self.duration_affinity,repeat_loop: self.repeat_loop, subject: self.subject, description: self.description, deadline: self.deadline)
     }
     
     //Data

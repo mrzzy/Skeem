@@ -27,10 +27,11 @@ public class PVRScheduler: NSObject
     weak var dataCtrl:PVRDataController! /* Link to Data Controller
                                           * NOTE: Will Terminate executable if Missing
                                          */
+    var dataViewCtrl:PVRDataController /*Link to Data View Data controller */
+    var dataView:PVRDataView /*Link to Data View */
 
     //Data
-    var dataViewCtrl:PVRDataController
-    var dataView:PVRDataView
+    var scheduleDuration:[PVRDuration] /* Schedulable Duration sorted by date until Last Task Date*/
 
     //Methods
     /*
@@ -43,6 +44,7 @@ public class PVRScheduler: NSObject
         self.dataCtrl = dataCtrl
         self.dataView = PVRDataView(db: dataCtrl.DB)
         self.dataViewCtrl = PVRDataController(db: self.dataView)
+        self.scheduleDuration = []
 
         super.init()
     }
@@ -65,50 +67,4 @@ public class PVRScheduler: NSObject
         }
     }
 
-    /*
-     * public func generateDuration() -> [PVRDuration]
-     * - Generates Schedulable Durations from Void Durations
-     * [Return]
-     * Array<PVRDuration> - Array of schedulable durations
-    */
-    public func generateDuration() throws -> [PVRDuration]
-    {
-        //Data Check
-        if self.dataView.voidDuration.count > 1
-        {
-            throw PVRSchedulerError.DataMissing
-        }
-
-        self.dataView.loadFromDB() //Reset Data View
-        let last_date = self.lastTaskDate()
-        var current_time = NSDate()
-        var current_voidd = self.dataViewCtrl.sortedVoidDuration(sattr: PVRVoidDurationSort.begin).last!
-        var arr_duration = Array<PVRDuration>()
-
-        //Compute Schedulable Duration
-        while current_time.compare(current_voidd.begin as Date) == ComparisonResult.orderedAscending
-        {
-            //current date/time < current void duration begin date/time
-            //Duration from current date/time to void duration begin date/time
-            let time = current_voidd.begin.timeIntervalSince(current_voidd.begin as Date)
-            let duration = PVRDuration(begin: current_time, duration: Int(time))
-            arr_duration.append(duration)
-
-            //Prepare for Next Interation
-            let time_increment = current_voidd.begin.timeIntervalSince(current_time as Date) + TimeInterval(current_voidd.duration) + 1
-            current_time = current_time.addingTimeInterval(time_increment) //Right After Void Duration
-            self.dataView.simulateDate(date: current_time)
-            self.dataViewCtrl.pruneVoidDuration() //Remove Now Invaild Void Duration
-            if self.dataView.voidDuration.count > 1
-            {
-                break
-            }
-            else
-            {
-                current_voidd = self.dataViewCtrl.sortedVoidDuration(sattr: PVRVoidDurationSort.begin).last!
-            }
-        }
-    }
-
-    //public func crt_subtask()
 }

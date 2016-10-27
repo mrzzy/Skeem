@@ -75,12 +75,13 @@ public class PVRDataController: NSObject
      * description - description of the task
      * deadline - Date/Time that the task must be completed
      * duration - Duration need in seconds to complete task
+     * duration_affinity - User desired subtask length
      * [Return]
      * Bool - true if successful in creating task, false otherwise
     */
-    public func createOneshotTask(name:String,subject:String,description:String,deadline:NSDate,duration:Int) -> Bool
+    public func createOneshotTask(name:String,subject:String,description:String,deadline:NSDate,duration:Int,duration_affinity:Int) -> Bool
     {
-        let crt_task = PVRTask(name: name, deadline: deadline, duration: duration , subject: subject,description:description)
+        let crt_task = PVRTask(name: name, deadline: deadline, duration: duration ,duration_affinity:duration_affinity, subject: subject,description:description)
 
         do
         {
@@ -109,12 +110,13 @@ public class PVRDataController: NSObject
      * repeat_loop - a loop of intervals of time to increment for each repeat.
      * deadline = nil - Date/Time repeat stops
      * duration - Duration need in seconds to complete task
+     * duration_affinity - User desired subtask length
      * [Return]
      * Bool - true if successful in creating task, false otherwise
     */
-    public func createRepeativeTask(name:String,subject:String,description:String,repeat_loop:[TimeInterval],deadline:NSDate? = nil,duration:Int) -> Bool
+    public func createRepeativeTask(name:String,subject:String,description:String,repeat_loop:[TimeInterval],deadline:NSDate? = nil,duration:Int,duration_affinity:Int) -> Bool
     {
-        let crt_rttask = PVRRepeatTask(name: name, duration: duration, repeat_loop: repeat_loop, subject: subject,description:description)
+        let crt_rttask = PVRRepeatTask(name: name, duration: duration,duration_affinity:duration_affinity, repeat_loop: repeat_loop, subject: subject,description:description)
 
         do
         {

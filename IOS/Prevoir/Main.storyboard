@@ -1380,7 +1380,7 @@
                                                         <rect key="frame" x="0.0" y="28" width="359" height="50"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2qC-DO-T6V" id="YMO-Da-W68">
-                                                            <frame key="frameInset" width="359" height="50"/>
+                                                            <frame key="frameInset" width="359" height="49.5"/>
                                                             <autoresizingMask key="autoresizingMask"/>
                                                             <subviews>
                                                                 <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" horizontalCompressionResistancePriority="100" verticalCompressionResistancePriority="100" contentHorizontalAlignment="center" contentVerticalAlignment="center" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="QDA-5R-Qya">

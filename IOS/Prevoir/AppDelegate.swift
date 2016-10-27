@@ -8,12 +8,10 @@
 
 import UIKit
 
-var DB:PVRDatabase!
-var DBC:PVRDataController!
-
 public enum PVRUserDefaultKey:String {
     case suite = "pvr_ud_suite"
     case use = "pvr_ud_use"
+    case setting = "pvr_ud_setting"
 }
 
 @UIApplicationMain
@@ -23,16 +21,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
     //App Status
-    var use_cnt:Int = 0
+    var use_cnt:Int!
+
+    //App Data
+    var DB:PVRDatabase!
+    var DBC:PVRDataController!
+    var setting:[String:NSCoding]!
 
     //Storage
     var ud:UserDefaults!
     
     //MARK:App Delegate
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
-        self.loadAppStatus()
-        DB = PVRDatabase()
-        DBC = PVRDataController(db: DB)
+        //Init Data
+        self.use_cnt = 0
+        self.setting = Dictionary<String,NSCoding>()
+        self.DB = PVRDatabase()
+        self.DBC = PVRDataController(db: DB)
+
+        self.loadUD()
+
         return true
     }
     
@@ -63,7 +71,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     //MARK:Additional Methods
-    public func loadAppStatus()
+    public func loadUD()
     {
         //Load user Defaults
         if let ud = UserDefaults(suiteName: PVRUserDefaultKey.suite.rawValue)
@@ -78,16 +86,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let ud = UserDefaults(suiteName: PVRUserDefaultKey.suite.rawValue)!
             self.ud = ud
         }
-        
-        //Update
-        self.use_cnt += 1
+
+        //Load App Settins If Present
+        if self.use_cnt > 1
+        {
+            self.setting = (ud.object(forKey: PVRUserDefaultKey.setting.rawValue) as! [String : NSCoding])
+        }
+
+        //Update use count
+        self.use_cnt = self.use_cnt + 1
     }
     
-    public func commitAppStatus()
+    public func commitUD()
     {
         //Save App Status
         ud.set(self.use_cnt, forKey: PVRUserDefaultKey.use.rawValue)
-        
+        ud.set(self.setting, forKey: PVRUserDefaultKey.setting.rawValue)
         self.ud.synchronize()
     }
 }
