@@ -1,5 +1,9 @@
 package sstinc.prevoir;
 
+/**
+ * @deprecated Use JodaTime {@link org.joda.time.Period} instead.
+ * @see org.joda.time.Period
+ */
 class Duration {
     private int years;
     private int months;

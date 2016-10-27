@@ -1,10 +1,11 @@
 package sstinc.prevoir;
 
+import org.joda.time.Period;
+
 import java.util.Calendar;
 import java.util.Locale;
 
 //TODO: Locale datetime string format
-//TODO: Check dependency with Duration
 
 /**
  * This class handles information relating to an instance in time using
@@ -196,23 +197,22 @@ class Datetime {
     }
 
     /**
-     * Returns the a new datetime instance with the duration added.
+     * Returns the a new datetime instance with the period added.
      *
-     * @see Duration
-     * @param duration the duration to add
-     * @return new datetime instance with duration added
+     * @see Period
+     * @param period the period to add
+     * @return new datetime instance with period added
      */
-    Datetime add(Duration duration) {
-        //TODO: Check dependency with Duration
+    Datetime add(Period period) {
         // Clone current calendar instance to calculate new datetime
         Calendar calendar = (Calendar) this.calendar.clone();
-        // Add the duration to the calendar
-        calendar.add(Calendar.YEAR, duration.getYears());
-        calendar.add(Calendar.MONTH, duration.getMonths());
-        calendar.add(Calendar.DAY_OF_MONTH, duration.getDays());
+        // Add the period to the calendar
+        calendar.add(Calendar.YEAR, period.getYears());
+        calendar.add(Calendar.MONTH, period.getMonths());
+        calendar.add(Calendar.DAY_OF_MONTH, period.getDays());
 
-        calendar.add(Calendar.HOUR_OF_DAY, duration.getHours());
-        calendar.add(Calendar.MINUTE, duration.getMinutes());
+        calendar.add(Calendar.HOUR_OF_DAY, period.getHours());
+        calendar.add(Calendar.MINUTE, period.getMinutes());
         // New datetime instance
         Datetime datetime = new Datetime();
         // Set calendar values
@@ -227,23 +227,22 @@ class Datetime {
     }
 
     /**
-     * Returns the a new datetime instance with the duration subtracted.
+     * Returns the a new datetime instance with the period subtracted.
      *
-     * @see Duration
-     * @param duration the duration to subtract
-     * @return new datetime instance with duration subtracted
+     * @see Period
+     * @param period the period to subtract
+     * @return new datetime instance with period subtracted
      */
-    Datetime subtract(Duration duration) {
-        //TODO: Check dependency with Duration
+    Datetime subtract(Period period) {
         // Clone current calendar instance to calculate new datetime
         Calendar calendar = (Calendar) this.calendar.clone();
-        // Subtract the duration to the calendar
-        calendar.add(Calendar.YEAR, -duration.getYears());
-        calendar.add(Calendar.MONTH, -duration.getMonths());
-        calendar.add(Calendar.DAY_OF_MONTH, -duration.getDays());
+        // Subtract the period to the calendar
+        calendar.add(Calendar.YEAR, -period.getYears());
+        calendar.add(Calendar.MONTH, -period.getMonths());
+        calendar.add(Calendar.DAY_OF_MONTH, -period.getDays());
 
-        calendar.add(Calendar.HOUR_OF_DAY, -duration.getHours());
-        calendar.add(Calendar.MINUTE, -duration.getMinutes());
+        calendar.add(Calendar.HOUR_OF_DAY, -period.getHours());
+        calendar.add(Calendar.MINUTE, -period.getMinutes());
         // New datetime instance
         Datetime datetime = new Datetime();
         // Set calendar values
