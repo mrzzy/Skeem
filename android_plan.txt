@@ -1,0 +1,34 @@
+PHASE 1: Create Objects
+Datetime
+    |- (Calendar)       calendar
+    |- (Boolean)        hasDate
+    |- (Boolean)        hasTime
+    |- Datetime getters and setters
+    |- Add date
+    |- Subtract date
+    |- toString()
+    |- toFormattedString(String format)
+    |- Copy constructor
+
+WeekDays
+    |- enum weekDays
+    |- toString()
+
+Schedulable
+    |- Task
+        |- (String)     name
+        |- (String)     description
+        |- (String)     subject
+        |- (Duration)   duration
+        |- (Duration)   min_time_period
+        |- (Datetime)   deadline
+    |- Voidblock
+        
+    |- Timeblock
+        |- (ArrayList<Task>) tasks_scheduled
+        |- (Datetime) from
+        |- (Datetime) to
+        |- (Duration) duration_used
+        |- (Duration) duration_left
+        |- (Duration) duration_total
+        |- addTask(Task task)
