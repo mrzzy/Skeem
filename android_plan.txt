@@ -15,15 +15,17 @@ WeekDays
     |- toString()
 
 Schedulable
-    |- Task
+    |- Task (Parcelable)
         |- (String)     name
         |- (String)     description
         |- (String)     subject
         |- (Duration)   duration
         |- (Duration)   min_time_period
         |- (Datetime)   deadline
-    |- Voidblock
-        
+    |- Voidblock (Parcelable)
+        |- (String)     name
+        |- (Datetime)   from
+        |- (Datetime)   to
     |- Timeblock
         |- (ArrayList<Task>) tasks_scheduled
         |- (Datetime) from
