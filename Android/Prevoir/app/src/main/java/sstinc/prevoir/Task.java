@@ -2,64 +2,122 @@ package sstinc.prevoir;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
+
+import org.joda.time.Period;
+import org.joda.time.format.PeriodFormatter;
 
 import java.util.ArrayList;
 
+//TODO: Remove Deadline Class
+
+/**
+ * This class handles information relating to each task. Each task has a
+ * name, description, subject, deadline, period needed and minimum period
+ * needed. Once the task is scheduled, it would have a scheduled time to
+ * start and stop as well. The task extends {@link Schedulable} and
+ * implements {@link Parcelable}.
+ *
+ * @see Schedulable
+ * @see Parcelable
+ * @see Period
+ * @see Datetime
+ */
 class Task extends Schedulable implements Parcelable {
-    boolean checked = false;
+    private final PeriodFormatter string_format = new PeriodFormatter();
 
-    Datetime scheduled_start;
-    Datetime scheduled_end;
+    private String name;
+    private String description;
+    private String subject;
 
-    String name = "";
-    String subject = "";
+    private WeekDays weekDays;
 
-    enum WeekDay {MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY}
-    ArrayList<WeekDay> weekDays;
-    Deadline deadline;
-    String description;
-    Duration duration;
-    Duration min_time_period;
+    private Period period_needed;
+    private Period period_minimum;
 
+    private Datetime scheduled_start;
+    private Datetime scheduled_stop;
+    private Datetime deadline;
+
+    /**
+     * Default constructor. Sets the name, description and subject to empty
+     * strings. Instantiates the other variables with their default empty
+     * constructors.
+     */
+    Task() {
+        this.name = "";
+        this.description = "";
+        this.subject = "";
+
+        this.weekDays = new WeekDays();
+
+        this.period_needed = new Period();
+        this.period_minimum = new Period();
+
+        this.scheduled_start = new Datetime();
+        this.scheduled_stop = new Datetime();
+        this.deadline = new Datetime();
+    }
+
+    // Copy constructor
     Task(Task task) {
-        this.name = task.name;
-        this.subject = task.subject;
-        this.weekDays = task.weekDays;
-        this.deadline = task.deadline;
-        this.description = task.description;
-        this.duration = task.duration;
-        this.min_time_period = task.min_time_period;
-        this.scheduled_start = task.scheduled_start;
-        this.scheduled_end = task.scheduled_end;
+        this.name = task.getName();
+        this.description = task.getDescription();
+        this.subject = task.getSubject();
+
+        this.weekDays = new WeekDays(task.getWeekDays());
+
+        this.period_needed = new Period(task.getPeriodNeeded());
+        this.period_minimum = new Period(task.getPeriodMinimum());
+
+        this.scheduled_start = new Datetime(task.getScheduledStart());
+        this.scheduled_stop = new Datetime(task.getScheduledStop());
+        this.deadline = new Datetime(task.getDeadline());
     }
 
-    Task(String name, String subject, ArrayList<WeekDay> weekdays,
-                Deadline deadline, String description, Duration duration,
-                Duration min_time_period) {
+    /**
+     * Basic constructor. Allows you to set the name, description and
+     * subject. Instantiates the other variables with their default empty
+     * constructors.
+     *
+     * @param name the task's name
+     * @param description the task's description
+     * @param subject the task's subject
+     */
+    Task(String name, String description, String subject) {
         this.name = name;
-        this.subject = subject;
-        this.weekDays = weekdays;
-        this.deadline = deadline;
         this.description = description;
-        this.duration = duration;
-        this.min_time_period = min_time_period;
+        this.subject = subject;
+
+        this.period_needed = new Period();
+        this.period_minimum = new Period();
+
+        this.scheduled_start = new Datetime();
+        this.scheduled_stop = new Datetime();
+        this.deadline = new Datetime();
     }
 
-    @Override
-    public void setId(long newId) {
-        this.id = newId;
-        this.deadline.setId(newId);
-    }
-
+    // Empty describe contents function for parcel
     @Override
     public int describeContents() {
         return 0;
     }
 
+    /**
+     * Function to write the data into a parcelable object.
+     *
+     * @param out parcel to write to
+     * @param flags other flags
+     */
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        // Write to parcel
+        out.writeString(this.name);
+        out.writeString(this.description);
+        out.writeString(this.subject);
+
+        out.writeStringArray(this.weekDays.toStringArray());
+
+        //TODO
+
         out.writeString(name);
         out.writeString(subject);
         // Convert weekDays to string
@@ -77,6 +135,7 @@ class Task extends Schedulable implements Parcelable {
         out.writeLong(this.getId());
     }
 
+    // Creator constant for parcel
     public static final Parcelable.Creator<Task> CREATOR = new Parcelable.Creator<Task>() {
         public Task createFromParcel(Parcel in) {
             return new Task(in);
@@ -87,11 +146,19 @@ class Task extends Schedulable implements Parcelable {
         }
     };
 
+    /**
+     * Function to read data from the task's parcel.
+     *
+     * @param in parcel to read from
+     */
     private Task(Parcel in) {
-        // Read from parcel
         this.name = in.readString();
+        this.description = in.readString();
         this.subject = in.readString();
-        Log.w(this.getClass().getName(), "Subject: " + this.subject);
+
+        //TODO
+        this.weekDays = in.readStringArray();;
+
         this.weekDays = new ArrayList<>();
         String[] string_weekDays = in.createStringArray();
         for (String string_weekday : string_weekDays) {
