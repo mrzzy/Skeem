@@ -18,6 +18,7 @@
 		5A87A27B1DBCE40900A206B9 /* PVRDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A87A27A1DBCE40900A206B9 /* PVRDataView.swift */; };
 		5AA4406E1DAF488F005B0E70 /* PVRTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA4406D1DAF488F005B0E70 /* PVRTask.swift */; };
 		5AA440701DAF81B3005B0E70 /* PVRDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA4406F1DAF81B3005B0E70 /* PVRDatabase.swift */; };
+		5AB7343B1DC499A500CCCC98 /* PVRSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB7343A1DC499A500CCCC98 /* PVRSetting.swift */; };
 		5AD59AA01DB4DD130076FF0B /* PVRDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AD59A9F1DB4DD130076FF0B /* PVRDataController.swift */; };
 /* End PBXBuildFile section */
 
@@ -35,6 +36,7 @@
 		5A87A27A1DBCE40900A206B9 /* PVRDataView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRDataView.swift; sourceTree = "<group>"; };
 		5AA4406D1DAF488F005B0E70 /* PVRTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRTask.swift; sourceTree = "<group>"; };
 		5AA4406F1DAF81B3005B0E70 /* PVRDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PVRDatabase.swift; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; wrapsLines = 1; };
+		5AB7343A1DC499A500CCCC98 /* PVRSetting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRSetting.swift; sourceTree = "<group>"; };
 		5AD59A9F1DB4DD130076FF0B /* PVRDataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRDataController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -110,6 +112,7 @@
 		5AA4406C1DAF4873005B0E70 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				5AB7343A1DC499A500CCCC98 /* PVRSetting.swift */,
 				5AA4406F1DAF81B3005B0E70 /* PVRDatabase.swift */,
 				5AD59A9F1DB4DD130076FF0B /* PVRDataController.swift */,
 				5A87A27A1DBCE40900A206B9 /* PVRDataView.swift */,
@@ -193,6 +196,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5AA4406E1DAF488F005B0E70 /* PVRTask.swift in Sources */,
+				5AB7343B1DC499A500CCCC98 /* PVRSetting.swift in Sources */,
 				5AA440701DAF81B3005B0E70 /* PVRDatabase.swift in Sources */,
 				5AD59AA01DB4DD130076FF0B /* PVRDataController.swift in Sources */,
 				5A4083D01DAB68FC0057E896 /* PVRScheduler.swift in Sources */,
