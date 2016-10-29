@@ -268,7 +268,7 @@ public enum PVRTaskSort
     case name //Sort by name
     case deadline //Sort by deadline date/time
     case duration //Sort by duration
-    case priority //Sort by priority
+
 }
 
 /*

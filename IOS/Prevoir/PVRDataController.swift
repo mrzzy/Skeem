@@ -276,8 +276,6 @@ public class PVRDataController: NSObject
                 return task.sorted(by:PVRTaskSortFunc.deadline)
             case PVRTaskSort.duration:
                 return task.sorted(by:PVRTaskSortFunc.duration)
-            case PVRTaskSort.priority:
-                return task.sorted(by:PVRTaskSortFunc.priority)
             }
         }
         else
