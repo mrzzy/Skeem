@@ -162,8 +162,6 @@ public class PVRRepeatTask: PVRTask
         self.repeat_deadline = deadline
 
         super.init(name: name, deadline: NSDate(), duration:duration, duration_affinity:duration_affinity, subject:subject,description:description)
-
-        self.update(date: NSDate()) //Update Deadline to current date
     }
 
     //NSCoding
@@ -234,28 +232,33 @@ public class PVRRepeatTask: PVRTask
      */
     public override func update(date: NSDate)
     {
-        if self.deadline.compare(date as Date) == ComparisonResult.orderedAscending
+        //Prepare Data
+        var rpt_idx_fwd = self.repeat_index &+ 1 //Overflow Addition
+        var tint_fwd = self.repeat_loop[rpt_idx_fwd % self.repeat_loop.count]
+        var rpt_idx_bwd = self.repeat_index &- 1 //Overflow Subtraction
+        var tint_bwd = -(self.repeat_loop[rpt_idx_bwd % self.repeat_loop.count])
+
+        if self.deadline.addingTimeInterval(tint_fwd).compare(date as Date) == ComparisonResult.orderedAscending
         {
-            //current deadline earlier than virtual current date
-            //Update Forwards in Time
-            while self.deadline.compare(date as Date) == ComparisonResult.orderedAscending
+            while self.deadline.addingTimeInterval(tint_fwd).compare(date as Date) == ComparisonResult.orderedAscending
             {
-                //Update Void Duration Data
-                self.repeat_index = self.repeat_index &+ 1 //Overflow Addition
-                let tint = self.repeat_loop[self.repeat_index % self.repeat_loop.count]
-                self.deadline = NSDate(timeInterval: tint, since: (self.deadline as Date))
+                //Update Task Data
+                rpt_idx_fwd = rpt_idx_fwd &+ 1 //Overflow Addition
+                tint_fwd = self.repeat_loop[rpt_idx_fwd % self.repeat_loop.count]
+                self.deadline = NSDate(timeInterval: tint_fwd, since: (self.deadline as Date))
             }
+            self.repeat_index = rpt_idx_fwd
         }
-        else if self.deadline.compare(date as Date) == ComparisonResult.orderedDescending
+        else if self.deadline.addingTimeInterval(tint_bwd).compare(date as Date) == ComparisonResult.orderedDescending
         {
-            //current deadline is later than virtual current date
+            //current begin is later than virtual current date
             //Update Backwards in Time
-            while self.deadline.compare(date as Date) == ComparisonResult.orderedDescending
+            while self.deadline.addingTimeInterval(tint_bwd).compare(date as Date) == ComparisonResult.orderedDescending
             {
-                //Update Void Duration Data
-                self.repeat_index = self.repeat_index &- 1 //Overflow Subtraction
-                let tint = -(self.repeat_loop[self.repeat_index % self.repeat_loop.count]) //Negative Time Interval
-                self.deadline = NSDate(timeInterval: tint, since: (self.deadline as Date))
+                //Update Task Data
+                rpt_idx_bwd = rpt_idx_bwd &- 1 //Overflow Subtraction
+                tint_bwd = -(self.repeat_loop[self.repeat_index % self.repeat_loop.count]) //Negative Time Interval
+                self.deadline = NSDate(timeInterval: tint_bwd, since: (self.deadline as Date))
             }
         }
     }

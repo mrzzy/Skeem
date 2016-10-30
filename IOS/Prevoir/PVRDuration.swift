@@ -160,12 +160,13 @@ public class PVRRepeatVoidDuration: PVRVoidDuration
      * asserted = false - Whether void duration asserts to not have task scheduled during the "Duration of Time", true if void duration asserts
      */
     init(begin: NSDate, duration: Int, name: String,repeat_loop:[TimeInterval],deadline:NSDate? = nil, asserted: Bool = false) {
-        self.repeat_enabled = false
+        self.repeat_enabled = true
         self.repeat_loop = repeat_loop
         self.repeat_index = 0
         self.repeat_deadline = deadline
 
         super.init(begin: begin, duration: duration, name: name, asserted: asserted)
+        
     }
 
     //NSCoding
@@ -211,7 +212,7 @@ public class PVRRepeatVoidDuration: PVRVoidDuration
      */
     public override func vaild() -> Bool
     {
-        if self.repeat_enabled == false || self.repeat_deadline?.compare(Date()) != ComparisonResult.orderedDescending
+        if self.repeat_enabled == false || self.repeat_deadline?.compare(Date()) == ComparisonResult.orderedDescending
         {
             return false
         }
@@ -232,28 +233,33 @@ public class PVRRepeatVoidDuration: PVRVoidDuration
      */
     public override func update(date: NSDate)
     {
-        if self.begin.compare(date as Date) == ComparisonResult.orderedAscending
+        //Prepare Data
+        var rpt_idx_fwd = self.repeat_index &+ 1 //Overflow Addition
+        var tint_fwd = self.repeat_loop[rpt_idx_fwd % self.repeat_loop.count]
+        var rpt_idx_bwd = self.repeat_index &- 1 //Overflow Subtraction
+        var tint_bwd = -(self.repeat_loop[rpt_idx_bwd % self.repeat_loop.count])
+
+        if self.begin.addingTimeInterval(tint_fwd).compare(date as Date) == ComparisonResult.orderedAscending
         {
-            //current begin earlier than virtual current date
-            //Update Forwards in Time
-            while self.begin.compare(date as Date) == ComparisonResult.orderedAscending
+            while self.begin.addingTimeInterval(tint_fwd).compare(date as Date) == ComparisonResult.orderedAscending
             {
                 //Update Void Duration Data
-                self.repeat_index = self.repeat_index &+ 1 //Overflow Addition
-                let tint = self.repeat_loop[self.repeat_index % self.repeat_loop.count]
-                self.begin = NSDate(timeInterval: tint, since: (self.begin as Date))
+                rpt_idx_fwd = rpt_idx_fwd &+ 1 //Overflow Addition
+                tint_fwd = self.repeat_loop[rpt_idx_fwd % self.repeat_loop.count]
+                self.begin = NSDate(timeInterval: tint_fwd, since: (self.begin as Date))
             }
+            self.repeat_index = rpt_idx_fwd
         }
-        else if self.begin.compare(date as Date) == ComparisonResult.orderedDescending
+        else if self.begin.addingTimeInterval(tint_bwd).compare(date as Date) == ComparisonResult.orderedDescending
         {
             //current begin is later than virtual current date
             //Update Backwards in Time
-            while self.begin.compare(date as Date) == ComparisonResult.orderedDescending
+            while self.begin.addingTimeInterval(tint_bwd).compare(date as Date) == ComparisonResult.orderedDescending
             {
                 //Update Void Duration Data
-                self.repeat_index = self.repeat_index &- 1 //Overflow Subtraction
-                let tint = -(self.repeat_loop[self.repeat_index % self.repeat_loop.count]) //Negative Time Interval
-                self.begin = NSDate(timeInterval: tint, since: (self.begin as Date))
+                rpt_idx_bwd = rpt_idx_bwd &- 1 //Overflow Subtraction
+                tint_bwd = -(self.repeat_loop[self.repeat_index % self.repeat_loop.count]) //Negative Time Interval
+                self.begin = NSDate(timeInterval: tint_bwd, since: (self.begin as Date))
             }
         }
     }

@@ -106,7 +106,7 @@ public class PVRScheduler: NSObject
             //date < last task date
             //Duration from date to voidd.begin
             let tint = voidd.begin.timeIntervalSince(date)
-            let drsn = PVRDuration(begin: date as NSDate, duration: Int(tint))
+            let drsn = PVRDuration(begin: date as NSDate, duration: Int(round(tint)))
             arr_drsn.append(drsn)
 
             //Update Data
