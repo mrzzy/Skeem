@@ -2,14 +2,12 @@ package sstinc.prevoir;
 
 import java.util.ArrayList;
 
-//TODO: Change Task WeekDays to use this instead. Ensure code uses methods supplied by this class
-
 /**
  * This class handles the task's repeated week days.
  *
  * @see Task
  */
-public class WeekDays {
+class WeekDays {
     enum WeekDay {MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY}
     private ArrayList<WeekDay> weekDays_list = new ArrayList<>();
 
@@ -35,6 +33,7 @@ public class WeekDays {
         }
     }
 
+    // Getters and Setters
     // Get weekDays_list
     ArrayList<WeekDay> getWeekDays_list() {
         return this.weekDays_list;
@@ -42,7 +41,6 @@ public class WeekDays {
 
     /**
      * Adds a new weekday to the list.
-     *
      * @param weekDay new weekday to add
      */
     void add(WeekDay weekDay) {
