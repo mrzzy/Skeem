@@ -23,6 +23,7 @@ public class PVRTask: NSObject,NSCoding,NSCopying
     var duration:Int /*duration that the task takes to complete in seconds*/
     var duration_affinity:Int /* User desired subtask length*/
     var completion:Double = 0.0 /*0.0<=x<=1.0, where x represents how much of the task is completed*/
+    var date:NSDate /* Defines the virtual current date*/
 
     /*
      * init(name:String, deadline:NSDate, duration:Int, subject:String,description:String)
@@ -42,6 +43,7 @@ public class PVRTask: NSObject,NSCoding,NSCopying
         self.duration = duration
         self.duration_affinity = duration_affinity
         self.descript = description
+        self.date = NSDate() //Init to current date
     }
 
     //NSCoding
@@ -81,7 +83,7 @@ public class PVRTask: NSObject,NSCoding,NSCopying
     */
     public func vaild() -> Bool
     {
-        if self.deadline.compare(Date()) != ComparisonResult.orderedDescending && self.completion != 1.0
+        if self.deadline.compare(self.date as Date) != ComparisonResult.orderedDescending && self.completion != 1.0
         {
             return false
         }
@@ -106,11 +108,10 @@ public class PVRTask: NSObject,NSCoding,NSCopying
      *
      * [Argument]
      * date - virtual current date
-     * PVRTask::nextVoid() - Does not do anything
      */
     public func update(date:NSDate)
     {
-
+        self.date = date
     }
 
     /*
@@ -212,7 +213,7 @@ public class PVRRepeatTask: PVRTask
      * Bool - true if task is vaild, false otherwise
      */
     public override func vaild() -> Bool {
-        if self.repeat_enabled == false || self.repeat_deadline?.compare(Date()) != ComparisonResult.orderedDescending
+        if self.repeat_enabled == false || self.repeat_deadline?.compare(self.date as Date) != ComparisonResult.orderedDescending
         {
             return false
         }
@@ -238,9 +239,11 @@ public class PVRRepeatTask: PVRTask
         var rpt_idx_bwd = self.repeat_index &- 1 //Overflow Subtraction
         var tint_bwd = -(self.repeat_loop[rpt_idx_bwd % self.repeat_loop.count])
 
-        if self.deadline.addingTimeInterval(tint_fwd).compare(date as Date) == ComparisonResult.orderedAscending
+        if self.deadline.compare(date as Date) == ComparisonResult.orderedAscending
         {
-            while self.deadline.addingTimeInterval(tint_fwd).compare(date as Date) == ComparisonResult.orderedAscending
+            //Current dateline is later than current deadline
+            //Update forwards in time
+            while self.deadline.compare(date as Date) == ComparisonResult.orderedAscending
             {
                 //Update Task Data
                 rpt_idx_fwd = rpt_idx_fwd &+ 1 //Overflow Addition
@@ -251,7 +254,7 @@ public class PVRRepeatTask: PVRTask
         }
         else if self.deadline.addingTimeInterval(tint_bwd).compare(date as Date) == ComparisonResult.orderedDescending
         {
-            //current begin is later than virtual current date
+            //current date/time is earlier than previous deadline
             //Update Backwards in Time
             while self.deadline.addingTimeInterval(tint_bwd).compare(date as Date) == ComparisonResult.orderedDescending
             {
@@ -260,6 +263,8 @@ public class PVRRepeatTask: PVRTask
                 tint_bwd = -(self.repeat_loop[self.repeat_index % self.repeat_loop.count]) //Negative Time Interval
                 self.deadline = NSDate(timeInterval: tint_bwd, since: (self.deadline as Date))
             }
+
+            self.repeat_index = rpt_idx_bwd
         }
     }
 }

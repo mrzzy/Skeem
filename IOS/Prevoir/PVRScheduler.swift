@@ -101,33 +101,31 @@ public class PVRScheduler: NSObject
         var arr_drsn = Array<PVRDuration>()
 
         //Extract Duration from Void Duration
-        while date.compare(self.lastTaskDate() as Date) == ComparisonResult.orderedAscending && self.dataView.voidDuration.count > 0
+        while date.compare(self.lastTaskDate() as Date) == ComparisonResult.orderedAscending
         {
             //date < last task date
             //Duration from date to voidd.begin
             let tint = voidd.begin.timeIntervalSince(date)
-            let drsn = PVRDuration(begin: date as NSDate, duration: Int(round(tint)))
-            arr_drsn.append(drsn)
+            if tint > 0
+            {
+                let drsn = PVRDuration(begin: date as NSDate, duration: Int(round(tint)))
+                arr_drsn.append(drsn)
+            }
 
             //Update Data
             let tadd = voidd.duration + 1
-            date = (NSDate(timeInterval: TimeInterval(tadd), since: voidd.begin as Date) )as Date //1 Second after voidd
+            date = (NSDate(timeInterval: TimeInterval(tadd), since: voidd.begin as Date)) as Date //1 Second after voidd
             self.dataView.simulateDate(date: date as NSDate) //Update Repeat Task
             self.dataViewCtrl.pruneVoidDuration()
-            voidd = self.dataCtrl.sortedVoidDuration(sattr: PVRVoidDurationSort.begin)[0] //Closest begin date
+            voidd = self.dataViewCtrl.sortedVoidDuration(sattr: PVRVoidDurationSort.begin)[0] //Closest begin date
         }
-
-        //Duration from date to last task date
-        let tint = self.lastTaskDate().timeIntervalSince(date)
-        let drsn = PVRDuration(begin: (date as NSDate), duration: Int(tint))
-        arr_drsn.append(drsn)
 
         //Cleanup Data
         self.dataView.loadFromDB()
 
         return arr_drsn
     }
-
+    
     /*
      * public func generateSubtask(task:PVRTask) -> [PVRTask]
      * - Generate subtasks from task
@@ -209,7 +207,7 @@ public class PVRScheduler: NSObject
 
     /*
      * public validateDurationAdequate() -> Bool
-     * - Determines whether schedulable duration is sufficent to schedule all tasks
+     * - Determines whether schedulable duration is sufficent to schedule tasks
      * NOTE: Does not determine if duration affinity can be followed.
      * [Return]
      * Bool - Retuns true if schedulable duration sufficent, false otherwise

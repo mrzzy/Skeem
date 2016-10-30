@@ -61,6 +61,7 @@ public class PVRVoidDuration: PVRDuration
     //Properties
     public var name:String /*Defines the name of the void duration*/
     public var asserted:Bool /*Defines whether the void duration asserts to not have task scheduled during the "Duration of Time"*/
+    public var date:NSDate /* Defines the virtual current date*/
 
     //Methods
     /*
@@ -75,6 +76,7 @@ public class PVRVoidDuration: PVRDuration
     {
         self.name = name
         self.asserted = asserted
+        self.date = NSDate() //Init To Current Time
 
         super.init(begin: begin, duration: duration)
     }
@@ -111,7 +113,7 @@ public class PVRVoidDuration: PVRDuration
     */
     public func vaild() -> Bool
     {
-        if NSDate(timeInterval: Double(self.duration), since: self.begin as Date).compare(Date()) == ComparisonResult.orderedDescending
+        if NSDate(timeInterval: Double(self.duration), since: self.begin as Date).compare(self.date as Date) == ComparisonResult.orderedDescending
         {
             return true
         }
@@ -124,13 +126,12 @@ public class PVRVoidDuration: PVRDuration
     /*
      * public func update(date:NSDate)
      * - Reset Void Duration with date as the  virtual current date
-     * PVRVoidDuration::nextVoid() - Does not do anything.
      * [Argument]
      * date - Virtual current date
     */
     public func update(date:NSDate)
     {
-        //Do Nothing
+        self.date = date
     }
 }
 
@@ -239,10 +240,11 @@ public class PVRRepeatVoidDuration: PVRVoidDuration
         var rpt_idx_bwd = self.repeat_index &- 1 //Overflow Subtraction
         var tint_bwd = -(self.repeat_loop[rpt_idx_bwd % self.repeat_loop.count])
 
-        if self.begin.addingTimeInterval(tint_fwd).compare(date as Date) == ComparisonResult.orderedAscending
+        if self.begin.addingTimeInterval(TimeInterval(self.duration)).compare(date as Date) == ComparisonResult.orderedAscending
         {
-            while self.begin.addingTimeInterval(tint_fwd).compare(date as Date) == ComparisonResult.orderedAscending
+            while self.begin.compare(date as Date) == ComparisonResult.orderedAscending
             {
+                //current date/time is later then begin + duration
                 //Update Void Duration Data
                 rpt_idx_fwd = rpt_idx_fwd &+ 1 //Overflow Addition
                 tint_fwd = self.repeat_loop[rpt_idx_fwd % self.repeat_loop.count]
@@ -250,9 +252,9 @@ public class PVRRepeatVoidDuration: PVRVoidDuration
             }
             self.repeat_index = rpt_idx_fwd
         }
-        else if self.begin.addingTimeInterval(tint_bwd).compare(date as Date) == ComparisonResult.orderedDescending
+        else if self.begin.addingTimeInterval(TimeInterval(self.duration)).addingTimeInterval(tint_bwd).compare(date as Date) == ComparisonResult.orderedDescending
         {
-            //current begin is later than virtual current date
+            //current date/time is earlier then previous begin + duration
             //Update Backwards in Time
             while self.begin.addingTimeInterval(tint_bwd).compare(date as Date) == ComparisonResult.orderedDescending
             {
