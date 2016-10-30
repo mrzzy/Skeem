@@ -103,6 +103,7 @@ public class PVRScheduler: NSObject
 
         //Extract Duration from Void Duration
         while date.compare(self.lastTaskDate() as Date) == ComparisonResult.orderedAscending && self.dataView.voidDuration.count > 0
+
         {
             //date < last task date
             //Duration from date to voidd.begin
@@ -256,9 +257,36 @@ public class PVRScheduler: NSObject
         //Cleanup Data
         self.dataView.loadFromDB()
 
-        return arr_stsk.reversed()
+        return sch_stsk
     }
 
+    /*
+     * public func vaildateSchedulable() -> Bool
+     * - Vaildates if scheduling all tasks is possible
+     * NOTE: Does not verify if duration affinity can be followed
+     * [Return]
+     * Bool - Returns true if scheduling all tasks is possible
+    */
+    public func vaildateSchedulable() -> Bool
+    {
+        //Generate Input Data
+        let dict_stsk = self.generateAllSubtask()
+        let drsn_left = self.durationLeft(date: self.lastTaskDate())
+
+        //Result Data
+        var tsk_need = 0
+
+        //Compute Task Duration
+        for arr_stsk in dict_stsk.values
+        {
+            for stsk in arr_stsk
+            {
+                tsk_need += stsk.duration
+            }
+        }
+
+        return drsn_left >= tsk_need
+    }
 
     /*
      * public scheduleTask()

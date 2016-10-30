@@ -44,10 +44,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.SCH = PVRScheduler(dataCtrl: self.DBC)
 
         self.loadUD()
-
-        let test = PVRTest()
-        let rst = test.unit_schedule()
-
+        
         return true
     }
     
