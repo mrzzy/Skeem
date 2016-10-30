@@ -162,6 +162,8 @@ public class PVRRepeatTask: PVRTask
         self.repeat_deadline = deadline
 
         super.init(name: name, deadline: NSDate(), duration:duration, duration_affinity:duration_affinity, subject:subject,description:description)
+
+        self.update(date: NSDate()) //Update Deadline to current date
     }
 
     //NSCoding
