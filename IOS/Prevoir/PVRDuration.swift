@@ -111,7 +111,7 @@ public class PVRVoidDuration: PVRDuration
     */
     public func vaild() -> Bool
     {
-        if NSDate(timeInterval: Double(self.duration), since: self.begin as Date).compare(Date()) == ComparisonResult.orderedAscending
+        if NSDate(timeInterval: Double(self.duration), since: self.begin as Date).compare(Date()) == ComparisonResult.orderedDescending
         {
             return true
         }

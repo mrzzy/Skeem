@@ -306,7 +306,7 @@ public class PVRDataController: NSObject
      */
     public func updateVoidDuration()
     {
-        for (name,voidd) in (self.DB.retrieveAllEntry(lockey: PVRDBKey.void_duration) as! [String:PVRTask])
+        for (name,voidd) in (self.DB.retrieveAllEntry(lockey: PVRDBKey.void_duration) as! [String:PVRVoidDuration])
         {
             voidd.update(date: NSDate()) //Update for current date/time
             try? self.DB.updateEntry(lockey: PVRDBKey.void_duration, key: name, val: voidd)
@@ -359,7 +359,7 @@ public class PVRDataController: NSObject
      * [Return]
      * Bool - true if successful in creating void duration, false if entry already exists in database.
     */
-    public func createRepeatVoidDuration(name:String,begin:NSDate,duration:Int,repeat_loop:[TimeInterval],repeat_deadline:NSDate,asserted:Bool) -> Bool
+    public func createRepeatVoidDuration(name:String,begin:NSDate,duration:Int,repeat_loop:[TimeInterval],repeat_deadline:NSDate?,asserted:Bool) -> Bool
     {
         let crt_rptvoidd = PVRRepeatVoidDuration(begin: begin, duration: duration, name: name, repeat_loop: repeat_loop, deadline: repeat_deadline, asserted: asserted)
 

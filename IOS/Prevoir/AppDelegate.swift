@@ -28,6 +28,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var DBC:PVRDataController!
     var setting:[String:NSCoding]!
 
+    //App Logic
+    var SCH:PVRScheduler!
+
     //Storage
     var ud:UserDefaults!
     
@@ -38,8 +41,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.setting = Dictionary<String,NSCoding>()
         self.DB = PVRDatabase()
         self.DBC = PVRDataController(db: DB)
+        self.SCH = PVRScheduler(dataCtrl: self.DBC)
 
         self.loadUD()
+
+        let test = PVRTest()
+        let rst = test.unit_schedule()
 
         return true
     }
