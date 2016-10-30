@@ -319,14 +319,15 @@ public class PVRDataController: NSObject
      * NOTE: Will terminate executable if unknown database error occurs
      * [Argument]
      * name - name of Void Duration
+     * begin - begin date/time of void duration
      * duration - duration of void duration in seconds
      * asserted - Whether void duration asserts to not have task scheduled during the "Duration of Time", true if void duration asserts
      * [Return]
      * Bool - true if successful in creating void duration, false if entry already exists in database.
     */
-    public func createVoidDuration(name:String,duration:Int,asserted:Bool) -> Bool
+    public func createVoidDuration(name:String,begin:NSDate,duration:Int,asserted:Bool) -> Bool
     {
-        let crt_voidd = PVRVoidDuration(begin: NSDate(), duration:duration , name: name, asserted: asserted)
+        let crt_voidd = PVRVoidDuration(begin: begin, duration:duration , name: name, asserted: asserted)
 
         do
         {
@@ -350,6 +351,7 @@ public class PVRDataController: NSObject
      * NOTE: Will terminate executable if unknown database error occurs
      * [Argument]
      * name - name of the void duration
+     * begin - begin date/time of void duration
      * duration - duration of void duration in seconds
      * repeat_loop - a loop of intervals of time to increment for each repeat
      * deadline - date/time to stop repeat
@@ -357,9 +359,9 @@ public class PVRDataController: NSObject
      * [Return]
      * Bool - true if successful in creating void duration, false if entry already exists in database.
     */
-    public func createRepeatVoidDuration(name:String,duration:Int,repeat_loop:[TimeInterval],repeat_deadline:NSDate,asserted:Bool) -> Bool
+    public func createRepeatVoidDuration(name:String,begin:NSDate,duration:Int,repeat_loop:[TimeInterval],repeat_deadline:NSDate,asserted:Bool) -> Bool
     {
-        let crt_rptvoidd = PVRRepeatVoidDuration(begin: NSDate(), duration: duration, name: name, repeat_loop: repeat_loop, deadline: repeat_deadline, asserted: asserted)
+        let crt_rptvoidd = PVRRepeatVoidDuration(begin: begin, duration: duration, name: name, repeat_loop: repeat_loop, deadline: repeat_deadline, asserted: asserted)
 
         do
         {
