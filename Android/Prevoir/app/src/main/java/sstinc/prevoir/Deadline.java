@@ -1,5 +1,9 @@
 package sstinc.prevoir;
 
+
+/**
+ * @deprecated use datetime to represent deadline instead.
+ */
 class Deadline {
     private long taskId;
     private Datetime deadline;
@@ -13,7 +17,6 @@ class Deadline {
 
     Deadline(Datetime deadline) {
         this.deadline = deadline;
-        this.hasDueTime = deadline.hasTime();
         this.taskId = -1;
     }
 
@@ -25,7 +28,6 @@ class Deadline {
 
     void setDeadline(Datetime deadline) {
         this.deadline = deadline;
-        this.hasDueTime = this.deadline.hasTime();
     }
 
     void setId(long id) { this.taskId = id; }

@@ -10,9 +10,9 @@ package sstinc.prevoir;
  * @see Voidblock
  */
 class Schedulable {
-    protected long id = -1;
-    protected Datetime scheduled_start;
-    protected Datetime scheduled_stop;
+    long id = -1;
+    Datetime scheduled_stop;
+    Datetime scheduled_start;
 
     /**
      * Default constructor. Sets the id to -1 to indicate that there is no

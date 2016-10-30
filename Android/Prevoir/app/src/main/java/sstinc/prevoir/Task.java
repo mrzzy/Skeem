@@ -5,10 +5,6 @@ import android.os.Parcelable;
 
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormat;
-import org.joda.time.format.PeriodFormatter;
-import org.joda.time.format.PeriodFormatterBuilder;
-
-import java.util.ArrayList;
 
 /**
  * This class handles information relating to each task. Each task has a
@@ -196,7 +192,7 @@ class Task extends Schedulable implements Parcelable {
 
     /**
      * {@link #getDeadline()}
-     * @return deadline task's deadline
+     * @param deadline task's deadline
      */
     void setDeadline(Datetime deadline) {
         this.deadline = deadline;

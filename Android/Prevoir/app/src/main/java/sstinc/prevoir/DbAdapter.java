@@ -1,29 +1,5 @@
 package sstinc.prevoir;
 
-/*
-Task:
-    - ID (int)
-    - Name (String)
-    - Subject (String)
-    - description (String)
-    - duration (time)
-    - minimum_time_period (time)
-
-Deadline Table
-    - TaskID (int)
-    - deadline (date)
-    - deadline (time)
-
-Days
-    - TaskID (int)
-    - List of days (array list)
-
-Void block
-    - Name (String)
-    - from (datetime)
-    - to (datetime)
- */
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -33,14 +9,52 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.joda.time.format.PeriodFormat;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * This class handles the database CRUD, create, read, update and delete
+ * operations. There are four tables, Task, Deadline, Days and Voidblock.
+ *
+ * <p>Task Table:</p>
+ * <ul>
+ *     <li>id (int)</li>
+ *     <li>name (String)</li>
+ *     <li>subject (String)</li>
+ *     <li>description (String)</li>
+ *     <li>period_needed (String)</li>
+ *     <li>period_minimum (String)</li>
+ *     <li>deadline (String)</li>
+ * </ul>
+ *
+ * <p>Days Table:</p>
+ * <ul>
+ *     <li>id (int)</li>
+ *     <li>monday (int)</li>
+ *     <li>tuesday (int)</li>
+ *     <li>wednesday (int)</li>
+ *     <li>thursday (int)</li>
+ *     <li>friday (int)</li>
+ *     <li>saturday (int)</li>
+ *     <li>sunday (int)</li>
+ *     <li>id references Task Table's id.</li>
+ * </ul>
+ *
+ * <p>Voidblock Table:</p>
+ * <ul>
+ *     <li>id (int)</li>
+ *     <li>name (String)</li>
+ *     <li>scheduled_start (String)</li>
+ *     <li>scheduled_stop (String)</li>
+ * </ul>
+ */
 class DbAdapter {
     // Define constants
     // Constants for database
     private static final String DATABASE_NAME = "prevoir.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // Constants for Tasks Table
     private static final String TASKS_TABLE = "tasks";
@@ -48,12 +62,14 @@ class DbAdapter {
     private static final String TASKS_TABLE_COL_NAME =  "name";
     private static final String TASKS_TABLE_COL_SUBJECT = "subject";
     private static final String TASKS_TABLE_COL_DESCRIPTION = "description";
-    private static final String TASKS_TABLE_COL_DURATION = "duration";
-    private static final String TASKS_TABLE_COL_MIN_TIME_PERIOD = "min_time_period";
+    private static final String TASKS_TABLE_COL_PERIOD_NEEDED = "period_needed";
+    private static final String TASKS_TABLE_COL_PERIOD_MINIMUM = "period_minimum";
+    private static final String TASKS_TABLE_COL_DEADLINE = "deadline";
     // Task Table column list
     private String[] TASKS_TABLE_COLUMNS = {
             TASKS_TABLE_COL_ID, TASKS_TABLE_COL_NAME, TASKS_TABLE_COL_SUBJECT,
-            TASKS_TABLE_COL_DESCRIPTION, TASKS_TABLE_COL_DURATION, TASKS_TABLE_COL_MIN_TIME_PERIOD
+            TASKS_TABLE_COL_DESCRIPTION, TASKS_TABLE_COL_PERIOD_NEEDED,
+            TASKS_TABLE_COL_PERIOD_MINIMUM, TASKS_TABLE_COL_DEADLINE
     };
     // Command to create table
     private static final String TASKS_TABLE_CREATE = "CREATE TABLE " + TASKS_TABLE  + "("
@@ -61,30 +77,15 @@ class DbAdapter {
             + TASKS_TABLE_COL_NAME + " TEXT NOT NULL, "
             + TASKS_TABLE_COL_SUBJECT + " TEXT NOT NULL, "
             + TASKS_TABLE_COL_DESCRIPTION + " TEXT NOT NULL, "
-            + TASKS_TABLE_COL_DURATION + " TEXT NOT NULL, "
-            + TASKS_TABLE_COL_MIN_TIME_PERIOD + " TEXT, "
-            + "CONSTRAINT VALID_DURATION CHECK(" + TASKS_TABLE_COL_DURATION + " > 0)"
-            + ");";
-
-    // Constants for Deadlines Table
-    private static final String DEADLINES_TABLE = "deadlines";
-    private static final String DEADLINES_TABLE_COL_TASK_ID = "task_id";
-    private static final String DEADLINES_TABLE_COL_DEADLINE_DATETIME = "deadline_datetime";
-    // Deadlines Table column list
-    private String[] DEADLINES_TABLE_COLUMNS = {
-            DEADLINES_TABLE_COL_TASK_ID, DEADLINES_TABLE_COL_DEADLINE_DATETIME
-    };
-    // Command to create table
-    private static final String DEADLINES_TABLE_CREATE = "CREATE TABLE " + DEADLINES_TABLE + "("
-            + DEADLINES_TABLE_COL_TASK_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + DEADLINES_TABLE_COL_DEADLINE_DATETIME + " TEXT NOT NULL, "
-            + "FOREIGN KEY(task_id) REFERENCES " +
-                TASKS_TABLE + "(" + TASKS_TABLE_COL_ID + ")"
+            + TASKS_TABLE_COL_PERIOD_NEEDED + " TEXT NOT NULL, "
+            + TASKS_TABLE_COL_PERIOD_MINIMUM + " TEXT, "
+            + TASKS_TABLE_COL_DEADLINE + " TEXT NOT NULL, "
+            + "CONSTRAINT VALID_DURATION CHECK(" + TASKS_TABLE_COL_PERIOD_NEEDED + " > 0)"
             + ");";
 
     // Constants for Days Table
     private static final String DAYS_TABLE = "days";
-    private static final String DAYS_TABLE_COL_TASK_ID = "task_id";
+    private static final String DAYS_TABLE_COL_TASK_ID = "id";
     private static final String DAYS_TABLE_COL_MONDAY = "monday";
     private static final String DAYS_TABLE_COL_TUESDAY = "tuesday";
     private static final String DAYS_TABLE_COL_WEDNESDAY = "wednesday";
@@ -116,19 +117,19 @@ class DbAdapter {
     private static final String VOIDBLOCKS_TABLE = "voidblocks";
     private static final String VOIDBLOCKS_TABLE_COL_ID = "id";
     private static final String VOIDBLOCKS_TABLE_COL_NAME = "name";
-    private static final String VOIDBLOCKS_TABLE_COL_FROM_DATETIME = "from_datetime";
-    private static final String VOIDBLOCKS_TABLE_COL_TO_DATETIME = "to_datetime";
+    private static final String VOIDBLOCKS_TABLE_COL_SCHEDULED_START = "scheduled_start";
+    private static final String VOIDBLOCKS_TABLE_COL_SCHEDULED_STOP = "scheduled_stop";
     // Voidblocks Table column list
     private String[] VOIDBLOCKS_TABLE_COLUMNS = {
             VOIDBLOCKS_TABLE_COL_ID, VOIDBLOCKS_TABLE_COL_NAME,
-            VOIDBLOCKS_TABLE_COL_FROM_DATETIME, VOIDBLOCKS_TABLE_COL_TO_DATETIME
+            VOIDBLOCKS_TABLE_COL_SCHEDULED_START, VOIDBLOCKS_TABLE_COL_SCHEDULED_STOP
     };
     // Command to create table
     private static final String VOIDBLOCKS_TABLE_CREATE = "CREATE TABLE " + VOIDBLOCKS_TABLE + "("
             + VOIDBLOCKS_TABLE_COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + VOIDBLOCKS_TABLE_COL_NAME + " TEXT NOT NULL, "
-            + VOIDBLOCKS_TABLE_COL_FROM_DATETIME + " TEXT NOT NULL, "
-            + VOIDBLOCKS_TABLE_COL_TO_DATETIME + " TEXT NOT NULL"
+            + VOIDBLOCKS_TABLE_COL_SCHEDULED_START + " TEXT NOT NULL, "
+            + VOIDBLOCKS_TABLE_COL_SCHEDULED_STOP + " TEXT NOT NULL"
             + ");";
 
     private SQLiteDatabase SQLdb;
@@ -140,35 +141,38 @@ class DbAdapter {
         context = ctx;
     }
 
+    // Opens the database
     DbAdapter open() throws android.database.SQLException {
         dbHelper = new DbHelper(context);
         SQLdb = dbHelper.getWritableDatabase();
         return this;
     }
 
+    // Closes the database
     void close() {
         dbHelper.close();
     }
 
     // Create
+
+    /**
+     * Add a new task to the database.
+     * @param task task to add
+     */
     void insertTask(Task task) {
         ContentValues values = new ContentValues();
 
         // Tasks Table
-        values.put(DbAdapter.TASKS_TABLE_COL_NAME, task.name);
-        values.put(DbAdapter.TASKS_TABLE_COL_SUBJECT, task.subject);
-        values.put(DbAdapter.TASKS_TABLE_COL_DESCRIPTION, task.description);
-        values.put(DbAdapter.TASKS_TABLE_COL_DURATION, task.duration.toString());
-        values.put(DbAdapter.TASKS_TABLE_COL_MIN_TIME_PERIOD, task.min_time_period.toString());
+        values.put(DbAdapter.TASKS_TABLE_COL_NAME, task.getName());
+        values.put(DbAdapter.TASKS_TABLE_COL_SUBJECT, task.getSubject());
+        values.put(DbAdapter.TASKS_TABLE_COL_DESCRIPTION, task.getDescription());
+        values.put(DbAdapter.TASKS_TABLE_COL_PERIOD_NEEDED,
+                PeriodFormat.getDefault().print(task.getPeriodNeeded()));
+        values.put(DbAdapter.TASKS_TABLE_COL_PERIOD_MINIMUM,
+                PeriodFormat.getDefault().print(task.getPeriodMinimum()));
+        values.put(DbAdapter.TASKS_TABLE_COL_DEADLINE, task.getDeadline().toString());
+        // Insert into database and set the task's id.
         task.setId(SQLdb.insert(DbAdapter.TASKS_TABLE, null, values));
-
-        // Deadlines Table
-        values = new ContentValues();
-        values.put(DbAdapter.DEADLINES_TABLE_COL_TASK_ID, task.getId());
-
-        values.put(DbAdapter.DEADLINES_TABLE_COL_DEADLINE_DATETIME,
-                task.deadline.getDeadline().toString());
-        SQLdb.insert(DbAdapter.DEADLINES_TABLE, null, values);
 
         // Days Table
         values = new ContentValues();
@@ -181,7 +185,7 @@ class DbAdapter {
         values.put(DbAdapter.DAYS_TABLE_COL_SATURDAY, 0);
         values.put(DbAdapter.DAYS_TABLE_COL_SUNDAY, 0);
 
-        for (Task.WeekDay weekDay : task.weekDays) {
+        for (WeekDays.WeekDay weekDay : task.getWeekDays().getWeekDays_list()) {
             switch (weekDay) {
                 case MONDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 1);
@@ -202,31 +206,44 @@ class DbAdapter {
         SQLdb.insert(DbAdapter.DAYS_TABLE, null, values);
     }
 
+    /**
+     * Adds a new voidblock into the database.
+     * @param voidblock voidblock to add
+     */
     void insertVoidblock(Voidblock voidblock) {
         ContentValues values = new ContentValues();
-        values.put(DbAdapter.VOIDBLOCKS_TABLE_COL_NAME, voidblock.name);
-        values.put(DbAdapter.VOIDBLOCKS_TABLE_COL_FROM_DATETIME, voidblock.from.toString());
-        values.put(DbAdapter.VOIDBLOCKS_TABLE_COL_TO_DATETIME, voidblock.to.toString());
+
+        values.put(DbAdapter.VOIDBLOCKS_TABLE_COL_NAME, voidblock.getName());
+        values.put(DbAdapter.VOIDBLOCKS_TABLE_COL_SCHEDULED_START,
+                voidblock.getScheduledStart().toString());
+        values.put(DbAdapter.VOIDBLOCKS_TABLE_COL_SCHEDULED_STOP,
+                voidblock.getScheduledStop().toString());
+        // Insert into database and set the voidblock's id
         voidblock.setId(SQLdb.insert(DbAdapter.VOIDBLOCKS_TABLE, null, values));
     }
 
     // Read
-    private Deadline getDeadline(long taskId) {
-        Cursor cursor = SQLdb.query(DEADLINES_TABLE, DEADLINES_TABLE_COLUMNS,
-                DEADLINES_TABLE_COL_TASK_ID + " = " + taskId, null, null, null, null);
-        cursor.moveToFirst();
-        Deadline deadline = new Deadline(new Datetime(cursor.getString(1)));
-        cursor.close();
-        return deadline;
-    }
 
-    private ArrayList<Task.WeekDay> getDays(long taskId) {
+    /**
+     * Private function that {@link #getTasks()} uses to get the weekdays of
+     * it's tasks.
+     *
+     * @param taskId id of the task to get weekdays for
+     * @return weekdays of the task
+     */
+    private WeekDays getDays(long taskId) {
+        // Query the days table
         Cursor cursor = SQLdb.query(DAYS_TABLE, DAYS_TABLE_COLUMNS,
                 DAYS_TABLE_COL_TASK_ID + " = " + taskId, null, null, null, null);
+
+        // Create WeekDays instance
+        WeekDays weekDays = new WeekDays();
+        // ArrayList to index from to get the values
+        WeekDays.WeekDay[] weekDayIndex = WeekDays.WeekDay.values();
+
         cursor.moveToFirst();
-        ArrayList<Task.WeekDay> weekDays = new ArrayList<>();
-        Task.WeekDay[] weekDayIndex = Task.WeekDay.values();
         for (int i=1; i<8; i++) {
+            // FIXME: 30/10/16 getString to getInt
             if (cursor.getString(i).equals("1")) {
                 weekDays.add(weekDayIndex[i-1]);
             }
@@ -235,47 +252,65 @@ class DbAdapter {
         return weekDays;
     }
 
+    /**
+     * Gets the task based on its id.
+     * @param taskId task's id
+     * @return task queried from database
+     */
     Task getTask(long taskId) {
-        // Get task information
+        // Query task table with task id
         Cursor cursor = SQLdb.query(TASKS_TABLE, TASKS_TABLE_COLUMNS,
                 TASKS_TABLE_COL_ID + " = " + taskId , null, null, null, null);
         cursor.moveToFirst();
-        String name = cursor.getString(1);
-        String subject = cursor.getString(2);
-        String description = cursor.getString(3);
-        Duration duration = new Duration(cursor.getString(4));
-        Duration min_time_period = new Duration(cursor.getString(5));
+
+        // Create task instance
+        Task task = new Task();
+
+        task.setName(cursor.getString(1));
+        task.setSubject(cursor.getString(2));
+        task.setDescription(cursor.getString(3));
+
+        task.setPeriodNeeded(PeriodFormat.getDefault().parsePeriod(cursor.getString(4)));
+        task.setPeriodMinimum(PeriodFormat.getDefault().parsePeriod(cursor.getString(5)));
+        task.setDeadline(new Datetime(cursor.getString(6)));
 
         cursor.close();
 
-        Task task = new Task(name, subject, getDays(taskId), getDeadline(taskId),
-                description, duration, min_time_period);
         task.setId(taskId);
+        task.setWeekDays(getDays(taskId));
 
         return task;
     }
 
+    /**
+     * Gets all the tasks in the database.
+     * @return array list of all the tasks in the database
+     */
     ArrayList<Task> getTasks() {
+        // Prepare array list
         ArrayList<Task> tasks = new ArrayList<>();
-        Cursor taskCursor = SQLdb.query(TASKS_TABLE, TASKS_TABLE_COLUMNS,
+
+        // Query database for all tasks
+        Cursor cursor = SQLdb.query(TASKS_TABLE, TASKS_TABLE_COLUMNS,
                 null, null, null, null, null);
 
-        Task task;
-        for (taskCursor.moveToLast(); !taskCursor.isBeforeFirst(); taskCursor.moveToPrevious()) {
-            long taskId = Long.parseLong(taskCursor.getString(0));
-            String name = taskCursor.getString(1);
-            String subject = taskCursor.getString(2);
-            String description = taskCursor.getString(3);
-            Duration duration = new Duration(taskCursor.getString(4));
-            Duration min_time_period = new Duration(taskCursor.getString(5));
+        for (cursor.moveToLast(); !cursor.isBeforeFirst(); cursor.moveToPrevious()) {
+            Task task = new Task();
+            // FIXME: 30/10/16 getString to getLong
+            task.setId(Long.parseLong(cursor.getString(0)));
 
-            task = new Task(name, subject, getDays(taskId), getDeadline(taskId),
-                    description, duration, min_time_period);
-            task.setId(taskId);
+            task.setName(cursor.getString(1));
+            task.setSubject(cursor.getString(2));
+            task.setDescription(cursor.getString(3));
+
+            task.setPeriodNeeded(PeriodFormat.getDefault().parsePeriod(cursor.getString(4)));
+            task.setPeriodMinimum(PeriodFormat.getDefault().parsePeriod(cursor.getString(5)));
+
+            task.setDeadline(new Datetime(cursor.getString(6)));
 
             tasks.add(task);
         }
-        taskCursor.close();
+        cursor.close();
 
         // Sort the tasks
         TaskComparator taskComparator = new TaskComparator();
@@ -284,35 +319,49 @@ class DbAdapter {
         return tasks;
     }
 
+    /**
+     * Gets the voidblock based on its id.
+     * @param voidblockId voidblock's id
+     * @return voidblock queried from database
+     */
     Voidblock getVoidblock(long voidblockId) {
+        // Query database
         Cursor cursor = SQLdb.query(VOIDBLOCKS_TABLE, VOIDBLOCKS_TABLE_COLUMNS,
                 VOIDBLOCKS_TABLE_COL_ID + " = " + voidblockId, null, null, null, null);
         cursor.moveToFirst();
-        String name = cursor.getString(1);
-        Datetime from = new Datetime(cursor.getString(2));
-        Datetime to = new Datetime(cursor.getString(3));
+
+        Voidblock voidblock = new Voidblock();
+
+        voidblock.setName(cursor.getString(1));
+        voidblock.setScheduledStart(new Datetime(cursor.getString(2)));
+        voidblock.setScheduledStop(new Datetime(cursor.getString(3)));
+
         cursor.close();
 
-        Voidblock voidblock = new Voidblock(name, from, to);
         voidblock.setId(voidblockId);
 
         return voidblock;
     }
 
+    /**
+     * Gets all the voidblocks in the database.
+     * @return array list of all the voidblocks in the database
+     */
     ArrayList<Voidblock> getVoidblocks() {
+        // Prepare array list
+        ArrayList<Voidblock> voidblocks = new ArrayList<>();
+
+        // Query database
         Cursor cursor = SQLdb.query(VOIDBLOCKS_TABLE, VOIDBLOCKS_TABLE_COLUMNS,
                 null, null, null, null, null);
 
-        ArrayList<Voidblock> voidblocks = new ArrayList<>();
-
         for (cursor.moveToLast(); !cursor.isBeforeFirst(); cursor.moveToPrevious()) {
-            long voidblockId = Long.parseLong(cursor.getString(0));
-            String name = cursor.getString(1);
-            Datetime from = new Datetime(cursor.getString(2));
-            Datetime to = new Datetime(cursor.getString(3));
-
-            Voidblock voidblock = new Voidblock(name, from, to);
-            voidblock.setId(voidblockId);
+            Voidblock voidblock = new Voidblock();
+            // FIXME: 31/10/16 getString to getLong
+            voidblock.setId(Long.parseLong(cursor.getString(0)));
+            voidblock.setName(cursor.getString(1));
+            voidblock.setScheduledStart(new Datetime(cursor.getString(2)));
+            voidblock.setScheduledStop(new Datetime(cursor.getString(3)));
 
             voidblocks.add(voidblock);
         }
@@ -327,23 +376,27 @@ class DbAdapter {
     }
 
     // Update
-    void updateTask(long taskId, Task newTask) {
+
+    /**
+     * Updates the task's values completely. Does not check for changes or
+     * empty values.
+     * @param taskId id of task to update
+     * @param task new values to update
+     */
+    void updateTask(long taskId, Task task) {
         ContentValues values = new ContentValues();
 
         // Tasks Table
-        values.put(TASKS_TABLE_COL_NAME, newTask.name);
-        values.put(TASKS_TABLE_COL_SUBJECT, newTask.subject);
-        values.put(TASKS_TABLE_COL_DESCRIPTION, newTask.description);
-        values.put(TASKS_TABLE_COL_DURATION, newTask.duration.toString());
-        values.put(TASKS_TABLE_COL_MIN_TIME_PERIOD, newTask.min_time_period.toString());
-        SQLdb.update(TASKS_TABLE, values, TASKS_TABLE_COL_ID + "=" + taskId, null);
+        values.put(TASKS_TABLE_COL_NAME, task.getName());
+        values.put(TASKS_TABLE_COL_SUBJECT, task.getSubject());
+        values.put(TASKS_TABLE_COL_DESCRIPTION, task.getDescription());
+        values.put(TASKS_TABLE_COL_PERIOD_NEEDED,
+                PeriodFormat.getDefault().print(task.getPeriodNeeded()));
+        values.put(TASKS_TABLE_COL_PERIOD_MINIMUM,
+                PeriodFormat.getDefault().print(task.getPeriodMinimum()));
+        values.put(TASKS_TABLE_COL_DEADLINE, task.getDeadline().toString());
 
-        // Deadlines Table
-        values = new ContentValues();
-        values.put(DbAdapter.DEADLINES_TABLE_COL_DEADLINE_DATETIME,
-                newTask.deadline.getDeadline().toString());
-        SQLdb.update(DbAdapter.DEADLINES_TABLE, values,
-                DEADLINES_TABLE_COL_TASK_ID + "=" + taskId, null);
+        SQLdb.update(TASKS_TABLE, values, TASKS_TABLE_COL_ID + "=" + taskId, null);
 
         // Days Table
         values = new ContentValues();
@@ -355,7 +408,7 @@ class DbAdapter {
         values.put(DbAdapter.DAYS_TABLE_COL_SATURDAY, 0);
         values.put(DbAdapter.DAYS_TABLE_COL_SUNDAY, 0);
 
-        for (Task.WeekDay weekDay : newTask.weekDays) {
+        for (WeekDays.WeekDay weekDay : task.getWeekDays().getWeekDays_list()) {
             switch (weekDay) {
                 case MONDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 1);
@@ -376,30 +429,49 @@ class DbAdapter {
         SQLdb.update(DbAdapter.DAYS_TABLE, values, DAYS_TABLE_COL_TASK_ID + "=" + taskId, null);
     }
 
-    void updateVoidblock(long voidblockId, Voidblock newVoidblock) {
+    /**
+     * Updates the voidblock's values completely. Does not check for changes or
+     * empty values.
+     * @param voidblockId id of task to update
+     * @param voidblock new values to update
+     */
+    void updateVoidblock(long voidblockId, Voidblock voidblock) {
         ContentValues values = new ContentValues();
-        values.put(DbAdapter.VOIDBLOCKS_TABLE_COL_NAME, newVoidblock.name);
-        values.put(DbAdapter.VOIDBLOCKS_TABLE_COL_FROM_DATETIME, newVoidblock.from.toString());
-        values.put(DbAdapter.VOIDBLOCKS_TABLE_COL_TO_DATETIME, newVoidblock.to.toString());
+        values.put(DbAdapter.VOIDBLOCKS_TABLE_COL_NAME, voidblock.getName());
+        values.put(DbAdapter.VOIDBLOCKS_TABLE_COL_SCHEDULED_START,
+                voidblock.getScheduledStart().toString());
+        values.put(DbAdapter.VOIDBLOCKS_TABLE_COL_SCHEDULED_STOP,
+                voidblock.getScheduledStop().toString());
 
         SQLdb.update(VOIDBLOCKS_TABLE, values, VOIDBLOCKS_TABLE_COL_ID + "=" + voidblockId, null);
     }
 
     // Delete
+
+    /**
+     * Deletes a task based on it's id.
+     * @param taskId id of task to delete
+     */
     void deleteTask(long taskId) {
         // Delete foreign keys first
-        SQLdb.delete(DEADLINES_TABLE, DEADLINES_TABLE_COL_TASK_ID + "=" + taskId, null);
         SQLdb.delete(DAYS_TABLE, DAYS_TABLE_COL_TASK_ID + "=" + taskId, null);
+        // Delete from Task Table
         SQLdb.delete(TASKS_TABLE, TASKS_TABLE_COL_ID + "=" + taskId, null);
     }
 
+    /**
+     * Delets a voidblock based on it's id.
+     * @param voidblockId id of voidblock to delete
+     */
     void deleteVoidblock(long voidblockId) {
         SQLdb.delete(VOIDBLOCKS_TABLE, VOIDBLOCKS_TABLE_COL_ID + "=" + voidblockId, null);
     }
 
+    /**
+     * Deletes all values by dropping all tables and recreating them again.
+     */
     void deleteAll() {
         SQLdb.execSQL("DROP TABLE IF EXISTS " + TASKS_TABLE);
-        SQLdb.execSQL("DROP TABLE IF EXISTS " + DEADLINES_TABLE);
         SQLdb.execSQL("DROP TABLE IF EXISTS " + DAYS_TABLE);
         SQLdb.execSQL("DROP TABLE IF EXISTS " + VOIDBLOCKS_TABLE);
         dbHelper.onCreate(SQLdb);
@@ -414,7 +486,6 @@ class DbAdapter {
         @Override
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(TASKS_TABLE_CREATE);
-            db.execSQL(DEADLINES_TABLE_CREATE);
             db.execSQL(DAYS_TABLE_CREATE);
             db.execSQL(VOIDBLOCKS_TABLE_CREATE);
         }
@@ -425,7 +496,6 @@ class DbAdapter {
                     "Updating database version from version " + oldVersion +
                     " to version " + newVersion + ". This will destroy all data.");
             db.execSQL("DROP TABLE IF EXISTS " + TASKS_TABLE);
-            db.execSQL("DROP TABLE IF EXISTS " + DEADLINES_TABLE);
             db.execSQL("DROP TABLE IF EXISTS " + DAYS_TABLE);
             db.execSQL("DROP TABLE IF EXISTS " + VOIDBLOCKS_TABLE);
             onCreate(db);
