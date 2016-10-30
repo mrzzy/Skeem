@@ -152,17 +152,17 @@ public class PVRRepeatTask: PVRTask
      * repeat_loop - List of time intervals to increment per repeat of task
      * subject - subject of the task
      * description - description of the task
-     * deadline - date/time task must be finished
+     * deadline - date/time where repeat stops
      */
-    init(name:String, duration:Int,duration_affinity:Int, repeat_loop:[TimeInterval],subject:String,description:String,deadline:NSDate? = nil)
+    init(name:String,duration:Int,duration_affinity:Int, repeat_loop:[TimeInterval],subject:String,description:String,deadline:NSDate,repeat_deadline:NSDate?=nil)
     {
         self.repeat_loop = repeat_loop
         self.repeat_enabled = true
         self.repeat_index = 0
         self.repeat_duration = duration
-        self.repeat_deadline = deadline
+        self.repeat_deadline = repeat_deadline
 
-        super.init(name: name, deadline: NSDate(), duration:duration, duration_affinity:duration_affinity, subject:subject,description:description)
+        super.init(name: name, deadline:deadline,duration:duration, duration_affinity:duration_affinity, subject:subject,description:description)
     }
 
     //NSCoding
@@ -213,7 +213,7 @@ public class PVRRepeatTask: PVRTask
      * Bool - true if task is vaild, false otherwise
      */
     public override func vaild() -> Bool {
-        if self.repeat_enabled == false || self.repeat_deadline?.compare(self.date as Date) != ComparisonResult.orderedDescending
+        if self.repeat_enabled == false || self.repeat_deadline?.compare(self.date as Date) == ComparisonResult.orderedDescending
         {
             return false
         }

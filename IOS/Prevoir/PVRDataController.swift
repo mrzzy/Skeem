@@ -114,9 +114,9 @@ public class PVRDataController: NSObject
      * [Return]
      * Bool - true if successful in creating task, false otherwise
     */
-    public func createRepeativeTask(name:String,subject:String,description:String,repeat_loop:[TimeInterval],deadline:NSDate? = nil,duration:Int,duration_affinity:Int) -> Bool
+    public func createRepeativeTask(name:String,subject:String,description:String,repeat_loop:[TimeInterval],repeat_deadline:NSDate?=nil,duration:Int,duration_affinity:Int,deadline:NSDate) -> Bool
     {
-        let crt_rttask = PVRRepeatTask(name: name, duration: duration,duration_affinity:duration_affinity, repeat_loop: repeat_loop, subject: subject,description:description)
+        let crt_rttask = PVRRepeatTask(name: name, duration: duration,duration_affinity:duration_affinity, repeat_loop: repeat_loop, subject: subject,description:description,deadline:deadline,repeat_deadline:repeat_deadline)
 
         do
         {

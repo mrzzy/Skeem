@@ -101,7 +101,7 @@ public class PVRScheduler: NSObject
         var arr_drsn = Array<PVRDuration>()
 
         //Extract Duration from Void Duration
-        while date.compare(self.lastTaskDate() as Date) == ComparisonResult.orderedAscending
+        while date.compare(self.lastTaskDate() as Date) == ComparisonResult.orderedAscending && self.dataView.voidDuration.count <= 0
         {
             //date < last task date
             //Duration from date to voidd.begin
@@ -120,12 +120,20 @@ public class PVRScheduler: NSObject
             voidd = self.dataViewCtrl.sortedVoidDuration(sattr: PVRVoidDurationSort.begin)[0] //Closest begin date
         }
 
+        //Duration from date to last date/time
+        let tint = self.lastTaskDate().timeIntervalSince(date)
+        if tint > 0
+        {
+            let drsn = PVRDuration(begin: date as NSDate, duration: Int(round(tint)))
+            arr_drsn.append(drsn)
+        }
+
         //Cleanup Data
         self.dataView.loadFromDB()
 
         return arr_drsn
     }
-    
+
     /*
      * public func generateSubtask(task:PVRTask) -> [PVRTask]
      * - Generate subtasks from task
@@ -138,7 +146,7 @@ public class PVRScheduler: NSObject
         var arr_stsk = Array<PVRTask>()
         let stsk_cnt = Int(floor(Double(task.duration / task.duration_affinity)))
         var duration_left = task.duration
-        var completion_left = task.completion
+        var completion = task.completion
 
         //Generate Subtasks
         for stsk_idx in 0..<stsk_cnt
@@ -149,13 +157,13 @@ public class PVRScheduler: NSObject
             {
                 //Last Subtask
                 stsk.duration = duration_left
-                stsk.completion = completion_left
+                stsk.completion = 1.0 - completion //Completion left
             }
             else
             {
                 stsk.duration = task.duration_affinity
                 stsk.completion = Double(task.duration_affinity)/Double(task.duration)
-                completion_left -= Double(task.duration_affinity)/Double(task.duration)
+                completion += Double(task.duration_affinity)/Double(task.duration)
             }
 
             duration_left -= stsk.duration
@@ -202,38 +210,7 @@ public class PVRScheduler: NSObject
         self.dataView.loadFromDB()
 
         return arr_stsk.reversed()
-    }
-
-
-    /*
-     * public validateDurationAdequate() -> Bool
-     * - Determines whether schedulable duration is sufficent to schedule tasks
-     * NOTE: Does not determine if duration affinity can be followed.
-     * [Return]
-     * Bool - Retuns true if schedulable duration sufficent, false otherwise
-    */
-    public func vaildateDurationAdequate() -> Bool
-    {
-        //Prepare Data
-        var sch_drsn = 0
-        var stsk_drsn = 0
-        let arr_sch_drsn = self.generateSchedulableDuration()
-        let arr_stsk =  self.genrateAllSubtask()
-
-        //Compute Total Schedulable duration
-        for drsn in arr_sch_drsn
-        {
-            sch_drsn += drsn.duration
-        }
-
-        //Compute Total Task Duration
-        for stsk in arr_stsk
-        {
-            stsk_drsn += stsk.duration
-        }
-
-        return (sch_drsn >= stsk_drsn)
-    }
+    }f
 
     /*
      * public scheduleTask()
@@ -245,11 +222,6 @@ public class PVRScheduler: NSObject
     */
     public func scheduleTask() throws -> [PVRDuration:[PVRTask]]
     {
-        //Validate Sufficent Duration
-        if self.vaildateDurationAdequate() == false
-        {
-            throw PVRSchedulerError.DurationOverflow
-        }
 
         //Prepare Data
         var arr_drsn = self.generateSchedulableDuration()
