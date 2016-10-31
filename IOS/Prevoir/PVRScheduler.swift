@@ -210,7 +210,7 @@ public class PVRScheduler: NSObject
         self.dataView.loadFromDB()
 
         return arr_stsk.reversed()
-    }f
+    }
 
     /*
      * public scheduleTask()
