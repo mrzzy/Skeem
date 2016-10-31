@@ -68,7 +68,7 @@ public class PVRVoidDuration: PVRDuration
      * init(begin: NSDate, duration: Int, name: String,repeat_loop:[TimeInterval],deadline:NSDate, asserted: Bool = false)
      * [Argument]
      * begin - Start Date/Time
-     * duration - Time in seconds of the "Duration of time"
+     * duration - Time in seconds of the "Duration of time" NOTE: For accurate scheduling, duration is decremented
      * name - name of the void duration
      * asserted = false - Whether void duration asserts to not have task scheduled during the "Duration of Time", true if void duration asserts
     */
@@ -78,13 +78,13 @@ public class PVRVoidDuration: PVRDuration
         self.asserted = asserted
         self.date = NSDate() //Init To Current Time
 
-        super.init(begin: begin, duration: duration)
+        super.init(begin: begin, duration: duration - 1) //NOTE: For accurate scheduling, duration is decremented
     }
 
     //NSCoding
     public override func encode(with aCoder: NSCoder) {
         aCoder.encode(self.begin, forKey: "begin")
-        aCoder.encode(self.duration, forKey: "duration")
+        aCoder.encode(self.duration + 1, forKey: "duration") //NOTE: For accurate scheduling, duration is incremented
         aCoder.encode(self.name, forKey: "name")
         aCoder.encode(self.asserted,forKey:"asserted")
     }
@@ -148,6 +148,7 @@ public class PVRRepeatVoidDuration: PVRVoidDuration
     public var repeat_loop:[TimeInterval] /*Defines a loop of intervals of time in seconds to increment for each repeat*/
     public var repeat_index:Int /*Defines the current position in thne repeat_loop*/
     public var repeat_deadline:NSDate? /*Defines a date/time that repeat stops*/
+    public var repeat_duration:Int /*Defines the duration of each repeat*/
 
     //Methods
     /*
@@ -165,6 +166,7 @@ public class PVRRepeatVoidDuration: PVRVoidDuration
         self.repeat_loop = repeat_loop
         self.repeat_index = 0
         self.repeat_deadline = deadline
+        self.repeat_duration = duration
 
         super.init(begin: begin, duration: duration, name: name, asserted: asserted)
         
@@ -180,16 +182,18 @@ public class PVRRepeatVoidDuration: PVRVoidDuration
         let repeat_loop = (aDecoder.decodeObject(forKey: "repeat_loop") as! [TimeInterval])
         let repeat_index = aDecoder.decodeInteger(forKey: "repeat_index")
         let repeat_deadline = (aDecoder.decodeObject(forKey: "repeat_deadline") as! NSDate)
+        let repeat_duration =  aDecoder.decodeInteger(forKey: "repeat_duration")
 
         self.init(begin:begin, duration:duration, name:name, repeat_loop:repeat_loop, deadline:repeat_deadline,asserted:asserted)
 
+        self.repeat_duration = repeat_duration
         self.repeat_enabled = repeat_enabled
         self.repeat_index = repeat_index
     }
 
     public override func encode(with aCoder: NSCoder) {
         aCoder.encode(self.begin, forKey: "begin")
-        aCoder.encode(self.duration, forKey: "duration")
+        aCoder.encode(self.duration + 1, forKey: "duration") //NOTE: For accurate scheduling, duration is incremented
         aCoder.encode(self.name, forKey: "name")
         aCoder.encode(self.asserted,forKey:"asserted")
         aCoder.encode(self.repeat_enabled, forKey: "repeat_enabled")
@@ -249,6 +253,7 @@ public class PVRRepeatVoidDuration: PVRVoidDuration
                 rpt_idx_fwd = rpt_idx_fwd &+ 1 //Overflow Addition
                 tint_fwd = self.repeat_loop[rpt_idx_fwd % self.repeat_loop.count]
                 self.begin = NSDate(timeInterval: tint_fwd, since: (self.begin as Date))
+                self.duration = self.repeat_duration - 1 //NOTE: For accurate scheduling, duration is decremented
             }
             self.repeat_index = rpt_idx_fwd
         }
@@ -262,6 +267,7 @@ public class PVRRepeatVoidDuration: PVRVoidDuration
                 rpt_idx_bwd = rpt_idx_bwd &- 1 //Overflow Subtraction
                 tint_bwd = -(self.repeat_loop[self.repeat_index % self.repeat_loop.count]) //Negative Time Interval
                 self.begin = NSDate(timeInterval: tint_bwd, since: (self.begin as Date))
+                self.duration = self.repeat_duration - 1 //NOTE: For accurate scheduling, duration is decremented
             }
         }
     }

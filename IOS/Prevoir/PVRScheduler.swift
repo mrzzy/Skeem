@@ -102,7 +102,7 @@ public class PVRScheduler: NSObject
         var arr_drsn = Array<PVRDuration>()
 
         //Extract Duration from Void Duration
-        while date.compare(self.lastTaskDate() as Date) == ComparisonResult.orderedAscending && self.dataView.voidDuration.count > 0
+        while date.compare(self.lastTaskDate() as Date) == ComparisonResult.orderedAscending && self.dataView.voidDuration.count >= 0
 
         {
             //date < last task date
@@ -315,10 +315,6 @@ public class PVRScheduler: NSObject
         var arr_tsk = Array(dict_tsk.keys)
         var dict_stsk = self.generateAllSubtask()
 
-        //Status Data
-        //var date = Date()
-        var tsk_idx = 0
-
         //Result Data
         var schd = Dictionary<PVRDuration,Array<PVRTask>>()
         for drsn in arr_drsn
@@ -335,79 +331,82 @@ public class PVRScheduler: NSObject
             return tsk1_slk <= tsk2_slk
         }
 
+        //Status Data
+        var tsk_idx = 0
+        var tsk = arr_tsk.sorted(by: slk_srt)[tsk_idx]
+        var stsk = dict_stsk[tsk]!.removeFirst()
+
         //Schedule Data
         for drsn in arr_drsn
         {
             while drsn.duration > 0 && arr_tsk.count > 0
             {
-                let tsk = arr_tsk.sorted(by: slk_srt)[tsk_idx]
-                if dict_stsk[tsk]!.count <= 0
+                //Duration Check
+                if drsn.duration < stsk.duration && self.sch_affinity == true
                 {
-                    //No More Subtasks to schedule for task
-                    tsk_idx += 1
-                }
-                else
-                {
-                    let stsk = dict_stsk[tsk]!.removeFirst()
-
-                    //Duration Check
-                    if drsn.duration < stsk.duration && self.sch_affinity == true
+                    //Current Duration is less then subtask duration && Duration affinity following positive
+                    if tsk_idx < (arr_tsk.count - 1)
                     {
-                        //Current Duration is less then subtask duration && Duration affinity following positive
-                        if tsk_idx < arr_tsk.count
-                        {
-                            tsk_idx += 1 //Attempt to fit Next Task's subtask
-                        }
-                        else
-                        {
-                            //Failed to fit all Task's subtasks
-                            break //Attempt Next Duration
-                        }
-                    }
-                    else if drsn.duration < stsk.duration && self.sch_affinity == false
-                    {
-                        //Current Duration is less then subtask duration && Duration affinty following negative
-                        //Split subtask into 2 subtasks
-                        //Subtask_1
-                        let stsk_1 = (stsk.copy() as! PVRTask)
-                        stsk_1.duration = drsn.duration
-                        stsk_1.completion = stsk.completion * (Double(stsk_1.duration) / Double(stsk.duration))
-                        //Subtask 2
-                        let stsk_2 = stsk //Reference
-                        stsk_2.duration -= stsk_1.duration
-                        stsk_2.completion -= stsk_1.completion
-
-                        //Schedule Subtask 1
-                        schd[drsn]!.append(stsk_1)
-
-                        //Update Data
-                        dict_tsk[tsk]!.duration -= stsk_1.duration
-                        dict_tsk[tsk]!.completion -= stsk_1.completion
-
-                        //Defer Schedule Subtask 2
-                        dict_stsk[tsk]!.insert(stsk_2, at: 0)
+                        //Task index must be one less then arr_tsk count -1
+                        tsk_idx += 1 //Attempt to fit Next Task's subtask
                     }
                     else
                     {
-                        //Current duration sufficent to schedule subtask
-                        schd[drsn]!.append(stsk)
-
-                        //Update Data
-                        dict_tsk[tsk]!.duration -= stsk.duration
-                        dict_tsk[tsk]!.completion -= stsk.completion
-                        tsk_idx = 0
+                        //Failed to fit all Task's subtasks
+                        break //Attempt Next Duration
                     }
+                }
+                else if drsn.duration < stsk.duration && self.sch_affinity == false
+                {
+                    //Current Duration is less then subtask duration && Duration affinty following negative
+                    //Split subtask into 2 subtasks
+                    //Subtask_1
+                    let stsk_1 = (stsk.copy() as! PVRTask)
+                    stsk_1.duration = drsn.duration
+                    stsk_1.completion = stsk.completion * (Double(stsk_1.duration) / Double(stsk.duration))
+                    //Subtask 2
+                    let stsk_2 = stsk //Reference
+                    stsk_2.duration -= stsk_1.duration
+                    stsk_2.completion -= stsk_1.completion
+
+                    //Schedule Subtask 1
+                    schd[drsn]!.append(stsk_1)
 
                     //Update Data
-                    let arr_tsk_cpy = arr_tsk
-                    for tsk in arr_tsk_cpy
+                    drsn.duration -= stsk.duration
+                    dict_tsk[tsk]!.duration -= stsk_1.duration
+                    dict_tsk[tsk]!.completion -= stsk_1.completion
+
+                    //Defer Schedule Subtask 2
+                    dict_stsk[tsk]!.insert(stsk_2, at: 0)
+                }
+                else
+                {
+                    //Current duration sufficent to schedule subtask
+                    schd[drsn]!.append(stsk)
+
+                    //Update Data
+                    drsn.duration -= stsk.duration
+                    dict_tsk[tsk]!.duration -= stsk.duration
+                    dict_tsk[tsk]!.completion -= stsk.completion
+                    tsk_idx = 0
+                }
+
+                //Update Data
+                let arr_tsk_cpy = arr_tsk
+                for tsk in arr_tsk_cpy
+                {
+                    if dict_stsk[tsk]!.count <= 0
                     {
-                        if dict_stsk[tsk]!.count >= 0
-                        {
-                            let tsk_i = arr_tsk_cpy.index(of: tsk)!
-                            arr_tsk.remove(at: tsk_i)
-                        }
+                        let tsk_i = arr_tsk_cpy.index(of: tsk)!
+                        arr_tsk.remove(at: tsk_i)
                     }
+                }
+
+                if arr_tsk.count > 0
+                {
+                    tsk = arr_tsk.sorted(by: slk_srt)[tsk_idx]
+                    stsk = dict_stsk[tsk]!.removeFirst()
                 }
             }
         }
