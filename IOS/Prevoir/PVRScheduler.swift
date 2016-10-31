@@ -15,6 +15,7 @@ import UIKit
 public enum PVRSchedulerError:Error
 {
     case DurationOverflow /* Schedulable duration is insufficent to schedule all tasks*/
+    case DeadlineOverflow /* Subtasks could not be scheduled before deadline */
 }
 
 
@@ -101,7 +102,7 @@ public class PVRScheduler: NSObject
         var arr_drsn = Array<PVRDuration>()
 
         //Extract Duration from Void Duration
-        while date.compare(self.lastTaskDate() as Date) == ComparisonResult.orderedAscending && self.dataView.voidDuration.count <= 0
+        while date.compare(self.lastTaskDate() as Date) == ComparisonResult.orderedAscending && self.dataView.voidDuration.count > 0
         {
             //date < last task date
             //Duration from date to voidd.begin
@@ -132,6 +133,41 @@ public class PVRScheduler: NSObject
         self.dataView.loadFromDB()
 
         return arr_drsn
+    }
+
+    /*
+     * public func durationLeft(date:NSDate) -> Int
+     * - Detemines the schedulable duration left until date in seconds
+     * [Return]
+     * Int - Schedulable duration until date
+    */
+    public func durationLeft(date:NSDate) -> Int
+    {
+        //Prepare Data
+        let arr_drsn = self.generateSchedulableDuration()
+        var rst_drsn = 0
+
+        for drsn in arr_drsn
+        {
+            if drsn.begin.compare(date as Date) == ComparisonResult.orderedDescending
+            {
+                //Duration begin > date
+                break
+            }
+            else if drsn.begin.compare(date as Date) == ComparisonResult.orderedAscending && Date(timeInterval: TimeInterval(drsn.duration), since: drsn.begin as Date).compare(date as Date) == ComparisonResult.orderedDescending
+            {
+                //Duration begin < date < Durationbegin + duration
+                //Duration between Duration begin and date
+                rst_drsn += Int(round(date.timeIntervalSince(drsn.begin as Date)))
+            }
+            else
+            {
+                //Full Duration
+                rst_drsn += drsn.duration
+            }
+        }
+
+        return rst_drsn
     }
 
     /*
@@ -174,12 +210,12 @@ public class PVRScheduler: NSObject
     }
 
     /*
-     * public func genrateAllSubtask() -> [PVRTask]
+     * public func generateAllSubtask() -> [String:[PVRTask]]
      * - Generate subtasks from all tasks
      * [Return]
-     * Array<PVRTask> - Array of subtasks
+     * Dictionary<String,Array<PVRTask>> - Dictionary with key as task name and value as subtasks generated from task specfied by name
     */
-    public func genrateAllSubtask() -> [PVRTask]
+    public func generateAllSubtask() -> [String:[PVRTask]]
     {
         //Prepare Data
         self.dataCtrl.updateTask()
@@ -187,7 +223,7 @@ public class PVRScheduler: NSObject
         self.dataView.loadFromDB()
         var date = Date()
         var task = self.dataViewCtrl.sortedTask(sattr: PVRTaskSort.deadline)[0] //Closest Deadline
-        var arr_stsk = Array<PVRTask>()
+        var sch_stsk = Dictionary<String,Array<PVRTask>>()
 
         //Iterate Tasks
         while date.compare(self.lastTaskDate() as Date) != ComparisonResult.orderedDescending && self.dataView.task.count > 0
@@ -196,7 +232,18 @@ public class PVRScheduler: NSObject
             let task_stsk = self.generateSubtask(task: task)
             for stsk in task_stsk
             {
-                arr_stsk.append(stsk)
+                if var arr_stsk = sch_stsk[task.name]
+                {
+                    arr_stsk.append(stsk)
+                    sch_stsk[task.name] = arr_stsk
+                }
+                else
+                {
+                    //Subtask array missing
+                    var arr_stsk = Array<PVRTask>()
+                    arr_stsk.append(stsk)
+                    sch_stsk[task.name] = arr_stsk
+                }
             }
 
             //Update Data
@@ -212,6 +259,7 @@ public class PVRScheduler: NSObject
         return arr_stsk.reversed()
     }f
 
+
     /*
      * public scheduleTask()
      * - Generate Schedule
@@ -222,126 +270,147 @@ public class PVRScheduler: NSObject
     */
     public func scheduleTask() throws -> [PVRDuration:[PVRTask]]
     {
+        //Safeguard check
+        if self.vaildateSchedulable() == false
+        {
+            throw PVRSchedulerError.DeadlineOverflow
+        }
 
-        //Prepare Data
-        var arr_drsn = self.generateSchedulableDuration()
-        var arr_task = (Array(self.dataView.retrieveAllEntry(lockey: PVRDBKey.task).values) as! [PVRTask])
-        let date = Date() //Init Current Date
-        var schedule = Dictionary<PVRDuration,Array<PVRTask>>()
-        var task_idx = 0
-        var drsn_idx = 0
-        var drsn_left = arr_drsn[drsn_idx].duration //Closest Duration
-
-        //Init Schedular Stavation Status
-        self.dataViewCtrl.updateTask()
-        self.dataViewCtrl.pruneTask()
+        //Prepare Data View
+        self.dataCtrl.updateTask()
+        self.dataCtrl.pruneTask()
         self.dataView.loadFromDB()
-        var sch_stsk = Dictionary<String,Array<PVRTask>>()
-        var sch_stv = Dictionary<String,Int>()
-        for task in arr_task
+
+        //Generate Input Data
+        let arr_drsn = self.generateSchedulableDuration()
+        var dict_tsk = (self.dataView.retrieveAllEntry(lockey: PVRDBKey.task) as! [String:PVRTask])
+        var arr_tsk = Array(dict_tsk.keys)
+        var dict_stsk = self.generateAllSubtask()
+
+        //Status Data
+        //var date = Date()
+        var tsk_idx = 0
+
+        //Result Data
+        var schd = Dictionary<PVRDuration,Array<PVRTask>>()
+        for drsn in arr_drsn
         {
-            sch_stsk[task.name] = self.generateSubtask(task: task).reversed() //Earlist Subtask Last
-        }
-        let sort_stv = {(tsk1:PVRTask,tsk2:PVRTask) -> Bool
-            in
-            return sch_stv[tsk1.name]! <= sch_stv[tsk2.name]! //Most Staved First
+            schd[drsn] = Array<PVRTask>()
         }
 
-        //Generate Schedule
-        while arr_task.count > 0
+        //Slack - Duration schedulable till deadline - Duration need by task
+        //Slack Sort
+        let slk_srt = {(tsk1:String,tsk2:String) -> Bool in
+            let tsk1_slk = self.durationLeft(date: dict_tsk[tsk1]!.deadline) - dict_tsk[tsk1]!.duration
+            let tsk2_slk = self.durationLeft(date: dict_tsk[tsk2]!.deadline) - dict_tsk[tsk2]!.duration
+
+            return tsk1_slk <= tsk2_slk
+        }
+
+        //Schedule Data
+        for drsn in arr_drsn
         {
-            //Update Data
-            //Update Stavation Status
-            for task in arr_task
+            while drsn.duration > 0 && arr_tsk.count > 0
             {
-                sch_stv[task.name] = Int(task.deadline.timeIntervalSince(date)) / sch_stsk[task.name]!.count
+                let tsk = arr_tsk.sorted(by: slk_srt)[tsk_idx]
+                if dict_stsk[tsk]!.count <= 0
+                {
+                    //No More Subtasks to schedule for task
+                    tsk_idx += 1
+                }
+                else
+                {
+                    let stsk = dict_stsk[tsk]!.removeFirst()
+
+                    //Duration Check
+                    if drsn.duration < stsk.duration && self.sch_affinity == true
+                    {
+                        //Current Duration is less then subtask duration && Duration affinity following positive
+                        if tsk_idx < arr_tsk.count
+                        {
+                            tsk_idx += 1 //Attempt to fit Next Task's subtask
+                        }
+                        else
+                        {
+                            //Failed to fit all Task's subtasks
+                            break //Attempt Next Duration
+                        }
+                    }
+                    else if drsn.duration < stsk.duration && self.sch_affinity == false
+                    {
+                        //Current Duration is less then subtask duration && Duration affinty following negative
+                        //Split subtask into 2 subtasks
+                        //Subtask_1
+                        let stsk_1 = (stsk.copy() as! PVRTask)
+                        stsk_1.duration = drsn.duration
+                        stsk_1.completion = stsk.completion * (Double(stsk_1.duration) / Double(stsk.duration))
+                        //Subtask 2
+                        let stsk_2 = stsk //Reference
+                        stsk_2.duration -= stsk_1.duration
+                        stsk_2.completion -= stsk_1.completion
+
+                        //Schedule Subtask 1
+                        schd[drsn]!.append(stsk_1)
+
+                        //Update Data
+                        dict_tsk[tsk]!.duration -= stsk_1.duration
+                        dict_tsk[tsk]!.completion -= stsk_1.completion
+
+                        //Defer Schedule Subtask 2
+                        dict_stsk[tsk]!.insert(stsk_2, at: 0)
+                    }
+                    else
+                    {
+                        //Current duration sufficent to schedule subtask
+                        schd[drsn]!.append(stsk)
+
+                        //Update Data
+                        dict_tsk[tsk]!.duration -= stsk.duration
+                        dict_tsk[tsk]!.completion -= stsk.completion
+                        tsk_idx = 0
+                    }
+
+                    //Update Data
+                    let arr_tsk_cpy = arr_tsk
+                    for tsk in arr_tsk_cpy
+                    {
+                        if dict_stsk[tsk]!.count >= 0
+                        {
+                            let tsk_i = arr_tsk_cpy.index(of: tsk)!
+                            arr_tsk.remove(at: tsk_i)
+                        }
+                    }
+                }
             }
-            arr_task = arr_task.sorted(by: sort_stv)
-            //Update Duration
-            if drsn_left <= 0
+        }
+        //Check for Unscheduled Tasks
+        if arr_tsk.count > 0
+        {
+            if self.sch_affinity == true
             {
-                //Next Duration
-                drsn_idx += 1
-                drsn_left = arr_drsn[drsn_idx].duration
-            }
-            if drsn_left == arr_drsn[drsn_idx].duration
-            {
-                //New Duration
-                schedule[arr_drsn[drsn_idx]] = Array<PVRTask>()
-            }
-            if drsn_idx >= (arr_drsn.count - 1)
-            {
-                //No Duration Left
-                //Retry Scheduling without following time afinity
+                //Attempt to Reschedule without following affinity
                 self.sch_affinity = false
                 do
                 {
-                    schedule = try self.scheduleTask()
+                    schd = try self.scheduleTask()
                 }
                 catch PVRSchedulerError.DurationOverflow
                 {
-                    //No Duration Left
-
                     throw PVRSchedulerError.DurationOverflow
                 }
-
-                break
-            }
-
-            //Schedule Subtask
-            let task = arr_task[task_idx]
-            let stsk = sch_stsk[task.name]!.popLast()!
-            if self.sch_affinity == true && drsn_left < stsk.duration
-            {
-                //Following affinity && Unable fit subtask into duration
-                //Try Scheduling another Task's subtask
-                task_idx += 1
-                continue
-            }
-            else if self.sch_affinity == false && drsn_left < stsk.duration
-            {
-                //Unable fit subtask into duration
-                //Split subtask into 2 subtasks
-                //Subtask 1
-                let stsk_bfr = (stsk.copy() as! PVRTask)
-                stsk_bfr.duration = drsn_left
-                schedule[arr_drsn[drsn_idx]]!.append(stsk_bfr)
-
-
-                //Subtask 2
-                stsk.duration = task.duration - stsk_bfr.duration
-                sch_stsk[task.name]!.append(stsk) //Defer Scheduling of Subtask 2
-
-                //Update Data
-                drsn_left -= stsk_bfr.duration
-                task.duration -= stsk_bfr.duration
-                task.completion = stsk_bfr.completion
-
+                catch
+                {
+                    print("FATAL:PVRScheduler:Unknown Error Occured while scheduling, aborting.")
+                    abort()
+                }
             }
             else
             {
-                //Able fit subtask into duration
-                schedule[arr_drsn[drsn_idx]]!.append(stsk)
-
-                //Update Data
-                drsn_left -= stsk.duration
-                task.duration -= stsk.duration
-                task.completion = stsk.completion
-                task_idx = 0
+                throw PVRSchedulerError.DurationOverflow
             }
-
-            //Prepare for next Iteration
-            self.dataViewCtrl.pruneTask()
-            arr_task = (Array(self.dataView.retrieveAllEntry(lockey: PVRDBKey.task).values) as! [PVRTask])
         }
 
-        //Cleanup
-        self.dataView.loadFromDB()
 
-        //Output Results
-        self.sch_date = NSDate() //Init to Current time
-        self.schedule = schedule
-
-        return schedule
+        return schd
     }
 }
