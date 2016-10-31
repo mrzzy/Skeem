@@ -70,11 +70,11 @@ class VoidblockArrayAdapter extends ArrayAdapter<Voidblock> {
         viewHolder.checkBox.setTag(position);
 
         // Set the name
-        viewHolder.name.setText(voidblock.name);
+        viewHolder.name.setText(voidblock.getName());
         // Set the from time
-        viewHolder.fromTime.setText(voidblock.from.toFormattedString());
+        viewHolder.fromTime.setText(voidblock.getScheduledStart().toFormattedString());
         // Set the to time
-        viewHolder.toTime.setText(voidblock.to.toFormattedString());
+        viewHolder.toTime.setText(voidblock.getScheduledStop().toFormattedString());
         // Set visibility of checkbox
 //        if (TaskFragment.menu_multi) {
 //            viewHolder.checkBox.setVisibility(View.VISIBLE);

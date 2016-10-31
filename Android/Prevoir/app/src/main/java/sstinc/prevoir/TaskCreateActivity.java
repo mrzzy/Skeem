@@ -8,6 +8,9 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ScrollView;
 
+import org.joda.time.Period;
+import org.joda.time.format.PeriodFormat;
+
 import java.util.ArrayList;
 //TODO: Update and retain information
 
@@ -47,9 +50,9 @@ public class TaskCreateActivity extends AppCompatActivity {
             EditText editText_subject = (EditText) findViewById(R.id.field_text_task_subject);
             EditText editText_description = (EditText) findViewById(R.id.field_text_description);
 
-            editText_name.setText(task.name);
-            editText_subject.setText(task.subject);
-            editText_description.setText(task.description);
+            editText_name.setText(task.getName());
+            editText_subject.setText(task.getSubject());
+            editText_description.setText(task.getDescription());
         }
     }
 
@@ -102,19 +105,26 @@ public class TaskCreateActivity extends AppCompatActivity {
                 String subject = editText_subject.getText().toString();
                 String description = editText_description.getText().toString();
                 // Get weekdays
+                WeekDays weekDays = new WeekDays();
                 ArrayList<String> stringWeekDays = data.getStringArrayListExtra(EXTRA_WEEKDAYS);
-                ArrayList<Task.WeekDay> weekDays = new ArrayList<>();
                 for (String weekDay : stringWeekDays) {
-                    weekDays.add(Task.WeekDay.valueOf(weekDay));
+                    weekDays.add(WeekDays.WeekDay.valueOf(weekDay));
                 }
                 // Get deadline, duration and min_time_period
-                Deadline deadline = new Deadline(new Datetime(data.getStringExtra(EXTRA_DEADLINE)));
-                Duration duration = new Duration(data.getStringExtra(EXTRA_DURATION));
-                Duration min_time_period = new Duration(data.getStringExtra(EXTRA_MIN_TIME_PERIOD));
+                Datetime deadline = new Datetime(data.getStringExtra(EXTRA_DEADLINE));
+                Period period = PeriodFormat.getDefault().parsePeriod(
+                        data.getStringExtra(EXTRA_DURATION));
+                Period min_time_period = PeriodFormat.getDefault().parsePeriod(
+                        data.getStringExtra(EXTRA_MIN_TIME_PERIOD));
                 // Create intent
                 Intent intent = new Intent();
-                Task task = new Task(name, subject, weekDays, deadline,
-                        description, duration, min_time_period);
+                Task task = new Task();
+                task.setName(name);
+                task.setSubject(subject);
+                task.setWeekDays(weekDays);
+                task.setDeadline(deadline);
+                task.setPeriodNeeded(period);
+                task.setPeriodMinimum(min_time_period);
                 task.setId(data.getLongExtra(EXTRA_TASK_ID, -1));
                 intent.putExtra(TaskFragment.EXTRA_TASK, task);
 
@@ -122,18 +132,24 @@ public class TaskCreateActivity extends AppCompatActivity {
                 finish();
             } else if (resultCode == RESULT_CANCELED) {
                 // Get Week Days
+                WeekDays weekDays = new WeekDays();
                 ArrayList<String> stringWeekDays = data.getStringArrayListExtra(EXTRA_WEEKDAYS);
-                ArrayList<Task.WeekDay> weekDays = new ArrayList<>();
                 for (String weekDay : stringWeekDays) {
-                    weekDays.add(Task.WeekDay.valueOf(weekDay));
+                    weekDays.add(WeekDays.WeekDay.valueOf(weekDay));
                 }
                 // Get Deadline
-                Deadline deadline = new Deadline(new Datetime(data.getStringExtra(EXTRA_DEADLINE)));
+                Datetime deadline = new Datetime(data.getStringExtra(EXTRA_DEADLINE));
                 // Get duration and min_tim_period
-                Duration duration = new Duration(data.getStringExtra(EXTRA_DURATION));
-                Duration min_time_period = new Duration(data.getStringExtra(EXTRA_MIN_TIME_PERIOD));
+                Period period = PeriodFormat.getDefault().parsePeriod(
+                        data.getStringExtra(EXTRA_DURATION));
+                Period min_time_period = PeriodFormat.getDefault().parsePeriod(
+                        data.getStringExtra(EXTRA_MIN_TIME_PERIOD));
 
-                cont_task = new Task("", "", weekDays, deadline, "", duration, min_time_period);
+                cont_task = new Task();
+                cont_task.setWeekDays(weekDays);
+                cont_task.setDeadline(deadline);
+                cont_task.setPeriodNeeded(period);
+                cont_task.setPeriodMinimum(min_time_period);
 
                 show_continue = true;
                 invalidateOptionsMenu();

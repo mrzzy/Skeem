@@ -299,7 +299,7 @@ public class VoidblockFragment extends ListFragment implements AdapterView.OnIte
                 // Update the task in the database
                 DbAdapter dbAdapter = new DbAdapter(getActivity().getApplicationContext());
                 dbAdapter.open();
-                dbAdapter.updateVoidblock(voidblock.getId(), voidblock);
+                dbAdapter.updateVoidblock(voidblock);
                 ArrayList<Voidblock> voidblocks = dbAdapter.getVoidblocks();
                 dbAdapter.close();
 

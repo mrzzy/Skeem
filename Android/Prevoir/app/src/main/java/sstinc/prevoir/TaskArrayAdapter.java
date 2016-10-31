@@ -68,9 +68,9 @@ class TaskArrayAdapter extends ArrayAdapter<Task> {
         viewHolder.checkbox.setTag(position);
 
         // Set the title
-        viewHolder.title.setText(task.name);
+        viewHolder.title.setText(task.getName());
         // Set the description
-        viewHolder.description.setText(task.description);
+        viewHolder.description.setText(task.getDescription());
         // Set visibility of checkbox
         if (TaskFragment.menu_multi) {
             viewHolder.checkbox.setVisibility(View.VISIBLE);

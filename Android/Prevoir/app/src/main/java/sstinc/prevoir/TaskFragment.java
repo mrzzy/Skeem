@@ -142,7 +142,7 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
                 // Update the task in the database
                 DbAdapter dbAdapter = new DbAdapter(getActivity().getApplicationContext());
                 dbAdapter.open();
-                dbAdapter.updateTask(task.getId(), task);
+                dbAdapter.updateTask(task);
                 ArrayList<Task> tasks = dbAdapter.getTasks();
                 dbAdapter.close();
 

@@ -19,6 +19,7 @@ import org.joda.time.format.PeriodFormat;
  * @see Datetime
  */
 class Task extends Schedulable implements Parcelable {
+    boolean checked = false;
     private String name;
     private String description;
     private String subject;

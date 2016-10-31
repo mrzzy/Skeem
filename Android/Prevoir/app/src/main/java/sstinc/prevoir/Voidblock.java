@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * @see Parcelable
  */
 class Voidblock extends Schedulable implements Parcelable {
-    //    boolean checked = false;
+    boolean checked = false;
     private String name;
     private WeekDays weekDays;
 

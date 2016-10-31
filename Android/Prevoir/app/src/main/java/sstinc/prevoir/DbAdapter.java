@@ -84,7 +84,7 @@ class DbAdapter {
             + DAYS_TABLE_COL_THURSDAY + " INTEGER NOT NULL, "
             + DAYS_TABLE_COL_FRIDAY + " INTEGER NOT NULL, "
             + DAYS_TABLE_COL_SATURDAY + " INTEGER NOT NULL, "
-            + DAYS_TABLE_COL_SUNDAY + " INTEGER NOT NULL, "
+            + DAYS_TABLE_COL_SUNDAY + " INTEGER NOT NULL"
             + ");";
 
     // Constants for Tasks Table

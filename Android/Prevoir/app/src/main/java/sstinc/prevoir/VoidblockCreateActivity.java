@@ -104,12 +104,12 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                     R.id.text_view_voidblock_to);
 
             // Set the values of the fields
-            editText_name.setText(voidblock.name);
-            textView_from_datetime.setText(voidblock.from.toFormattedString());
-            textView_to_datetime.setText(voidblock.to.toFormattedString());
+            editText_name.setText(voidblock.getName());
+            textView_from_datetime.setText(voidblock.getScheduledStart().toFormattedString());
+            textView_to_datetime.setText(voidblock.getScheduledStop().toFormattedString());
             // Set local voidblock times
-            voidblock_from_datetime = voidblock.from;
-            voidblock_to_datetime = voidblock.to;
+            voidblock_from_datetime = voidblock.getScheduledStart();
+            voidblock_to_datetime = voidblock.getScheduledStop();
             voidblock_id = voidblock.getId();
         }
     }
@@ -143,8 +143,10 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
             }
 
-            Voidblock voidblock = new Voidblock(name, voidblock_from_datetime,
-                    voidblock_to_datetime);
+            Voidblock voidblock = new Voidblock();
+            voidblock.setName(name);
+            voidblock.setScheduledStart(voidblock_from_datetime);
+            voidblock.setScheduledStop(voidblock_to_datetime);
             if (voidblock_id != -1) {
                 voidblock.setId(voidblock_id);
             }

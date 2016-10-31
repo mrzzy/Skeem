@@ -30,7 +30,7 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
     static boolean edit = false;
 
     // Values of the task
-    private ArrayList<Task.WeekDay> weekDays = new ArrayList<>();
+    private ArrayList<WeekDays.WeekDay> weekDays = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -208,7 +208,7 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
             edit = getIntent().getBooleanExtra(TaskCreateActivity.EXTRA_HAS_OLD_INFORMATION, false);
 
             // Set weekDays
-            weekDays = task.weekDays;
+            weekDays = task.getWeekDays().getWeekDays_list();
             if (!weekDays.isEmpty()) {
                 switch_onetime_repetitive.setChecked(true);
                 setDaysButton.setText(getTextToSet());
@@ -216,25 +216,27 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
             }
             // Set duration
             spinner_duration_hours.setSelection(
-                    hourArrayAdapter.getPosition(Integer.toString(task.duration.getHours())));
+                    hourArrayAdapter.getPosition(
+                            Integer.toString(task.getPeriodNeeded().getHours())));
             spinner_duration_minutes.setSelection(
-                    minuteArrayAdapter.getPosition(Integer.toString(task.duration.getMinutes())));
+                    minuteArrayAdapter.getPosition(
+                            Integer.toString(task.getPeriodNeeded().getMinutes())));
 
             // Minimum Time Period
-            if (task.min_time_period.getHours() != -1) {
+            if (task.getPeriodMinimum().getHours() != -1) {
                 switch_min_time_period.setChecked(true);
                 spinner_min_time_period_hours.setSelection(hourArrayAdapter.getPosition(
-                        Integer.toString(task.min_time_period.getHours())));
+                        Integer.toString(task.getPeriodMinimum().getHours())));
                 spinner_min_time_period_minutes.setSelection(minuteArrayAdapter.getPosition(
-                        Integer.toString(task.min_time_period.getMinutes())));
+                        Integer.toString(task.getPeriodMinimum().getMinutes())));
                 spinner_min_time_period_hours.setVisibility(View.VISIBLE);
                 spinner_min_time_period_minutes.setVisibility(View.VISIBLE);
             }
 
             // Deadline
-            datePicker_deadline.updateDate(task.deadline.getDeadline().getYear(),
-                    task.deadline.getDeadline().getMonth(), task.deadline.getDeadline().getDay());
-            if (task.deadline.getHasDueTime()) {
+            datePicker_deadline.updateDate(task.getDeadline().getYear(),
+                    task.getDeadline().getMonth(), task.getDeadline().getDay());
+            if (task.getDeadline().getHasTime()) {
                 ScrollableTimePicker timePicker_deadline = (ScrollableTimePicker) findViewById(
                         R.id.time_picker_deadline);
 
@@ -242,8 +244,8 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
                 timePicker_deadline.setVisibility(View.VISIBLE);
 
                 // Set time for time picker
-                timePicker_deadline.setCurrentHour(task.deadline.getDeadline().getHour());
-                timePicker_deadline.setCurrentMinute(task.deadline.getDeadline().getMinute());
+                timePicker_deadline.setCurrentHour(task.getDeadline().getHour());
+                timePicker_deadline.setCurrentMinute(task.getDeadline().getMinute());
             }
         }
     }
@@ -253,7 +255,7 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(),
                 TaskCreateDaysActivity.class);
         ArrayList<String> stringWeekDays = new ArrayList<>();
-        for (Task.WeekDay weekDay : weekDays) {
+        for (WeekDays.WeekDay weekDay : weekDays) {
             stringWeekDays.add(weekDay.toString());
         }
         intent.putExtra(EXTRA_CURRENT_DAYS, stringWeekDays);
@@ -278,7 +280,7 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
         // WeekDays (Repeated Days)
         // Convert weekDays to ArrayList<String>
         ArrayList<String> arrayListWeekDays = new ArrayList<>();
-        for (Task.WeekDay weekDay : weekDays) {
+        for (WeekDays.WeekDay weekDay : weekDays) {
             arrayListWeekDays.add(weekDay.toString());
         }
         intent.putExtra(TaskCreateActivity.EXTRA_WEEKDAYS, arrayListWeekDays);
@@ -354,7 +356,7 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
 
     private String getTextToSet() {
         String textToSet = "";
-        for (Task.WeekDay weekDay : weekDays) {
+        for (WeekDays.WeekDay weekDay : weekDays) {
             textToSet += weekDay.toString().substring(0, 3);
             textToSet += ", ";
         }
@@ -374,7 +376,7 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
                 ArrayList<String> days = data.getStringArrayListExtra(EXTRA_DAYS);
                 weekDays = new ArrayList<>();
                 for (String day : days) {
-                    weekDays.add(Task.WeekDay.valueOf(day.toUpperCase()));
+                    weekDays.add(WeekDays.WeekDay.valueOf(day.toUpperCase()));
                 }
 
                 Switch switch_deadline = (Switch) findViewById(R.id.switch_deadline);
