@@ -45,6 +45,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         self.loadUD()
 
+        let test = PVRTest()
+        let rst = test.unit_schedule()
+
         return true
     }
     
