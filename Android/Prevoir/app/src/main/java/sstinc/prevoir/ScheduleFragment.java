@@ -15,11 +15,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import org.joda.time.Period;
+import org.joda.time.format.PeriodFormat;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 
 public class ScheduleFragment extends ListFragment {
-
     // Menu status
     boolean menu_shuffle = false;
     boolean menu_continue = false;
@@ -27,6 +29,14 @@ public class ScheduleFragment extends ListFragment {
     boolean menu_duplicate = false;
     boolean menu_delete = false;
 
+    /**
+     * This function returns a list of voidblocks. Between each voidblock, a
+     * timeblock is inserted to fill the gap.
+     *
+     * @see Voidblock
+     * @see Timeblock
+     * @return list of void and time blocks
+     */
     private ArrayList<Schedulable> getVoidTimeblocks() {
         // Get voidblocks
         DbAdapter dbAdapter = new DbAdapter(getActivity());
@@ -41,13 +51,19 @@ public class ScheduleFragment extends ListFragment {
             } else {
                 Voidblock prev_voidblock = voidblocks.get(i-1);
                 Voidblock curr_voidblock = voidblocks.get(i);
-                voidTimeblocks.add(new Timeblock(prev_voidblock.to, curr_voidblock.from));
+                voidTimeblocks.add(new Timeblock(prev_voidblock.getScheduledStop(),
+                        curr_voidblock.getScheduledStart()));
                 voidTimeblocks.add(curr_voidblock);
             }
         }
         return voidTimeblocks;
     }
 
+    /**
+     * Checks if there is enough time in timeblocks for all the tasks.
+     * @return true if there is enough time. false if there is not enough
+     * time
+     */
     private boolean validateTaskInTimeblocks() {
         // Get voidTimeblocks and tasks
         DbAdapter dbAdapter = new DbAdapter(getActivity());
@@ -55,24 +71,30 @@ public class ScheduleFragment extends ListFragment {
         ArrayList<Task> tasks = dbAdapter.getTasks();
         dbAdapter.close();
 
-        Duration time_needed = new Duration();
+        Period time_needed = new Period();
         for (Schedulable schedulable : tasks) {
             Task task = (Task) schedulable;
-            time_needed.add(task.duration);
+            time_needed.plus(task.getPeriodNeeded());
         }
 
-        Duration total_time = new Duration();
+        Period total_time = new Period();
         for (Schedulable schedulable : getVoidTimeblocks()) {
             if (schedulable instanceof Timeblock) {
                 Timeblock timeblock = (Timeblock) schedulable;
-                total_time.add(timeblock.duration);
+                total_time.plus(timeblock.getPeriodLeft());
             }
         }
 
-        return total_time.toFullString().compareTo(time_needed.toFullString()) != -1;
+        return PeriodFormat.getDefault().print(total_time).compareTo(
+                PeriodFormat.getDefault().print(time_needed)) != -1;
     }
 
-    // Get and sort values according to even sort
+
+    /**
+     * Sorts and scehdules the tasks evenely into each timeblock. Returns an
+     * empty list if there is insufficient time.
+     * @return array list of voidblocks and timeblocks.
+     */
     private ArrayList<Schedulable> evenSort() {
         if (!validateTaskInTimeblocks()) {
             return new ArrayList<>();
@@ -87,38 +109,39 @@ public class ScheduleFragment extends ListFragment {
         ArrayList<Schedulable> voidTimeblocks = getVoidTimeblocks();
 
         for (Task task : tasks) {
-            Duration time_per_block = task.duration.divide(number_of_timeblocks);
-            Duration task_duration_left = task.duration;
+            Period time_per_block = new Period(
+                    task.getPeriodNeeded().getMillis()/number_of_timeblocks);
+            Period task_duration_left = task.getPeriodNeeded();
 
-            while (task_duration_left.toMinutes() != 0) {
+            while (task_duration_left.getMinutes() != 0) {
                 for (Schedulable schedulable : voidTimeblocks) {
                     if (schedulable instanceof Timeblock) {
                         Timeblock timeblock = (Timeblock) schedulable;
-                        if (timeblock.duration.toMinutes() == 0) {
+                        if (timeblock.getPeriod().getMinutes() == 0) {
                             continue;
                         }
 
-                        if (time_per_block.toFullString().compareTo(
-                                timeblock.duration.toFullString()) == -1) {
-                            task_duration_left = task_duration_left.subtract(timeblock.duration);
+                        if (PeriodFormat.getDefault().print(time_per_block).compareTo(
+                                PeriodFormat.getDefault().print(timeblock.getPeriod())) == -1) {
+                            task_duration_left = task_duration_left.minus(timeblock.getPeriod());
 
                             Task timeblock_task = new Task(task);
-                            timeblock_task.scheduled_start = timeblock.from;
-                            timeblock_task.scheduled_end = timeblock.to;
-                            timeblock_task.duration = timeblock.duration;
+                            timeblock_task.setScheduledStart(
+                                    new Datetime(timeblock.getScheduledStart()));
+                            timeblock_task.setScheduledStop(
+                                    new Datetime(timeblock.getScheduledStop()));
+                            timeblock_task.setPeriodNeeded(new Period(timeblock.getPeriod()));
                             timeblock.addTask(timeblock_task);
                         } else {
-                            task_duration_left = task_duration_left.subtract(time_per_block);
+                            task_duration_left = task_duration_left.minus(time_per_block);
 
                             Task timeblock_task = new Task(task);
-                            Log.w(this.getClass().getName(), "Time per block: " + time_per_block.toFullString());
-                            Log.w(this.getClass().getName(), "Timeblock from: " + timeblock.from.add(timeblock.duration_used).toString());
-                            Log.w(this.getClass().getName(), "Task duration: " + task.duration.toFullString());
-                            Log.w(this.getClass().getName(), "Duration used: " + timeblock.duration_used.toFullString());
-                            timeblock_task.scheduled_start = timeblock.from.add(
-                                    timeblock.duration_used);
-                            timeblock_task.scheduled_end = timeblock.to.add(
-                                    timeblock.duration_used).add(time_per_block);
+                            timeblock_task.setScheduledStart(new Datetime(
+                                    timeblock.getScheduledStart().add(timeblock.getPeriodUsed())));
+                            timeblock_task.setScheduledStop(new Datetime(
+                                    timeblock.getScheduledStart()
+                                            .add(timeblock.getPeriodUsed())
+                                            .add(time_per_block)));
                             timeblock.addTask(timeblock_task);
                         }
                     }
@@ -131,7 +154,7 @@ public class ScheduleFragment extends ListFragment {
         for (Schedulable schedulable : voidTimeblocks) {
             if (schedulable instanceof Timeblock) {
                 Timeblock timeblock = (Timeblock) schedulable;
-                schedule.addAll(timeblock.tasks_scheduled);
+                schedule.addAll(timeblock.getTasksScheduled());
             } else {
                 schedule.add(schedulable);
             }
@@ -172,22 +195,22 @@ public class ScheduleFragment extends ListFragment {
         for (Schedulable item : schedule) {
             if (item instanceof Task) {
                 Task task = (Task) item;
-                if ((task.scheduled_start.getDay() == current_day &&
-                        task.scheduled_start.getMonth() == current_month &&
-                        task.scheduled_start.getYear() == current_year) ||
-                        (task.scheduled_end.getDay() == current_day &&
-                         task.scheduled_end.getMonth() == current_month &&
-                         task.scheduled_end.getYear() == current_year)) {
+                if ((task.getScheduledStart().getDay() == current_day &&
+                        task.getScheduledStart().getMonth() == current_month &&
+                        task.getScheduledStart().getYear() == current_year) ||
+                        (task.getScheduledStop().getDay() == current_day &&
+                         task.getScheduledStop().getMonth() == current_month &&
+                         task.getScheduledStop().getYear() == current_year)) {
                     filtered_schedule.add(task);
                 }
             } else {
                 Voidblock voidblock = (Voidblock) item;
-                if ((voidblock.from.getDay() == current_day &&
-                        voidblock.from.getMonth() == current_month &&
-                        voidblock.from.getYear() == current_year) ||
-                        (voidblock.to.getDay() == current_day &&
-                                voidblock.to.getMonth() == current_month &&
-                                voidblock.to.getYear() == current_year)) {
+                if ((voidblock.getScheduledStart().getDay() == current_day &&
+                        voidblock.getScheduledStart().getMonth() == current_month &&
+                        voidblock.getScheduledStart().getYear() == current_year) ||
+                        (voidblock.getScheduledStop().getDay() == current_day &&
+                                voidblock.getScheduledStop().getMonth() == current_month &&
+                                voidblock.getScheduledStop().getYear() == current_year)) {
                     filtered_schedule.add(voidblock);
                 }
             }

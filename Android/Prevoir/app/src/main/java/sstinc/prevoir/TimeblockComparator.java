@@ -1,84 +1,122 @@
 package sstinc.prevoir;
 
+import org.joda.time.format.PeriodFormat;
+
 import java.util.Comparator;
 
+/**
+ * This class helps compare Timeblocks using {@link Comparator}.
+ *
+ * @see Comparator
+ */
 class TimeblockComparator implements Comparator<Timeblock> {
-    private TimeblockComparator.Order orderBy = Order.TOTAL_DURATION;
+    // Set default order
+    private TimeblockComparator.Order order = Order.TOTAL_PERIOD;
     private boolean isAscending = true;
+    // Ways to order by
+    enum Order {TOTAL_PERIOD, PERIOD_USED, PERIOD_LEFT, SCHEDULED_START, SCHEDULED_STOP}
 
-    enum Order {TOTAL_DURATION, DURATION_USED, DURATION_LEFT, START_DATETIME, END_DATETIME};
-
-    // Ascending is A-Z 0-9
+    /**
+     * Sets the order to sort the voidblocks by based on the enum value given.
+     * If it is ascending, the voidblocks are sorted by 0-9, A-z.
+     *
+     * @param order sort the voidblocks by this order
+     * @param isAscending sort by ascending order
+     */
     void setSortBy(TimeblockComparator.Order order, boolean isAscending) {
-        this.orderBy = order;
+        this.order = order;
         this.isAscending = isAscending;
     }
 
+    /**
+     * Implemented function from {@link Comparator} to compare two voidblocks.
+     * @param o1 voidblock 1
+     * @param o2 voidblock 2
+     * @return comparison value, -1, 0 or 1.
+     */
     @Override
     public int compare(Timeblock o1, Timeblock o2) {
         int mul_val = isAscending ? 1 : -1;
         int c;
-        switch (this.orderBy) {
-            case TOTAL_DURATION:
-                c = mul_val*o1.duration.toFullString().compareTo(o2.duration.toFullString());
-                // Sort by duration left
+        switch (this.order) {
+            case TOTAL_PERIOD:
+                c = mul_val* PeriodFormat.getDefault().print(o1.getPeriod()).compareTo(
+                        PeriodFormat.getDefault().print(o2.getPeriod()));
+                // Sort by period left
                 if (c == 0) {
-                    c = mul_val*o1.duration_left.toFullString().compareTo(o2.duration_left.toFullString());
+                    c = mul_val*PeriodFormat.getDefault().print(o1.getPeriodLeft()).compareTo(
+                            PeriodFormat.getDefault().print(o2.getPeriodLeft()));
                 }
-                // Sort by start datetime
+                // Sort by scheduled start datetime
                 if (c == 0) {
-                    c = mul_val*o1.from.toString().compareTo(o2.from.toString());
+                    c = mul_val*o1.getScheduledStart().toString().compareTo(
+                            o2.getScheduledStart().toString());
                 }
-            case DURATION_USED:
-                c = mul_val*o1.duration_used.toFullString().compareTo(o2.duration_used.toFullString());
-                // Sort by total duration
+            case PERIOD_USED:
+                c = mul_val*PeriodFormat.getDefault().print(o1.getPeriodUsed()).compareTo(
+                        PeriodFormat.getDefault().print(o2.getPeriodUsed()));
+                // Sort by total period
                 if (c == 0) {
-                    c = mul_val*o1.duration.toFullString().compareTo(o2.duration.toFullString());
+                    c = mul_val*PeriodFormat.getDefault().print(o1.getPeriod()).compareTo(
+                            PeriodFormat.getDefault().print(o2.getPeriod()));
                 }
-                // Sort by start datetime
+                // Sort by scheduled start datetime
                 if (c == 0) {
-                    c = mul_val*o1.from.toString().compareTo(o2.from.toString());
+                    c = mul_val*o1.getScheduledStart().toString().compareTo(
+                            o2.getScheduledStart().toString());
                 }
-            case DURATION_LEFT:
-                c = mul_val*o1.duration_left.toFullString().compareTo(o2.duration_left.toFullString());
-                // Sort by total duration
+            case PERIOD_LEFT:
+                c = mul_val*PeriodFormat.getDefault().print(o1.getPeriodLeft()).compareTo(
+                        PeriodFormat.getDefault().print(o2.getPeriodLeft()));
+                // Sort by total period
                 if (c == 0) {
-                    c = mul_val*o1.duration.toFullString().compareTo(o2.duration.toFullString());
+                    c = mul_val*PeriodFormat.getDefault().print(o1.getPeriod()).compareTo(
+                            PeriodFormat.getDefault().print(o2.getPeriod()));
                 }
-                // Sort by start datetime
+                // Sort by scheduled start datetime
                 if (c == 0) {
-                    c = mul_val*o1.from.toString().compareTo(o2.from.toString());
+                    c = mul_val*o1.getScheduledStart().toString().compareTo(
+                            o2.getScheduledStart().toString());
                 }
-            case START_DATETIME:
-                c = mul_val*o1.from.toString().compareTo(o2.from.toString());
-                // Sort by total duration
+            case SCHEDULED_START:
+                c = mul_val*o1.getScheduledStart().toString().compareTo(
+                        o2.getScheduledStart().toString());
+                // Sort by total period
                 if (c == 0) {
-                    c = mul_val*o1.duration.toFullString().compareTo(o2.duration.toFullString());
+                    c = mul_val*PeriodFormat.getDefault().print(o1.getPeriod()).compareTo(
+                            PeriodFormat.getDefault().print(o2.getPeriod()));
                 }
-                // Sort by duration left
+                // Sort by period left
                 if (c == 0) {
-                    c = mul_val*o1.duration_left.toFullString().compareTo(o2.duration_left.toFullString());
+                    c = mul_val*PeriodFormat.getDefault().print(o1.getPeriodLeft()).compareTo(
+                            PeriodFormat.getDefault().print(o2.getPeriodLeft()));
                 }
-            case END_DATETIME:
-                c = mul_val*o1.to.toString().compareTo(o2.to.toString());
-                // Sort by total duration
+            case SCHEDULED_STOP:
+                c = mul_val*o1.getScheduledStop().toString().compareTo(
+                        o2.getScheduledStop().toString());
+                // Sort by total period
                 if (c == 0) {
-                    c = mul_val*o1.duration.toFullString().compareTo(o2.duration.toFullString());
+                    c = mul_val*PeriodFormat.getDefault().print(o1.getPeriod()).compareTo(
+                            PeriodFormat.getDefault().print(o2.getPeriod()));
                 }
-                // Sort by duration left
+                // Sort by period left
                 if (c == 0) {
-                    c = mul_val*o1.duration_left.toFullString().compareTo(o2.duration_left.toFullString());
+                    c = mul_val*PeriodFormat.getDefault().print(o1.getPeriodLeft()).compareTo(
+                            PeriodFormat.getDefault().print(o2.getPeriodLeft()));
                 }
             default:
-                // Default to total duration
-                c = mul_val*o1.duration.toFullString().compareTo(o2.duration.toFullString());
-                // Sort by duration left
+                // Default to total period
+                c = mul_val*PeriodFormat.getDefault().print(o1.getPeriod()).compareTo(
+                        PeriodFormat.getDefault().print(o2.getPeriod()));
+                // Sort by period left
                 if (c == 0) {
-                    c = mul_val*o1.duration_left.toFullString().compareTo(o2.duration_left.toFullString());
+                    c = mul_val*PeriodFormat.getDefault().print(o1.getPeriodLeft()).compareTo(
+                            PeriodFormat.getDefault().print(o2.getPeriodLeft()));
                 }
-                // Sort by start datetime
+                // Sort by scheduled start datetime
                 if (c == 0) {
-                    c = mul_val*o1.from.toString().compareTo(o2.from.toString());
+                    c = mul_val*o1.getScheduledStart().toString().compareTo(
+                            o2.getScheduledStart().toString());
                 }
         }
         return c;

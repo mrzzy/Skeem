@@ -2,62 +2,88 @@ package sstinc.prevoir;
 
 import java.util.Comparator;
 
+/**
+ * This class helps compare Voidblocks using {@link Comparator}.
+ *
+ * @see Comparator
+ */
 class VoidblockComparator implements Comparator<Voidblock> {
-
-    private VoidblockComparator.Order orderBy = Order.START_DATETIME;
+    // Set default order
+    private VoidblockComparator.Order order = Order.SCHEDULED_START;
     private boolean isAscending = true;
+    // Ways to order by
+    enum Order {NAME, SCHEDULED_START, SCHEDULED_STOP}
 
-    enum Order {NAME, START_DATETIME, END_DATETIME};
-
-    // Ascending is A-Z 0-9
+    /**
+     * Sets the order to sort the voidblocks by based on the enum value given.
+     * If it is ascending, the voidblocks are sorted by 0-9, A-z.
+     *
+     * @param order sort the voidblocks by this order
+     * @param isAscending sort by ascending order
+     */
     void setSortBy(VoidblockComparator.Order order, boolean isAscending) {
-        this.orderBy = order;
+        this.order = order;
         this.isAscending = isAscending;
     }
 
+    /**
+     * Implemented function from {@link Comparator} to compare two
+     * voidblocks.
+     * @param o1 voidblock 1
+     * @param o2 voidblock 2
+     * @return comparison value, -1, 0 or 1.
+     */
     @Override
     public int compare(Voidblock o1, Voidblock o2) {
         int mul_val = isAscending ? 1 : -1;
         int c;
-        switch (this.orderBy) {
+        switch (this.order) {
             case NAME:
-                c = mul_val*o1.name.compareTo(o2.name);
-                // Order by START_DATETIME next
+                c = mul_val*o1.getName().compareTo(o2.getName());
+                // Order by SCHEDULED_START next
                 if (c == 0) {
-                    c = mul_val*o1.from.toString().compareTo(o2.from.toString());
+                    c = mul_val*o1.getScheduledStart().toString().compareTo(
+                            o2.getScheduledStart().toString());
                 }
-                // Order by END_DATETIME last
+                // Order by SCHEDULED_STOP last
                 if (c == 0) {
-                    c = mul_val*o1.to.toString().compareTo(o2.to.toString());
+                    c = mul_val*o1.getScheduledStop().toString().compareTo(
+                            o2.getScheduledStop().toString());
                 }
-            case START_DATETIME:
-                c = mul_val*o1.from.toString().compareTo(o2.from.toString());
-                // Order by END_DATETIME next
+            case SCHEDULED_START:
+                c = mul_val*o1.getScheduledStart().toString().compareTo(
+                        o2.getScheduledStart().toString());
+                // Order by SCHEDULED_STOP next
                 if (c == 0) {
-                    c = mul_val*o1.to.toString().compareTo(o2.to.toString());
-                }
-                // Order by NAME last
-                if (c == 0) {
-                    c = mul_val*o1.name.compareTo(o2.name);
-                }
-            case END_DATETIME:
-                c = mul_val*o1.to.toString().compareTo(o2.to.toString());
-                // Order by START_DATETIME next
-                if (c == 0) {
-                    c = mul_val*o1.from.toString().compareTo(o2.from.toString());
+                    c = mul_val*o1.getScheduledStop().toString().compareTo(
+                            o2.getScheduledStop().toString());
                 }
                 // Order by NAME last
                 if (c == 0) {
-                    c = mul_val*o1.name.compareTo(o2.name);
+                    c = mul_val*o1.getName().compareTo(o2.getName());
+                }
+            case SCHEDULED_STOP:
+                c = mul_val*o1.getScheduledStop().toString().compareTo(
+                        o2.getScheduledStop().toString());
+                // Order by SCHEDULED_START next
+                if (c == 0) {
+                    c = mul_val*o1.getScheduledStart().toString().compareTo(
+                            o2.getScheduledStart().toString());
+                }
+                // Order by NAME last
+                if (c == 0) {
+                    c = mul_val*o1.getName().compareTo(o2.getName());
                 }
             default:
                 // Default to name
-                c = mul_val*o1.name.compareTo(o2.name);
+                c = mul_val*o1.getName().compareTo(o2.getName());
                 if (c == 0) {
-                    c = mul_val*o1.from.toString().compareTo(o2.from.toString());
+                    c = mul_val*o1.getScheduledStart().toString().compareTo(
+                            o2.getScheduledStart().toString());
                 }
                 if (c == 0) {
-                    c = mul_val*o1.to.toString().compareTo(o2.to.toString());
+                    c = mul_val*o1.getScheduledStop().toString().compareTo(
+                            o2.getScheduledStop().toString());
                 }
         }
         return c;
