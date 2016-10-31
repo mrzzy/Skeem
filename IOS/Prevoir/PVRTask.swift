@@ -241,7 +241,7 @@ public class PVRRepeatTask: PVRTask
 
         if self.deadline.compare(date as Date) == ComparisonResult.orderedAscending
         {
-            //Current dateline is later than current deadline
+            //Current date/time is later than current deadline
             //Update forwards in time
             while self.deadline.compare(date as Date) == ComparisonResult.orderedAscending
             {

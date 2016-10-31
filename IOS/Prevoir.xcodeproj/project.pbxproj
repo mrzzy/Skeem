@@ -16,7 +16,6 @@
 		5A50C7411D8CD4390002ACF8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A50C7401D8CD4390002ACF8 /* UIKit.framework */; };
 		5A50C7431D8CD4750002ACF8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5A50C7421D8CD4750002ACF8 /* Main.storyboard */; };
 		5A87A27B1DBCE40900A206B9 /* PVRDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A87A27A1DBCE40900A206B9 /* PVRDataView.swift */; };
-		5A991FD81DC5D14200E1A6E5 /* PVRTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A991FD71DC5D14200E1A6E5 /* PVRTest.swift */; };
 		5AA4406E1DAF488F005B0E70 /* PVRTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA4406D1DAF488F005B0E70 /* PVRTask.swift */; };
 		5AA440701DAF81B3005B0E70 /* PVRDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA4406F1DAF81B3005B0E70 /* PVRDatabase.swift */; };
 		5AB7343B1DC499A500CCCC98 /* PVRSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB7343A1DC499A500CCCC98 /* PVRSetting.swift */; };
@@ -35,7 +34,6 @@
 		5A50C7401D8CD4390002ACF8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		5A50C7421D8CD4750002ACF8 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		5A87A27A1DBCE40900A206B9 /* PVRDataView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRDataView.swift; sourceTree = "<group>"; };
-		5A991FD71DC5D14200E1A6E5 /* PVRTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRTest.swift; sourceTree = "<group>"; };
 		5AA4406D1DAF488F005B0E70 /* PVRTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRTask.swift; sourceTree = "<group>"; };
 		5AA4406F1DAF81B3005B0E70 /* PVRDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PVRDatabase.swift; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; wrapsLines = 1; };
 		5AB7343A1DC499A500CCCC98 /* PVRSetting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRSetting.swift; sourceTree = "<group>"; };
@@ -85,7 +83,6 @@
 		5A50C72B1D8CD2E50002ACF8 /* Prevoir */ = {
 			isa = PBXGroup;
 			children = (
-				5A991FD41DC5D10D00E1A6E5 /* Test */,
 				5A4083CE1DAB68AF0057E896 /* Logic */,
 				5A50C7451D8CD5070002ACF8 /* UI */,
 				5AA4406C1DAF4873005B0E70 /* Data */,
@@ -110,14 +107,6 @@
 				5A50C7351D8CD2E50002ACF8 /* LaunchScreen.storyboard */,
 			);
 			name = UI;
-			sourceTree = "<group>";
-		};
-		5A991FD41DC5D10D00E1A6E5 /* Test */ = {
-			isa = PBXGroup;
-			children = (
-				5A991FD71DC5D14200E1A6E5 /* PVRTest.swift */,
-			);
-			name = Test;
 			sourceTree = "<group>";
 		};
 		5AA4406C1DAF4873005B0E70 /* Data */ = {
@@ -214,7 +203,6 @@
 				5A2755241DB5F0BE00213D60 /* PVRDuration.swift in Sources */,
 				5A50C72D1D8CD2E50002ACF8 /* AppDelegate.swift in Sources */,
 				5A87A27B1DBCE40900A206B9 /* PVRDataView.swift in Sources */,
-				5A991FD81DC5D14200E1A6E5 /* PVRTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

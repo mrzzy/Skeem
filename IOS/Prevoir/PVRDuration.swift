@@ -242,7 +242,7 @@ public class PVRRepeatVoidDuration: PVRVoidDuration
 
         if self.begin.addingTimeInterval(TimeInterval(self.duration)).compare(date as Date) == ComparisonResult.orderedAscending
         {
-            while self.begin.compare(date as Date) == ComparisonResult.orderedAscending
+            while self.begin.addingTimeInterval(TimeInterval(self.duration)).compare(date as Date) == ComparisonResult.orderedAscending
             {
                 //current date/time is later then begin + duration
                 //Update Void Duration Data
@@ -252,9 +252,9 @@ public class PVRRepeatVoidDuration: PVRVoidDuration
             }
             self.repeat_index = rpt_idx_fwd
         }
-        else if self.begin.addingTimeInterval(TimeInterval(self.duration)).addingTimeInterval(tint_bwd).compare(date as Date) == ComparisonResult.orderedDescending
+        else if self.begin.addingTimeInterval(tint_bwd).compare(date as Date) == ComparisonResult.orderedDescending
         {
-            //current date/time is earlier then previous begin + duration
+            //current date/time is earlier then previous begin
             //Update Backwards in Time
             while self.begin.addingTimeInterval(tint_bwd).compare(date as Date) == ComparisonResult.orderedDescending
             {
