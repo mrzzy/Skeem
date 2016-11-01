@@ -41,7 +41,7 @@ public class PVRScheduler: NSObject
     var sch_affinity:Bool /*Whether Duration Afinity is followed */
 
     //Data
-    var schedule:[PVRDuration:[PVRTask]] /* Generated Schedule */
+    var schd:[PVRDuration:[PVRTask]] /* Generated Schedule */
 
 
     //Data
@@ -58,7 +58,7 @@ public class PVRScheduler: NSObject
         self.dataViewCtrl = PVRDataController(db: self.dataView)
         self.sch_date = NSDate.distantPast as NSDate
         self.sch_affinity = true
-        self.schedule = Dictionary<PVRDuration,Array<PVRTask>>()
+        self.schd = Dictionary<PVRDuration,Array<PVRTask>>()
         self.setting = (UIApplication.shared.delegate as! AppDelegate).setting
 
         super.init()
@@ -234,8 +234,7 @@ public class PVRScheduler: NSObject
             for stsk in task_stsk
             {
                 if var arr_stsk = sch_stsk[task.name]
-                {
-                    arr_stsk.append(stsk)
+                { arr_stsk.append(stsk)
                     sch_stsk[task.name] = arr_stsk
                 }
                 else
@@ -437,7 +436,34 @@ public class PVRScheduler: NSObject
             }
         }
 
-
+        //Write Schedule Data
+        self.schd = schd
         return schd
+    }
+
+    /*
+     * public func randomSchedule
+     * - Shuffles the current schedule randomly
+    */
+    public func randomSchedule()
+    {
+        //Prepare Random Number Generate Data
+        for (drsn,arr_stsk) in self.schd
+        {
+            var arr_tgt = arr_stsk //To Avoid arr_stsk constant error
+
+            //Randomly Shuffle Subtasks
+            for i in (0..<arr_tgt.count).reversed()
+            {
+                //Generate Random Num < i
+                let rn = Int(arc4random_uniform(UInt32(i)))
+                //Swap Values
+                let val1 = arr_tgt[i]
+                arr_tgt[i] = arr_tgt[rn]
+                arr_tgt[rn] = val1
+            }
+
+            self.schd[drsn] = arr_stsk
+        }
     }
 }
