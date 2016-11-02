@@ -35,7 +35,7 @@
         <!--SettingsListVC-->
         <scene sceneID="diZ-BN-NxY">
             <objects>
-                <tableViewController title="SettingsListVC" id="Z3P-A4-qf7" sceneMemberID="viewController">
+                <tableViewController title="SettingsListVC" id="Z3P-A4-qf7" customClass="SettingListVC" customModule="Prevoir" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="7Az-yM-Hjf">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -92,13 +92,13 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Fdv-BN-Vvt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1754.4000000000001" y="-470.91454272863569"/>
+            <point key="canvasLocation" x="2007" y="-917"/>
         </scene>
         <!--VoidBlockNC-->
         <scene sceneID="Vks-xU-cT8">
             <objects>
                 <navigationController title="VoidBlockNC" id="bkh-dh-pBM" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Void Blocks" id="1UQ-Wh-f03"/>
+                    <tabBarItem key="tabBarItem" title="Void Duration" id="1UQ-Wh-f03"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="zr5-hL-WND">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -109,12 +109,12 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="47Q-2D-sl9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="814" y="-1217"/>
+            <point key="canvasLocation" x="1068" y="591"/>
         </scene>
-        <!--VoidBlocksVC-->
+        <!--VoidDurationVC-->
         <scene sceneID="bYB-Es-hjf">
             <objects>
-                <tableViewController title="VoidBlockListVC" id="S7z-Jm-f7d" userLabel="VoidBlocksVC" sceneMemberID="viewController">
+                <tableViewController title="VoidBlockListVC" id="S7z-Jm-f7d" userLabel="VoidDurationVC" customClass="VoidDurationListVC" customModule="Prevoir" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="80" sectionHeaderHeight="28" sectionFooterHeight="28" id="mNI-yH-fdF">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -206,12 +206,12 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pvG-l8-1q4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1753" y="-1216"/>
+            <point key="canvasLocation" x="2007" y="591"/>
         </scene>
         <!--VoidBlocksEditVC-->
         <scene sceneID="gqm-5L-81O">
             <objects>
-                <viewController title="VoidBlockEditVC" id="bIl-9o-nkg" userLabel="VoidBlocksEditVC" sceneMemberID="viewController">
+                <viewController title="VoidBlockEditVC" id="bIl-9o-nkg" userLabel="VoidBlocksEditVC" customClass="VoidDurationEditVC" customModule="Prevoir" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="jTR-QE-TMf"/>
                         <viewControllerLayoutGuide type="bottom" id="P4k-Pq-b5f"/>
@@ -223,7 +223,7 @@
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wit-cY-GBe">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="618"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5u0-iA-KEn" customClass="UITableView">
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5u0-iA-KEn">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="893"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Optional" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="S7J-H6-pDN">
@@ -420,12 +420,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RjL-HJ-rpZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2520.8000000000002" y="-1215.2923538230887"/>
+            <point key="canvasLocation" x="2700" y="591"/>
         </scene>
-        <!--RptDateVC-->
+        <!--RepeatDateVC-->
         <scene sceneID="X9q-Ol-Pvz">
             <objects>
-                <tableViewController title="RptDateVC" id="Tj0-XI-T52" sceneMemberID="viewController">
+                <tableViewController title="RepeatDateVC" id="Tj0-XI-T52" customClass="RepeatDateVC" customModule="Prevoir" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="JM8-PC-TCc">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -561,18 +561,17 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Repeat Date" id="H1k-6O-kab">
-                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="2qq-3v-nGV"/>
                         <barButtonItem key="rightBarButtonItem" systemItem="done" id="tYK-CU-e1q"/>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lLm-Aq-pNg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3153" y="1185"/>
+            <point key="canvasLocation" x="3708" y="929"/>
         </scene>
         <!--ScheduleListVC-->
         <scene sceneID="UTW-Ir-xkg">
             <objects>
-                <tableViewController title="ScheduleListVC" id="m38-wZ-cvN" sceneMemberID="viewController">
+                <tableViewController title="ScheduleListVC" id="m38-wZ-cvN" customClass="ScheduleListVC" customModule="Prevoir" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="80" sectionHeaderHeight="28" sectionFooterHeight="28" id="d4a-4E-IZV">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -752,12 +751,12 @@
                 <pinchGestureRecognizer id="19t-jq-1mm"/>
                 <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="qKO-NW-ics"/>
             </objects>
-            <point key="canvasLocation" x="1752.8" y="330.58470764617692"/>
+            <point key="canvasLocation" x="2006" y="-199"/>
         </scene>
         <!--TaskViewVC-->
         <scene sceneID="0zQ-b2-zbq">
             <objects>
-                <viewController title="TaskViewVC" id="ctH-dC-1L5" sceneMemberID="viewController">
+                <viewController title="TaskViewVC" id="ctH-dC-1L5" customClass="TaskViewVC" customModule="Prevoir" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="IcS-gr-jfx"/>
                         <viewControllerLayoutGuide type="bottom" id="QkN-64-YKK"/>
@@ -1413,12 +1412,12 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="L8p-mN-bcE" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tapGestureRecognizer id="Gk4-N5-OYC"/>
             </objects>
-            <point key="canvasLocation" x="2445.5999999999999" y="331.48425787106447"/>
+            <point key="canvasLocation" x="2700" y="-197"/>
         </scene>
         <!--TaskEdit-->
         <scene sceneID="xt8-N6-wzr">
             <objects>
-                <viewController title="TaskEditVC" id="URm-k8-ZPh" userLabel="TaskEdit" sceneMemberID="viewController">
+                <viewController title="TaskEditVC" id="URm-k8-ZPh" userLabel="TaskEdit" customClass="TaskEditVC" customModule="Prevoir" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="TMM-hl-rUt"/>
                         <viewControllerLayoutGuide type="bottom" id="NiQ-1x-ITe"/>
@@ -1710,12 +1709,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zP3-iu-hCq" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2445.5999999999999" y="1185.6071964017992"/>
+            <point key="canvasLocation" x="2700" y="1261"/>
         </scene>
         <!--TaskListVC-->
         <scene sceneID="mPW-Xt-ooH">
             <objects>
-                <tableViewController title="TaskListVC" id="S2x-Le-kMg" sceneMemberID="viewController">
+                <tableViewController title="TaskListVC" id="S2x-Le-kMg" customClass="TaskListVC" customModule="Prevoir" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="yVA-88-GJf">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1815,7 +1814,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xJK-cT-AMh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1754.4000000000001" y="1186.0569715142431"/>
+            <point key="canvasLocation" x="2006" y="1261"/>
         </scene>
         <!--ScheduleNC-->
         <scene sceneID="QSt-U9-oPx">
@@ -1834,13 +1833,13 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wTF-oj-ie5" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="815" y="331"/>
+            <point key="canvasLocation" x="1068" y="-199"/>
         </scene>
         <!--SettingsNC-->
         <scene sceneID="PZT-gd-sab">
             <objects>
                 <navigationController title="SettingsNC" automaticallyAdjustsScrollViewInsets="NO" id="B1e-2G-VXy" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Settings" id="j1y-5f-pIT" userLabel="NavBISetting"/>
+                    <tabBarItem key="tabBarItem" title="Setting" id="j1y-5f-pIT" userLabel="NavBISetting"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="OnW-lO-gOC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -1853,7 +1852,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qrB-sW-vBN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="815.20000000000005" y="-470.91454272863569"/>
+            <point key="canvasLocation" x="1068" y="-917"/>
         </scene>
         <!--TaskNC-->
         <scene sceneID="tyN-hi-Q5i">
@@ -1872,12 +1871,12 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="a7B-TV-2s8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="815.20000000000005" y="1186.0569715142431"/>
+            <point key="canvasLocation" x="1068" y="1261"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="K5s-ob-RV9"/>
-        <segue reference="bsU-a9-eKf"/>
-        <segue reference="bAN-jK-76S"/>
+        <segue reference="r9v-mN-dbw"/>
+        <segue reference="qIP-Ih-SEo"/>
     </inferredMetricsTieBreakers>
 </document>
