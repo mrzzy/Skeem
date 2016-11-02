@@ -6,6 +6,12 @@ import android.view.MotionEvent;
 import android.view.ViewParent;
 import android.widget.DatePicker;
 
+/**
+ * This class extends {@link DatePicker} and makes the scroll locked when
+ * interacting with the date picker.
+ *
+ * @see DatePicker
+ */
 public class ScrollableDatePicker extends DatePicker {
 
     public ScrollableDatePicker(Context context, AttributeSet attrs, int defStyle) {

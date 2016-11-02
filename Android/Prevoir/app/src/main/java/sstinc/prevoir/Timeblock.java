@@ -80,6 +80,44 @@ class Timeblock extends Schedulable {
     }
 
     /**
+     * Sets the scheduled start datetime and recalculates the total period
+     * and period left if there is a set scheduled stop.
+     *
+     * @param datetime new scheduled start datetime to set
+     */
+    @Override
+    void setScheduledStart(Datetime datetime) {
+        this.scheduled_start = datetime;
+        // Get the new periods
+        // If the scheduled stop is set
+        if (this.scheduled_stop.getMillis() != new Period().getMillis()) {
+            // Recalculate the period and period left
+            this.period = new Period(this.scheduled_stop.getMillis() -
+                    this.scheduled_start.getMillis());
+            this.period_left = new Period(this.period).minus(this.period_used);
+        }
+    }
+
+    /**
+     * Sets the scheduled stop datetime and recalculates the total period and
+     * period left if there is a set scheduled start.
+     *
+     * @param datetime new scheduled stop datetime to set
+     */
+    @Override
+    void setScheduledStop(Datetime datetime) {
+        this.scheduled_stop = datetime;
+        // Get the new periods
+        // If the scheduled start is set
+        if (this.scheduled_start.getMillis() != new Period().getMillis()) {
+            // Recalculate the period and period left
+            this.period = new Period(this.scheduled_stop.getMillis() -
+                    this.scheduled_start.getMillis());
+            this.period_left = new Period(this.period).minus(this.period_used);
+        }
+    }
+
+    /**
      * Adds a new task to the timeblock. Recalculates the time used and time
      * left in the timeblock.
      *

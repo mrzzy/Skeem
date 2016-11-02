@@ -13,9 +13,25 @@ import org.joda.time.format.PeriodFormat;
 
 import java.util.ArrayList;
 //TODO: Update and retain information
-
+/*
+taskCreate
+    -> FROM: Helper VALUE: weekDays
+    -> FROM: Helper VALUE: Duration
+    -> FROM: Helper VALUE: min_time_period
+    -> FROM: Helper VALUE: Deadline
+    -> TO: Fragment VALUE: task
+taskCreateHelper
+    -> FROM: days VALUE: weekDays
+    -> TO: days VALUE: weekDays
+    -> TO: Create VALUE: weekDays
+    -> TO: Create VALUE: Duration
+    -> TO: Create VALUE: min_time_period
+    -> TO: Create VALUE: Deadline
+days
+    -> FROM: Helper VALUE: weekDays
+    -> TO: Helper VALUE: weekDays
+ */
 public class TaskCreateActivity extends AppCompatActivity {
-
     public final static String EXTRA_WEEKDAYS = "sstinc.prevoir.EXTRA_WEEKDAYS";
     public final static String EXTRA_DEADLINE = "sstinc.prevoir.EXTRA_DEADLINE";
     public final static String EXTRA_DURATION = "sstinc.prevoir.EXTRA_DURATION";

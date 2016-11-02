@@ -13,6 +13,49 @@ import android.view.MenuItem;
 //TODO: Check for assumed copy
 //TODO: Move menu status to static class
 //TODO: Expired tasks and voidblocks etc.
+//TODO: Refactor TaskCreateDaysActivity to DaysActivity
+
+/*
+Intent codes:
+    First digit: 1: Task, 2: Voidblock
+    Second digit: 1: Create, 2: Update
+    Third digit: Misc
+Intent flow:
+    Voidblock
+        voidblockCreate
+            -> FROM: days VALUE: weekDays
+            -> FROM: Datetime VALUE: from_datetime
+            -> FROM: Datetime VALUE: to_datetime
+            -> TO: days VALUE: weekDays
+            -> TO: Datetime VALUE: from_datetime
+            -> TO: Datetime VALUE: to_datetime
+            -> TO: Fragment VALUE: voidblock
+        voidblockCreateDatetime
+            -> FROM: Create VALUE: from_datetime
+            -> FROM: Create VALUE: to_datetime
+            -> TO: Create VALUE: from_datetime
+            -> TO: Create VALUE: to_datetime
+        days
+            -> FROM: Create VALUE: weekDays
+            -> TO: Create VALUE: weekDays
+    Task
+        taskCreate
+            -> FROM: Helper VALUE: weekDays
+            -> FROM: Helper VALUE: Duration
+            -> FROM: Helper VALUE: min_time_period
+            -> FROM: Helper VALUE: Deadline
+            -> TO: Fragment VALUE: task
+        taskCreateHelper
+            -> FROM: days VALUE: weekDays
+            -> TO: days VALUE: weekDays
+            -> TO: Create VALUE: weekDays
+            -> TO: Create VALUE: Duration
+            -> TO: Create VALUE: min_time_period
+            -> TO: Create VALUE: Deadline
+        days
+            -> FROM: Helper VALUE: weekDays
+            -> TO: Helper VALUE: weekDays
+ */
 
 /**
  * The main activity of the android app. Houses the four main fragments of

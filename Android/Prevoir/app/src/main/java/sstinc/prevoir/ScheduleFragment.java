@@ -60,6 +60,35 @@ public class ScheduleFragment extends ListFragment {
     }
 
     /**
+     * This function returns the timeblocks which the given task can use,
+     * that is, timeblocks before it's deadline. The task's deadline may
+     * be cutting into the last timeblock but the whole timeblock will be
+     * returned.
+     *
+     * @param task the task to get available timeblocks for
+     * @return timeblocks before the task's deadline
+     */
+    private ArrayList<Timeblock> getTaskAvailableTimeblocks(Task task) {
+        // Array list to store results
+        ArrayList<Timeblock> timeblocksAvailable = new ArrayList<>();
+        // Task deadline in milliseconds
+        long taskDeadlineMillis = task.getDeadline().getMillis();
+
+        // Get the voidtimeblocks
+        ArrayList<Schedulable> voidTimeblocks = getVoidTimeblocks();
+        for (Schedulable schedulable : voidTimeblocks) {
+            if (schedulable instanceof Timeblock) {
+                Timeblock timeblock = (Timeblock) schedulable;
+                // If the timeblock is before the deadline
+                if (timeblock.getScheduledStart().getMillis() < taskDeadlineMillis) {
+                    timeblocksAvailable.add(timeblock);
+                }
+            }
+        }
+        return timeblocksAvailable;
+    }
+
+    /**
      * Checks if there is enough time in timeblocks for all the tasks.
      * @return true if there is enough time. false if there is not enough
      * time
@@ -70,6 +99,8 @@ public class ScheduleFragment extends ListFragment {
         dbAdapter.open();
         ArrayList<Task> tasks = dbAdapter.getTasks();
         dbAdapter.close();
+
+        ArrayList<Schedulable> voidTimeblocks = getVoidTimeblocks();
 
         Period time_needed = new Period();
         for (Schedulable schedulable : tasks) {

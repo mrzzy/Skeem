@@ -6,6 +6,12 @@ import android.view.MotionEvent;
 import android.view.ViewParent;
 import android.widget.TimePicker;
 
+/**
+ * This class extends {@link TimePicker} and makes the scroll locked when
+ * interacting with the time picker.
+ *
+ * @see TimePicker
+ */
 public class ScrollableTimePicker extends TimePicker {
 
     public ScrollableTimePicker(Context context, AttributeSet attrs, int defStyle) {
