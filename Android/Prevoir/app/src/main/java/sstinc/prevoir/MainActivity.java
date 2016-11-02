@@ -17,7 +17,7 @@ import android.view.MenuItem;
 
 /*
 Intent codes:
-    First digit: 1: Task, 2: Voidblock
+    First digit: 1: Task, 2: Voidblock, 3: Days
     Second digit: 1: Create, 2: Update
     Third digit: Misc
 Intent flow:
@@ -29,7 +29,6 @@ Intent flow:
             -> TO: days VALUE: weekDays
             -> TO: Datetime VALUE: from_datetime
             -> TO: Datetime VALUE: to_datetime
-            -> TO: Fragment VALUE: voidblock
         voidblockCreateDatetime
             -> FROM: Create VALUE: from_datetime
             -> FROM: Create VALUE: to_datetime
@@ -44,7 +43,6 @@ Intent flow:
             -> FROM: Helper VALUE: Duration
             -> FROM: Helper VALUE: min_time_period
             -> FROM: Helper VALUE: Deadline
-            -> TO: Fragment VALUE: task
         taskCreateHelper
             -> FROM: days VALUE: weekDays
             -> TO: days VALUE: weekDays

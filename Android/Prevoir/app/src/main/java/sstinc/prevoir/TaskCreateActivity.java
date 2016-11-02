@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.ScrollView;
 
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormat;
@@ -19,7 +18,6 @@ taskCreate
     -> FROM: Helper VALUE: Duration
     -> FROM: Helper VALUE: min_time_period
     -> FROM: Helper VALUE: Deadline
-    -> TO: Fragment VALUE: task
 taskCreateHelper
     -> FROM: days VALUE: weekDays
     -> TO: days VALUE: weekDays
@@ -31,20 +29,29 @@ days
     -> FROM: Helper VALUE: weekDays
     -> TO: Helper VALUE: weekDays
  */
+
+/**
+ * This activity handles the creation of the task. The activity handles the
+ * name, subject and description of the task and calls other activities to
+ * get more information. Upon gathering all the information, it will create
+ * the task and store it into the database. The activity is then finished.
+ *
+ * @see TaskCreateHelperActivity
+ * @see TaskCreateDaysActivity
+ */
 public class TaskCreateActivity extends AppCompatActivity {
-    public final static String EXTRA_WEEKDAYS = "sstinc.prevoir.EXTRA_WEEKDAYS";
-    public final static String EXTRA_DEADLINE = "sstinc.prevoir.EXTRA_DEADLINE";
-    public final static String EXTRA_DURATION = "sstinc.prevoir.EXTRA_DURATION";
-    public final static String EXTRA_MIN_TIME_PERIOD = "sstinc.prevoir.EXTRA_MIN_TIME_PERIOD";
-    public static final String EXTRA_TASK_ID = "sstinc.prevoir.EXTRA_TASK_ID";
-
-    public static final String EXTRA_HAS_OLD_INFORMATION = "sstinc.prevoir.EXTRA_HAS_OLD_INFORMATION";
-
-    static final int createTaskHelperRequestCode = 111;
-
-    boolean show_continue = true;
-    boolean edit = false;
-    Task cont_task = null;
+    // Menu status
+    boolean menu_shuffle = false;
+    boolean menu_continue = false;
+    boolean menu_finish = false;
+    boolean menu_duplicate = false;
+    boolean menu_delete = false;
+    // Request Codes
+    static final int createTaskHelperRequestCode = 110;
+    // Intent Extras
+    public static final String EXTRA_TASK = TaskFragment.EXTRA_TASK;
+    // Misc
+    Task task = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,14 +65,15 @@ public class TaskCreateActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        Task task = getIntent().getParcelableExtra(TaskFragment.EXTRA_TASK);
-        if (task != null) {
-            edit = true;
-            // Set the values of the fields
+        // Get the task from TaskFragment
+        this.task = getIntent().getParcelableExtra(TaskFragment.EXTRA_TASK);
+        if (this.task != null) {
+            // If there is a task, fill in the fields with the task's values
+            // Get edit text views
             EditText editText_name = (EditText) findViewById(R.id.field_text_task_name);
             EditText editText_subject = (EditText) findViewById(R.id.field_text_task_subject);
             EditText editText_description = (EditText) findViewById(R.id.field_text_description);
-
+            // Set edit text views
             editText_name.setText(task.getName());
             editText_subject.setText(task.getSubject());
             editText_description.setText(task.getDescription());
@@ -77,30 +85,40 @@ public class TaskCreateActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-        menu.findItem(R.id.nav_shuffle).setVisible(false);
-        menu.findItem(R.id.nav_done).setVisible(false);
-        menu.findItem(R.id.nav_continue).setVisible(show_continue);
+        menu.findItem(R.id.nav_shuffle).setVisible(menu_shuffle);
+        menu.findItem(R.id.nav_continue).setVisible(menu_continue);
+        menu.findItem(R.id.nav_done).setVisible(menu_finish);
+        menu.findItem(R.id.nav_copy).setVisible(menu_duplicate);
+        menu.findItem(R.id.nav_delete).setVisible(menu_delete);
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Get the id of the menu item selected
         int id = item.getItemId();
-        // Back button
+
         if (id == android.R.id.home) {
+            // If the id is the back button, finish cancel and finish the
+            // activity.
+
             setResult(RESULT_CANCELED);
             finish();
         } else if (id == R.id.nav_continue) {
-            // start next activity
+            // If the id is the continue button, start the next activity,
+            // TaskCreateHelperActivity.
+
+            // Create intent for next activity
             Intent intent = new Intent(this, TaskCreateHelperActivity.class);
-            if (edit) {
-                Task task = getIntent().getParcelableExtra(TaskFragment.EXTRA_TASK);
-                intent.putExtra(TaskFragment.EXTRA_TASK, task);
-                intent.putExtra(EXTRA_TASK_ID, task.getId());
-            } else if (cont_task != null) {
-                intent.putExtra(TaskFragment.EXTRA_TASK, cont_task);
-                intent.putExtra(EXTRA_HAS_OLD_INFORMATION, true);
+
+            // Add extra information to the intent
+            if (this.task != null) {
+                // If it is an update or has information on the task
+                // (retained information during create process)
+                intent.putExtra(EXTRA_TASK, this.task);
             }
+            // Start the activity
             startActivityForResult(intent, createTaskHelperRequestCode);
         }
 
@@ -111,6 +129,10 @@ public class TaskCreateActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == createTaskHelperRequestCode) {
             if (resultCode == RESULT_OK) {
+                // User has finished creating the task. Create the task from
+                // the returned intent and pass it to TaskFragment. After
+                // that, finish the activity.
+
                 // Get name, subject and description
                 EditText editText_name = (EditText) findViewById(R.id.field_text_task_name);
                 EditText editText_subject = (EditText) findViewById(R.id.field_text_task_subject);
@@ -120,54 +142,53 @@ public class TaskCreateActivity extends AppCompatActivity {
                 String name = editText_name.getText().toString();
                 String subject = editText_subject.getText().toString();
                 String description = editText_description.getText().toString();
-                // Get weekdays
-                WeekDays weekDays = new WeekDays();
-                ArrayList<String> stringWeekDays = data.getStringArrayListExtra(EXTRA_WEEKDAYS);
-                for (String weekDay : stringWeekDays) {
-                    weekDays.add(WeekDays.WeekDay.valueOf(weekDay));
-                }
-                // Get deadline, duration and min_time_period
-                Datetime deadline = new Datetime(data.getStringExtra(EXTRA_DEADLINE));
+
+                // Get weekdays, deadline, period and min_time_period
+                WeekDays weekDays = new WeekDays(data.getStringArrayExtra(
+                        TaskCreateHelperActivity.EXTRA_WEEKDAYS));
+                Datetime deadline = new Datetime(
+                        data.getStringExtra(TaskCreateHelperActivity.EXTRA_DEADLINE));
                 Period period = PeriodFormat.getDefault().parsePeriod(
-                        data.getStringExtra(EXTRA_DURATION));
+                        data.getStringExtra(TaskCreateHelperActivity.EXTRA_DURATION));
                 Period min_time_period = PeriodFormat.getDefault().parsePeriod(
-                        data.getStringExtra(EXTRA_MIN_TIME_PERIOD));
+                        data.getStringExtra(TaskCreateHelperActivity.EXTRA_MIN_TIME_PERIOD));
+
                 // Create intent
                 Intent intent = new Intent();
-                Task task = new Task();
-                task.setName(name);
-                task.setSubject(subject);
-                task.setWeekDays(weekDays);
-                task.setDeadline(deadline);
-                task.setPeriodNeeded(period);
-                task.setPeriodMinimum(min_time_period);
-                task.setId(data.getLongExtra(EXTRA_TASK_ID, -1));
-                intent.putExtra(TaskFragment.EXTRA_TASK, task);
+                this.task.setName(name);
+                this.task.setSubject(subject);
+                this.task.setDescription(description);
+                this.task.setWeekDays(weekDays);
+                this.task.setDeadline(deadline);
+                this.task.setPeriodNeeded(period);
+                this.task.setPeriodMinimum(min_time_period);
+                intent.putExtra(TaskFragment.EXTRA_TASK, this.task);
 
+                // Pass task to TaskFragment
                 setResult(RESULT_OK, intent);
                 finish();
             } else if (resultCode == RESULT_CANCELED) {
-                // Get Week Days
-                WeekDays weekDays = new WeekDays();
-                ArrayList<String> stringWeekDays = data.getStringArrayListExtra(EXTRA_WEEKDAYS);
-                for (String weekDay : stringWeekDays) {
-                    weekDays.add(WeekDays.WeekDay.valueOf(weekDay));
-                }
-                // Get Deadline
-                Datetime deadline = new Datetime(data.getStringExtra(EXTRA_DEADLINE));
-                // Get duration and min_tim_period
+                // User cancelled setting the task settings. Store the values
+                // in the current task.
+
+                // Get weekdays, deadline, period and min_time_period
+                WeekDays weekDays = new WeekDays(data.getStringArrayExtra(
+                        TaskCreateHelperActivity.EXTRA_WEEKDAYS));
+                Datetime deadline = new Datetime(
+                        data.getStringExtra(TaskCreateHelperActivity.EXTRA_DEADLINE));
                 Period period = PeriodFormat.getDefault().parsePeriod(
-                        data.getStringExtra(EXTRA_DURATION));
+                        data.getStringExtra(TaskCreateHelperActivity.EXTRA_DURATION));
                 Period min_time_period = PeriodFormat.getDefault().parsePeriod(
-                        data.getStringExtra(EXTRA_MIN_TIME_PERIOD));
+                        data.getStringExtra(TaskCreateHelperActivity.EXTRA_MIN_TIME_PERIOD));
 
-                cont_task = new Task();
-                cont_task.setWeekDays(weekDays);
-                cont_task.setDeadline(deadline);
-                cont_task.setPeriodNeeded(period);
-                cont_task.setPeriodMinimum(min_time_period);
+                // Set the activities task for future update
+                this.task.setWeekDays(weekDays);
+                this.task.setDeadline(deadline);
+                this.task.setPeriodNeeded(period);
+                this.task.setPeriodMinimum(min_time_period);
 
-                show_continue = true;
+                // Reset menu
+                menu_continue = true;
                 invalidateOptionsMenu();
             }
         }

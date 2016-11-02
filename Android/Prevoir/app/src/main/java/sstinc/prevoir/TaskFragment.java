@@ -26,13 +26,17 @@ import static android.app.Activity.RESULT_OK;
 //TODO: Time picker in landscape
 
 public class TaskFragment extends ListFragment implements AdapterView.OnItemLongClickListener {
-    // Extra constants for intents
-    public static final String EXTRA_TASK = "sstinc.prevoir.EXTRA_TASK";
-    // Request codes for receiving and sending data
+    // Menu status
+    boolean menu_shuffle = false;
+    boolean menu_continue = false;
+    boolean menu_finish = false;
+    boolean menu_duplicate = false;
+    boolean menu_delete = false;
+    // Request codes
     static final int createTaskRequestCode = 110;
     static final int updateTaskRequestCode = 120;
-    // Boolean to show if menu shows duplicate and delete buttons
-    static boolean menu_multi = false;
+    // Intent Extras
+    public static final String EXTRA_TASK = "sstinc.prevoir.EXTRA_TASK";
 
     AdapterView.OnItemClickListener editItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
@@ -55,7 +59,7 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    if (menu_multi) {
+                    if (menu_duplicate && menu_delete) {
                         Log.w(this.getClass().getName(), "Undoing checks...");
                         for (int i=getListAdapter().getCount()-1; i>=0; i--) {
                             Log.w(this.getClass().getName(), "i = " + i);
@@ -75,7 +79,8 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
         setHasOptionsMenu(true);
 
         // Reset menu
-        menu_multi = false;
+        menu_duplicate = false;
+        menu_delete = false;
         getActivity().invalidateOptionsMenu();
 
         // Hide shuffle button
@@ -215,7 +220,8 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (getCheckedCheckBoxes() == 0) {
                         hideCheckBoxes();
-                        menu_multi = false;
+                        menu_duplicate = false;
+                        menu_delete = false;
                         getActivity().invalidateOptionsMenu();
                         // Return to normal OnItemClickListener
                         getListView().setOnItemClickListener(editItemClickListener);
@@ -224,7 +230,8 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
             });
         }
         // Reset Menu
-        menu_multi = true;
+        menu_duplicate = true;
+        menu_delete = true;
         getActivity().invalidateOptionsMenu();
 
         ((CheckBox) view.findViewById(R.id.list_item_task_checkBox)).setChecked(true);
@@ -235,8 +242,8 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
-        menu.findItem(R.id.nav_copy).setVisible(menu_multi);
-        menu.findItem(R.id.nav_delete).setVisible(menu_multi);
+        menu.findItem(R.id.nav_copy).setVisible(menu_duplicate);
+        menu.findItem(R.id.nav_delete).setVisible(menu_delete);
 
         // Set onClickListeners
         menu.findItem(R.id.nav_copy)
@@ -244,7 +251,8 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 // Disable menu
-                menu_multi = false;
+                menu_duplicate = false;
+                menu_delete = false;
                 getActivity().invalidateOptionsMenu();
 
                 // Duplicate all the selected tasks
@@ -276,7 +284,8 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
             public boolean onMenuItemClick(MenuItem item) {
                 if (getCheckedCheckBoxes() == 1) {
                     // Disable menu
-                    menu_multi = false;
+                    menu_duplicate = false;
+                    menu_delete = false;
                     getActivity().invalidateOptionsMenu();
 
                     // Delete immediately
@@ -307,7 +316,8 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
                                 new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 // Disable menu
-                                menu_multi = false;
+                                menu_duplicate = false;
+                                menu_delete = false;
                                 getActivity().invalidateOptionsMenu();
 
                                 // Duplicate all the selected tasks

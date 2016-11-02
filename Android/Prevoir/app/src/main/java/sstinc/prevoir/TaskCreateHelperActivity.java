@@ -3,7 +3,6 @@ package sstinc.prevoir;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,27 +17,50 @@ import android.widget.Switch;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-
+//TODO: Settle UI First. Stop Repeating date(time) and deadline on day time buttons.
+/*
+taskCreate
+    -> FROM: Helper VALUE: weekDays
+    -> FROM: Helper VALUE: Duration
+    -> FROM: Helper VALUE: min_time_period
+    -> FROM: Helper VALUE: Deadline
+taskCreateHelper
+    -> FROM: days VALUE: weekDays
+    -> TO: days VALUE: weekDays
+    -> TO: Create VALUE: weekDays
+    -> TO: Create VALUE: Duration
+    -> TO: Create VALUE: min_time_period
+    -> TO: Create VALUE: Deadline
+days
+    -> FROM: Helper VALUE: weekDays
+    -> TO: Helper VALUE: weekDays
+ */
 public class TaskCreateHelperActivity extends AppCompatActivity {
-
-    static final int createTaskDaysRequestCode = 112;
-
-    public static final String EXTRA_DAYS = "sstinc.prevoir.EXTRA_DAYS";
-    public static final String EXTRA_CURRENT_DAYS = "sstinc.prevoir.EXTRA_CURRENT_DAYS";
-
-    static boolean show_done = true;
-    static boolean edit = false;
-
-    // Values of the task
-    private ArrayList<WeekDays.WeekDay> weekDays = new ArrayList<>();
+    // Menu status
+    boolean menu_shuffle = false;
+    boolean menu_continue = false;
+    boolean menu_finish = false;
+    boolean menu_duplicate = false;
+    boolean menu_delete = false;
+    // Request Codes
+    static final int createDaysRequestCode = 310;
+    // Intent Extras
+    public static final String EXTRA_WEEKDAYS = "sstinc.prevoir.EXTRA_WEEKDAYS";
+    public static final String EXTRA_DURATION = "sstinc.prevoir.EXTRA_DURATION";
+    public static final String EXTRA_MIN_TIME_PERIOD = "sstinc.prevoir.EXTRA_MIN_TIME_PERIOD";
+    public static final String EXTRA_DEADLINE = "sstinc.prevoir.EXTRA_DEADLINE";
+    // Misc
+    Task task = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_create_helper);
+        // Animate
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 
         // Set the proper menu
+        menu_finish = true;
         invalidateOptionsMenu();
 
         // Set back button
@@ -48,7 +70,7 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        // Set date picker min time
+        // Set date picker minimum time to current date
         DatePicker datePicker_deadline = (DatePicker) findViewById(R.id.date_picker_deadline);
         Calendar cal = Calendar.getInstance();
         datePicker_deadline.setMinDate(cal.getTimeInMillis());
@@ -259,16 +281,18 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
             stringWeekDays.add(weekDay.toString());
         }
         intent.putExtra(EXTRA_CURRENT_DAYS, stringWeekDays);
-        startActivityForResult(intent, createTaskDaysRequestCode);
+        startActivityForResult(intent, createDaysRequestCode);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-        menu.findItem(R.id.nav_shuffle).setVisible(false);
-        menu.findItem(R.id.nav_continue).setVisible(false);
-        menu.findItem(R.id.nav_done).setVisible(show_done);
+        menu.findItem(R.id.nav_shuffle).setVisible(menu_shuffle);
+        menu.findItem(R.id.nav_continue).setVisible(menu_continue);
+        menu.findItem(R.id.nav_done).setVisible(menu_finish);
+        menu.findItem(R.id.nav_copy).setVisible(menu_duplicate);
+        menu.findItem(R.id.nav_delete).setVisible(menu_delete);
         return true;
     }
 
@@ -371,7 +395,7 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == createTaskDaysRequestCode) {
+        if (requestCode == createDaysRequestCode) {
             if (resultCode == RESULT_OK) {
                 ArrayList<String> days = data.getStringArrayListExtra(EXTRA_DAYS);
                 weekDays = new ArrayList<>();
