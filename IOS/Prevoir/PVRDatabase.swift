@@ -244,9 +244,20 @@ public class PVRDatabase:NSObject
         if self.modified == false
         {
             //Persistent Storage
-            try! self.pst_file.load()
-            self.task = (try! self.pst_file.retrieve(key: PVRDBKey.task) as! [String : PVRTask])
-            self.voidDuration = (try! self.pst_file.retrieve(key: PVRDBKey.void_duration) as! [String:PVRDuration] as! [String : PVRVoidDuration])
+            do
+            {
+                try self.pst_file.load()
+                self.task = (try! self.pst_file.retrieve(key: PVRDBKey.task) as! [String : PVRTask])
+                self.voidDuration = (try! self.pst_file.retrieve(key: PVRDBKey.void_duration) as! [String:PVRDuration] as! [String : PVRVoidDuration])
+            }
+            catch PVRDBFileError.file_not_exist
+            {
+                self.task = [:]
+            }
+            catch
+            {
+                abort()
+            }
 
             //Temporary Storage
             do
