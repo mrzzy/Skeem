@@ -134,7 +134,7 @@ public class PVRDBFile:NSObject
             throw PVRDBFileError.data_staged
         }
 
-        return self.unach.decodeObject(forKey: key.rawValue)
+        return self.unach.decodeObject(forKey: key.rawValue)!
     }
 
     /*

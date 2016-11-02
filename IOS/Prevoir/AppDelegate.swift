@@ -26,7 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     //App Data
     var DB:PVRDatabase!
     var DBC:PVRDataController!
-    var setting:[String:NSCoding]!
+    var CFG:PVRConfig!
 
     //App Logic
     var SCH:PVRScheduler!
@@ -38,24 +38,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
         //Init Data
         self.use_cnt = 0
-        self.setting = Dictionary<String,NSCoding>()
         self.DB = PVRDatabase()
         self.DBC = PVRDataController(db: DB)
-        self.SCH = PVRScheduler(dataCtrl: self.DBC)
-
+        self.CFG = PVRConfig(cfg: Dictionary<String,NSCoding>())
+        self.SCH = PVRScheduler(dataCtrl: self.DBC,cfg: self.CFG)
         self.loadUD()
         
         return true
     }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        
+        try? DB.load()
         return true
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
-        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-        // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
@@ -67,7 +64,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
-
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -94,7 +90,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //Load App Settins If Present
         if self.use_cnt > 1
         {
-            self.setting = (ud.object(forKey: PVRUserDefaultKey.setting.rawValue) as! [String : NSCoding])
+            let cfg_data = (ud.object(forKey: PVRUserDefaultKey.setting.rawValue) as! [String : NSCoding])
+            self.CFG = PVRConfig(cfg: cfg_data)
         }
 
         //Update use count
@@ -105,7 +102,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     {
         //Save App Status
         ud.set(self.use_cnt, forKey: PVRUserDefaultKey.use.rawValue)
-        ud.set(self.setting, forKey: PVRUserDefaultKey.setting.rawValue)
+        ud.set(self.CFG.cfg, forKey: PVRUserDefaultKey.setting.rawValue)
         self.ud.synchronize()
     }
 }
