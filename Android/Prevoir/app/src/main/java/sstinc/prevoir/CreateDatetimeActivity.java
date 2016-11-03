@@ -96,6 +96,13 @@ public class CreateDatetimeActivity extends AppCompatActivity {
                     timePicker.setVisibility(b? View.VISIBLE : View.GONE);
                 }
             });
+
+            // Make time picker gone first
+            timePicker.setVisibility(View.GONE);
+
+            LinearLayout add_time_layout = (LinearLayout) findViewById(
+                    R.id.datetime_add_time_layout);
+            add_time_layout.setVisibility(View.VISIBLE);
         }
 
         // Fill in the values of datetime if there were any
@@ -143,8 +150,18 @@ public class CreateDatetimeActivity extends AppCompatActivity {
             submitted_datetime.setMinute(timePicker.getCurrentMinute());
         }
 
-        return this.min_datetime.getMillis() <= submitted_datetime.getMillis() &&
-                submitted_datetime.getMillis() <= this.max_datetime.getMillis();
+        // Flag to indicate if valid
+        boolean flag = true;
+        // If the minimum datetime is set
+        if (this.min_datetime.getHasDate()) {
+            flag = this.min_datetime.getMillis() <= submitted_datetime.getMillis();
+        }
+        // If the maximum datetime is set
+        if (this.max_datetime.getHasDate()) {
+            flag = flag && submitted_datetime.getMillis() <= this.max_datetime.getMillis();
+        }
+
+        return flag;
     }
 
     @Override

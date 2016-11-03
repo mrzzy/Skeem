@@ -18,14 +18,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".TaskCreateActivity" />
-        <activity android:name=".TaskCreateHelperActivity" />
-        <activity android:name=".CreateRepeatedDaysActivity" />
         <activity
             android:name=".AndroidDatabaseManager"
             android:theme="@style/Theme.AppCompat.Light" />
+
+        <activity android:name=".TaskCreateActivity" />
+        <activity android:name=".TaskCreateHelperActivity" />
+        <activity android:name=".CreateRepeatedDaysActivity" />
         <activity android:name=".VoidblockCreateActivity" />
-        <activity android:name=".VoidblockCreateDatetimeActivity"></activity>
+        <activity android:name=".CreateDatetimeActivity" />
     </application>
 
 </manifest>

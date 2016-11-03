@@ -14,7 +14,7 @@ import java.util.Locale;
  * @see Calendar
  */
 class Datetime {
-    private Calendar calendar;
+    private org.joda.time.DateTime datetime;
     private boolean hasDate;
     private boolean hasTime;
 
@@ -27,17 +27,36 @@ class Datetime {
         this.hasDate = false;
         this.hasTime = false;
 
-        this.calendar = Calendar.getInstance();
-        this.calendar.set(0, 0, 0, 0, 0);
+        this.datetime = new org.joda.time.DateTime(0);
     }
 
     // Copy constructor
     Datetime(Datetime datetime) {
-        this.calendar = Calendar.getInstance();
-        this.calendar.setTimeInMillis(datetime.getMillis());
+        if (datetime == null) {
+            this.hasDate = false;
+            this.hasTime = false;
 
-        this.hasDate = datetime.getHasDate();
-        this.hasTime = datetime.getHasTime();
+            this.datetime = new org.joda.time.DateTime(0);
+        } else {
+            this.datetime = new org.joda.time.DateTime(datetime.getMillis());
+
+            this.hasDate = datetime.getHasDate();
+            this.hasTime = datetime.getHasTime();
+        }
+    }
+
+    Datetime(org.joda.time.DateTime datetime) {
+        if (datetime == null) {
+            this.hasDate = false;
+            this.hasTime = false;
+
+            this.datetime = new org.joda.time.DateTime(0);
+        } else {
+            this.hasDate = true;
+            this.hasTime = true;
+
+            this.datetime = datetime;
+        }
     }
 
     /**
@@ -48,13 +67,12 @@ class Datetime {
      *                 {@link #toString} method.
      */
     Datetime(String datetime) {
-        if (datetime.isEmpty()) {
+        if (datetime == null || datetime.isEmpty()) {
             // Set to default constructor
             this.hasDate = false;
             this.hasTime = false;
 
-            this.calendar = Calendar.getInstance();
-            this.calendar.set(0, 0, 0, 0, 0);
+            this.datetime = new org.joda.time.DateTime(0);
         } else {
             // Parse data from string
             String[] datetime_list = datetime.split(" ");
@@ -62,16 +80,11 @@ class Datetime {
             String[] time_list = datetime_list[1].split(":");
 
             // Set values
-            this.calendar = Calendar.getInstance();
-            // Set date values
-            this.calendar.set(Calendar.YEAR, Integer.parseInt(date_list[0]));
-            this.calendar.set(Calendar.MONTH, Integer.parseInt(date_list[1]));
-            this.calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(date_list[2]));
-
-            // Set time values
-            this.calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time_list[0]));
-            this.calendar.set(Calendar.MINUTE, Integer.parseInt(time_list[1]));
-
+            this.datetime = new org.joda.time.DateTime(Integer.parseInt(date_list[0]), // Year
+                                                       Integer.parseInt(date_list[1]), // Month
+                                                       Integer.parseInt(date_list[2]), // Day
+                                                       Integer.parseInt(time_list[0]), // Hour
+                                                       Integer.parseInt(time_list[1]));// Minute
             // Set hasDate
             this.hasDate = this.getDay() == 0;
             // Set hasTime
@@ -85,21 +98,21 @@ class Datetime {
      * @return datetime's year
      */
     int getYear() {
-        return this.calendar.get(Calendar.YEAR);
+        return this.datetime.getYear();
     }
     /**
      * Gets the datetime's month.
      * @return datetime's month
      */
     int getMonth() {
-        return this.calendar.get(Calendar.MONTH);
+        return this.datetime.getMonthOfYear();
     }
     /**
      * Gets the datetime's day of the month.
      * @return datetime's day of month
      */
     int getDay() {
-        return this.calendar.get(Calendar.DAY_OF_MONTH);
+        return this.datetime.getDayOfMonth();
     }
 
     /**
@@ -107,14 +120,14 @@ class Datetime {
      * @return datetime's 24 hour value
      */
     int getHour() {
-        return this.calendar.get(Calendar.HOUR_OF_DAY);
+        return this.datetime.getHourOfDay();
     }
     /**
      * Gets the datetime's minute
      * @return datetime's minute
      */
     int getMinute() {
-        return this.calendar.get(Calendar.MINUTE);
+        return this.datetime.getMinuteOfHour();
     }
 
     /**
@@ -143,7 +156,7 @@ class Datetime {
      * @return datetime calendar time in milliseconds
      */
     long getMillis() {
-        return this.calendar.getTimeInMillis();
+        return this.datetime.getMillis();
     }
 
     /**
@@ -152,7 +165,7 @@ class Datetime {
      */
     void setYear(int year) {
         hasDate = true;
-        this.calendar.set(Calendar.YEAR, year);
+        this.datetime = this.datetime.withYear(year);
     }
     /**
      * {@link #getMonth()}
@@ -160,7 +173,7 @@ class Datetime {
      */
     void setMonth(int month) {
         hasDate = true;
-        this.calendar.set(Calendar.MONTH, month);
+        this.datetime = this.datetime.withMonthOfYear(month);
     }
     /**
      * {@link #getDay()}
@@ -168,7 +181,7 @@ class Datetime {
      */
     void setDay(int day) {
         hasDate = true;
-        this.calendar.set(Calendar.DAY_OF_MONTH, day);
+        this.datetime = this.datetime.withDayOfMonth(day);
     }
 
     /**
@@ -177,7 +190,7 @@ class Datetime {
      */
     void setHour(int hour) {
         this.hasTime = true;
-        this.calendar.set(Calendar.HOUR_OF_DAY, hour);
+        this.datetime = this.datetime.withHourOfDay(hour);
     }
     /**
      * {@link #getMinute()}
@@ -185,7 +198,7 @@ class Datetime {
      */
     void setMinute(int minute) {
         this.hasTime = true;
-        this.calendar.set(Calendar.MINUTE, minute);
+        this.datetime = this.datetime.withMinuteOfHour(minute);
     }
 
     /**
@@ -193,7 +206,9 @@ class Datetime {
      * @param millis datetime's time in milliseconds
      */
     void setMillis(long millis) {
-        this.calendar.setTimeInMillis(millis);
+        this.hasDate = true;
+        this.hasTime = true;
+        this.datetime = new org.joda.time.DateTime(millis);
     }
 
     /**
@@ -204,26 +219,7 @@ class Datetime {
      * @return new datetime instance with period added
      */
     Datetime add(Period period) {
-        // Clone current calendar instance to calculate new datetime
-        Calendar calendar = (Calendar) this.calendar.clone();
-        // Add the period to the calendar
-        calendar.add(Calendar.YEAR, period.getYears());
-        calendar.add(Calendar.MONTH, period.getMonths());
-        calendar.add(Calendar.DAY_OF_MONTH, period.getDays());
-
-        calendar.add(Calendar.HOUR_OF_DAY, period.getHours());
-        calendar.add(Calendar.MINUTE, period.getMinutes());
-        // New datetime instance
-        Datetime datetime = new Datetime();
-        // Set calendar values
-        datetime.setYear(calendar.get(Calendar.YEAR));
-        datetime.setMonth(calendar.get(Calendar.MONTH));
-        datetime.setDay(calendar.get(Calendar.DAY_OF_MONTH));
-
-        datetime.setHour(calendar.get(Calendar.HOUR_OF_DAY));
-        datetime.setMinute(calendar.get(Calendar.MINUTE));
-
-        return datetime;
+        return new Datetime(this.datetime.withPeriodAdded(period, 1));
     }
 
     /**
@@ -234,26 +230,7 @@ class Datetime {
      * @return new datetime instance with period subtracted
      */
     Datetime subtract(Period period) {
-        // Clone current calendar instance to calculate new datetime
-        Calendar calendar = (Calendar) this.calendar.clone();
-        // Subtract the period to the calendar
-        calendar.add(Calendar.YEAR, -period.getYears());
-        calendar.add(Calendar.MONTH, -period.getMonths());
-        calendar.add(Calendar.DAY_OF_MONTH, -period.getDays());
-
-        calendar.add(Calendar.HOUR_OF_DAY, -period.getHours());
-        calendar.add(Calendar.MINUTE, -period.getMinutes());
-        // New datetime instance
-        Datetime datetime = new Datetime();
-        // Set calendar values
-        datetime.setYear(calendar.get(Calendar.YEAR));
-        datetime.setMonth(calendar.get(Calendar.MONTH));
-        datetime.setDay(calendar.get(Calendar.DAY_OF_MONTH));
-
-        datetime.setHour(calendar.get(Calendar.HOUR_OF_DAY));
-        datetime.setMinute(calendar.get(Calendar.MINUTE));
-
-        return datetime;
+        return new Datetime(this.datetime.withPeriodAdded(period, -1));
     }
 
     /**
@@ -281,13 +258,14 @@ class Datetime {
         String formattedString = "";
         // Add date if it is present
         if (this.getHasDate()) {
+            this.datetime.toCalendar(Locale.getDefault());
             formattedString += String.format(Locale.getDefault(),
-                    "%1$ty/%1$tm/%1$td", this.calendar);
+                    "%1$ty/%1$tm/%1$td", this.datetime.toCalendar(Locale.getDefault()));
         }
         // Add time if it is present
         if (this.getHasTime()) {
             formattedString += String.format(Locale.getDefault(),
-                    "%1$tH:%1$tM", this.calendar);
+                    "%1$tH:%1$tM", this.datetime.toCalendar(Locale.getDefault()));
         }
 
         return formattedString;

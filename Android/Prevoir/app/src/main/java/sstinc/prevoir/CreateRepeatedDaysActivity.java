@@ -44,7 +44,7 @@ public class CreateRepeatedDaysActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        ArrayList<String> weekDays = getIntent().getStringArrayListExtra(EXTRA_RECEIVE_DAYS);
+        String[] weekDays = getIntent().getStringArrayExtra(EXTRA_RECEIVE_DAYS);
         for (String weekDay : weekDays) {
             if (weekDay.equals("MONDAY")) {
                 monday.setChecked(true);
@@ -84,32 +84,32 @@ public class CreateRepeatedDaysActivity extends AppCompatActivity {
         // Back button
         if (id == android.R.id.home) {
             // Get values
-            ArrayList<String> days = new ArrayList<>();
+            WeekDays weekDays = new WeekDays();
 
             if (monday.isChecked()) {
-                days.add("monday");
+                weekDays.add(WeekDays.WeekDay.MONDAY);
             }
             if (tuesday.isChecked()) {
-                days.add("tuesday");
+                weekDays.add(WeekDays.WeekDay.TUESDAY);
             }
             if (wednesday.isChecked()) {
-                days.add("wednesday");
+                weekDays.add(WeekDays.WeekDay.WEDNESDAY);
             }
             if (thursday.isChecked()) {
-                days.add("thursday");
+                weekDays.add(WeekDays.WeekDay.THURSDAY);
             }
             if (friday.isChecked()) {
-                days.add("friday");
+                weekDays.add(WeekDays.WeekDay.FRIDAY);
             }
             if (saturday.isChecked()) {
-                days.add("saturday");
+                weekDays.add(WeekDays.WeekDay.SATURDAY);
             }
             if (sunday.isChecked()) {
-                days.add("sunday");
+                weekDays.add(WeekDays.WeekDay.SUNDAY);
             }
 
             Intent intent = new Intent();
-            intent.putExtra(EXTRA_DAYS, days);
+            intent.putExtra(EXTRA_DAYS, weekDays.toStringArray());
             setResult(RESULT_OK, intent);
             finish();
         }

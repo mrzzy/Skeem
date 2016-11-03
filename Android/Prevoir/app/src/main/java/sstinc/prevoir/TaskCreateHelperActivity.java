@@ -3,6 +3,7 @@ package sstinc.prevoir;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -77,11 +78,12 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
 
         // Get task from intent
         this.task = getIntent().getParcelableExtra(TaskCreateActivity.EXTRA_TASK);
+        if (this.task == null) {
+            this.task = new Task();
+        }
 
         // Set the setDaysButton to update the days when clicked
         Button setDaysButton = (Button) findViewById(R.id.button_repetitions);
-        // Set button text to any previously selected weekdays
-        setDaysButton.setText(task.getWeekDays().toString());
         setDaysButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,6 +103,13 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
                 Button setDaysButton = (Button) findViewById(R.id.button_repetitions);
                 LinearLayout deadline_per_day_layout = (LinearLayout) findViewById(
                         R.id.layout_deadline_per_day);
+
+                // Set setDaysButton text
+                if (task.getWeekDays().toString().equals("")) {
+                    setDaysButton.setText(R.string.button_repetitions_unset);
+                } else {
+                    setDaysButton.setText(task.getWeekDays().toString());
+                }
 
                 setDaysButton.setVisibility(b? View.VISIBLE : View.GONE);
                 deadline_per_day_layout.setVisibility(b? View.VISIBLE : View.GONE);
@@ -162,7 +171,7 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), CreateDatetimeActivity.class);
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE, true);
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASTIME,
-                        CreateDatetimeActivity.HASTIME_YES);
+                        CreateDatetimeActivity.HASTIME_OPTIONAL);
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_DATETIME,
                         task.getDeadline().toString());
                 startActivityForResult(intent, createDeadlineRequestCode);
@@ -172,9 +181,9 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), CreateDatetimeActivity.class);
-                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE, true);
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE, false);
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASTIME,
-                        CreateDatetimeActivity.HASTIME_OPTIONAL);
+                        CreateDatetimeActivity.HASTIME_YES);
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_DATETIME,
                         task.getDeadlinePerDay().toString());
                 startActivityForResult(intent, createDeadlinePerDayRequestCode);
@@ -182,13 +191,16 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
         });
 
         // Set values if it is edit
-        if (this.task != null) {
+        if (this.task.getId() == -1) {
+            // Set button text to any previously selected weekdays
+            setDaysButton.setText(task.getWeekDays().toString());
+
             // Set weekDays
-            if (!task.getWeekDays().getWeekDays_list().isEmpty()) {
+            if (!this.task.getWeekDays().getWeekDays_list().isEmpty()) {
                 // Check repetitive switch
                 switch_onetime_repetitive.setChecked(true);
                 // Set text for setDaysButton and show it
-                setDaysButton.setText(task.getWeekDays().toString());
+                setDaysButton.setText(this.task.getWeekDays().toString());
                 setDaysButton.setVisibility(View.VISIBLE);
 
                 // Set deadline per day
@@ -202,19 +214,19 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
 
             // Set duration
             spinner_duration_hours.setSelection(hourArrayAdapter.getPosition(
-                            Integer.toString(task.getPeriodNeeded().getHours())));
+                            Integer.toString(this.task.getPeriodNeeded().getHours())));
             spinner_duration_minutes.setSelection(minuteArrayAdapter.getPosition(
-                            Integer.toString(task.getPeriodNeeded().getMinutes())));
+                            Integer.toString(this.task.getPeriodNeeded().getMinutes())));
 
             // Set minimum time period
-            if (!task.getPeriodMinimum().equals(new Period())) {
+            if (!this.task.getPeriodMinimum().equals(new Period())) {
                 // Check the min_time_period switch
                 switch_min_time_period.setChecked(true);
                 // Set the appropriate hours and minutes
                 spinner_min_time_period_hours.setSelection(hourArrayAdapter.getPosition(
-                        Integer.toString(task.getPeriodMinimum().getHours())));
+                        Integer.toString(this.task.getPeriodMinimum().getHours())));
                 spinner_min_time_period_minutes.setSelection(minuteArrayAdapter.getPosition(
-                        Integer.toString(task.getPeriodMinimum().getMinutes())));
+                        Integer.toString(this.task.getPeriodMinimum().getMinutes())));
 
                 // Get layout and make it visible
                 LinearLayout min_time_period_layout = (LinearLayout) findViewById(
@@ -224,7 +236,9 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
 
             // Set Deadline
             TextView deadline = (TextView) findViewById(R.id.text_view_deadline);
-            deadline.setText(task.getDeadline().toFormattedString());
+            if (this.task.getDeadline().getHasDate()) {
+                deadline.setText(task.getDeadline().toString());
+            }
         }
     }
 
@@ -232,7 +246,8 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
         // Start new activity to set days
         Intent intent = new Intent(getApplicationContext(),
                 CreateRepeatedDaysActivity.class);
-        intent.putExtra(EXTRA_WEEKDAYS, this.task.getWeekDays().toStringArray());
+        intent.putExtra(CreateRepeatedDaysActivity.EXTRA_RECEIVE_DAYS,
+                this.task.getWeekDays().toStringArray());
         startActivityForResult(intent, createDaysRequestCode);
     }
 
@@ -284,6 +299,7 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_MIN_TIME_PERIOD, PeriodFormat.getDefault().print(min_time_period));
 
         // Deadline
+        //TODO: deadline to string is not 000
         intent.putExtra(EXTRA_DEADLINE, this.task.getDeadline().toString());
         // Deadline per day
         intent.putExtra(EXTRA_DEADLINE_PER_DAY, this.task.getDeadlinePerDay().toString());
@@ -320,7 +336,7 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
                         CreateDatetimeActivity.EXTRA_DATETIME)));
 
                 TextView deadline = (TextView) findViewById(R.id.text_view_deadline);
-                deadline.setText(this.task.getDeadline().toFormattedString());
+                deadline.setText(this.task.getDeadline().toString());
             }
         }
         else if (requestCode == createDeadlinePerDayRequestCode) {

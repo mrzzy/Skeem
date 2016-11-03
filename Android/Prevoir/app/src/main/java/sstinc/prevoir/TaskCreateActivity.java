@@ -46,6 +46,10 @@ public class TaskCreateActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
+        // Reset menu
+        menu_continue = true;
+        invalidateOptionsMenu();
+
         // Get the task from TaskFragment
         this.task = getIntent().getParcelableExtra(TaskFragment.EXTRA_TASK);
         if (this.task != null) {
