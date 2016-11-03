@@ -22,17 +22,17 @@ import static android.app.Activity.RESULT_OK;
 
 public class VoidblockFragment extends ListFragment implements AdapterView.OnItemClickListener,
         AdapterView.OnItemLongClickListener {
-    // Request codes
-    public static final int createVoidblockRequestCode = 210;
-    public static final int updateVoidblockRequestCode = 220;
-    // Extra strings
-    public static final String EXTRA_UPDATE_VOIDBLOCK = "sstinc.prevoir.EXTRA_UPDATE_VOIDBLOCK";
     // Menu status
     boolean menu_shuffle = false;
     boolean menu_continue = false;
     boolean menu_finish = false;
     boolean menu_duplicate = false;
     boolean menu_delete = false;
+    // Request codes
+    public static final int createVoidblockRequestCode = 210;
+    public static final int updateVoidblockRequestCode = 220;
+    // Extra strings
+    public static final String EXTRA_VOIDBLOCK = "sstinc.prevoir.EXTRA_VOIDBLOCK";
 
     private View getViewByPosition(int pos, ListView listView) {
         final int firstListItemPosition = listView.getFirstVisiblePosition();
@@ -49,7 +49,7 @@ public class VoidblockFragment extends ListFragment implements AdapterView.OnIte
     private void editVoidblock(int position) {
         Voidblock voidblock = (Voidblock) getListAdapter().getItem(position);
         Intent intent = new Intent(getActivity(), VoidblockCreateActivity.class);
-        intent.putExtra(EXTRA_UPDATE_VOIDBLOCK, voidblock);
+        intent.putExtra(EXTRA_VOIDBLOCK, voidblock);
         startActivityForResult(intent, updateVoidblockRequestCode);
     }
 

@@ -30,7 +30,10 @@
     <string name="text_view_min_time_period">Minimum time period</string>
 
     <string name="text_view_deadline">Deadline</string>
-    <string name="text_view_deadline_time">Add Time</string>
+    <string name="text_view_deadline_per_day">Finish before</string>
+
+
+    <string name="text_view_add_time">Add Time</string>
 
 
     <!-- Days of the week -->

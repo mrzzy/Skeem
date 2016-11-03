@@ -9,14 +9,16 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.DatePicker;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Switch;
 
+import org.joda.time.Period;
+import org.joda.time.format.PeriodFormat;
+
 import java.util.ArrayList;
-import java.util.Calendar;
+
 //TODO: Settle UI First. Stop Repeating date(time) and deadline on day time buttons.
 /*
 taskCreate
@@ -44,11 +46,14 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
     boolean menu_delete = false;
     // Request Codes
     static final int createDaysRequestCode = 310;
+    static final int createDeadlineRequestCode = 111;
+    static final int createDeadlinePerDayRequestCode = 112;
     // Intent Extras
     public static final String EXTRA_WEEKDAYS = "sstinc.prevoir.EXTRA_WEEKDAYS";
     public static final String EXTRA_DURATION = "sstinc.prevoir.EXTRA_DURATION";
     public static final String EXTRA_MIN_TIME_PERIOD = "sstinc.prevoir.EXTRA_MIN_TIME_PERIOD";
     public static final String EXTRA_DEADLINE = "sstinc.prevoir.EXTRA_DEADLINE";
+    public static final String EXTRA_DEADLINE_PER_DAY = "sstinc.prevoir.EXTRA_DEADLINE_PER_DAY";
     // Misc
     Task task = null;
 
@@ -70,138 +75,60 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        // Set date picker minimum time to current date
-        DatePicker datePicker_deadline = (DatePicker) findViewById(R.id.date_picker_deadline);
-        Calendar cal = Calendar.getInstance();
-        datePicker_deadline.setMinDate(cal.getTimeInMillis());
+        // Get task from intent
+        this.task = getIntent().getParcelableExtra(TaskCreateActivity.EXTRA_TASK);
 
-        // Set toggle button actions
-        // Repeat Yes/No Toggle Button
-        Switch switch_onetime_repetitive = (Switch) findViewById(
-                R.id.switch_onetime_repetitive);
+        // Set the setDaysButton to update the days when clicked
         Button setDaysButton = (Button) findViewById(R.id.button_repetitions);
+        // Set button text to any previously selected weekdays
+        setDaysButton.setText(task.getWeekDays().toString());
         setDaysButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getDayValues();
             }
         });
-        switch_onetime_repetitive.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // If it is repetitive
-                Switch switch_onetime_repetitive = (Switch) findViewById(
-                        R.id.switch_onetime_repetitive);
-                Button setDaysButton = (Button) findViewById(R.id.button_repetitions);
-                Switch switch_deadline = (Switch) findViewById(R.id.switch_deadline);
 
-                if (switch_onetime_repetitive.isChecked()) {
-                    if (weekDays.isEmpty()) {
-                        getDayValues();
-                        if (!weekDays.isEmpty()) {
-                            switch_deadline.setVisibility(View.VISIBLE);
-                        }
-                    } else {
-                        setDaysButton.setVisibility(View.VISIBLE);
-                    }
-                } else {
-                    switch_deadline.setVisibility(View.INVISIBLE);
-                    switch_deadline.setChecked(true);
-                    setDaysButton.setVisibility(View.GONE);
-                }
-            }
-        });
-        // Minimum Time Period Yes/No Toggle Button
-        Switch switch_min_time_period = (Switch) findViewById(
-                R.id.switch_min_time_period);
-        switch_min_time_period.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Switch switch_min_time_period = (Switch) findViewById(
-                        R.id.switch_min_time_period);
-                Spinner spinner_min_time_period_hours = (Spinner) findViewById(
-                        R.id.spinner_min_time_period_hours);
-                Spinner spinner_min_time_period_minutes = (Spinner) findViewById(
-                        R.id.spinner_min_time_period_minutes);
-                TextView textView_min_time_period_hours = (TextView) findViewById(
-                        R.id.text_view_min_time_period_hours);
-                TextView textView_min_time_period_minutes = (TextView) findViewById(
-                        R.id.text_view_min_time_period_minutes);
-                // Set minimum time period
-                if (switch_min_time_period.isChecked()) {
-                    spinner_min_time_period_hours.setVisibility(View.VISIBLE);
-                    spinner_min_time_period_minutes.setVisibility(View.VISIBLE);
-                    textView_min_time_period_hours.setVisibility(View.VISIBLE);
-                    textView_min_time_period_minutes.setVisibility(View.VISIBLE);
-                } else {
-                    spinner_min_time_period_hours.setVisibility(View.GONE);
-                    spinner_min_time_period_minutes.setVisibility(View.GONE);
-                    textView_min_time_period_hours.setVisibility(View.GONE);
-                    textView_min_time_period_minutes.setVisibility(View.GONE);
-                }
-            }
-        });
-        // Deadline Time Switch
-        Switch switch_deadline_time = (Switch) findViewById(
-                R.id.switch_deadline_add_time);
-        switch_deadline_time.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Switch switch_deadline_time = (Switch) findViewById(
-                        R.id.switch_deadline_add_time);
-                TimePicker timePicker_deadline = (TimePicker) findViewById(
-                        R.id.time_picker_deadline);
-                // Set deadline time
-                if (switch_deadline_time.isChecked()) {
-                    timePicker_deadline.setVisibility(View.VISIBLE);
-                } else {
-                    timePicker_deadline.setVisibility(View.GONE);
-                }
-            }
-        });
-        // Deadline Switch
-        Switch switch_deadline = (Switch) findViewById(R.id.switch_deadline);
-        switch_deadline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        // Set switch actions
+        // Repeat switch
+        Switch switch_onetime_repetitive = (Switch) findViewById(
+                R.id.switch_onetime_repetitive);
+        switch_onetime_repetitive.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                // Time Text View
-                TextView textView_deadline_time = (TextView) findViewById(
-                        R.id.text_view_deadline_time);
-                // Time Switch
-                Switch switch_deadline_time = (Switch) findViewById(
-                        R.id.switch_deadline_add_time);
-                // Date Picker
-                DatePicker datePicker_deadline = (DatePicker) findViewById(
-                        R.id.date_picker_deadline);
-                // Time Picker
-                TimePicker timePicker_deadline = (TimePicker) findViewById(
-                        R.id.time_picker_deadline);
+                // Toggle visibility of setDaysButton
+                Button setDaysButton = (Button) findViewById(R.id.button_repetitions);
+                LinearLayout deadline_per_day_layout = (LinearLayout) findViewById(
+                        R.id.layout_deadline_per_day);
 
-                if (compoundButton.isChecked()) {
-                    // Make components visible
-                    textView_deadline_time.setVisibility(View.VISIBLE);
-                    switch_deadline_time.setVisibility(View.VISIBLE);
-                    datePicker_deadline.setVisibility(View.VISIBLE);
-                    if (switch_deadline_time.isChecked()) {
-                        timePicker_deadline.setVisibility(View.VISIBLE);
-                    }
-                } else {
-                    // Make components invisible
-                    textView_deadline_time.setVisibility(View.GONE);
-                    switch_deadline_time.setVisibility(View.GONE);
-                    datePicker_deadline.setVisibility(View.GONE);
-                    timePicker_deadline.setVisibility(View.GONE);
-                }
+                setDaysButton.setVisibility(b? View.VISIBLE : View.GONE);
+                deadline_per_day_layout.setVisibility(b? View.VISIBLE : View.GONE);
             }
         });
 
+        // Minimum time period switch
+        Switch switch_min_time_period = (Switch) findViewById(
+                R.id.switch_min_time_period);
+        switch_min_time_period.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                // Toggle visibility of min_time_period_layout
+                LinearLayout min_time_period_layout = (LinearLayout) findViewById(
+                        R.id.min_time_period_layout);
+                min_time_period_layout.setVisibility(b? View.VISIBLE : View.GONE);
+            }
+        });
 
         // Set spinner values
+        // Create defined set of values to choose from
         String[] hourValues = {"0", "1", "2", "3", "4", "5", "6"};
         String[] minuteValues = new String[60];
         for (int i=0; i<60; i++) {
             minuteValues[i] = Integer.toString(i);
         }
+
         // Create adapters for hours and minutes
         ArrayAdapter<String> hourArrayAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, hourValues);
@@ -214,6 +141,7 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
         // Set duration spinner adapters
         spinner_duration_hours.setAdapter(hourArrayAdapter);
         spinner_duration_minutes.setAdapter(minuteArrayAdapter);
+
         // Get minimum time period spinners
         Spinner spinner_min_time_period_hours = (Spinner) findViewById(
                 R.id.spinner_min_time_period_hours);
@@ -223,64 +151,88 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
         spinner_min_time_period_hours.setAdapter(hourArrayAdapter);
         spinner_min_time_period_minutes.setAdapter(minuteArrayAdapter);
 
-        // Set values if it is edit
-        Task task = getIntent().getParcelableExtra(TaskFragment.EXTRA_TASK);
+        // Set deadline and deadline per day datetime selectors
+        LinearLayout deadline_layout = (LinearLayout) findViewById(R.id.layout_deadline);
+        LinearLayout deadline_per_day_layout = (LinearLayout) findViewById(
+                R.id.layout_deadline_per_day);
 
-        if (task != null) {
-            edit = getIntent().getBooleanExtra(TaskCreateActivity.EXTRA_HAS_OLD_INFORMATION, false);
-
-            // Set weekDays
-            weekDays = task.getWeekDays().getWeekDays_list();
-            if (!weekDays.isEmpty()) {
-                switch_onetime_repetitive.setChecked(true);
-                setDaysButton.setText(getTextToSet());
-                setDaysButton.setVisibility(View.VISIBLE);
+        deadline_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), CreateDatetimeActivity.class);
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE, true);
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASTIME,
+                        CreateDatetimeActivity.HASTIME_YES);
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_DATETIME,
+                        task.getDeadline().toString());
+                startActivityForResult(intent, createDeadlineRequestCode);
             }
+        });
+        deadline_per_day_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), CreateDatetimeActivity.class);
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE, true);
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASTIME,
+                        CreateDatetimeActivity.HASTIME_OPTIONAL);
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_DATETIME,
+                        task.getDeadlinePerDay().toString());
+                startActivityForResult(intent, createDeadlinePerDayRequestCode);
+            }
+        });
+
+        // Set values if it is edit
+        if (this.task != null) {
+            // Set weekDays
+            if (!task.getWeekDays().getWeekDays_list().isEmpty()) {
+                // Check repetitive switch
+                switch_onetime_repetitive.setChecked(true);
+                // Set text for setDaysButton and show it
+                setDaysButton.setText(task.getWeekDays().toString());
+                setDaysButton.setVisibility(View.VISIBLE);
+
+                // Set deadline per day
+                TextView deadline_per_day = (TextView) findViewById(
+                        R.id.text_view_deadline_per_day);
+                deadline_per_day.setText(task.getDeadlinePerDay().toFormattedString());
+
+                // Make deadline per day visible
+                deadline_per_day_layout.setVisibility(View.VISIBLE);
+            }
+
             // Set duration
-            spinner_duration_hours.setSelection(
-                    hourArrayAdapter.getPosition(
+            spinner_duration_hours.setSelection(hourArrayAdapter.getPosition(
                             Integer.toString(task.getPeriodNeeded().getHours())));
-            spinner_duration_minutes.setSelection(
-                    minuteArrayAdapter.getPosition(
+            spinner_duration_minutes.setSelection(minuteArrayAdapter.getPosition(
                             Integer.toString(task.getPeriodNeeded().getMinutes())));
 
-            // Minimum Time Period
-            if (task.getPeriodMinimum().getHours() != -1) {
+            // Set minimum time period
+            if (!task.getPeriodMinimum().equals(new Period())) {
+                // Check the min_time_period switch
                 switch_min_time_period.setChecked(true);
+                // Set the appropriate hours and minutes
                 spinner_min_time_period_hours.setSelection(hourArrayAdapter.getPosition(
                         Integer.toString(task.getPeriodMinimum().getHours())));
                 spinner_min_time_period_minutes.setSelection(minuteArrayAdapter.getPosition(
                         Integer.toString(task.getPeriodMinimum().getMinutes())));
-                spinner_min_time_period_hours.setVisibility(View.VISIBLE);
-                spinner_min_time_period_minutes.setVisibility(View.VISIBLE);
+
+                // Get layout and make it visible
+                LinearLayout min_time_period_layout = (LinearLayout) findViewById(
+                        R.id.min_time_period_layout);
+                min_time_period_layout.setVisibility(View.VISIBLE);
             }
 
-            // Deadline
-            datePicker_deadline.updateDate(task.getDeadline().getYear(),
-                    task.getDeadline().getMonth(), task.getDeadline().getDay());
-            if (task.getDeadline().getHasTime()) {
-                ScrollableTimePicker timePicker_deadline = (ScrollableTimePicker) findViewById(
-                        R.id.time_picker_deadline);
-
-                switch_deadline_time.setChecked(true);
-                timePicker_deadline.setVisibility(View.VISIBLE);
-
-                // Set time for time picker
-                timePicker_deadline.setCurrentHour(task.getDeadline().getHour());
-                timePicker_deadline.setCurrentMinute(task.getDeadline().getMinute());
-            }
+            // Set Deadline
+            TextView deadline = (TextView) findViewById(R.id.text_view_deadline);
+            deadline.setText(task.getDeadline().toFormattedString());
         }
     }
 
     private void getDayValues() {
         // Start new activity to set days
         Intent intent = new Intent(getApplicationContext(),
-                TaskCreateDaysActivity.class);
-        ArrayList<String> stringWeekDays = new ArrayList<>();
-        for (WeekDays.WeekDay weekDay : weekDays) {
-            stringWeekDays.add(weekDay.toString());
-        }
-        intent.putExtra(EXTRA_CURRENT_DAYS, stringWeekDays);
+                CreateRepeatedDaysActivity.class);
+        intent.putExtra(EXTRA_WEEKDAYS, this.task.getWeekDays().toStringArray());
         startActivityForResult(intent, createDaysRequestCode);
     }
 
@@ -298,74 +250,44 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Get the id of the menu item selected
         int id = item.getItemId();
-        // Return values back to previous activity
+
+        // Return all values back to TaskCreateActivity
         Intent intent = new Intent();
-        // WeekDays (Repeated Days)
-        // Convert weekDays to ArrayList<String>
-        ArrayList<String> arrayListWeekDays = new ArrayList<>();
-        for (WeekDays.WeekDay weekDay : weekDays) {
-            arrayListWeekDays.add(weekDay.toString());
-        }
-        intent.putExtra(TaskCreateActivity.EXTRA_WEEKDAYS, arrayListWeekDays);
-        // Duration
+        // Add weekdays to intent
+        intent.putExtra(EXTRA_WEEKDAYS, this.task.getWeekDays().toStringArray());
+
+        // Add duration to intent
         Spinner spinner_duration_hours = (Spinner) findViewById(R.id.spinner_duration_hours);
         Spinner spinner_duration_minutes = (Spinner) findViewById(
                 R.id.spinner_duration_minutes);
-        int duration_hours = Integer.parseInt(
-                (String) spinner_duration_hours.getSelectedItem());
-        int duration_minutes = Integer.parseInt(
-                (String) spinner_duration_minutes.getSelectedItem());
+        // Create new period for duration
+        Period duration = new Period();
+        duration.plusHours(Integer.parseInt((String) spinner_duration_hours.getSelectedItem()));
+        duration.plusMinutes(Integer.parseInt((String) spinner_duration_minutes.getSelectedItem()));
+        // Convert duration to PeriodFormat String and add to intent
+        intent.putExtra(EXTRA_DURATION, PeriodFormat.getDefault().print(duration));
 
-        intent.putExtra(TaskCreateActivity.EXTRA_DURATION,
-                (new Duration(duration_hours, duration_minutes).toString()));
-        // Minimum Time Period
+        // Add minimum time period to intent
         Spinner spinner_min_time_period_hours = (Spinner) findViewById(
                 R.id.spinner_min_time_period_hours);
         Spinner spinner_min_time_period_minutes = (Spinner) findViewById(
                 R.id.spinner_min_time_period_minutes);
-        Switch switch_min_time_period = (Switch) findViewById(
-                R.id.switch_min_time_period);
-        int min_time_period_hours = -1;
-        int min_time_period_minutes = -1;
+        // Create new period for min_time_period
+        Period min_time_period = new Period();
+        min_time_period.plusHours(Integer.parseInt(
+                (String) spinner_min_time_period_hours.getSelectedItem()));
+        min_time_period.plusMinutes(Integer.parseInt(
+                (String) spinner_min_time_period_minutes.getSelectedItem()));
+        // Convert min_time_period to PeriodFormat String and add to intent
+        intent.putExtra(EXTRA_MIN_TIME_PERIOD, PeriodFormat.getDefault().print(min_time_period));
 
-        if (switch_min_time_period.isChecked()) {
-            min_time_period_hours = Integer.parseInt(
-                    (String) spinner_min_time_period_hours.getSelectedItem());
-            min_time_period_minutes = Integer.parseInt(
-                    (String) spinner_min_time_period_minutes.getSelectedItem());
-        }
+        // Deadline
+        intent.putExtra(EXTRA_DEADLINE, this.task.getDeadline().toString());
+        // Deadline per day
+        intent.putExtra(EXTRA_DEADLINE_PER_DAY, this.task.getDeadlinePerDay().toString());
 
-        intent.putExtra(TaskCreateActivity.EXTRA_MIN_TIME_PERIOD,
-                (new Duration(min_time_period_hours, min_time_period_minutes).toString()));
-
-        // Deadline Date
-        ScrollableDatePicker datePicker_deadline = (ScrollableDatePicker) findViewById(
-                R.id.date_picker_deadline);
-        ScrollableTimePicker timePicker_deadline = (ScrollableTimePicker) findViewById(
-                R.id.time_picker_deadline);
-        Switch switch_add_time = (Switch) findViewById(
-                R.id.switch_deadline_add_time);
-        Switch switch_deadline = (Switch) findViewById(R.id.switch_deadline);
-
-        Datetime datetime = new Datetime();
-        if (switch_deadline.isChecked()) {
-            datetime.setYear(datePicker_deadline.getYear());
-            datetime.setMonth(datePicker_deadline.getMonth());
-            datetime.setDay(datePicker_deadline.getDayOfMonth());
-            if (switch_add_time.isChecked()) {
-                datetime.setHour(timePicker_deadline.getCurrentHour());
-                datetime.setMinute(timePicker_deadline.getCurrentMinute());
-            }
-        }
-
-        intent.putExtra(TaskCreateActivity.EXTRA_DEADLINE, datetime.toString());
-
-        // Return ID
-        intent.putExtra(TaskCreateActivity.EXTRA_TASK_ID, getIntent().getLongExtra(
-                TaskCreateActivity.EXTRA_TASK_ID, -1));
-
-        // Back button
         if (id == android.R.id.home) {
             setResult(RESULT_CANCELED, intent);
             finish();
@@ -378,44 +300,38 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private String getTextToSet() {
-        String textToSet = "";
-        for (WeekDays.WeekDay weekDay : weekDays) {
-            textToSet += weekDay.toString().substring(0, 3);
-            textToSet += ", ";
-        }
-        if (!textToSet.equals("")) {
-            textToSet = textToSet.substring(0, textToSet.length()-2);
-        } else {
-            textToSet = getString(R.string.button_repetitions_unset);
-        }
-
-        return textToSet;
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == createDaysRequestCode) {
             if (resultCode == RESULT_OK) {
-                ArrayList<String> days = data.getStringArrayListExtra(EXTRA_DAYS);
-                weekDays = new ArrayList<>();
-                for (String day : days) {
-                    weekDays.add(WeekDays.WeekDay.valueOf(day.toUpperCase()));
-                }
+                // Get repeated days
+                this.task.setWeekDays(new WeekDays(data.getStringArrayExtra(
+                        CreateRepeatedDaysActivity.EXTRA_DAYS)));
 
-                Switch switch_deadline = (Switch) findViewById(R.id.switch_deadline);
-                if (!weekDays.isEmpty()) {
-                    switch_deadline.setVisibility(View.VISIBLE);
-                } else {
-                    switch_deadline.setVisibility(View.INVISIBLE);
-                }
-
-                // Set button text
+                // Set button text and make it visible
                 Button setWeekDaysButton = (Button) findViewById(R.id.button_repetitions);
-                setWeekDaysButton.setText(getTextToSet());
+                setWeekDaysButton.setText(this.task.getWeekDays().toString());
                 setWeekDaysButton.setVisibility(View.VISIBLE);
-            } else {
-                invalidateOptionsMenu();
+            }
+        } else if (requestCode == createDeadlineRequestCode) {
+            if (resultCode == RESULT_OK) {
+                // Get deadline
+                this.task.setDeadline(new Datetime(data.getStringExtra(
+                        CreateDatetimeActivity.EXTRA_DATETIME)));
+
+                TextView deadline = (TextView) findViewById(R.id.text_view_deadline);
+                deadline.setText(this.task.getDeadline().toFormattedString());
+            }
+        }
+        else if (requestCode == createDeadlinePerDayRequestCode) {
+            if (resultCode == RESULT_OK) {
+                // Get deadline per day
+                this.task.setDeadlinePerDay(new Datetime(data.getStringExtra(
+                        CreateDatetimeActivity.EXTRA_DATETIME)));
+
+                TextView deadline_per_day = (TextView) findViewById(
+                        R.id.text_view_deadline_per_day);
+                deadline_per_day.setText(this.task.getDeadlinePerDay().toFormattedString());
             }
         }
     }

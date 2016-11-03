@@ -20,7 +20,7 @@
         </activity>
         <activity android:name=".TaskCreateActivity" />
         <activity android:name=".TaskCreateHelperActivity" />
-        <activity android:name=".TaskCreateDaysActivity" />
+        <activity android:name=".CreateRepeatedDaysActivity" />
         <activity
             android:name=".AndroidDatabaseManager"
             android:theme="@style/Theme.AppCompat.Light" />

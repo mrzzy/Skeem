@@ -6,6 +6,8 @@ import android.os.Parcelable;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormat;
 
+//TODO: Check dependencies on deadline per day
+
 /**
  * This class handles information relating to each task. Each task has a
  * name, description, subject, deadline, period needed and minimum period
@@ -25,6 +27,7 @@ class Task extends Schedulable implements Parcelable {
     private String subject;
 
     private WeekDays weekDays;
+    private Datetime deadline_per_day;
 
     private Period period_needed;
     private Period period_minimum;
@@ -44,6 +47,7 @@ class Task extends Schedulable implements Parcelable {
         this.subject = "";
 
         this.weekDays = new WeekDays();
+        this.deadline_per_day = new Datetime();
 
         this.period_needed = new Period();
         this.period_minimum = new Period();
@@ -60,6 +64,7 @@ class Task extends Schedulable implements Parcelable {
         this.subject = task.getSubject();
 
         this.weekDays = new WeekDays(task.getWeekDays());
+        this.deadline_per_day = new Datetime(task.getDeadlinePerDay());
 
         this.period_needed = new Period(task.getPeriodNeeded());
         this.period_minimum = new Period(task.getPeriodMinimum());
@@ -82,6 +87,9 @@ class Task extends Schedulable implements Parcelable {
         this.name = name;
         this.description = description;
         this.subject = subject;
+
+        this.weekDays = new WeekDays();
+        this.deadline_per_day = new Datetime();
 
         this.period_needed = new Period();
         this.period_minimum = new Period();
@@ -120,6 +128,13 @@ class Task extends Schedulable implements Parcelable {
      */
     WeekDays getWeekDays() {
         return this.weekDays;
+    }
+    /**
+     * Gets the task's deadline each weekday.
+     * @return task's deadline each weekday
+     */
+    Datetime getDeadlinePerDay() {
+        return this.deadline_per_day;
     }
 
     /**
@@ -175,6 +190,13 @@ class Task extends Schedulable implements Parcelable {
     void setWeekDays(WeekDays weekDays) {
         this.weekDays = weekDays;
     }
+    /**
+     * {@link #getDeadlinePerDay()}
+     * @param deadline_per_day task's deadline per day
+     */
+    void setDeadlinePerDay(Datetime deadline_per_day) {
+        this.deadline_per_day = deadline_per_day;
+    }
 
     /**
      * {@link #getPeriodNeeded()}
@@ -220,6 +242,8 @@ class Task extends Schedulable implements Parcelable {
         out.writeString(this.subject);
         // Write the weekDays as a string array
         out.writeStringArray(this.weekDays.toStringArray());
+        // Write the deadline per day as a string
+        out.writeString(this.deadline_per_day.toString());
         // Use the default period format and write that string
         out.writeString(PeriodFormat.getDefault().print(this.period_needed));
         out.writeString(PeriodFormat.getDefault().print(this.period_minimum));
@@ -254,10 +278,12 @@ class Task extends Schedulable implements Parcelable {
         this.subject = in.readString();
         // Create new WeekDays instance from string array
         this.weekDays = new WeekDays(in.createStringArray());
+        // Create datetime objects from strings
+        this.deadline_per_day = new Datetime(in.readString());
         // Parse the Periods with the default period format
         this.period_needed = PeriodFormat.getDefault().parsePeriod(in.readString());
         this.period_minimum = PeriodFormat.getDefault().parsePeriod(in.readString());
-        // Create datetime strings to datetime objects
+        // Create datetime objects from datetime strings
         this.scheduled_start = new Datetime(in.readString());
         this.scheduled_stop = new Datetime(in.readString());
         this.deadline = new Datetime(in.readString());

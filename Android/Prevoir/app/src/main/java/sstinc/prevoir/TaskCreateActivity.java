@@ -10,34 +10,15 @@ import android.widget.EditText;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormat;
 
-import java.util.ArrayList;
-//TODO: Update and retain information
-/*
-taskCreate
-    -> FROM: Helper VALUE: weekDays
-    -> FROM: Helper VALUE: Duration
-    -> FROM: Helper VALUE: min_time_period
-    -> FROM: Helper VALUE: Deadline
-taskCreateHelper
-    -> FROM: days VALUE: weekDays
-    -> TO: days VALUE: weekDays
-    -> TO: Create VALUE: weekDays
-    -> TO: Create VALUE: Duration
-    -> TO: Create VALUE: min_time_period
-    -> TO: Create VALUE: Deadline
-days
-    -> FROM: Helper VALUE: weekDays
-    -> TO: Helper VALUE: weekDays
- */
-
 /**
- * This activity handles the creation of the task. The activity handles the
+ * This activity handles the creation of a task. The activity handles the
  * name, subject and description of the task and calls other activities to
  * get more information. Upon gathering all the information, it will create
- * the task and store it into the database. The activity is then finished.
+ * a task and pass it to TaskFragment. The activity is then finished.
  *
  * @see TaskCreateHelperActivity
- * @see TaskCreateDaysActivity
+ * @see CreateRepeatedDaysActivity
+ * @see TaskFragment
  */
 public class TaskCreateActivity extends AppCompatActivity {
     // Menu status

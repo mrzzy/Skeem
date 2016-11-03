@@ -6,33 +6,53 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.Calendar;
+
+/**
+ * This activity handles the creation of a voidblock. The activity handles
+ * the name of the voidblock and calls other activities to get more
+ * information. Upon gathering all the information, it will create a
+ * voidblock and pass it the VoidblockFragment.
+ *
+ * @see CreateDatetimeActivity
+ * @see CreateRepeatedDaysActivity
+ * @see VoidblockFragment
+ */
 public class VoidblockCreateActivity extends AppCompatActivity {
-    // Request Codes
-    public static final int createVoidblockFromRequestCode = 200;
-    public static final int createVoidblockToRequestCode = 201;
-    // Extra
-    public static final String EXTRA_VOIDBLOCK = "sstinc.prevoir.EXTRA_VOIDBLOCK";
-    public static final String EXTRA_VOIDBLOCK_UPDATE_DATETIME =
-            "sstinc.prevoir.EXTRA_VOIDBLOCK_UPDATE_DATETIME";
-    public static final String EXTRA_VOIDBLOCK_DATETIME_MIN_MAX =
-            "sstinc.prevoir.EXTRA_VOIDBLOCK_DATETIME_MIN_MAX";
-    public static final String EXTRA_VOIDBLOCK_DATETIME =
-            "sstinc.prevoir.EXTRA_VOIDBLOCK_DATETIME";
+    /*
+    voidblockCreate
+        -> FROM: days VALUE: weekDays
+        -> FROM: Datetime VALUE: from_datetime
+        -> FROM: Datetime VALUE: to_datetime
+        -> TO: days VALUE: weekDays
+        -> TO: Datetime VALUE: from_datetime
+        -> TO: Datetime VALUE: to_datetime
+    voidblockCreateDatetime
+        -> FROM: Create VALUE: from_datetime
+        -> FROM: Create VALUE: to_datetime
+        -> TO: Create VALUE: from_datetime
+        -> TO: Create VALUE: to_datetime
+    days
+        -> FROM: Create VALUE: weekDays
+        -> TO: Create VALUE: weekDays
+     */
     // Menu status
     boolean menu_shuffle = false;
     boolean menu_continue = false;
     boolean menu_finish = false;
     boolean menu_duplicate = false;
     boolean menu_delete = false;
+    // Request codes
+    public static final int createVoidblockFromRequestCode = 200;
+    public static final int createVoidblockToRequestCode = 201;
+    // Intent extras
+    public static final String EXTRA_VOIDBLOCK = "sstinc.prevoir.EXTRA_VOIDBLOCK";
     // Voidblock information
-    long voidblock_id = -1;
-    Datetime voidblock_from_datetime = new Datetime();
-    Datetime voidblock_to_datetime = new Datetime();
+    Voidblock voidblock = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,48 +75,75 @@ public class VoidblockCreateActivity extends AppCompatActivity {
         LinearLayout layout_from = (LinearLayout) findViewById(R.id.layout_from);
         LinearLayout layout_to = (LinearLayout) findViewById(R.id.layout_to);
 
+        // Start CreateDatetimeActivity when setting scheduled start
         layout_from.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Create intent
                 Intent intent = new Intent(getApplicationContext(),
-                        VoidblockCreateDatetimeActivity.class);
-                if (voidblock_from_datetime.getYear() != -1) {
-                    intent.putExtra(EXTRA_VOIDBLOCK_UPDATE_DATETIME,
-                            voidblock_from_datetime.toString());
-                }
-                intent.putExtra(EXTRA_VOIDBLOCK_DATETIME, "");
-                intent.putExtra(EXTRA_VOIDBLOCK_DATETIME_MIN_MAX, "");
+                        CreateDatetimeActivity.class);
 
-                if (voidblock_to_datetime.getYear() != -1) {
-                    intent.putExtra(EXTRA_VOIDBLOCK_DATETIME_MIN_MAX, "MAX");
-                    intent.putExtra(EXTRA_VOIDBLOCK_DATETIME, voidblock_to_datetime.toString());
+                // Get current date in datetime
+                Datetime currentDatetime = new Datetime();
+                currentDatetime.setMillis(Calendar.getInstance().getTimeInMillis());
+                // Set datetime selector to have date and time
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE, true);
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASTIME,
+                        CreateDatetimeActivity.HASTIME_YES);
+                // Set maximum to scheduled_stop if it exists
+                if (voidblock.getScheduledStop().getHasDate() &&
+                        voidblock.getScheduledStop().getHasTime()) {
+                    intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_MAX,
+                            voidblock.getScheduledStop().toString());
                 }
+                // Set minimum to current datetime
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_MIN,
+                        currentDatetime.toString());
+                // Set the current datetime to the scheduled_start
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_DATETIME,
+                        voidblock.getScheduledStart().toString());
+
+                // Start activity
                 startActivityForResult(intent, createVoidblockFromRequestCode);
             }
         });
+
+        // Start CreateDatetimeActivity when setting scheduled stop
         layout_to.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Create intent
                 Intent intent = new Intent(getApplicationContext(),
-                        VoidblockCreateDatetimeActivity.class);
-                if (voidblock_to_datetime.getYear() != -1) {
-                    intent.putExtra(EXTRA_VOIDBLOCK_UPDATE_DATETIME,
-                            voidblock_to_datetime.toString());
+                        CreateDatetimeActivity.class);
+
+                // Get current date in datetime
+                Datetime currentDatetime = new Datetime();
+                currentDatetime.setMillis(Calendar.getInstance().getTimeInMillis());
+                // Set datetime selector to have date and time
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE, true);
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASTIME,
+                        CreateDatetimeActivity.HASTIME_YES);
+                // Set minimum to scheduled_start if it exists. If not, set
+                // it to the current datetime
+                if (voidblock.getScheduledStart().getHasDate() &&
+                        voidblock.getScheduledStart().getHasTime()) {
+                    intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_MIN,
+                            voidblock.getScheduledStart().toString());
+                } else {
+                    intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_MIN,
+                            currentDatetime.toString());
                 }
-                intent.putExtra(EXTRA_VOIDBLOCK_DATETIME, "");
-                intent.putExtra(EXTRA_VOIDBLOCK_DATETIME_MIN_MAX, "");
-                if (voidblock_from_datetime.getYear() != -1) {
-                    intent.putExtra(EXTRA_VOIDBLOCK_DATETIME_MIN_MAX, "MIN");
-                    intent.putExtra(EXTRA_VOIDBLOCK_DATETIME, voidblock_from_datetime.toString());
-                }
+
+                // Start activity
                 startActivityForResult(intent, createVoidblockToRequestCode);
             }
         });
 
         // Check if it is update
-        Voidblock voidblock = getIntent().getParcelableExtra(
-                VoidblockFragment.EXTRA_UPDATE_VOIDBLOCK);
-        if (voidblock != null) {
+        this.voidblock = getIntent().getParcelableExtra(
+                VoidblockFragment.EXTRA_VOIDBLOCK);
+
+        if (this.voidblock != null) {
             // Get the elements
             TextView textView_from_datetime = (TextView) findViewById(
                     R.id.text_view_voidblock_from);
@@ -104,13 +151,9 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                     R.id.text_view_voidblock_to);
 
             // Set the values of the fields
-            editText_name.setText(voidblock.getName());
-            textView_from_datetime.setText(voidblock.getScheduledStart().toFormattedString());
-            textView_to_datetime.setText(voidblock.getScheduledStop().toFormattedString());
-            // Set local voidblock times
-            voidblock_from_datetime = voidblock.getScheduledStart();
-            voidblock_to_datetime = voidblock.getScheduledStop();
-            voidblock_id = voidblock.getId();
+            editText_name.setText(this.voidblock.getName());
+            textView_from_datetime.setText(this.voidblock.getScheduledStart().toFormattedString());
+            textView_to_datetime.setText(this.voidblock.getScheduledStop().toFormattedString());
         }
     }
 
@@ -128,31 +171,29 @@ public class VoidblockCreateActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Get the id of the menu item selected
         int id = item.getItemId();
 
         if (id == android.R.id.home) {
-            // Back button
+            // Set to cancel and finish
             setResult(RESULT_CANCELED);
             finish();
         } else if (id == R.id.nav_done) {
-            // Get information
+            // Check that voidblock all fields have been set then finish.
+
+            // Set new name
             EditText editText_name = (EditText) findViewById(R.id.field_text_voidblock_name);
             String name = editText_name.getText().toString();
+            this.voidblock.setName(name);
 
-            if (voidblock_to_datetime.getYear() == -1 || voidblock_from_datetime.getYear() == -1) {
+            // Check that the voidblock has scheduled start and stop
+            if (this.voidblock.getScheduledStart().getHasDate() &&
+                    this.voidblock.getScheduledStop().getHasDate()) {
                 return super.onOptionsItemSelected(item);
             }
 
-            Voidblock voidblock = new Voidblock();
-            voidblock.setName(name);
-            voidblock.setScheduledStart(voidblock_from_datetime);
-            voidblock.setScheduledStop(voidblock_to_datetime);
-            if (voidblock_id != -1) {
-                voidblock.setId(voidblock_id);
-            }
-
             Intent intent = new Intent();
-            intent.putExtra(EXTRA_VOIDBLOCK, voidblock);
+            intent.putExtra(EXTRA_VOIDBLOCK, this.voidblock);
             setResult(RESULT_OK, intent);
             finish();
         }
@@ -167,21 +208,30 @@ public class VoidblockCreateActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 TextView textView_from_datetime = (TextView) findViewById(
                         R.id.text_view_voidblock_from);
-
-                voidblock_from_datetime = new Datetime(data.getStringExtra(
-                        VoidblockCreateDatetimeActivity.EXTRA_VOIDBLOCK_TIME));
-
-                textView_from_datetime.setText(voidblock_from_datetime.toFormattedString());
+                // Create voidblock if it does not exist
+                if (this.voidblock == null) {
+                    this.voidblock = new Voidblock();
+                }
+                // Set the new scheduled start
+                this.voidblock.setScheduledStart(new Datetime(data.getStringExtra(
+                        CreateDatetimeActivity.EXTRA_DATETIME)));
+                // Reset from text view
+                textView_from_datetime.setText(
+                        this.voidblock.getScheduledStart().toFormattedString());
             }
         } else if (requestCode == createVoidblockToRequestCode) {
             if (resultCode == RESULT_OK) {
                 TextView textView_to_datetime = (TextView) findViewById(
                         R.id.text_view_voidblock_to);
 
-                voidblock_to_datetime = new Datetime(data.getStringExtra(
-                        VoidblockCreateDatetimeActivity.EXTRA_VOIDBLOCK_TIME));
-
-                textView_to_datetime.setText(voidblock_to_datetime.toFormattedString());
+                if (this.voidblock == null) {
+                    this.voidblock = new Voidblock();
+                }
+                // Set the new scheduled stop
+                this.voidblock.setScheduledStop(new Datetime(data.getStringExtra(
+                        CreateDatetimeActivity.EXTRA_DATETIME)));
+                // Reset to text view
+                textView_to_datetime.setText(this.voidblock.getScheduledStop().toFormattedString());
             }
         }
     }

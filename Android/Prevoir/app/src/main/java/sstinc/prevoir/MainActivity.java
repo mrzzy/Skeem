@@ -13,7 +13,7 @@ import android.view.MenuItem;
 //TODO: Check for assumed copy
 //TODO: Move menu status to static class
 //TODO: Expired tasks and voidblocks etc.
-//TODO: Refactor TaskCreateDaysActivity to DaysActivity
+//TODO: Refactor CreateRepeatedDaysActivity to DaysActivity
 
 /*
 Intent codes:

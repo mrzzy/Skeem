@@ -110,7 +110,9 @@ class TaskArrayAdapter extends ArrayAdapter<Task> {
         viewHolder.checkbox.setChecked(list.get(position).checked);
 
         // Set the visibility of the checkbox
-        viewHolder.checkbox.setVisibility(TaskFragment.menu_multi? View.VISIBLE: View.GONE);
+        //TODO Test that there is no need for below statement
+        //viewHolder.checkbox.setVisibility(TaskFragment.menu_multi? View.VISIBLE: View.GONE);
+        viewHolder.checkbox.setVisibility(View.GONE);
 
         return convertView;
     }
