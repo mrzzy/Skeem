@@ -107,7 +107,24 @@ class VoidDurationListVC: UITableViewController {
 
     //UI Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
+        if let sge_idf = segue.identifier
+        {
+            switch sge_idf {
+            case "uisge.voidblock.add":
+                let voiddeditvc = (segue.destination as! VoidDurationEditVC)
+                voiddeditvc.loadAddVoidDuration()
+            case "uisge.voidblock.edit":
+                let voiddeditvc = (segue.destination as! VoidDurationEditVC)
+                let voidd = self.arr_voidd[(self.tableView.indexPathForSelectedRow?.row)!]
+                voiddeditvc.loadEditVoidDuration(voidd: voidd)
+            default:
+                abort()
+            }
+        }
+        else
+        {
+            abort()
+        }
     }
 
 }

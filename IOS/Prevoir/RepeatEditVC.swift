@@ -8,18 +8,45 @@
 
 import UIKit
 
+public enum RepeatDataKey
+{
+    case stop_date //Date - date/time repeat will terminate
+    case repeat_time //Date - time to repeat each day
+    case repeat_day //Array<Bool> - days to repeat of a weak
+}
+
 class RepeatEditVC: UIViewController {
 
+    //Data
+    var rpt_data:[RepeatDataKey:Any]!
+
+    //Functions
+    public func loadAddRepeatData()
+    {
+
+    }
+
+    public func loadEditRepeatData(rptdat:[RepeatDataKey:Any])
+    {
+        self.rpt_data = rptdat
+
+        //Load Repeat Data in UI Elements
+    }
+
+    
+    //Events
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
 
-        // Do any additional setup after loading the view.
+    override func viewWillDisappear(_ animated: Bool) {
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
     
 
     /*

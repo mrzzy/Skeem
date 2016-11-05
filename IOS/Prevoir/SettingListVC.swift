@@ -35,10 +35,6 @@ class SettingListVC: UITableViewController {
     }
 
     //UI Events
-    /*
-     * @IBAction func switch_toggle_shake(_ sender: UISwitch) {
-     * - Event Handler for switch for the PVRSetting.ui_shake setting
-    */
     @IBAction func switch_toggle_shake(_ sender: UISwitch) {
         let cfg_val = NSNumber(booleanLiteral: sender.isOn)
         CFG.commitSetting(set: PVRSetting.ui_shake, val: cfg_val)
