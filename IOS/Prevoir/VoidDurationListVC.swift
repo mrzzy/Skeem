@@ -17,6 +17,7 @@ class VoidDurationListVC: UITableViewController {
     //Data
     var arr_voidd:[PVRVoidDuration]!
     var utcell_id_voidd:String!
+    var arr_voidd_idx:Int!
 
     //UI Elements
     @IBOutlet weak var barbtn_edit: UIBarButtonItem!
@@ -32,8 +33,15 @@ class VoidDurationListVC: UITableViewController {
         //Init Data
         self.utcell_id_voidd = "utcell.list.voidd"
         self.arr_voidd = Array<PVRVoidDuration>()
-        
+        self.arr_voidd_idx = 0
+
         super.viewDidLoad()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        //Update Data
+        self.arr_voidd = self.DBC.sortedVoidDuration(sattr: PVRVoidDurationSort.begin)
+        self.arr_voidd_idx = 0
     }
 
     override func didReceiveMemoryWarning() {
@@ -41,7 +49,7 @@ class VoidDurationListVC: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    //UITableDataSource Protocol Functions
+    //UITableView Delegate/Data Source Functions
     override func numberOfSections(in tableView: UITableView) -> Int {
         let sections = 1 //Only one section 
         return sections
@@ -53,62 +61,53 @@ class VoidDurationListVC: UITableViewController {
         case 0: //First Section
             return self.DBC.DB.voidDuration.values.count
         default:
-            abort() //Only one section
+            abort() //Unhandled Section
         }
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        //Update Data
-        if self.arr_voidd.count <= 0
-        {
-            self.arr_voidd = self.DBC.sortedVoidDuration(sattr: PVRVoidDurationSort.begin)
-        }
-
         //Create/Update Table View Cell
         let cell = ((tableView.dequeueReusableCell(withIdentifier: self.utcell_id_voidd, for: indexPath)) as! VoidDurationListTBC)
-        let voidd = self.arr_voidd.removeFirst()
+        let voidd = self.arr_voidd[self.arr_voidd_idx]
         cell.updateData(name: voidd.name, begin: voidd.begin, duration: voidd.duration)
+
+        //Update Data
+        self.arr_voidd_idx! += 1
+        if self.arr_voidd_idx >= self.arr_voidd.count
+        {
+            self.arr_voidd_idx = 0
+        }
 
         return cell
     }
 
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        //Can Edit any Row
         return true
     }
 
-    // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+        if editingStyle == UITableViewCellEditingStyle.delete {
+            switch indexPath.section {
+            case 0:
+                let voidd = self.DBC.sortedVoidDuration(sattr: PVRVoidDurationSort.begin)[indexPath.row]
+                let rst = self.DBC.deleteVoidDuration(name: voidd.name)
+                assert(rst) //Terminates Executable if delete fails
+            default:
+                abort() //Unhandled Section
+            }
+
+            tableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.automatic)
+        }
+        else if editingStyle == UITableViewCellEditingStyle.insert {
+            //Data Should be in databasel
+            tableView.insertRows(at: [indexPath], with: UITableViewRowAnimation.automatic)
         }    
     }
 
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    //UI Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        
     }
-    */
 
 }
