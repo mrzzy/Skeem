@@ -53,6 +53,7 @@ import java.util.Collections;
  *     <li>days_id references Days(id)</li>
  * </ul>
  */
+//TODO: Add task deadline per day
 class DbAdapter {
     // Define constants
     // Constants for database
@@ -145,7 +146,7 @@ class DbAdapter {
     private DbHelper dbHelper;
     private Context context;
 
-    // Databse Methods
+    // Database Methods
     DbAdapter(Context ctx) {
         context = ctx;
     }
@@ -201,6 +202,7 @@ class DbAdapter {
         long days_id = SQLdb.insert(DbAdapter.DAYS_TABLE, null, values);
 
         // Tasks Table
+        values = new ContentValues();
         values.put(DbAdapter.TASKS_TABLE_COL_DAYS_ID, days_id);
         values.put(DbAdapter.TASKS_TABLE_COL_NAME, task.getName());
         values.put(DbAdapter.TASKS_TABLE_COL_SUBJECT, task.getSubject());
@@ -347,7 +349,6 @@ class DbAdapter {
 
             task.setPeriodNeeded(PeriodFormat.getDefault().parsePeriod(cursor.getString(5)));
             task.setPeriodMinimum(PeriodFormat.getDefault().parsePeriod(cursor.getString(6)));
-
             task.setDeadline(new Datetime(cursor.getString(7)));
 
             tasks.add(task);

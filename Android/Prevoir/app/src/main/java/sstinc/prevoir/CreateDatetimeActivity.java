@@ -3,6 +3,7 @@ package sstinc.prevoir;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,9 +58,9 @@ public class CreateDatetimeActivity extends AppCompatActivity {
         Intent intent = getIntent();
         this.hasDate = intent.getBooleanExtra(EXTRA_RECEIVE_HASDATE, true);
         this.hasTime = intent.getStringExtra(EXTRA_RECEIVE_HASTIME);
-        this.datetime = new Datetime(intent.getStringExtra(EXTRA_RECEIVE_DATETIME));
-        this.max_datetime = new Datetime(intent.getStringExtra(EXTRA_RECEIVE_MAX));
-        this.min_datetime = new Datetime(intent.getStringExtra(EXTRA_RECEIVE_MIN));
+        this.datetime = new Datetime((Datetime) intent.getParcelableExtra(EXTRA_RECEIVE_DATETIME));
+        this.max_datetime = new Datetime((Datetime) intent.getParcelableExtra(EXTRA_RECEIVE_MAX));
+        this.min_datetime = new Datetime((Datetime) intent.getParcelableExtra(EXTRA_RECEIVE_MIN));
 
         // Get date and time picker
         ScrollableDatePicker datePicker = (ScrollableDatePicker) findViewById(
@@ -100,6 +101,11 @@ public class CreateDatetimeActivity extends AppCompatActivity {
             // Make time picker gone first
             timePicker.setVisibility(View.GONE);
 
+            // Set checked if datetime has time
+            if (this.datetime.getHasTime()) {
+                switch_addTime.setChecked(true);
+            }
+
             LinearLayout add_time_layout = (LinearLayout) findViewById(
                     R.id.datetime_add_time_layout);
             add_time_layout.setVisibility(View.VISIBLE);
@@ -107,8 +113,9 @@ public class CreateDatetimeActivity extends AppCompatActivity {
 
         // Fill in the values of datetime if there were any
         if (this.datetime.getHasDate()) {
-            datePicker.updateDate(datePicker.getYear(), datePicker.getMonth(),
-                    datePicker.getDayOfMonth());
+            Log.w(this.getClass().getName(), this.datetime.toFormattedString());
+            datePicker.updateDate(this.datetime.getYear(), this.datetime.getMonth()-1,
+                    this.datetime.getDay());
         }
         if (this.datetime.getHasTime()) {
             timePicker.setCurrentHour(this.datetime.getHour());
@@ -142,7 +149,7 @@ public class CreateDatetimeActivity extends AppCompatActivity {
         Datetime submitted_datetime = new Datetime();
         if (this.hasDate) {
             submitted_datetime.setYear(datePicker.getYear());
-            submitted_datetime.setMonth(datePicker.getMonth());
+            submitted_datetime.setMonth(datePicker.getMonth()+1);
             submitted_datetime.setDay(datePicker.getDayOfMonth());
         }
         if (this.hasTime.equals(HASTIME_YES)) {
@@ -197,7 +204,7 @@ public class CreateDatetimeActivity extends AppCompatActivity {
                 Datetime datetime = new Datetime();
                 if (this.hasDate) {
                     datetime.setYear(datePicker.getYear());
-                    datetime.setMonth(datePicker.getMonth());
+                    datetime.setMonth(datePicker.getMonth()+1);
                     datetime.setDay(datePicker.getDayOfMonth());
                 }
                 if (this.hasTime.equals(HASTIME_YES)) {
@@ -207,7 +214,7 @@ public class CreateDatetimeActivity extends AppCompatActivity {
 
                 // Create intent
                 Intent intent = new Intent();
-                intent.putExtra(EXTRA_DATETIME, datetime.toString());
+                intent.putExtra(EXTRA_DATETIME, datetime);
 
                 // Set result and finish activity
                 setResult(RESULT_OK, intent);

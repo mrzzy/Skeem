@@ -1,5 +1,7 @@
 package sstinc.prevoir;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -139,9 +141,9 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
         }
 
         // Create adapters for hours and minutes
-        ArrayAdapter<String> hourArrayAdapter = new ArrayAdapter<String>(this,
+        ArrayAdapter<String> hourArrayAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, hourValues);
-        ArrayAdapter<String> minuteArrayAdapter = new ArrayAdapter<String>(this,
+        ArrayAdapter<String> minuteArrayAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, minuteValues);
 
         // Get duration spinners
@@ -172,8 +174,7 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE, true);
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASTIME,
                         CreateDatetimeActivity.HASTIME_OPTIONAL);
-                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_DATETIME,
-                        task.getDeadline().toString());
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_DATETIME, task.getDeadline());
                 startActivityForResult(intent, createDeadlineRequestCode);
             }
         });
@@ -185,60 +186,58 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASTIME,
                         CreateDatetimeActivity.HASTIME_YES);
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_DATETIME,
-                        task.getDeadlinePerDay().toString());
+                        task.getDeadlinePerDay());
                 startActivityForResult(intent, createDeadlinePerDayRequestCode);
             }
         });
 
-        // Set values if it is edit
-        if (this.task.getId() == -1) {
-            // Set button text to any previously selected weekdays
-            setDaysButton.setText(task.getWeekDays().toString());
+        // Set the values from the given task object
+        // Set button text to any previously selected weekdays
+        setDaysButton.setText(task.getWeekDays().toString());
 
-            // Set weekDays
-            if (!this.task.getWeekDays().getWeekDays_list().isEmpty()) {
-                // Check repetitive switch
-                switch_onetime_repetitive.setChecked(true);
-                // Set text for setDaysButton and show it
-                setDaysButton.setText(this.task.getWeekDays().toString());
-                setDaysButton.setVisibility(View.VISIBLE);
+        // Set weekDays
+        if (!this.task.getWeekDays().getWeekDays_list().isEmpty()) {
+            // Check repetitive switch
+            switch_onetime_repetitive.setChecked(true);
+            // Set text for setDaysButton and show it
+            setDaysButton.setText(this.task.getWeekDays().toString());
+            setDaysButton.setVisibility(View.VISIBLE);
 
-                // Set deadline per day
-                TextView deadline_per_day = (TextView) findViewById(
-                        R.id.text_view_deadline_per_day);
-                deadline_per_day.setText(task.getDeadlinePerDay().toFormattedString());
+            // Set deadline per day
+            TextView deadline_per_day = (TextView) findViewById(
+                    R.id.text_view_deadline_per_day);
+            deadline_per_day.setText(task.getDeadlinePerDay().toFormattedString());
 
-                // Make deadline per day visible
-                deadline_per_day_layout.setVisibility(View.VISIBLE);
-            }
+            // Make deadline per day visible
+            deadline_per_day_layout.setVisibility(View.VISIBLE);
+        }
 
-            // Set duration
-            spinner_duration_hours.setSelection(hourArrayAdapter.getPosition(
-                            Integer.toString(this.task.getPeriodNeeded().getHours())));
-            spinner_duration_minutes.setSelection(minuteArrayAdapter.getPosition(
-                            Integer.toString(this.task.getPeriodNeeded().getMinutes())));
+        // Set duration
+        spinner_duration_hours.setSelection(hourArrayAdapter.getPosition(
+                        Integer.toString(this.task.getPeriodNeeded().getHours())));
+        spinner_duration_minutes.setSelection(minuteArrayAdapter.getPosition(
+                        Integer.toString(this.task.getPeriodNeeded().getMinutes())));
 
-            // Set minimum time period
-            if (!this.task.getPeriodMinimum().equals(new Period())) {
-                // Check the min_time_period switch
-                switch_min_time_period.setChecked(true);
-                // Set the appropriate hours and minutes
-                spinner_min_time_period_hours.setSelection(hourArrayAdapter.getPosition(
-                        Integer.toString(this.task.getPeriodMinimum().getHours())));
-                spinner_min_time_period_minutes.setSelection(minuteArrayAdapter.getPosition(
-                        Integer.toString(this.task.getPeriodMinimum().getMinutes())));
+        // Set minimum time period
+        if (!this.task.getPeriodMinimum().equals(new Period())) {
+            // Check the min_time_period switch
+            switch_min_time_period.setChecked(true);
+            // Set the appropriate hours and minutes
+            spinner_min_time_period_hours.setSelection(hourArrayAdapter.getPosition(
+                    Integer.toString(this.task.getPeriodMinimum().getHours())));
+            spinner_min_time_period_minutes.setSelection(minuteArrayAdapter.getPosition(
+                    Integer.toString(this.task.getPeriodMinimum().getMinutes())));
 
-                // Get layout and make it visible
-                LinearLayout min_time_period_layout = (LinearLayout) findViewById(
-                        R.id.min_time_period_layout);
-                min_time_period_layout.setVisibility(View.VISIBLE);
-            }
+            // Get layout and make it visible
+            LinearLayout min_time_period_layout = (LinearLayout) findViewById(
+                    R.id.min_time_period_layout);
+            min_time_period_layout.setVisibility(View.VISIBLE);
+        }
 
-            // Set Deadline
-            TextView deadline = (TextView) findViewById(R.id.text_view_deadline);
-            if (this.task.getDeadline().getHasDate()) {
-                deadline.setText(task.getDeadline().toString());
-            }
+        // Set Deadline
+        TextView deadline = (TextView) findViewById(R.id.text_view_deadline);
+        if (this.task.getDeadline().getHasDate()) {
+            deadline.setText(task.getDeadline().toFormattedString());
         }
     }
 
@@ -279,8 +278,10 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
                 R.id.spinner_duration_minutes);
         // Create new period for duration
         Period duration = new Period();
-        duration.plusHours(Integer.parseInt((String) spinner_duration_hours.getSelectedItem()));
-        duration.plusMinutes(Integer.parseInt((String) spinner_duration_minutes.getSelectedItem()));
+        duration = duration.plusHours(
+                Integer.parseInt((String) spinner_duration_hours.getSelectedItem()));
+        duration = duration.plusMinutes(
+                Integer.parseInt((String) spinner_duration_minutes.getSelectedItem()));
         // Convert duration to PeriodFormat String and add to intent
         intent.putExtra(EXTRA_DURATION, PeriodFormat.getDefault().print(duration));
 
@@ -291,23 +292,29 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
                 R.id.spinner_min_time_period_minutes);
         // Create new period for min_time_period
         Period min_time_period = new Period();
-        min_time_period.plusHours(Integer.parseInt(
+        min_time_period = min_time_period.plusHours(Integer.parseInt(
                 (String) spinner_min_time_period_hours.getSelectedItem()));
-        min_time_period.plusMinutes(Integer.parseInt(
+        min_time_period = min_time_period.plusMinutes(Integer.parseInt(
                 (String) spinner_min_time_period_minutes.getSelectedItem()));
         // Convert min_time_period to PeriodFormat String and add to intent
         intent.putExtra(EXTRA_MIN_TIME_PERIOD, PeriodFormat.getDefault().print(min_time_period));
 
         // Deadline
-        //TODO: deadline to string is not 000
-        intent.putExtra(EXTRA_DEADLINE, this.task.getDeadline().toString());
+        intent.putExtra(EXTRA_DEADLINE, this.task.getDeadline());
         // Deadline per day
-        intent.putExtra(EXTRA_DEADLINE_PER_DAY, this.task.getDeadlinePerDay().toString());
+        intent.putExtra(EXTRA_DEADLINE_PER_DAY, this.task.getDeadlinePerDay());
 
         if (id == android.R.id.home) {
             setResult(RESULT_CANCELED, intent);
             finish();
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        } else if (!(this.task.getDeadline().getHasDate() ||
+                this.task.getDeadline().getHasTime())) {
+            // If deadline not set show an alert and don't do anything
+            AlertDialog.Builder deadline_not_set = new AlertDialog.Builder(this);
+            deadline_not_set.setTitle(R.string.dialog_no_deadline_title);
+            deadline_not_set.setMessage(R.string.dialog_no_deadline_message);
+            deadline_not_set.show();
         } else if (id == R.id.nav_done) {
             setResult(RESULT_OK, intent);
             finish();
@@ -326,23 +333,27 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
 
                 // Set button text and make it visible
                 Button setWeekDaysButton = (Button) findViewById(R.id.button_repetitions);
-                setWeekDaysButton.setText(this.task.getWeekDays().toString());
+                if (this.task.getWeekDays().toString().isEmpty()) {
+                    setWeekDaysButton.setText(R.string.button_repetitions_unset);
+                } else {
+                    setWeekDaysButton.setText(this.task.getWeekDays().toString());
+                }
                 setWeekDaysButton.setVisibility(View.VISIBLE);
             }
         } else if (requestCode == createDeadlineRequestCode) {
             if (resultCode == RESULT_OK) {
                 // Get deadline
-                this.task.setDeadline(new Datetime(data.getStringExtra(
+                this.task.setDeadline(new Datetime((Datetime) data.getParcelableExtra(
                         CreateDatetimeActivity.EXTRA_DATETIME)));
 
                 TextView deadline = (TextView) findViewById(R.id.text_view_deadline);
-                deadline.setText(this.task.getDeadline().toString());
+                deadline.setText(this.task.getDeadline().toFormattedString());
             }
         }
         else if (requestCode == createDeadlinePerDayRequestCode) {
             if (resultCode == RESULT_OK) {
                 // Get deadline per day
-                this.task.setDeadlinePerDay(new Datetime(data.getStringExtra(
+                this.task.setDeadlinePerDay(new Datetime((Datetime) data.getParcelableExtra(
                         CreateDatetimeActivity.EXTRA_DATETIME)));
 
                 TextView deadline_per_day = (TextView) findViewById(

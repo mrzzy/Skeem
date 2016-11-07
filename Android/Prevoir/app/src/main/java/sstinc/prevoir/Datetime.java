@@ -1,19 +1,30 @@
 package sstinc.prevoir;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.joda.time.Period;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.Calendar;
 import java.util.Locale;
 
 //TODO: Locale datetime string format
+//TODO: Check dependencies for datetime parcelable
 
 /**
  * This class handles information relating to an instance in time using
- * Calendar. Minutes is the smallest denomination this class handles.
+ * Calendar. Minutes is the smallest denomination this class handles. The
+ * class is parcelable.
  *
  * @see Calendar
+ * @see Parcelable
  */
-class Datetime {
+class Datetime implements Parcelable {
+    private static final DateTimeFormatter default_format = DateTimeFormat.forPattern(
+            "yyyy-MM-dd HH:mm:ss");
+
     private org.joda.time.DateTime datetime;
     private boolean hasDate;
     private boolean hasTime;
@@ -86,9 +97,9 @@ class Datetime {
                                                        Integer.parseInt(time_list[0]), // Hour
                                                        Integer.parseInt(time_list[1]));// Minute
             // Set hasDate
-            this.hasDate = this.getDay() == 0;
+            this.hasDate = this.getDay() != 0;
             // Set hasTime
-            this.hasTime = this.getHour() == 0;
+            this.hasTime = this.getHour() != 0;
         }
     }
 
@@ -260,8 +271,14 @@ class Datetime {
         if (this.getHasDate()) {
             this.datetime.toCalendar(Locale.getDefault());
             formattedString += String.format(Locale.getDefault(),
-                    "%1$ty/%1$tm/%1$td", this.datetime.toCalendar(Locale.getDefault()));
+                    "%1$td/%1$tm/%1$ty", this.datetime.toCalendar(Locale.getDefault()));
         }
+
+        // Add a spacing in between if both exist
+        if (this.getHasDate() && this.getHasTime()) {
+            formattedString += " ";
+        }
+
         // Add time if it is present
         if (this.getHasTime()) {
             formattedString += String.format(Locale.getDefault(),
@@ -269,5 +286,52 @@ class Datetime {
         }
 
         return formattedString;
+    }
+
+    // Empty describe contents function for parcel
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    /**
+     * Function to write the data into a parcelable object.
+     *
+     * @param out parcel to write to
+     * @param flags other flags
+     */
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        // Write hasDate and hasTime
+        boolean[] hasDateHasTime = {this.hasDate, this.hasTime};
+        out.writeBooleanArray(hasDateHasTime);
+        // Write datetime
+        out.writeString(default_format.print(this.datetime));
+
+    }
+
+    // Creator constant for parcel
+    public static final Parcelable.Creator<Datetime> CREATOR = new Parcelable.Creator<Datetime>() {
+        public Datetime createFromParcel(Parcel in) {
+            return new Datetime(in);
+        }
+
+        public Datetime[] newArray(int size) {
+            return new Datetime[size];
+        }
+    };
+
+    /**
+     * Constructor to create instance from data from parcel.
+     *
+     * @param in parcel to read from
+     */
+    private Datetime(Parcel in) {
+        // Read hasDate and hasTime
+        boolean[] hasDateHasTime = in.createBooleanArray();
+        this.hasDate = hasDateHasTime[0];
+        this.hasTime = hasDateHasTime[1];
+        // Parse datetime
+        this.datetime = default_format.parseDateTime(in.readString());
     }
 }

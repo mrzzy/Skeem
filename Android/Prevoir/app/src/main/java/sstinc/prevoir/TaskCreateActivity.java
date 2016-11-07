@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 
+import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormat;
 
@@ -98,11 +99,8 @@ public class TaskCreateActivity extends AppCompatActivity {
             Intent intent = new Intent(this, TaskCreateHelperActivity.class);
 
             // Add extra information to the intent
-            if (this.task != null) {
-                // If it is an update or has information on the task
-                // (retained information during create process)
-                intent.putExtra(EXTRA_TASK, this.task);
-            }
+            intent.putExtra(EXTRA_TASK, this.task);
+
             // Start the activity
             startActivityForResult(intent, createTaskHelperRequestCode);
         }
@@ -113,6 +111,10 @@ public class TaskCreateActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == createTaskHelperRequestCode) {
+            if (this.task == null) {
+                this.task = new Task();
+            }
+
             if (resultCode == RESULT_OK) {
                 // User has finished creating the task. Create the task from
                 // the returned intent and pass it to TaskFragment. After
@@ -131,8 +133,8 @@ public class TaskCreateActivity extends AppCompatActivity {
                 // Get weekdays, deadline, period and min_time_period
                 WeekDays weekDays = new WeekDays(data.getStringArrayExtra(
                         TaskCreateHelperActivity.EXTRA_WEEKDAYS));
-                Datetime deadline = new Datetime(
-                        data.getStringExtra(TaskCreateHelperActivity.EXTRA_DEADLINE));
+                Datetime deadline = data.getParcelableExtra(
+                        TaskCreateHelperActivity.EXTRA_DEADLINE);
                 Period period = PeriodFormat.getDefault().parsePeriod(
                         data.getStringExtra(TaskCreateHelperActivity.EXTRA_DURATION));
                 Period min_time_period = PeriodFormat.getDefault().parsePeriod(

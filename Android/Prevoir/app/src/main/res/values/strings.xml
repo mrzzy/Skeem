@@ -58,6 +58,9 @@
     Tasks?</string>
     <string name="dialog_confirm_delete_positive">Yes</string>
     <string name="dialog_confirm_delete_negative">No</string>
+    <!-- No deadline dialog -->
+    <string name="dialog_no_deadline_title">Alert</string>
+    <string name="dialog_no_deadline_message">Deadline is not set.</string>
 
     <!-- Create voidblock Activity -->
     <string name="field_text_voidblock_name_hint">Name</string>
