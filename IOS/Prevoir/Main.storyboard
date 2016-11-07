@@ -177,7 +177,7 @@
                                     <segue destination="bIl-9o-nkg" kind="show" identifier="uisge.voidblock.edit" id="K9N-17-Tm4"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="uitcell.null" id="MxF-Zo-Mv0">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="uitcell.list.voidd.null" id="MxF-Zo-Mv0">
                                 <rect key="frame" x="0.0" y="108" width="320" height="80"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="MxF-Zo-Mv0" id="1yV-FF-oV1">
@@ -229,11 +229,11 @@
                         <viewControllerLayoutGuide type="bottom" id="P4k-Pq-b5f"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="IiP-1T-RLL">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="2000"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wit-cY-GBe">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="1951"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5u0-iA-KEn">
                                         <rect key="frame" x="8" y="0.0" width="304" height="643"/>
@@ -266,7 +266,7 @@
                                                     <!--2016-09-17 23:57:54 +0000-->
                                                 </date>
                                                 <connections>
-                                                    <action selector="datepicker_duration_action:" destination="bIl-9o-nkg" eventType="valueChanged" id="l6f-Ib-IQp"/>
+                                                    <action selector="datepicker_duration_action:" destination="bIl-9o-nkg" eventType="valueChanged" id="KIi-wG-kHC"/>
                                                 </connections>
                                             </datePicker>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="amC-L3-3xS">
@@ -287,7 +287,7 @@
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences" autocorrectionType="no" spellCheckingType="no" keyboardType="alphabet" keyboardAppearance="light" returnKeyType="done"/>
                                                 <connections>
-                                                    <action selector="textfield_text_action:" destination="bIl-9o-nkg" eventType="editingDidEnd" id="JCT-GL-puT"/>
+                                                    <action selector="textfield_name_editend:" destination="bIl-9o-nkg" eventType="editingDidEnd" id="ccS-D3-ADg"/>
                                                 </connections>
                                             </textField>
                                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="d5T-cq-Hsf">
@@ -395,38 +395,33 @@
                         <barButtonItem key="rightBarButtonItem" title="Done" id="LCV-qK-DIO">
                             <connections>
                                 <action selector="bbtn_finish_action:" destination="bIl-9o-nkg" id="PE6-5b-XtQ"/>
-                                <segue destination="Tj0-XI-T52" kind="show" identifier="uisge.rpt.edit" id="uiO-cb-36K"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="320" height="2000"/>
                     <connections>
                         <outlet property="bbtn_finish" destination="LCV-qK-DIO" id="DYT-pt-K7I"/>
                         <outlet property="cnstrt_datepicker_begin" destination="j9B-YI-SrX" id="MGn-uX-xQX"/>
                         <outlet property="cnstrt_label_begin" destination="so6-7g-wMY" id="UVg-Qh-Vr0"/>
                         <outlet property="datepick_begin" destination="Rca-Rq-PoA" id="pmy-2s-LrM"/>
                         <outlet property="datepick_duration" destination="EMG-c9-gRs" id="itU-xz-kFs"/>
-                        <outlet property="datepicker_begin" destination="Rca-Rq-PoA" id="e99-L7-NEW"/>
-                        <outlet property="datepicker_duration" destination="EMG-c9-gRs" id="Uf8-w3-lWR"/>
-                        <outlet property="navitem_title" destination="mpE-TA-b2B" id="zqf-oc-0Kw"/>
                         <outlet property="segctl_type" destination="PJP-lf-spU" id="hpP-Tf-z1Z"/>
                         <outlet property="switch_optional" destination="d5T-cq-Hsf" id="Bja-Xy-yTT"/>
                         <outlet property="textfield_name" destination="sKI-a8-MbT" id="LZA-r5-V6E"/>
-                        <segue destination="MVz-BT-Lv5" kind="unwind" identifier="uisge.voidd.edit.unwind" unwindAction="perpareUnwindWithSegue:" id="jNk-Se-JjP"/>
+                        <segue destination="Tj0-XI-T52" kind="show" identifier="uisge.rpt.edit" id="BZm-a4-8RU"/>
+                        <segue destination="MVz-BT-Lv5" kind="unwind" identifier="uisge.voidd.list.unwind" unwindAction="unwind_voidDurationListWithSge:" id="bmi-y8-Feo"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RjL-HJ-rpZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="MVz-BT-Lv5" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="2700" y="590.10494752623697"/>
+            <point key="canvasLocation" x="2700" y="589.43661971830988"/>
         </scene>
         <!--RepeatEditVC-->
         <scene sceneID="X9q-Ol-Pvz">
             <objects>
-                <tableViewController title="RepeatEditVC" id="Tj0-XI-T52" sceneMemberID="viewController">
+                <tableViewController title="RepeatEditVC" id="Tj0-XI-T52" customClass="RepeatListVC" customModule="Prevoir" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="JM8-PC-TCc">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="2000"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <sections>
@@ -436,7 +431,7 @@
                                         <rect key="frame" x="0.0" y="28" width="320" height="200"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="zgL-x0-RTD" id="EaK-U7-0ma">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="200"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="199.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="date" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="cPL-ab-o6Z">
@@ -444,6 +439,9 @@
                                                     <date key="date" timeIntervalSinceReferenceDate="495849474.47164702">
                                                         <!--2016-09-17 23:57:54 +0000-->
                                                     </date>
+                                                    <connections>
+                                                        <action selector="datepick_stopdate_action:" destination="Tj0-XI-T52" eventType="valueChanged" id="jBh-33-arc"/>
+                                                    </connections>
                                                 </datePicker>
                                             </subviews>
                                             <constraints>
@@ -470,6 +468,9 @@
                                                     <date key="date" timeIntervalSinceReferenceDate="499759662.83274001">
                                                         <!--2016-11-02 06:07:42 +0000-->
                                                     </date>
+                                                    <connections>
+                                                        <action selector="datepick_repeattime_action:" destination="Tj0-XI-T52" eventType="valueChanged" id="Hzp-eN-l9g"/>
+                                                    </connections>
                                                 </datePicker>
                                             </subviews>
                                             <constraints>
@@ -612,12 +613,22 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Repeat" id="H1k-6O-kab">
-                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="tYK-CU-e1q"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="tYK-CU-e1q">
+                            <connections>
+                                <segue destination="WZp-cJ-1VV" kind="unwind" unwindAction="unwind_voidDurationEditWithSge:" id="F5r-hD-WgJ"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="bbtn_finish" destination="tYK-CU-e1q" id="h4A-6t-n1k"/>
+                        <outlet property="datepick_repeattime" destination="qbx-gN-X52" id="u3T-Ub-egB"/>
+                        <outlet property="datepick_stopdate" destination="cPL-ab-o6Z" id="rwq-xD-F2q"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lLm-Aq-pNg" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="WZp-cJ-1VV" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="3406" y="916"/>
+            <point key="canvasLocation" x="3431" y="919"/>
         </scene>
         <!--ScheduleListVC-->
         <scene sceneID="UTW-Ir-xkg">
@@ -2361,6 +2372,9 @@
                                             <constraint firstItem="dcy-Ou-8sL" firstAttribute="leading" secondItem="IoW-f9-0wo" secondAttribute="leading" id="taA-2n-caz"/>
                                             <constraint firstItem="Kla-wp-OSY" firstAttribute="leading" secondItem="IoW-f9-0wo" secondAttribute="leading" constant="8" id="tiC-bc-B42"/>
                                         </constraints>
+                                        <connections>
+                                            <outletCollection property="gestureRecognizers" destination="ph7-e7-G6R" appends="YES" id="W07-3A-vBr"/>
+                                        </connections>
                                     </view>
                                 </subviews>
                                 <constraints>
@@ -2381,14 +2395,14 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Add/Edit Task" id="58I-Mt-JmP">
-                        <barButtonItem key="rightBarButtonItem" title="Done" id="l1c-p2-OXn">
-                            <connections>
-                                <segue destination="Tj0-XI-T52" kind="show" identifier="uisge.rpt.edit" id="uJD-aM-qXB"/>
-                            </connections>
-                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Done" id="l1c-p2-OXn"/>
                     </navigationItem>
+                    <connections>
+                        <segue destination="Tj0-XI-T52" kind="show" identifier="uisge.rpt.edit" id="6gq-wF-8pM"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zP3-iu-hCq" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="ph7-e7-G6R"/>
             </objects>
             <point key="canvasLocation" x="2700" y="1261"/>
         </scene>
@@ -2560,7 +2574,7 @@
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="K5s-ob-RV9"/>
+        <segue reference="BZm-a4-8RU"/>
         <segue reference="bAN-jK-76S"/>
-        <segue reference="uiO-cb-36K"/>
     </inferredMetricsTieBreakers>
 </document>

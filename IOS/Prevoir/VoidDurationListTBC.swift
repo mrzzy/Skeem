@@ -39,11 +39,11 @@ class VoidDurationListTBC: UITableViewCell {
         //Begin Label 
         switch diff_dcmp.day! {
         case 0:
-            label_begin.text = "\(begin_dcmp.hour) \(begin_dcmp.minute)"
+            label_begin.text = "\(begin_dcmp.hour!) \(begin_dcmp.minute!)"
         case 1:
-            label_begin.text = "Tommorow,\(begin_dcmp.hour) \(begin_dcmp.minute)"
+            label_begin.text = "Tommorow,\(begin_dcmp.hour!) \(begin_dcmp.minute!)"
         default:
-            label_begin.text = "\(begin_dcmp.day)/\(begin_dcmp.month)/\(begin_dcmp.year), \(begin_dcmp.hour) \(begin_dcmp.minute)"
+            label_begin.text = "\(begin_dcmp.day!)/\(begin_dcmp.month!)/\(begin_dcmp.year!), \(begin_dcmp.hour!) \(begin_dcmp.minute!)"
         }
 
         //Duration Label
@@ -51,9 +51,9 @@ class VoidDurationListTBC: UITableViewCell {
         var drsn_min = 0
         var drsn_left = duration
 
-        drsn_hour = drsn_left / 60 * 60 * 60
-        drsn_left -= drsn_hour * 60 * 60 * 60
-        drsn_min = duration / 60 * 60
+        drsn_hour = drsn_left / (60 * 60)
+        drsn_left -= drsn_hour * (60 * 60)
+        drsn_min = drsn_left / (60)
 
         self.label_duration.text = "\(drsn_hour)h \(drsn_min)m"
     }
@@ -66,5 +66,4 @@ class VoidDurationListTBC: UITableViewCell {
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
-
 }

@@ -16,13 +16,31 @@ class VoidDurationListVC: UITableViewController {
 
     //Data
     var arr_voidd:[PVRVoidDuration]!
-    var utcell_id_voidd:String!
     var arr_voidd_idx:Int!
+
+    var utcell_id_voidd:String!
+    var utcell_id_voidd_null:String!
 
     //UI Elements
     @IBOutlet weak var barbtn_edit: UIBarButtonItem!
     @IBOutlet weak var barbtn_add: UIBarButtonItem!
+
+    //Data Functions
+    /*
+     * public func updateView()
+     * - Triggers a update to current data and UI update with that data
+    */
+    public func updateView()
+    {
+        //Update Data
+        self.arr_voidd = self.DBC.sortedVoidDuration(sattr: PVRVoidDurationSort.begin)
+        self.arr_voidd_idx = 0
+
+        //Update UI
+        self.tableView.reloadData()
+    }
     
+    //Event Functions
     override func viewDidLoad() {
         //Init Links 
         let appDelegate = (UIApplication.shared.delegate as! AppDelegate)
@@ -31,8 +49,10 @@ class VoidDurationListVC: UITableViewController {
         self.CFG = appDelegate.CFG
 
         //Init Data
-        self.utcell_id_voidd = "utcell.list.voidd"
-        self.arr_voidd = Array<PVRVoidDuration>()
+        self.utcell_id_voidd = "uitcell.list.voidd"
+        self.utcell_id_voidd_null = "uitcell.list.voidd.null"
+
+        self.arr_voidd = self.DBC.sortedVoidDuration(sattr: PVRVoidDurationSort.begin)
         self.arr_voidd_idx = 0
 
         super.viewDidLoad()
@@ -59,31 +79,46 @@ class VoidDurationListVC: UITableViewController {
         switch section
         {
         case 0: //First Section
-            return self.DBC.DB.voidDuration.values.count
+            return  (self.arr_voidd.count <= 0) ? 1 : self.arr_voidd.count //Introduce Space for no void duration cell
         default:
             abort() //Unhandled Section
         }
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        //Create/Update Table View Cell
-        let cell = ((tableView.dequeueReusableCell(withIdentifier: self.utcell_id_voidd, for: indexPath)) as! VoidDurationListTBC)
-        let voidd = self.arr_voidd[self.arr_voidd_idx]
-        cell.updateData(name: voidd.name, begin: voidd.begin, duration: voidd.duration)
-
-        //Update Data
-        self.arr_voidd_idx! += 1
-        if self.arr_voidd_idx >= self.arr_voidd.count
+        if self.arr_voidd.count > 0
         {
-            self.arr_voidd_idx = 0
-        }
+            //Create/Update Table View Cell
+            let cell = ((tableView.dequeueReusableCell(withIdentifier: self.utcell_id_voidd, for: indexPath)) as! VoidDurationListTBC)
+            let voidd = self.arr_voidd[self.arr_voidd_idx]
+            cell.updateData(name: voidd.name, begin: voidd.begin, duration: voidd.duration)
 
-        return cell
+            //Update Data
+            self.arr_voidd_idx! += 1
+            if self.arr_voidd_idx >= self.arr_voidd.count
+            {
+                self.arr_voidd_idx = 0
+            }
+
+            return cell
+        }
+        else
+        {
+            //Empty Void Duration Cell
+            let cell = tableView.dequeueReusableCell(withIdentifier: self.utcell_id_voidd_null, for: indexPath)
+            return cell
+        }
     }
 
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        //Can Edit any Row
-        return true
+        if self.arr_voidd.count <= 0
+        {
+            return false //Cannot Edit Null Cell
+        }
+        else
+        {
+            return true
+        }
     }
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
@@ -112,9 +147,11 @@ class VoidDurationListVC: UITableViewController {
             switch sge_idf {
             case "uisge.voidblock.add":
                 let voiddeditvc = (segue.destination as! VoidDurationEditVC)
+                let _ = voiddeditvc.view //Force View Load
                 voiddeditvc.loadAddVoidDuration()
             case "uisge.voidblock.edit":
                 let voiddeditvc = (segue.destination as! VoidDurationEditVC)
+                let _ = voiddeditvc.view //Force View Load
                 let voidd = self.arr_voidd[(self.tableView.indexPathForSelectedRow?.row)!]
                 voiddeditvc.loadEditVoidDuration(voidd: voidd)
             default:
@@ -127,4 +164,9 @@ class VoidDurationListVC: UITableViewController {
         }
     }
 
+
+    @IBAction func unwind_voidDurationList(sge:UIStoryboardSegue)
+    {
+        
+    }
 }

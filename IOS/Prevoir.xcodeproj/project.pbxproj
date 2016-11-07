@@ -16,6 +16,7 @@
 		5A50C7411D8CD4390002ACF8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A50C7401D8CD4390002ACF8 /* UIKit.framework */; };
 		5A50C7431D8CD4750002ACF8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5A50C7421D8CD4750002ACF8 /* Main.storyboard */; };
 		5A5463A71DCB01BC0028261C /* VoidDurationListTBC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A5463A61DCB01BC0028261C /* VoidDurationListTBC.swift */; };
+		5A81D25D1DD020AB008E5FE4 /* RepeatListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A81D25C1DD020AB008E5FE4 /* RepeatListVC.swift */; };
 		5A87A27B1DBCE40900A206B9 /* PVRDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A87A27A1DBCE40900A206B9 /* PVRDataView.swift */; };
 		5A8E08AF1DC9DBBC00A7DE53 /* VoidDurationListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8E08AE1DC9DBBC00A7DE53 /* VoidDurationListVC.swift */; };
 		5A8E08B71DC9DC5500A7DE53 /* ScheduleListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8E08B61DC9DC5500A7DE53 /* ScheduleListVC.swift */; };
@@ -28,7 +29,6 @@
 		5AA440701DAF81B3005B0E70 /* PVRDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA4406F1DAF81B3005B0E70 /* PVRDatabase.swift */; };
 		5AB7343B1DC499A500CCCC98 /* PVRSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB7343A1DC499A500CCCC98 /* PVRSetting.swift */; };
 		5AD59AA01DB4DD130076FF0B /* PVRDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AD59A9F1DB4DD130076FF0B /* PVRDataController.swift */; };
-		5AEBED241DCC5F6800713292 /* RepeatEditVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AEBED231DCC5F6800713292 /* RepeatEditVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +43,7 @@
 		5A50C7401D8CD4390002ACF8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		5A50C7421D8CD4750002ACF8 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		5A5463A61DCB01BC0028261C /* VoidDurationListTBC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoidDurationListTBC.swift; sourceTree = "<group>"; };
+		5A81D25C1DD020AB008E5FE4 /* RepeatListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RepeatListVC.swift; sourceTree = "<group>"; };
 		5A87A27A1DBCE40900A206B9 /* PVRDataView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRDataView.swift; sourceTree = "<group>"; };
 		5A8E08AE1DC9DBBC00A7DE53 /* VoidDurationListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoidDurationListVC.swift; sourceTree = "<group>"; };
 		5A8E08B61DC9DC5500A7DE53 /* ScheduleListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleListVC.swift; sourceTree = "<group>"; };
@@ -55,7 +56,6 @@
 		5AA4406F1DAF81B3005B0E70 /* PVRDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PVRDatabase.swift; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; wrapsLines = 1; };
 		5AB7343A1DC499A500CCCC98 /* PVRSetting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRSetting.swift; sourceTree = "<group>"; };
 		5AD59A9F1DB4DD130076FF0B /* PVRDataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRDataController.swift; sourceTree = "<group>"; };
-		5AEBED231DCC5F6800713292 /* RepeatEditVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RepeatEditVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,12 +124,12 @@
 				5A50C7421D8CD4750002ACF8 /* Main.storyboard */,
 				5A50C7351D8CD2E50002ACF8 /* LaunchScreen.storyboard */,
 				5A5463A41DCB01730028261C /* Setting */,
+				5A81D25E1DD02F5A008E5FE4 /* Repeat */,
 				5A5463A51DCB017D0028261C /* VoidDuration */,
 				5A8E08B61DC9DC5500A7DE53 /* ScheduleListVC.swift */,
 				5A8E08B81DC9DD2D00A7DE53 /* TaskListVC.swift */,
 				5A8E08BA1DC9DD9100A7DE53 /* TaskViewVC.swift */,
 				5A8E08BE1DC9DF0400A7DE53 /* TaskEditVC.swift */,
-				5AEBED231DCC5F6800713292 /* RepeatEditVC.swift */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -150,6 +150,14 @@
 				5A8E08BC1DC9DDDA00A7DE53 /* VoidDurationEditVC.swift */,
 			);
 			name = VoidDuration;
+			sourceTree = "<group>";
+		};
+		5A81D25E1DD02F5A008E5FE4 /* Repeat */ = {
+			isa = PBXGroup;
+			children = (
+				5A81D25C1DD020AB008E5FE4 /* RepeatListVC.swift */,
+			);
+			name = Repeat;
 			sourceTree = "<group>";
 		};
 		5AA4406C1DAF4873005B0E70 /* Data */ = {
@@ -239,10 +247,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				5AA4406E1DAF488F005B0E70 /* PVRTask.swift in Sources */,
-				5AEBED241DCC5F6800713292 /* RepeatEditVC.swift in Sources */,
 				5A8E08C71DC9E19E00A7DE53 /* SettingListVC.swift in Sources */,
 				5AB7343B1DC499A500CCCC98 /* PVRSetting.swift in Sources */,
 				5AA440701DAF81B3005B0E70 /* PVRDatabase.swift in Sources */,
+				5A81D25D1DD020AB008E5FE4 /* RepeatListVC.swift in Sources */,
 				5A8E08AF1DC9DBBC00A7DE53 /* VoidDurationListVC.swift in Sources */,
 				5AD59AA01DB4DD130076FF0B /* PVRDataController.swift in Sources */,
 				5A4083D01DAB68FC0057E896 /* PVRScheduler.swift in Sources */,
