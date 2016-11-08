@@ -269,8 +269,13 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
 
         // Return all values back to TaskCreateActivity
         Intent intent = new Intent();
-        // Add weekdays to intent
-        intent.putExtra(EXTRA_WEEKDAYS, this.task.getWeekDays().toStringArray());
+        // Add weekdays to intent if repeat is checked
+        Switch switch_repeat = (Switch) findViewById(R.id.switch_onetime_repetitive);
+        if (switch_repeat.isChecked()) {
+            intent.putExtra(EXTRA_WEEKDAYS, this.task.getWeekDays().toStringArray());
+        } else {
+            intent.putExtra(EXTRA_WEEKDAYS, new String[] {});
+        }
 
         // Add duration to intent
         Spinner spinner_duration_hours = (Spinner) findViewById(R.id.spinner_duration_hours);
@@ -315,6 +320,22 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
             deadline_not_set.setTitle(R.string.dialog_no_deadline_title);
             deadline_not_set.setMessage(R.string.dialog_no_deadline_message);
             deadline_not_set.show();
+        } else if (duration.getHours() == 0 && duration.getMinutes() == 0) {
+            // If the duration given is zero, show an alert and don't do
+            // anything.
+            AlertDialog.Builder zero_duration = new AlertDialog.Builder(this);
+            zero_duration.setTitle(R.string.dialog_zero_duration_title);
+            zero_duration.setMessage(R.string.dialog_zero_duration_message);
+            zero_duration.show();
+        } else if (!this.task.getDeadlinePerDay().getHasTime() &&
+                !this.task.getWeekDays().getWeekDays_list().isEmpty() &&
+                switch_repeat.isChecked()) {
+            // If deadline per day is not set but there are repeated days,
+            // show an alert and don't do anything.
+            AlertDialog.Builder deadline_per_day_not_set = new AlertDialog.Builder(this);
+            deadline_per_day_not_set.setTitle(R.string.dialog_no_deadline_per_day_title);
+            deadline_per_day_not_set.setMessage(R.string.dialog_no_deadline_per_day_message);
+            deadline_per_day_not_set.show();
         } else if (id == R.id.nav_done) {
             setResult(RESULT_OK, intent);
             finish();

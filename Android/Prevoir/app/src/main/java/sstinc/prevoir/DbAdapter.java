@@ -98,11 +98,13 @@ class DbAdapter {
     private static final String TASKS_TABLE_COL_PERIOD_NEEDED = "period_needed";
     private static final String TASKS_TABLE_COL_PERIOD_MINIMUM = "period_minimum";
     private static final String TASKS_TABLE_COL_DEADLINE = "deadline";
+    private static final String TASKS_TABLE_COL_DEADLINE_PER_DAY = "deadline_per_day";
     // Task Table column list
     private String[] TASKS_TABLE_COLUMNS = {
             TASKS_TABLE_COL_ID, TASKS_TABLE_COL_DAYS_ID, TASKS_TABLE_COL_NAME,
             TASKS_TABLE_COL_SUBJECT, TASKS_TABLE_COL_DESCRIPTION, TASKS_TABLE_COL_PERIOD_NEEDED,
-            TASKS_TABLE_COL_PERIOD_MINIMUM, TASKS_TABLE_COL_DEADLINE
+            TASKS_TABLE_COL_PERIOD_MINIMUM, TASKS_TABLE_COL_DEADLINE,
+            TASKS_TABLE_COL_DEADLINE_PER_DAY
     };
     // Command to create table
     private static final String TASKS_TABLE_CREATE = "CREATE TABLE " + TASKS_TABLE  + "("
@@ -114,6 +116,7 @@ class DbAdapter {
             + TASKS_TABLE_COL_PERIOD_NEEDED + " TEXT NOT NULL, "
             + TASKS_TABLE_COL_PERIOD_MINIMUM + " TEXT, "
             + TASKS_TABLE_COL_DEADLINE + " TEXT NOT NULL, "
+            + TASKS_TABLE_COL_DEADLINE_PER_DAY + " TEXT NOT NULL, "
             + "FOREIGN KEY(" + TASKS_TABLE_COL_DAYS_ID + ") REFERENCES " + DAYS_TABLE + "("
             + DAYS_TABLE_COL_ID + "), "
             + "CONSTRAINT VALID_DURATION CHECK(" + TASKS_TABLE_COL_PERIOD_NEEDED + " > 0)"
@@ -212,6 +215,7 @@ class DbAdapter {
         values.put(DbAdapter.TASKS_TABLE_COL_PERIOD_MINIMUM,
                 PeriodFormat.getDefault().print(task.getPeriodMinimum()));
         values.put(DbAdapter.TASKS_TABLE_COL_DEADLINE, task.getDeadline().toString());
+        values.put(DbAdapter.TASKS_TABLE_COL_DEADLINE_PER_DAY, task.getDeadlinePerDay().toString());
         // Insert into database and set the task's id.
         task.setId(SQLdb.insert(DbAdapter.TASKS_TABLE, null, values));
     }
@@ -350,6 +354,7 @@ class DbAdapter {
             task.setPeriodNeeded(PeriodFormat.getDefault().parsePeriod(cursor.getString(5)));
             task.setPeriodMinimum(PeriodFormat.getDefault().parsePeriod(cursor.getString(6)));
             task.setDeadline(new Datetime(cursor.getString(7)));
+            task.setDeadlinePerDay(new Datetime(cursor.getString(8)));
 
             tasks.add(task);
         }
@@ -443,6 +448,7 @@ class DbAdapter {
         values.put(TASKS_TABLE_COL_PERIOD_MINIMUM,
                 PeriodFormat.getDefault().print(task.getPeriodMinimum()));
         values.put(TASKS_TABLE_COL_DEADLINE, task.getDeadline().toString());
+        values.put(TASKS_TABLE_COL_DEADLINE_PER_DAY, task.getDeadlinePerDay().toString());
 
         SQLdb.update(TASKS_TABLE, values, TASKS_TABLE_COL_ID + "=" + taskId, null);
         // Query task table with task id

@@ -133,6 +133,8 @@ public class TaskCreateActivity extends AppCompatActivity {
                 // Get weekdays, deadline, period and min_time_period
                 WeekDays weekDays = new WeekDays(data.getStringArrayExtra(
                         TaskCreateHelperActivity.EXTRA_WEEKDAYS));
+                Datetime deadline_per_day = data.getParcelableExtra(
+                        TaskCreateHelperActivity.EXTRA_DEADLINE_PER_DAY);
                 Datetime deadline = data.getParcelableExtra(
                         TaskCreateHelperActivity.EXTRA_DEADLINE);
                 Period period = PeriodFormat.getDefault().parsePeriod(
@@ -146,6 +148,7 @@ public class TaskCreateActivity extends AppCompatActivity {
                 this.task.setSubject(subject);
                 this.task.setDescription(description);
                 this.task.setWeekDays(weekDays);
+                this.task.setDeadlinePerDay(deadline_per_day);
                 this.task.setDeadline(deadline);
                 this.task.setPeriodNeeded(period);
                 this.task.setPeriodMinimum(min_time_period);
@@ -161,8 +164,10 @@ public class TaskCreateActivity extends AppCompatActivity {
                 // Get weekdays, deadline, period and min_time_period
                 WeekDays weekDays = new WeekDays(data.getStringArrayExtra(
                         TaskCreateHelperActivity.EXTRA_WEEKDAYS));
-                Datetime deadline = new Datetime(
-                        data.getStringExtra(TaskCreateHelperActivity.EXTRA_DEADLINE));
+                Datetime deadline_per_day = data.getParcelableExtra(
+                        TaskCreateHelperActivity.EXTRA_DEADLINE_PER_DAY);
+                Datetime deadline = data.getParcelableExtra(
+                        TaskCreateHelperActivity.EXTRA_DEADLINE);
                 Period period = PeriodFormat.getDefault().parsePeriod(
                         data.getStringExtra(TaskCreateHelperActivity.EXTRA_DURATION));
                 Period min_time_period = PeriodFormat.getDefault().parsePeriod(
@@ -170,6 +175,7 @@ public class TaskCreateActivity extends AppCompatActivity {
 
                 // Set the activities task for future update
                 this.task.setWeekDays(weekDays);
+                this.task.setDeadlinePerDay(deadline_per_day);
                 this.task.setDeadline(deadline);
                 this.task.setPeriodNeeded(period);
                 this.task.setPeriodMinimum(min_time_period);

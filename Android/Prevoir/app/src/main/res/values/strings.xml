@@ -61,6 +61,12 @@
     <!-- No deadline dialog -->
     <string name="dialog_no_deadline_title">Alert</string>
     <string name="dialog_no_deadline_message">Deadline is not set.</string>
+    <!-- No deadline per day dialog -->
+    <string name="dialog_no_deadline_per_day_title">Alert</string>
+    <string name="dialog_no_deadline_per_day_message">Time to finish before is not set.</string>
+    <!-- zero duration dialog -->
+    <string name="dialog_zero_duration_title">Alert</string>
+    <string name="dialog_zero_duration_message">Please set the duration needed for the task</string>
 
     <!-- Create voidblock Activity -->
     <string name="field_text_voidblock_name_hint">Name</string>

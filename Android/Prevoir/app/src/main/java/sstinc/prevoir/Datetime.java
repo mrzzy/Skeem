@@ -96,8 +96,9 @@ class Datetime implements Parcelable {
                                                        Integer.parseInt(date_list[2]), // Day
                                                        Integer.parseInt(time_list[0]), // Hour
                                                        Integer.parseInt(time_list[1]));// Minute
-            // Set hasDate
-            this.hasDate = this.getDay() != 0;
+            // Set hasDate (check that the date is not 1/1/1970
+            // "start of time" for computers (and jodatime))
+            this.hasDate = this.getDay() != 1 && this.getMonth() != 1 && this.getYear() != 1970;
             // Set hasTime
             this.hasTime = this.getHour() != 0;
         }
