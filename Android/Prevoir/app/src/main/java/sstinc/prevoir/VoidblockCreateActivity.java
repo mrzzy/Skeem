@@ -6,8 +6,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.Calendar;
@@ -49,6 +52,7 @@ public class VoidblockCreateActivity extends AppCompatActivity {
     // Request codes
     public static final int createVoidblockFromRequestCode = 200;
     public static final int createVoidblockToRequestCode = 201;
+    public static final int createDaysRequestCode = 310;
     // Intent extras
     public static final String EXTRA_VOIDBLOCK = "sstinc.prevoir.EXTRA_VOIDBLOCK";
     // Voidblock information
@@ -74,6 +78,8 @@ public class VoidblockCreateActivity extends AppCompatActivity {
         EditText editText_name = (EditText) findViewById(R.id.field_text_voidblock_name);
         LinearLayout layout_from = (LinearLayout) findViewById(R.id.layout_from);
         LinearLayout layout_to = (LinearLayout) findViewById(R.id.layout_to);
+        Switch switch_repeat = (Switch) findViewById(R.id.switch_voidblock_repeat);
+        Button button_repeats = (Button) findViewById(R.id.button_voidblock_repeats);
 
         // Start CreateDatetimeActivity when setting scheduled start
         layout_from.setOnClickListener(new View.OnClickListener() {
@@ -154,7 +160,67 @@ public class VoidblockCreateActivity extends AppCompatActivity {
             editText_name.setText(this.voidblock.getName());
             textView_from_datetime.setText(this.voidblock.getScheduledStart().toFormattedString());
             textView_to_datetime.setText(this.voidblock.getScheduledStop().toFormattedString());
+            if (this.voidblock.getWeekDays().getWeekDays_list().isEmpty()) {
+                button_repeats.setText(R.string.button_repetitions_unset);
+            } else {
+                button_repeats.setText(this.voidblock.getWeekDays().toString());
+            }
+        } else {
+            this.voidblock = new Voidblock();
         }
+
+        // Show repeats button when repeats switch is checked
+        switch_repeat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // Set visibility of button
+                Button button_repeats = (Button) findViewById(R.id.button_voidblock_repeats);
+                button_repeats.setVisibility(isChecked? View.VISIBLE: View.GONE);
+
+                // If it is checked, change the "from" and "to" to only have
+                // time.
+                if (isChecked) {
+                    // Create new datetimes for voidblock
+                    Datetime scheduled_start = new Datetime();
+                    Datetime scheduled_stop = new Datetime();
+                    // Scheduled start
+                    scheduled_start.setHour(voidblock.getScheduledStart().getHour());
+                    scheduled_start.setMinute(voidblock.getScheduledStart().getMinute());
+                    // Scheduled stop
+                    scheduled_stop.setHour(voidblock.getScheduledStop().getHour());
+                    scheduled_stop.setMinute(voidblock.getScheduledStop().getMinute());
+                    // Set new scheduled start and stop
+                    voidblock.setScheduledStart(scheduled_start);
+                    voidblock.setScheduledStop(scheduled_stop);
+
+                    // Reset the textviews only if they are set
+                    TextView textView_from_datetime = (TextView) findViewById(
+                            R.id.text_view_voidblock_from);
+                    TextView textView_to_datetime = (TextView) findViewById(
+                            R.id.text_view_voidblock_to);
+
+                    if (textView_from_datetime.getText().length() != 0) {
+                        textView_from_datetime.setText(voidblock.getScheduledStart().toFormattedString());
+                    }
+                    if (textView_to_datetime.getText().length() != 0) {
+                        textView_to_datetime.setText(voidblock.getScheduledStop().toFormattedString());
+                    }
+                }
+            }
+        });
+
+        // Set repeats button onClickListener
+        button_repeats.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start new activity to set days
+                Intent intent = new Intent(getApplicationContext(),
+                        CreateRepeatedDaysActivity.class);
+                intent.putExtra(CreateRepeatedDaysActivity.EXTRA_RECEIVE_DAYS,
+                        voidblock.getWeekDays().toStringArray());
+                startActivityForResult(intent, createDaysRequestCode);
+            }
+        });
     }
 
     @Override
@@ -208,10 +274,7 @@ public class VoidblockCreateActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 TextView textView_from_datetime = (TextView) findViewById(
                         R.id.text_view_voidblock_from);
-                // Create voidblock if it does not exist
-                if (this.voidblock == null) {
-                    this.voidblock = new Voidblock();
-                }
+
                 // Set the new scheduled start
                 this.voidblock.setScheduledStart(new Datetime(data.getStringExtra(
                         CreateDatetimeActivity.EXTRA_DATETIME)));
@@ -224,14 +287,27 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                 TextView textView_to_datetime = (TextView) findViewById(
                         R.id.text_view_voidblock_to);
 
-                if (this.voidblock == null) {
-                    this.voidblock = new Voidblock();
-                }
                 // Set the new scheduled stop
                 this.voidblock.setScheduledStop(new Datetime(data.getStringExtra(
                         CreateDatetimeActivity.EXTRA_DATETIME)));
                 // Reset to text view
                 textView_to_datetime.setText(this.voidblock.getScheduledStop().toFormattedString());
+            }
+        } else if (requestCode == createDaysRequestCode) {
+            if (resultCode == RESULT_OK) {
+                // Get weekdays
+                WeekDays weekdays = new WeekDays(data.getStringArrayExtra(
+                        CreateRepeatedDaysActivity.EXTRA_DAYS));
+                // Set button text
+                Button button_repeat = (Button) findViewById(R.id.button_voidblock_repeats);
+                if (weekdays.toString().isEmpty()) {
+                    button_repeat.setText(R.string.button_repetitions_unset);
+                } else {
+                    button_repeat.setText(weekdays.toString());
+                }
+
+                // Set voidblock
+                this.voidblock.setWeekDays(weekdays);
             }
         }
     }
