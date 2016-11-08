@@ -241,7 +241,8 @@ public class PVRRepeatVoidDuration: PVRVoidDuration
         //Prepare Data
         var rpt_idx_fwd = self.repeat_index &+ 1 //Overflow Addition
         var tint_fwd = self.repeat_loop[rpt_idx_fwd % self.repeat_loop.count]
-        var rpt_idx_bwd = self.repeat_index &- 1 //Overflow Subtraction
+
+        var rpt_idx_bwd = abs(self.repeat_index &- 1) //Overflow Subtraction
         var tint_bwd = -(self.repeat_loop[rpt_idx_bwd % self.repeat_loop.count])
 
         if self.begin.addingTimeInterval(TimeInterval(self.duration)).compare(date as Date) == ComparisonResult.orderedAscending
