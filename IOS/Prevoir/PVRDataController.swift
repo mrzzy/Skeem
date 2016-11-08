@@ -136,6 +136,158 @@ public class PVRDataController: NSObject
     }
 
     /*
+     * public func updateOneshotTask(name:String,subject:String?=nil,description:String?=nil,deadline:NSDate?=nil,duration:Int?=nil,duration_affinity:Int?=nil) -> Bool
+     * - Updates oneshot task specified by name
+     * [Argument]
+     * name - name of the task
+     * subject - subject of the task
+     * description - description of the task
+     * deadline - Date/Time that the task must be completed
+     * duration - Duration need in seconds to complete task
+     * duration_affinity - User desired subtask length
+     * [Return]
+     * Bool - true if successful in creating task, false otherwise
+    */
+    public func updateOneshotTask(name:String,subject:String?=nil,description:String?=nil,deadline:NSDate?=nil,duration:Int?=nil,duration_affinity:Int?=nil) -> Bool
+    {
+        var up_task:PVRTask!
+
+        //Obtain task
+        do
+        {
+            up_task = (try self.DB.retrieveEntry(lockey: PVRDBKey.task, key: name) as! PVRTask)
+        }
+        catch PVRDBError.entry_not_exist
+        {
+            print("ERR:PVRDataController: Failed to update task, entry does not exist in database")
+            return false
+        }
+        catch
+        {
+            abort()
+        }
+
+        //Update Task Data
+        if let sub = subject
+        {
+            up_task.subject = sub
+        }
+
+        if let descript = description
+        {
+            up_task.descript = descript
+        }
+
+        if let dl = deadline
+        {
+            up_task.deadline = dl
+        }
+
+        if let drt = duration
+        {
+            up_task.duration = drt
+        }
+
+        if let drt_aft = duration_affinity
+        {
+            up_task.duration_affinity = drt_aft
+        }
+
+        //Update DataBase
+        do
+        {
+            try self.DB.updateEntry(lockey: PVRDBKey.task, key: name, val: up_task)
+        }
+        catch
+        {
+            abort()
+        }
+
+        return true
+    }
+
+    /*
+     * public func updateRepeativeTask(name:String,subject:String?=nil,description:String?=nil,repeat_loop:[TimeInterval]?=nil,repeat_deadline:NSDate?=nil,duration:Int?=nil,duration_affinity:Int?=nil,deadline:NSDate?=nil) -> Bool
+     * - Update Repeative Task Data
+     * name - name of the task
+     * subject - subject of the task
+     * description - description of the task
+     * repeat_loop - a loop of intervals of time to increment for each repeat.
+     * deadline = nil - Date/Time repeat stops
+     * duration - Duration need in seconds to complete task
+     * duration_affinity - User desired subtask length
+     * [Return]
+     * Bool - true if successful in creating task, false otherwise
+    */
+    public func updateRepeativeTask(name:String,subject:String?=nil,description:String?=nil,repeat_loop:[TimeInterval]?=nil,repeat_deadline:NSDate?=nil,duration:Int?=nil,duration_affinity:Int?=nil,deadline:NSDate?=nil) -> Bool
+    {
+        var up_task:PVRRepeatTask!
+
+        //Obtain task
+        do
+        {
+            up_task = (try self.DB.retrieveEntry(lockey: PVRDBKey.task, key: name) as! PVRRepeatTask)
+        }
+        catch PVRDBError.entry_not_exist
+        {
+            print("ERR:PVRDataController: Failed to update task, entry does not exist in database")
+            return false
+        }
+        catch
+        {
+            abort()
+        }
+
+        //Update Task Data
+        if let sub = subject
+        {
+            up_task.subject = sub
+        }
+
+        if let descript = description
+        {
+            up_task.descript = descript
+        }
+
+        if let dl = deadline
+        {
+            up_task.deadline = dl
+        }
+
+        if let drt = duration
+        {
+            up_task.duration = drt
+        }
+
+        if let drt_aft = duration_affinity
+        {
+            up_task.duration_affinity = drt_aft
+        }
+
+        if let rpt_lp = repeat_loop
+        {
+            up_task.repeat_loop = rpt_lp
+        }
+
+        if let rpt_dl = repeat_deadline
+        {
+            up_task.repeat_deadline = rpt_dl
+        }
+
+        //Update Database
+        do
+        {
+            try self.DB.updateEntry(lockey: PVRDBKey.task, key: name, val: up_task)
+        }
+        catch
+        {
+            abort()
+        }
+
+        return false
+    }
+
+    /*
      * public func completeTask(name:String) -> Bool
      * - Mark task specified by name as complete
      * [Argument]
@@ -156,6 +308,7 @@ public class PVRDataController: NSObject
             return false
         }
     }
+
 
     /*
      * public func deleteTask(name:String) -> Bool
@@ -346,7 +499,8 @@ public class PVRDataController: NSObject
         return true
     }
 
-    /* public func createRepeatVoidDuration(name:Stirn,duration:Int,repeat_loop:[TimeInterval],repeat_deadline:NSDate,asserted:Bool) -> Bool
+    /* 
+     * public func createRepeatVoidDuration(name:Stirn,duration:Int,repeat_loop:[TimeInterval],repeat_deadline:NSDate,asserted:Bool) -> Bool
      * - Create Repeatable Void Duration
      * NOTE: Will terminate executable if unknown database error occurs
      * [Argument]
@@ -377,6 +531,137 @@ public class PVRDataController: NSObject
             abort()
         }
 
+        return true
+    }
+
+    /*
+     * public func updateVoidDuration(name:String,begin:NSDate?=nil,duration:Int?=nil,asserted:Bool?=nil) -> Bool
+     * - Update oneshot void duration
+     * NOTE: Will terminate executable if unknown database error occurs
+     * [Argument]
+     * name - name of Void Duration
+     * begin - begin date/time of void duration
+     * duration - duration of void duration in seconds
+     * asserted - Whether void duration asserts to not have task scheduled during the "Duration of Time", true if void duration asserts
+     * [Return]
+     * Bool - true if successful in creating void duration, false if entry already exists in database.
+     */
+    public func updateVoidDuration(name:String,begin:NSDate?=nil,duration:Int?=nil,asserted:Bool?=nil) -> Bool
+    {
+        //Obtain Void Duration
+        var voidd:PVRVoidDuration!
+        do
+        {
+            voidd = (try self.DB.retrieveEntry(lockey: PVRDBKey.void_duration, key: name) as! PVRVoidDuration)
+        }
+        catch PVRDBError.entry_not_exist
+        {
+            print("ERR:PVRDataController: Faild to update void duration, entry does not exist in database.")
+            return false
+        }
+        catch
+        {
+            abort()
+        }
+
+        //Update Void Duration Data
+        if let bgn = begin
+        {
+            voidd.begin = bgn
+        }
+
+        if let drsn = duration
+        {
+            voidd.duration = drsn
+        }
+
+        if let asrt = asserted
+        {
+            voidd.asserted = asrt
+        }
+
+
+        //Update Database
+        do
+        {
+            try self.DB.updateEntry(lockey: PVRDBKey.void_duration, key: name, val: voidd)
+        }
+        catch
+        {
+            abort()
+        }
+
+        return true
+    }
+
+    /*
+     * public func updateRepeatVoidDuration(name:String,begin:NSDate?=nil,duration:Int?=nil,repeat_loop:[TimeInterval]?=nil,repeat_deadline:NSDate??=nil,asserted:Bool?=nil) -> Bool
+     * - Create Repeatable Void Duration
+     * NOTE: Will terminate executable if unknown database error occurs
+     * [Argument]
+     * name - name of the void duration
+     * begin - begin date/time of void duration
+     * duration - duration of void duration in seconds
+     * repeat_loop - a loop of intervals of time to increment for each repeat
+     * deadline - date/time to stop repeat
+     * asserted - Whether void duration asserts to not have task scheduled during the "Duration of Time", true if void duration asserts
+     * [Return]
+     * Bool - true if successful in creating void duration, false if entry already exists in database.
+    */
+    public func updateRepeatVoidDuration(name:String,begin:NSDate?=nil,duration:Int?=nil,repeat_loop:[TimeInterval]?=nil,repeat_deadline:NSDate??=nil,asserted:Bool?=nil) -> Bool
+    {
+        //Obtain Void Duration
+        var voidd:PVRRepeatVoidDuration!
+        do
+        {
+            voidd = (try self.DB.retrieveEntry(lockey: PVRDBKey.void_duration, key: name) as! PVRRepeatVoidDuration)
+        }
+        catch PVRDBError.entry_not_exist
+        {
+            print("ERR:PVRDataController: Faild to update void duration, entry does not exist in database.")
+            return false
+        }
+        catch
+        {
+            abort()
+        }
+
+        //Update Void Duration Data
+        if let bgn = begin
+        {
+            voidd.begin = bgn
+        }
+
+        if let drsn = duration
+        {
+            voidd.duration = drsn
+        }
+
+        if let asrt = asserted
+        {
+            voidd.asserted = asrt
+        }
+
+        if let rpt_lp = repeat_loop
+        {
+            voidd.repeat_loop = rpt_lp
+        }
+
+        if let rpt_dl = repeat_deadline
+        {
+            voidd.repeat_deadline = rpt_dl
+        }
+
+        //Update Database
+        do
+        {
+            try self.DB.updateEntry(lockey: PVRDBKey.void_duration, key: name, val: voidd)
+        }
+        catch
+        {
+            abort()
+        }
+        
         return true
     }
 
