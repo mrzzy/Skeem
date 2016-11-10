@@ -19,6 +19,9 @@ import org.joda.time.DateTime;
 
 import java.util.Calendar;
 
+//TODO: Obsolete repeat
+//TODO: from and to do not have proper MAX and MIN
+//TODO: Retrieve days for repeated crashes
 /**
  * This activity handles the creation of a voidblock. The activity handles
  * the name of the voidblock and calls other activities to get more
@@ -93,14 +96,22 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(),
                         CreateDatetimeActivity.class);
 
+                // Get the switch
+                Switch switch_repeat = (Switch) findViewById(R.id.switch_voidblock_repeat);
+
                 // Get current date in datetime
                 Datetime currentDatetime = new Datetime();
                 currentDatetime.setMillis(Calendar.getInstance().getTimeInMillis());
                 // Set datetime selector to have date and time
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_TITLE,
                         "Set voidblock starting time");
-                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE,
-                        voidblock.getWeekDays().getWeekDays_list().isEmpty());
+                // Set if date is needed
+                if (!switch_repeat.isChecked() ||
+                        voidblock.getWeekDays().getWeekDays_list().isEmpty()) {
+                    intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE, true);
+                } else {
+                    intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE, false);
+                }
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASTIME,
                         CreateDatetimeActivity.HASTIME_YES);
                 // Set maximum to scheduled_stop if it exists
@@ -129,14 +140,22 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(),
                         CreateDatetimeActivity.class);
 
+                // Get the switch
+                Switch switch_repeat = (Switch) findViewById(R.id.switch_voidblock_repeat);
+
                 // Get current date in datetime
                 Datetime currentDatetime = new Datetime();
                 currentDatetime.setMillis(Calendar.getInstance().getTimeInMillis());
                 // Set datetime selector to have date and time
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_TITLE,
                         "Set voidblock ending time");
-                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE,
-                        voidblock.getWeekDays().getWeekDays_list().isEmpty());
+                // Set if date is needed
+                if (!switch_repeat.isChecked() ||
+                        voidblock.getWeekDays().getWeekDays_list().isEmpty()) {
+                    intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE, true);
+                } else {
+                    intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE, false);
+                }
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASTIME,
                         CreateDatetimeActivity.HASTIME_YES);
                 // Set minimum to scheduled_start if it exists. If not, set
