@@ -242,15 +242,15 @@ class Task extends Schedulable implements Parcelable {
         out.writeString(this.subject);
         // Write the weekDays as a string array
         out.writeStringArray(this.weekDays.toStringArray());
-        // Write the deadline per day as a string
-        out.writeString(this.deadline_per_day.toString());
+        // Write the deadline per day as a parcelable
+        out.writeParcelable(this.deadline_per_day, flags);
         // Use the default period format and write that string
         out.writeString(PeriodFormat.getDefault().print(this.period_needed));
         out.writeString(PeriodFormat.getDefault().print(this.period_minimum));
         // Convert datetime values to string and write them
-        out.writeString(this.scheduled_start.toString());
-        out.writeString(this.scheduled_stop.toString());
-        out.writeString(this.deadline.toString());
+        out.writeParcelable(this.scheduled_start, flags);
+        out.writeParcelable(this.scheduled_stop, flags);
+        out.writeParcelable(this.deadline, flags);
         // Write the current id of the task
         out.writeLong(this.id);
     }
@@ -279,14 +279,14 @@ class Task extends Schedulable implements Parcelable {
         // Create new WeekDays instance from string array
         this.weekDays = new WeekDays(in.createStringArray());
         // Create datetime objects from strings
-        this.deadline_per_day = new Datetime(in.readString());
+        this.deadline_per_day = in.readParcelable(Datetime.class.getClassLoader());
         // Parse the Periods with the default period format
         this.period_needed = PeriodFormat.getDefault().parsePeriod(in.readString());
         this.period_minimum = PeriodFormat.getDefault().parsePeriod(in.readString());
         // Create datetime objects from datetime strings
-        this.scheduled_start = new Datetime(in.readString());
-        this.scheduled_stop = new Datetime(in.readString());
-        this.deadline = new Datetime(in.readString());
+        this.scheduled_start = in.readParcelable(Datetime.class.getClassLoader());
+        this.scheduled_stop = in.readParcelable(Datetime.class.getClassLoader());
+        this.deadline = in.readParcelable(Datetime.class.getClassLoader());
         // Read the id of the task
         this.id = in.readLong();
     }

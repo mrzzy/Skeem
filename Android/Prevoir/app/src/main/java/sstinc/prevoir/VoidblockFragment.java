@@ -100,6 +100,7 @@ public class VoidblockFragment extends ListFragment implements AdapterView.OnIte
                 createVoidblock();
             }
         });
+        fab.setVisibility(View.VISIBLE);
     }
 
     @Override

@@ -1,8 +1,10 @@
 package sstinc.prevoir;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,6 +14,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import org.joda.time.DateTime;
 
 import java.util.Calendar;
 
@@ -93,21 +97,24 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                 Datetime currentDatetime = new Datetime();
                 currentDatetime.setMillis(Calendar.getInstance().getTimeInMillis());
                 // Set datetime selector to have date and time
-                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE, true);
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_TITLE,
+                        "Set voidblock starting time");
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE,
+                        voidblock.getWeekDays().getWeekDays_list().isEmpty());
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASTIME,
                         CreateDatetimeActivity.HASTIME_YES);
                 // Set maximum to scheduled_stop if it exists
                 if (voidblock.getScheduledStop().getHasDate() &&
                         voidblock.getScheduledStop().getHasTime()) {
                     intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_MAX,
-                            voidblock.getScheduledStop().toString());
+                            voidblock.getScheduledStop());
                 }
                 // Set minimum to current datetime
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_MIN,
-                        currentDatetime.toString());
+                        currentDatetime);
                 // Set the current datetime to the scheduled_start
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_DATETIME,
-                        voidblock.getScheduledStart().toString());
+                        voidblock.getScheduledStart());
 
                 // Start activity
                 startActivityForResult(intent, createVoidblockFromRequestCode);
@@ -126,7 +133,10 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                 Datetime currentDatetime = new Datetime();
                 currentDatetime.setMillis(Calendar.getInstance().getTimeInMillis());
                 // Set datetime selector to have date and time
-                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE, true);
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_TITLE,
+                        "Set voidblock ending time");
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE,
+                        voidblock.getWeekDays().getWeekDays_list().isEmpty());
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASTIME,
                         CreateDatetimeActivity.HASTIME_YES);
                 // Set minimum to scheduled_start if it exists. If not, set
@@ -134,10 +144,10 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                 if (voidblock.getScheduledStart().getHasDate() &&
                         voidblock.getScheduledStart().getHasTime()) {
                     intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_MIN,
-                            voidblock.getScheduledStart().toString());
+                            voidblock.getScheduledStart());
                 } else {
                     intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_MIN,
-                            currentDatetime.toString());
+                            currentDatetime);
                 }
 
                 // Start activity
@@ -176,36 +186,6 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                 // Set visibility of button
                 Button button_repeats = (Button) findViewById(R.id.button_voidblock_repeats);
                 button_repeats.setVisibility(isChecked? View.VISIBLE: View.GONE);
-
-                // If it is checked, change the "from" and "to" to only have
-                // time.
-                if (isChecked) {
-                    // Create new datetimes for voidblock
-                    Datetime scheduled_start = new Datetime();
-                    Datetime scheduled_stop = new Datetime();
-                    // Scheduled start
-                    scheduled_start.setHour(voidblock.getScheduledStart().getHour());
-                    scheduled_start.setMinute(voidblock.getScheduledStart().getMinute());
-                    // Scheduled stop
-                    scheduled_stop.setHour(voidblock.getScheduledStop().getHour());
-                    scheduled_stop.setMinute(voidblock.getScheduledStop().getMinute());
-                    // Set new scheduled start and stop
-                    voidblock.setScheduledStart(scheduled_start);
-                    voidblock.setScheduledStop(scheduled_stop);
-
-                    // Reset the textviews only if they are set
-                    TextView textView_from_datetime = (TextView) findViewById(
-                            R.id.text_view_voidblock_from);
-                    TextView textView_to_datetime = (TextView) findViewById(
-                            R.id.text_view_voidblock_to);
-
-                    if (textView_from_datetime.getText().length() != 0) {
-                        textView_from_datetime.setText(voidblock.getScheduledStart().toFormattedString());
-                    }
-                    if (textView_to_datetime.getText().length() != 0) {
-                        textView_to_datetime.setText(voidblock.getScheduledStop().toFormattedString());
-                    }
-                }
             }
         });
 
@@ -240,23 +220,40 @@ public class VoidblockCreateActivity extends AppCompatActivity {
         // Get the id of the menu item selected
         int id = item.getItemId();
 
+        // Date today
+        DateTime dateTime = new DateTime();
+
         if (id == android.R.id.home) {
             // Set to cancel and finish
             setResult(RESULT_CANCELED);
             finish();
+        } else if (!voidblock.getScheduledStart().getHasTime()) {
+            // If starting time not set show an alert and don't do anything
+            AlertDialog.Builder starting_not_set = new AlertDialog.Builder(this);
+            starting_not_set.setTitle(R.string.dialog_no_starting_title);
+            starting_not_set.setMessage(R.string.dialog_no_starting_message);
+            starting_not_set.show();
+        } else if (!voidblock.getScheduledStop().getHasTime()) {
+            // If stopping time not set show an alert and don't do anything
+            AlertDialog.Builder stopping_not_set = new AlertDialog.Builder(this);
+            stopping_not_set.setTitle(R.string.dialog_no_stopping_title);
+            stopping_not_set.setMessage(R.string.dialog_no_stopping_message);
+            stopping_not_set.show();
+        } else if (dateTime.getMillis() > this.voidblock.getScheduledStop().getMillis()) {
+            // "to" in millis is larger
+            Log.w(this.getClass().getName(), "Scheduled stop millis: " + this.voidblock.getScheduledStop().getMillis());
+            Log.w(this.getClass().getName(), "Current datetime in millis: " + dateTime.getMillis());
+            // "to" is before today
+            // If stopping time not set show an alert and don't do anything
+            AlertDialog.Builder voidblock_obsolete = new AlertDialog.Builder(this);
+            voidblock_obsolete.setTitle(R.string.dialog_voidblock_obsolete_title);
+            voidblock_obsolete.setMessage(R.string.dialog_voidblock_obsolete_message);
+            voidblock_obsolete.show();
         } else if (id == R.id.nav_done) {
-            // Check that voidblock all fields have been set then finish.
-
             // Set new name
             EditText editText_name = (EditText) findViewById(R.id.field_text_voidblock_name);
             String name = editText_name.getText().toString();
             this.voidblock.setName(name);
-
-            // Check that the voidblock has scheduled start and stop
-            if (this.voidblock.getScheduledStart().getHasDate() &&
-                    this.voidblock.getScheduledStop().getHasDate()) {
-                return super.onOptionsItemSelected(item);
-            }
 
             Intent intent = new Intent();
             intent.putExtra(EXTRA_VOIDBLOCK, this.voidblock);
@@ -276,8 +273,8 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                         R.id.text_view_voidblock_from);
 
                 // Set the new scheduled start
-                this.voidblock.setScheduledStart(new Datetime(data.getStringExtra(
-                        CreateDatetimeActivity.EXTRA_DATETIME)));
+                this.voidblock.setScheduledStart((Datetime) data.getParcelableExtra(
+                        CreateDatetimeActivity.EXTRA_DATETIME));
                 // Reset from text view
                 textView_from_datetime.setText(
                         this.voidblock.getScheduledStart().toFormattedString());
@@ -288,8 +285,8 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                         R.id.text_view_voidblock_to);
 
                 // Set the new scheduled stop
-                this.voidblock.setScheduledStop(new Datetime(data.getStringExtra(
-                        CreateDatetimeActivity.EXTRA_DATETIME)));
+                this.voidblock.setScheduledStop((Datetime) data.getParcelableExtra(
+                        CreateDatetimeActivity.EXTRA_DATETIME));
                 // Reset to text view
                 textView_to_datetime.setText(this.voidblock.getScheduledStop().toFormattedString());
             }
@@ -302,8 +299,48 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                 Button button_repeat = (Button) findViewById(R.id.button_voidblock_repeats);
                 if (weekdays.toString().isEmpty()) {
                     button_repeat.setText(R.string.button_repetitions_unset);
+
+                    // Reset the "from" and "to" date and time values
+                    voidblock.getScheduledStart().setHasDate(
+                            voidblock.getScheduledStart().getHasTime());
+                    voidblock.getScheduledStop().setHasDate(
+                            voidblock.getScheduledStop().getHasTime());
+
+                    // Reset the textviews only if they are set
+                    TextView textView_from_datetime = (TextView) findViewById(
+                            R.id.text_view_voidblock_from);
+                    TextView textView_to_datetime = (TextView) findViewById(
+                            R.id.text_view_voidblock_to);
+
+                    if (textView_from_datetime.getText().length() != 0) {
+                        textView_from_datetime.setText(
+                                voidblock.getScheduledStart().toFormattedString());
+                    }
+                    if (textView_to_datetime.getText().length() != 0) {
+                        textView_to_datetime.setText(
+                                voidblock.getScheduledStop().toFormattedString());
+                    }
                 } else {
                     button_repeat.setText(weekdays.toString());
+
+                    // Reset the "from" and "to" date and time values
+                    voidblock.getScheduledStart().setHasDate(false);
+                    voidblock.getScheduledStop().setHasDate(false);
+
+                    // Reset the textviews only if they are set
+                    TextView textView_from_datetime = (TextView) findViewById(
+                            R.id.text_view_voidblock_from);
+                    TextView textView_to_datetime = (TextView) findViewById(
+                            R.id.text_view_voidblock_to);
+
+                    if (textView_from_datetime.getText().length() != 0) {
+                        textView_from_datetime.setText(
+                                voidblock.getScheduledStart().toFormattedString());
+                    }
+                    if (textView_to_datetime.getText().length() != 0) {
+                        textView_to_datetime.setText(
+                                voidblock.getScheduledStop().toFormattedString());
+                    }
                 }
 
                 // Set voidblock

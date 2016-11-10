@@ -91,11 +91,28 @@ class Datetime implements Parcelable {
             String[] time_list = datetime_list[1].split(":");
 
             // Set values
-            this.datetime = new org.joda.time.DateTime(Integer.parseInt(date_list[0]), // Year
-                                                       Integer.parseInt(date_list[1]), // Month
-                                                       Integer.parseInt(date_list[2]), // Day
-                                                       Integer.parseInt(time_list[0]), // Hour
-                                                       Integer.parseInt(time_list[1]));// Minute
+            this.datetime = new org.joda.time.DateTime(0);
+
+            // Check values
+            this.hasDate = false;
+            this.hasTime = false;
+            if (Integer.parseInt(date_list[2]) != 0) {
+                this.datetime = this.datetime.withYear(Integer.parseInt(date_list[0]));
+                this.datetime = this.datetime.withMonthOfYear(Integer.parseInt(date_list[1]));
+                this.datetime = this.datetime.withDayOfMonth(Integer.parseInt(date_list[2]));
+            }
+            if (Integer.parseInt(time_list[0]) != 0) {
+                // There is no time
+                this.datetime = this.datetime.withHourOfDay(Integer.parseInt(time_list[0]));
+                this.datetime = this.datetime.withMinuteOfHour(Integer.parseInt(time_list[1]));
+                this.hasTime = true;
+            }
+            // Set values
+//            this.datetime = new org.joda.time.DateTime(Integer.parseInt(date_list[0]), // Year
+//                                                       Integer.parseInt(date_list[1]), // Month
+//                                                       Integer.parseInt(date_list[2]), // Day
+//                                                       Integer.parseInt(time_list[0]), // Hour
+//                                                       Integer.parseInt(time_list[1]));// Minute
             // Set hasDate (check that the date is not 1/1/1970
             // "start of time" for computers (and jodatime))
             this.hasDate = this.getDay() != 1 && this.getMonth() != 1 && this.getYear() != 1970;
@@ -224,6 +241,22 @@ class Datetime implements Parcelable {
     }
 
     /**
+     * {@link #getHasDate()}
+     * @param hasDate whether datetime has date enabled or not
+     */
+    void setHasDate(boolean hasDate) {
+        this.hasDate = hasDate;
+    }
+
+    /**
+     * {@link #getHasTime()}
+     * @param hasTime whether datetime has time enabled or not
+     */
+    void setHasTime(boolean hasTime) {
+        this.hasTime = hasTime;
+    }
+
+    /**
      * Returns the a new datetime instance with the period added.
      *
      * @see Period
@@ -254,8 +287,22 @@ class Datetime implements Parcelable {
      */
     @Override
     public String toString() {
-        return this.getYear() + "/" + this.getMonth() + "/" + this.getDay() + " " +
-                this.getHour() + ":" + this.getMinute();
+        String string = "";
+        // Date
+        if (this.getHasDate()) {
+            string += this.getYear() + "/" + this.getMonth() + "/" + this.getDay();
+        } else {
+            string += "0/0/0";
+        }
+        // Add a space separator
+        string += " ";
+        // Time
+        if (this.getHasTime()) {
+            string += this.getHour() + ":" + this.getMinute();
+        } else {
+            string += "0:0";
+        }
+        return string;
     }
 
     /**

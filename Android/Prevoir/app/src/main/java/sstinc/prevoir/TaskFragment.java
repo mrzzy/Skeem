@@ -130,6 +130,7 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
                 startActivityForResult(intent, createTaskRequestCode);
             }
         });
+        fab.setVisibility(View.VISIBLE);
     }
 
     @Override

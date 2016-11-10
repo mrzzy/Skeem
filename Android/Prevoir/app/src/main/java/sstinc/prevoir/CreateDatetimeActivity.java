@@ -14,6 +14,7 @@ import android.widget.Switch;
 
 public class CreateDatetimeActivity extends AppCompatActivity {
     // Extra strings
+    public static final String EXTRA_RECEIVE_TITLE = "sstinc.prevoir.EXTRA_TITLE";
     public static final String EXTRA_RECEIVE_HASDATE = "sstinc.prevoir.EXTRA_RECEIVE_HASDATE";
     public static final String EXTRA_RECEIVE_HASTIME = "sstinc.prevoir.EXTRA_RECEIVE_HASTIME";
     public static final String EXTRA_RECEIVE_DATETIME = "sstinc.prevoir.EXTRA_RECEIVE_DATETIME";
@@ -46,7 +47,7 @@ public class CreateDatetimeActivity extends AppCompatActivity {
 
         // Set back button and title
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("Create New Voidblock");
+            getSupportActionBar().setTitle(getIntent().getStringExtra(EXTRA_RECEIVE_TITLE));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }

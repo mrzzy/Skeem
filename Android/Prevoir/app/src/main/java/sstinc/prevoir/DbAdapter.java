@@ -257,6 +257,7 @@ class DbAdapter {
         }
         long days_id = SQLdb.insert(DbAdapter.DAYS_TABLE, null, values);
 
+        values = new ContentValues();
         values.put(DbAdapter.VOIDBLOCKS_TABLE_COL_DAYS_ID, days_id);
         values.put(DbAdapter.VOIDBLOCKS_TABLE_COL_NAME, voidblock.getName());
         values.put(DbAdapter.VOIDBLOCKS_TABLE_COL_SCHEDULED_START,
@@ -413,9 +414,9 @@ class DbAdapter {
             voidblock.setId(Long.parseLong(cursor.getString(0)));
             // FIXME: 31/10/16 getString to getLong
             voidblock.setWeekDays(getDays(Long.parseLong(cursor.getString(1))));
-            voidblock.setName(cursor.getString(1));
-            voidblock.setScheduledStart(new Datetime(cursor.getString(2)));
-            voidblock.setScheduledStop(new Datetime(cursor.getString(3)));
+            voidblock.setName(cursor.getString(2));
+            voidblock.setScheduledStart(new Datetime(cursor.getString(3)));
+            voidblock.setScheduledStop(new Datetime(cursor.getString(4)));
 
             voidblocks.add(voidblock);
         }

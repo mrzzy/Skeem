@@ -66,7 +66,16 @@
     <string name="dialog_no_deadline_per_day_message">Time to finish before is not set.</string>
     <!-- zero duration dialog -->
     <string name="dialog_zero_duration_title">Alert</string>
-    <string name="dialog_zero_duration_message">Please set the duration needed for the task</string>
+    <string name="dialog_zero_duration_message">Please set the duration needed for the task.</string>
+    <!-- No starting time dialog -->
+    <string name="dialog_no_starting_title">Alert</string>
+    <string name="dialog_no_starting_message">Time when the voidblock starts is not set.</string>
+    <!-- No stopping time dialog -->
+    <string name="dialog_no_stopping_title">Alert</string>
+    <string name="dialog_no_stopping_message">Time when the voidblock stops is not set.</string>
+    <!-- Voidblock obsolete -->
+    <string name="dialog_voidblock_obsolete_title">Alert</string>
+    <string name="dialog_voidblock_obsolete_message">The voidblock is obsolete.</string>
 
     <!-- Create voidblock Activity -->
     <string name="field_text_voidblock_name_hint">Name</string>

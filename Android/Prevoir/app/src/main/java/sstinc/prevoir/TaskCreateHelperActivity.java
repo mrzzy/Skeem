@@ -171,6 +171,7 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), CreateDatetimeActivity.class);
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_TITLE, "Set deadline");
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE, true);
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASTIME,
                         CreateDatetimeActivity.HASTIME_OPTIONAL);
@@ -182,6 +183,8 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), CreateDatetimeActivity.class);
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_TITLE,
+                        "Set time to finish before");
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE, false);
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASTIME,
                         CreateDatetimeActivity.HASTIME_YES);

@@ -206,17 +206,19 @@ public class ScheduleFragment extends ListFragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Go to SelectCreateActivity
+                // TODO: Go to SelectCreateActivity
 //                Intent intent = new Intent(this, SelectCreateActivity.class);
 
             }
         });
+        fab.setVisibility(View.VISIBLE);
 
         // Show shuffle button
         MainActivity.menu_shuffle = true;
         getActivity().invalidateOptionsMenu();
 
-        ArrayList<Schedulable> schedule = evenSort();
+//        ArrayList<Schedulable> schedule = evenSort();
+        ArrayList<Schedulable> schedule = new ArrayList<>();
         ArrayList<Schedulable> filtered_schedule = new ArrayList<>();
 
         Calendar cal = Calendar.getInstance();
