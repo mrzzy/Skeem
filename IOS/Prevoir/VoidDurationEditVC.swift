@@ -14,7 +14,7 @@ enum VoidDurationType:Int
     case repetitive = 1
 }
 
-class VoidDurationEditVC: UIViewController,UITextFieldDelegate,RepeatDataTarget {
+class VoidDurationEditVC: UIViewController,UITextFieldDelegate{
     //UI Elements
     @IBOutlet weak var bbtn_finish: UIBarButtonItem!
     @IBOutlet weak var segctl_type: UISegmentedControl!
@@ -46,22 +46,76 @@ class VoidDurationEditVC: UIViewController,UITextFieldDelegate,RepeatDataTarget 
 
     //Functions
     /*
+     * public func updateUI()
+     * - Updates UI Elements to current data
+    */
+    public func updateUI()
+    {
+        if self.voidd_type == VoidDurationType.oneshot
+        {
+            self.bbtn_finish.title = "Done"
+            self.segctl_type.selectedSegmentIndex = 0
+            self.textfield_name.text = self.voidd_name
+            self.switch_optional.isOn = (self.voidd_asserted == true) ? false : true
+            self.datepick_duration.countDownDuration = TimeInterval(self.voidd_duration)
+            self.datepick_begin.date = self.voidd_begin
+            self.cnstrt_label_begin.constant = 21.0
+            self.cnstrt_datepicker_begin.constant = 200.0
+        }
+        else if self.voidd_type == VoidDurationType.repetitive
+        {
+            if self.repeat_data == false
+            {
+                self.bbtn_finish.title = "Next"
+                self.segctl_type.selectedSegmentIndex = 1
+                self.textfield_name.text = self.voidd_name
+                self.switch_optional.isOn = (self.voidd_asserted == true) ? false : true
+                self.datepick_duration.countDownDuration = TimeInterval(self.voidd_duration)
+                self.datepick_begin.date = self.voidd_begin
+                self.cnstrt_label_begin.constant = 0.0
+                self.cnstrt_datepicker_begin.constant = 0.0
+            }
+            else
+            {
+                self.bbtn_finish.title = "Done"
+                self.segctl_type.selectedSegmentIndex = 1
+                self.textfield_name.text = self.voidd_name
+                self.switch_optional.isOn = (self.voidd_asserted == true) ? false : true
+                self.datepick_duration.countDownDuration = TimeInterval(self.voidd_duration)
+                self.datepick_begin.date = self.voidd_begin
+                self.cnstrt_label_begin.constant = 0.0
+                self.cnstrt_datepicker_begin.constant = 0.0
+            }
+        }
+    }
+
+    /*
+     * public func resetData()
+     * - Reset View Controller Data to default values
+    */
+    public func resetData()
+    {
+        self.voidd_name = ""
+        self.voidd_duration = 1
+        self.voidd_begin = Date() //Init To Current Time
+        self.voidd_asserted = true
+        self.rptvoidd_repeat_loop = Array<TimeInterval>()
+        self.rptvoidd_deadline = Date()
+    }
+
+    /*
      * public func loadAddVoidDuration()
      * - Prepare View for adding Void Duration
     */
     public func loadAddVoidDuration()
     {
         //New Void Duration
+        self.voidd_type = VoidDurationType.oneshot //Default Type
         self.edit = false
         self.repeat_data = false
-        self.voidd_type = VoidDurationType.oneshot
 
-        //Reset UI Elements
-        self.segctl_type.selectedSegmentIndex = 0
-        self.textfield_name.text = ""
-        self.switch_optional.setOn(false, animated: false)
-        self.datepick_duration.countDownDuration = 0
-        self.datepick_begin.date = Date() //Display Current Date
+        self.resetData()
+        self.updateUI()
     }
 
     /*
@@ -73,48 +127,32 @@ class VoidDurationEditVC: UIViewController,UITextFieldDelegate,RepeatDataTarget 
     public func loadEditVoidDuration(voidd:PVRVoidDuration)
     {
         self.edit = true
-        self.voidd_type = VoidDurationType.oneshot
         self.repeat_data = false
-
+        
         //Load Void Duration Data
-        self.voidd_name = voidd.name
-        self.voidd_begin = voidd.begin as Date
-        self.voidd_duration = voidd.duration
-        self.voidd_asserted = voidd.asserted
-
         if let rpt_voidd = (voidd as? PVRRepeatVoidDuration)
         {
             self.voidd_type = VoidDurationType.repetitive
+            rpt_voidd.update(date: NSDate()) //Update to current date
+            self.voidd_name = voidd.name
+            self.voidd_begin = voidd.begin as Date
+            self.voidd_asserted = voidd.asserted
+            self.voidd_duration =  rpt_voidd.repeat_duration
             self.rptvoidd_deadline = rpt_voidd.repeat_deadline as Date?
             self.rptvoidd_repeat_loop = rpt_voidd.repeat_loop
         }
-
-        //Update UI
-        self.textfield_name.text = self.voidd_name
-        self.switch_optional.setOn(((self.voidd_asserted == true) ? false : true), animated: false)
-        self.datepick_begin.date = (self.voidd_begin as Date)
-
-        if self.voidd_type == VoidDurationType.repetitive
-        {
-            let rpt_voidd = (voidd as! PVRRepeatVoidDuration)
-            //Admend UI
-            self.segctl_type.selectedSegmentIndex = 1 //Repeat Duuration
-            self.bbtn_finish.title = "Next"
-            self.cnstrt_label_begin.constant = 0.0
-            self.cnstrt_datepicker_begin.constant = 0.0
-
-            //Load Data into UI
-            self.datepick_duration.countDownDuration = TimeInterval(rpt_voidd.repeat_duration)
-        }
         else
         {
-            //Admend UI
-            self.segctl_type.selectedSegmentIndex = 0 //Oneshot Duration
-
-            //Load Data into UI
-            self.datepick_duration.countDownDuration = TimeInterval(voidd.duration)
+            self.voidd_type = VoidDurationType.oneshot
+            self.voidd_name = voidd.name
+            self.voidd_begin = voidd.begin as Date
+            self.voidd_duration = voidd.duration + 1 //Void Duration Readjustment
+            self.voidd_asserted = voidd.asserted
         }
 
+
+        //Update UI
+        self.updateUI()
     }
 
     /*
@@ -132,7 +170,7 @@ class VoidDurationEditVC: UIViewController,UITextFieldDelegate,RepeatDataTarget 
             return false
         }
 
-        if self.voidd_duration < 1
+        if self.voidd_duration <= 0
         {
             return false
         }
@@ -149,50 +187,6 @@ class VoidDurationEditVC: UIViewController,UITextFieldDelegate,RepeatDataTarget 
         }
 
         return true
-    }
-    
-
-    /*
-     * public func commitRepeatData([RepeatDataKey:Any])
-     * - Saves Repeat Data into self.rpt_voidd
-     * NOTE: Will Terminate excutable if is nil.
-     * [Argument]
-     * rpt_time - Time repeat will trigger
-     * rpt_day - Days repeat will trigger
-     * rpt_stopdate - Date/Time Repeat will be disabled
-    */
-    public func commitRepeatData(rpt_time:Date,rpt_day:Array<Bool>,rpt_stopdate:Date)
-    {
-        if self.voidd_type != VoidDurationType.repetitive
-        {
-            abort() //Terminates Executable
-        }
-
-        //Update Status
-        //self.rptvoidd_deadline = rpt_stopdate
-        self.voidd_begin = rpt_time
-
-        let day_int = 24 * 60 * 60
-        var day_cnt = 1
-        self.rptvoidd_repeat_loop = Array<TimeInterval>()
-
-        for day in 0..<rpt_day.count
-        {
-            if rpt_day[day] == true
-            {
-                self.rptvoidd_repeat_loop.append(TimeInterval(day_int * day_cnt))
-                day_cnt = 1
-            }
-            else
-            {
-                day_cnt += 1
-            }
-        }
-        
-        self.repeat_data = true
-
-        //Update UI
-        self.bbtn_finish.title = "Done"
     }
 
     /*
@@ -211,17 +205,35 @@ class VoidDurationEditVC: UIViewController,UITextFieldDelegate,RepeatDataTarget 
         var rst:Bool!
 
         //Create Void Duration
-        if self.voidd_type == VoidDurationType.oneshot
+        if self.edit == false
         {
-            rst = self.DBC.createVoidDuration(name: self.voidd_name, begin: self.voidd_begin as NSDate, duration: self.voidd_duration, asserted: self.voidd_asserted)
-        }
-        else if self.voidd_type == VoidDurationType.repetitive
-        {
-            rst = self.DBC.createRepeatVoidDuration(name: self.voidd_name, begin: self.voidd_begin as NSDate, duration: self.voidd_duration, repeat_loop: self.rptvoidd_repeat_loop, repeat_deadline: self.rptvoidd_deadline as NSDate?, asserted: self.voidd_asserted)
+            if self.voidd_type == VoidDurationType.oneshot
+            {
+                rst = self.DBC.createVoidDuration(name: self.voidd_name, begin: self.voidd_begin as NSDate, duration: self.voidd_duration, asserted: self.voidd_asserted)
+            }
+            else if self.voidd_type == VoidDurationType.repetitive && repeat_data == true
+            {
+                rst = self.DBC.createRepeatVoidDuration(name: self.voidd_name, begin: self.voidd_begin as NSDate, duration: self.voidd_duration, repeat_loop: self.rptvoidd_repeat_loop, repeat_deadline: self.rptvoidd_deadline as NSDate?, asserted: self.voidd_asserted)
+            }
+            else
+            {
+                abort()
+            }
         }
         else
         {
-            abort()
+            if self.voidd_type == VoidDurationType.oneshot
+            {
+                rst = self.DBC.updateVoidDuration(name: self.voidd_name, begin: self.voidd_begin as NSDate, duration: self.voidd_duration, asserted: self.voidd_asserted)
+            }
+            else if self.voidd_type == VoidDurationType.repetitive && repeat_data == true
+            {
+                rst = self.DBC.updateRepeatVoidDuration(name: self.voidd_name, begin: self.voidd_begin as NSDate, duration: self.voidd_duration,repeat_loop: self.rptvoidd_repeat_loop, repeat_deadline: self.rptvoidd_deadline as NSDate?, asserted: self.voidd_asserted)
+            }
+            else
+            {
+                abort()
+            }
         }
 
         //Failed To Create New Void Duration
@@ -246,26 +258,14 @@ class VoidDurationEditVC: UIViewController,UITextFieldDelegate,RepeatDataTarget 
         let appdelegate = (UIApplication.shared.delegate as! AppDelegate)
         self.DBC = appdelegate.DBC
         self.textfield_name.delegate = (self as UITextFieldDelegate)
+
+        //Init Data
+        self.resetData()
+
+        //Init UI
+        self.updateUI()
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self.view, action: #selector(self.view.endEditing(_:)))) //Dismiss Keyboard On Outside Tap
-
-        //Load Data
-        self.voidd_name = ""
-        self.voidd_duration = 5 * 60
-        self.voidd_begin = Date() //Init Current Data
-        self.voidd_asserted = false
-        self.rptvoidd_deadline = Date() //Init to current date
-        self.rptvoidd_repeat_loop = Array<TimeInterval>()
-    }
-    
-
-    override func viewWillDisappear(_ animated: Bool) {
-        //Reset Data
-        self.voidd_name = ""
-        self.voidd_duration = 5 * 60
-        self.voidd_begin = Date() //Init Current Data
-        self.voidd_asserted = false
-        self.rptvoidd_deadline = Date() //Init to current date
-        self.rptvoidd_repeat_loop = Array<TimeInterval>()
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -281,23 +281,20 @@ class VoidDurationEditVC: UIViewController,UITextFieldDelegate,RepeatDataTarget 
             self.voidd_type = VoidDurationType.oneshot
 
             //Update Data Elenents
-            self.bbtn_finish.title = "Done"
-            self.cnstrt_label_begin.constant = 21.0
-            self.cnstrt_datepicker_begin.constant = 200.0
+            self.updateUI()
         case VoidDurationType.repetitive.rawValue:
             self.voidd_type = VoidDurationType.repetitive
 
             //Update UI Elements
-            self.bbtn_finish.title = "Next"
-            self.cnstrt_label_begin.constant = 0.0
-            self.cnstrt_datepicker_begin.constant = 0.0
+            self.updateUI()
         default:
             abort() //Teminates Executable, Unknown Void Duration Type
         }
 
     }
 
-    @IBAction func textfield_name_editend(_ sender: UITextField) {
+    @IBAction func textfield_name_editend(_ sender: UITextField)
+    {
         self.voidd_name = self.textfield_name.text!
     }
 
@@ -318,7 +315,7 @@ class VoidDurationEditVC: UIViewController,UITextFieldDelegate,RepeatDataTarget 
 
     @IBAction func bbtn_finish_action(_ sender: UIBarButtonItem)
     {
-        if self.voidd_type == VoidDurationType.oneshot || self.repeat_data == true
+        if self.voidd_type == VoidDurationType.oneshot
         {
             //Data Check
             if self.vaildateData() == false
@@ -335,20 +332,39 @@ class VoidDurationEditVC: UIViewController,UITextFieldDelegate,RepeatDataTarget 
                 self.performSegue(withIdentifier: "uisge.voidd.list.unwind", sender: self)
             }
         }
-        else if self.voidd_type == VoidDurationType.repetitive && self.repeat_data == false
+        else if self.voidd_type == VoidDurationType.repetitive
         {
             //Data Check
-            if self.vaildateData() == false
+            if self.repeat_data == false
             {
-                //Present Invaild Data Warning to User
-                let alertctl = UIAlertController(title: "Invaild Data", message: "Please correct invaild data", preferredStyle: UIAlertControllerStyle.alert)
-                alertctl.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.cancel, handler: {(alertact:UIAlertAction) in
-                    self.dismiss(animated: true, completion: nil)}))
-                self.present(alertctl, animated: true, completion: nil)
+                if self.vaildateData() == false
+                {
+                    //Present Invaild Data Warning to User
+                    let alertctl = UIAlertController(title: "Invaild Data", message: "Please correct invaild data", preferredStyle: UIAlertControllerStyle.alert)
+                    alertctl.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.cancel, handler: {(alertact:UIAlertAction) in
+                        self.dismiss(animated: true, completion: nil)}))
+                    self.present(alertctl, animated: true, completion: nil)
+                }
+                else
+                {
+                    self.performSegue(withIdentifier: "uisge.rpt.edit", sender: self)
+                }
             }
             else
             {
-                self.performSegue(withIdentifier: "uisge.rpt.edit", sender: self)
+                if self.vaildateData() == false
+                {
+                    //Present Invaild Data Warning to User
+                    let alertctl = UIAlertController(title: "Invaild Data", message: "Please correct invaild data", preferredStyle: UIAlertControllerStyle.alert)
+                    alertctl.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.cancel, handler: {(alertact:UIAlertAction) in
+                        self.dismiss(animated: true, completion: nil)}))
+                    self.present(alertctl, animated: true, completion: nil)
+                }
+                else
+                {
+                    self.commitVoidDuration()
+                    self.performSegue(withIdentifier: "uisge.voidd.list.unwind", sender: self)
+                }
             }
         }
     }
@@ -367,30 +383,19 @@ class VoidDurationEditVC: UIViewController,UITextFieldDelegate,RepeatDataTarget 
             switch sge_idf
             {
             case "uisge.rpt.edit":
-                //Load Data if Editing 
-                if self.edit == true
-                {
-                    let rpteditvc = (segue.destination as! RepeatListVC)
-                    rpteditvc.repeat_time = self.voidd_begin
+                let rpteditvc = (segue.destination as! RepeatEditVC)
 
-                    var arr_day = Array<Bool>()
-                    let day_sec  = TimeInterval(24 * 60 * 60)
-                    for tint in self.rptvoidd_repeat_loop
-                    {
-                        var tint_left = tint
-                        while tint_left > day_sec
-                        {
-                            tint_left -= day_sec
-                            arr_day.append(false)
-                        }
-                        arr_day.append(true)
-                    }
-                    rpteditvc.repeat_day = arr_day
-                }
-            case "uisge.voidd.list.unwind":
-                //Trigger Update Table View
-                let voiddlistvc = (segue.destination as! VoidDurationListVC)
-                voiddlistvc.updateView()
+                let _ = rpteditvc.view //Force Load View
+                //Push Data Into View Controller
+                rpteditvc.repeat_deadline = self.rptvoidd_deadline
+                rpteditvc.repeat_time = self.voidd_begin
+                rpteditvc.computeDay(rpt_lp: self.rptvoidd_repeat_loop)
+                rpteditvc.source_vc = self
+
+                rpteditvc.updateUI()
+
+            case "uisge.voidd.list.unwind": break
+                
             default:
                 abort()
             }
@@ -403,6 +408,27 @@ class VoidDurationEditVC: UIViewController,UITextFieldDelegate,RepeatDataTarget 
 
     @IBAction func unwind_voidDurationEdit(sge:UIStoryboardSegue)
     {
+        //Pull Dat From View Controller
+        if let sge_idf = sge.identifier
+        {
+            switch sge_idf
+            {
+            case "uisge.voidd.edit.unwind":
+                let rpteditvc = (sge.source as! RepeatEditVC)
+                self.rptvoidd_deadline = rpteditvc.repeat_deadline
+                self.voidd_begin = rpteditvc.repeat_time
+                self.rptvoidd_repeat_loop = rpteditvc.computeTimeInterval()
 
+                //Update UI
+                self.repeat_data = true
+                self.updateUI()
+            default:
+                abort()
+            }
+        }
+        else
+        {
+            abort()
+        }
     }
 }

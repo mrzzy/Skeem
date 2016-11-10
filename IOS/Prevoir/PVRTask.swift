@@ -178,8 +178,9 @@ public class PVRRepeatTask: PVRTask
         let repeat_index = aDecoder.decodeInteger(forKey: "repeat_index")
         let repeat_duration = aDecoder.decodeInteger(forKey: "repeat_duration")
         let descript = (aDecoder.decodeObject(forKey: "descript") as! String)
+        let repeat_deadline = (aDecoder.decodeObject(forKey:"repeat_deadline") as? NSDate)
 
-        self.init(name: name, duration: duration,duration_affinity:duration_affinity, repeat_loop: repeat_loop, subject: subject,description: descript,deadline: deadline)
+        self.init(name: name, duration: duration,duration_affinity:duration_affinity, repeat_loop: repeat_loop, subject: subject,description: descript,deadline: deadline,repeat_deadline: repeat_deadline)
         self.completion = completion
         self.repeat_enabled = repeat_enabled
         self.repeat_index = repeat_index
@@ -197,11 +198,13 @@ public class PVRRepeatTask: PVRTask
         aCoder.encode(self.repeat_enabled, forKey: "repeat_enabled")
         aCoder.encode(self.repeat_index, forKey: "repeat_index")
         aCoder.encode(self.descript, forKey: "descript")
+        aCoder.encode(self.repeat_duration,forKey: "repeat_duration")
+        aCoder.encode(self.repeat_deadline!, forKey: "repeat_deadline")
     }
 
     //NSCopying
     public override func copy(with zone: NSZone?) -> Any {
-        return PVRRepeatTask(name: self.name, duration: self.duration, duration_affinity:self.duration_affinity,repeat_loop: self.repeat_loop, subject: self.subject, description: self.description, deadline: self.deadline)
+        return PVRRepeatTask(name: self.name, duration: self.repeat_duration, duration_affinity:self.duration_affinity,repeat_loop: self.repeat_loop, subject: self.subject, description: self.description, deadline: self.deadline)
     }
     
     //Data
@@ -234,14 +237,14 @@ public class PVRRepeatTask: PVRTask
     public override func update(date: NSDate)
     {
         //Prepare Data
-        var rpt_idx_fwd = self.repeat_index &+ 1 //Overflow Addition
+        var rpt_idx_fwd = abs(self.repeat_index &+ 1) //Overflow Addition
         var tint_fwd = self.repeat_loop[rpt_idx_fwd % self.repeat_loop.count]
-        var rpt_idx_bwd = self.repeat_index &- 1 //Overflow Subtraction
+        var rpt_idx_bwd = abs(self.repeat_index &- 1) //Overflow Subtraction
         var tint_bwd = -(self.repeat_loop[rpt_idx_bwd % self.repeat_loop.count])
 
         if self.deadline.compare(date as Date) == ComparisonResult.orderedAscending
         {
-            //Current date/time is later than current deadline
+            //Current deadline earlier then current date
             //Update forwards in time
             while self.deadline.compare(date as Date) == ComparisonResult.orderedAscending
             {
@@ -254,7 +257,7 @@ public class PVRRepeatTask: PVRTask
         }
         else if self.deadline.addingTimeInterval(tint_bwd).compare(date as Date) == ComparisonResult.orderedDescending
         {
-            //current date/time is earlier than previous deadline
+            //current deadline later than current date
             //Update Backwards in Time
             while self.deadline.addingTimeInterval(tint_bwd).compare(date as Date) == ComparisonResult.orderedDescending
             {

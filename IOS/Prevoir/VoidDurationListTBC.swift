@@ -37,13 +37,14 @@ class VoidDurationListTBC: UITableViewCell {
         self.label_name.text = name
 
         //Begin Label 
+        //Adjust Label for Readablity
         switch diff_dcmp.day! {
         case 0:
-            label_begin.text = "\(begin_dcmp.hour!) \(begin_dcmp.minute!)"
+            label_begin.text = "\(begin_dcmp.hour!) \((begin_dcmp.minute! < 10) ? "0\(begin_dcmp.minute!)":  "\(begin_dcmp.minute!)")"
         case 1:
-            label_begin.text = "Tommorow,\(begin_dcmp.hour!) \(begin_dcmp.minute!)"
+            label_begin.text = "Tommorow,\(begin_dcmp.hour!) \((begin_dcmp.minute! < 10) ? "0\(begin_dcmp.minute!)":  "\(begin_dcmp.minute!)")"
         default:
-            label_begin.text = "\(begin_dcmp.day!)/\(begin_dcmp.month!)/\(begin_dcmp.year!), \(begin_dcmp.hour!) \(begin_dcmp.minute!)"
+            label_begin.text = "\(begin_dcmp.day!)/\(begin_dcmp.month!)/\(begin_dcmp.year!), \(begin_dcmp.hour!) \((begin_dcmp.minute! < 10) ? "0\(begin_dcmp.minute!)":  "\(begin_dcmp.minute!)")"
         }
 
         //Duration Label

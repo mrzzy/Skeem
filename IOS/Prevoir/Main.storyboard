@@ -419,9 +419,9 @@
         <!--RepeatEditVC-->
         <scene sceneID="X9q-Ol-Pvz">
             <objects>
-                <tableViewController title="RepeatEditVC" id="Tj0-XI-T52" customClass="RepeatListVC" customModule="Prevoir" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="RepeatEditVC" id="Tj0-XI-T52" customClass="RepeatEditVC" customModule="Prevoir" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="JM8-PC-TCc">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="2000"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <sections>
@@ -431,7 +431,7 @@
                                         <rect key="frame" x="0.0" y="28" width="320" height="200"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="zgL-x0-RTD" id="EaK-U7-0ma">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="199.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="200"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="date" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="cPL-ab-o6Z">
@@ -615,7 +615,7 @@
                     <navigationItem key="navigationItem" title="Repeat" id="H1k-6O-kab">
                         <barButtonItem key="rightBarButtonItem" systemItem="done" id="tYK-CU-e1q">
                             <connections>
-                                <segue destination="WZp-cJ-1VV" kind="unwind" unwindAction="unwind_voidDurationEditWithSge:" id="F5r-hD-WgJ"/>
+                                <action selector="bbtn_finish_action:" destination="Tj0-XI-T52" id="G3r-HF-Zns"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -623,6 +623,8 @@
                         <outlet property="bbtn_finish" destination="tYK-CU-e1q" id="h4A-6t-n1k"/>
                         <outlet property="datepick_repeattime" destination="qbx-gN-X52" id="u3T-Ub-egB"/>
                         <outlet property="datepick_stopdate" destination="cPL-ab-o6Z" id="rwq-xD-F2q"/>
+                        <segue destination="WZp-cJ-1VV" kind="unwind" identifier="uisge.voidd.edit.unwind" unwindAction="unwind_voidDurationEditWithSge:" id="DY3-3W-65a"/>
+                        <segue destination="WZp-cJ-1VV" kind="unwind" identifier="uisge.task.edit.unwind" unwindAction="unwind_taskEditVCWithSge:" id="RNF-Sv-6Uj"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lLm-Aq-pNg" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2208,11 +2210,11 @@
                         <viewControllerLayoutGuide type="bottom" id="NiQ-1x-ITe"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="XTN-N6-Fki">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="2000"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="y7c-E4-5aU">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="1951"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IoW-f9-0wo">
                                         <rect key="frame" x="8" y="0.0" width="304" height="969"/>
@@ -2236,6 +2238,9 @@
                                                     <segment title="Oneshot"/>
                                                     <segment title="Repeative"/>
                                                 </segments>
+                                                <connections>
+                                                    <action selector="sgectl_type_action:" destination="URm-k8-ZPh" eventType="valueChanged" id="0wQ-xD-j23"/>
+                                                </connections>
                                             </segmentedControl>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Deadline" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sgm-6Z-iFB">
                                                 <rect key="frame" x="8" y="248" width="67" height="21"/>
@@ -2266,7 +2271,7 @@
                                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="time" minuteInterval="5" translatesAutoresizingMaskIntoConstraints="NO" id="dcy-Ou-8sL">
+                                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" minuteInterval="5" translatesAutoresizingMaskIntoConstraints="NO" id="dcy-Ou-8sL">
                                                 <rect key="frame" x="0.0" y="514" width="304" height="200"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="200" id="xJO-bv-5JD"/>
@@ -2274,6 +2279,9 @@
                                                 <date key="date" timeIntervalSinceReferenceDate="495849474.47164702">
                                                     <!--2016-09-17 23:57:54 +0000-->
                                                 </date>
+                                                <connections>
+                                                    <action selector="datepick_duration:" destination="URm-k8-ZPh" eventType="valueChanged" id="5py-iP-3tA"/>
+                                                </connections>
                                             </datePicker>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ie7-WT-wYh">
                                                 <rect key="frame" x="8" y="140" width="88" height="21"/>
@@ -2285,7 +2293,7 @@
                                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Task Description" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="pt9-rB-NgK">
+                                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="pt9-rB-NgK">
                                                 <rect key="frame" x="0.0" y="160" width="304" height="80"/>
                                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
@@ -2293,11 +2301,17 @@
                                                 </constraints>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences" autocorrectionType="yes" spellCheckingType="yes" keyboardType="alphabet" keyboardAppearance="light" returnKeyType="done"/>
+                                                <connections>
+                                                    <outlet property="delegate" destination="URm-k8-ZPh" id="mg7-LG-35C"/>
+                                                </connections>
                                             </textView>
                                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="amc-Mt-7DL">
                                                 <rect key="frame" x="247" y="722" width="51" height="31"/>
+                                                <connections>
+                                                    <action selector="switch_drsn_affinity_action:" destination="URm-k8-ZPh" eventType="valueChanged" id="NgH-cJ-rfU"/>
+                                                </connections>
                                             </switch>
-                                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="date" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="xFx-ej-Utf">
+                                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="xFx-ej-Utf">
                                                 <rect key="frame" x="0.0" y="277" width="304" height="200"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="200" id="lwV-K0-1ZS"/>
@@ -2305,6 +2319,9 @@
                                                 <date key="date" timeIntervalSinceReferenceDate="495849474.47164702">
                                                     <!--2016-09-17 23:57:54 +0000-->
                                                 </date>
+                                                <connections>
+                                                    <action selector="datepick_deadline_action:" destination="URm-k8-ZPh" eventType="valueChanged" id="RRH-cY-EnD"/>
+                                                </connections>
                                             </datePicker>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vFi-f0-aqq">
                                                 <rect key="frame" x="8" y="73" width="45" height="21"/>
@@ -2323,16 +2340,22 @@
                                                 </constraints>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences" autocorrectionType="no" spellCheckingType="no" keyboardType="alphabet" keyboardAppearance="light" returnKeyType="done"/>
+                                                <connections>
+                                                    <action selector="textfield_name_action:" destination="URm-k8-ZPh" eventType="editingDidEnd" id="b4m-4u-FcT"/>
+                                                    <outlet property="delegate" destination="URm-k8-ZPh" id="Wbp-2O-N7q"/>
+                                                </connections>
                                             </textField>
-                                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="time" minuteInterval="5" translatesAutoresizingMaskIntoConstraints="NO" id="Zje-cY-mly">
+                                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="countDownTimer" minuteInterval="5" translatesAutoresizingMaskIntoConstraints="NO" id="Zje-cY-mly">
                                                 <rect key="frame" x="0.0" y="761" width="304" height="200"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="200" id="OTs-vG-wWC"/>
                                                     <constraint firstAttribute="height" constant="200" id="Xm5-l3-NbX"/>
                                                 </constraints>
                                                 <date key="date" timeIntervalSinceReferenceDate="495849474.47164702">
                                                     <!--2016-09-17 23:57:54 +0000-->
                                                 </date>
+                                                <connections>
+                                                    <action selector="datepick_drsn_affinity_action:" destination="URm-k8-ZPh" eventType="valueChanged" id="FiH-1V-U4i"/>
+                                                </connections>
                                             </datePicker>
                                         </subviews>
                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -2395,13 +2418,32 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Add/Edit Task" id="58I-Mt-JmP">
-                        <barButtonItem key="rightBarButtonItem" title="Done" id="l1c-p2-OXn"/>
+                        <barButtonItem key="rightBarButtonItem" title="Done" id="l1c-p2-OXn">
+                            <connections>
+                                <action selector="bbtn_finish_action:" destination="URm-k8-ZPh" id="dR8-fg-Iqx"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="320" height="2000"/>
                     <connections>
+                        <outlet property="bbtn_finish" destination="l1c-p2-OXn" id="Jzg-xk-Vdx"/>
+                        <outlet property="cnstrt_datepick_deadline" destination="lwV-K0-1ZS" id="dry-Jy-6GN"/>
+                        <outlet property="cnstrt_datepick_drsn_affinity" destination="Xm5-l3-NbX" id="dpv-dZ-zl1"/>
+                        <outlet property="cnstrt_label_deadline" destination="2hi-WQ-Onl" id="MaU-zS-aHa"/>
+                        <outlet property="datepick_deadline" destination="xFx-ej-Utf" id="0YR-0x-CE2"/>
+                        <outlet property="datepick_drsn_affinity" destination="Zje-cY-mly" id="w2K-V1-NMk"/>
+                        <outlet property="datepick_duration" destination="dcy-Ou-8sL" id="VsO-i2-HSm"/>
+                        <outlet property="segctl_type" destination="vGd-GV-cTZ" id="vil-DW-Jug"/>
+                        <outlet property="switch_drsn_affinity" destination="amc-Mt-7DL" id="4oN-b9-Ou2"/>
+                        <outlet property="textfield_name" destination="0tE-2W-ugl" id="KPR-1f-Jgg"/>
+                        <outlet property="textview_descript" destination="pt9-rB-NgK" id="Lbh-9t-lrw"/>
                         <segue destination="Tj0-XI-T52" kind="show" identifier="uisge.rpt.edit" id="6gq-wF-8pM"/>
+                        <segue destination="UEy-a0-fx0" kind="unwind" identifier="uisge.task.list.unwind" unwindAction="unwind_taskListVCWithSge:" id="fMO-Iy-mJy"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zP3-iu-hCq" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="UEy-a0-fx0" userLabel="Exit" sceneMemberID="exit"/>
                 <tapGestureRecognizer id="ph7-e7-G6R"/>
             </objects>
             <point key="canvasLocation" x="2700" y="1261"/>
@@ -2415,7 +2457,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="uitcell.list.edit" id="1cO-lJ-Qkp">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="uitcell.list.task" id="1cO-lJ-Qkp" customClass="TaskListTBC" customModule="Prevoir" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="28" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="1cO-lJ-Qkp" id="d5k-Iu-gMR">
@@ -2472,10 +2514,13 @@
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
+                                    <outlet property="label_name" destination="eiz-sV-cmL" id="0c7-a2-ROM"/>
+                                    <outlet property="label_status" destination="jqo-ah-RJT" id="Evi-ZX-V88"/>
+                                    <outlet property="label_subject" destination="Msk-Xz-wEx" id="Sqg-js-J05"/>
                                     <segue destination="URm-k8-ZPh" kind="show" identifier="uisge.task.edit" id="ymf-ua-i68"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="uitcell.null" id="i7n-9V-bHx">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="uitcell.list.task.null" id="i7n-9V-bHx">
                                 <rect key="frame" x="0.0" y="72" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="i7n-9V-bHx" id="E0q-bw-e9c">
@@ -2502,7 +2547,7 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Tasks" id="3uX-RW-SdC" userLabel="NavBITask">
-                        <barButtonItem key="leftBarButtonItem" systemItem="organize" id="r2q-RF-NsF"/>
+                        <barButtonItem key="leftBarButtonItem" systemItem="edit" id="r2q-RF-NsF"/>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="BPs-Ux-Y73">
                             <connections>
                                 <segue destination="URm-k8-ZPh" kind="show" identifier="uisge.task.add" id="QpA-Ei-MkB"/>
@@ -2574,7 +2619,7 @@
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="K5s-ob-RV9"/>
-        <segue reference="BZm-a4-8RU"/>
-        <segue reference="bAN-jK-76S"/>
+        <segue reference="ymf-ua-i68"/>
+        <segue reference="6gq-wF-8pM"/>
     </inferredMetricsTieBreakers>
 </document>

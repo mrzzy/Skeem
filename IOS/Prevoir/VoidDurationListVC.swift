@@ -16,7 +16,6 @@ class VoidDurationListVC: UITableViewController {
 
     //Data
     var arr_voidd:[PVRVoidDuration]!
-    var arr_voidd_idx:Int!
 
     var utcell_id_voidd:String!
     var utcell_id_voidd_null:String!
@@ -27,19 +26,26 @@ class VoidDurationListVC: UITableViewController {
 
     //Data Functions
     /*
-     * public func updateView()
-     * - Triggers a update to current data and UI update with that data
+     * public func updateData()
+     * - Updates data to reflect database
     */
-    public func updateView()
+    public func updateData()
     {
         //Update Data
+        self.DBC.updateVoidDuration()
         self.arr_voidd = self.DBC.sortedVoidDuration(sattr: PVRVoidDurationSort.begin)
-        self.arr_voidd_idx = 0
+    }
 
+    /*
+     * public func updateUI()
+     * - Triggers a update to current data and UI update with that data
+    */
+    public func updateUI()
+    {
         //Update UI
         self.tableView.reloadData()
     }
-    
+   
     //Event Functions
     override func viewDidLoad() {
         //Init Links 
@@ -53,15 +59,14 @@ class VoidDurationListVC: UITableViewController {
         self.utcell_id_voidd_null = "uitcell.list.voidd.null"
 
         self.arr_voidd = self.DBC.sortedVoidDuration(sattr: PVRVoidDurationSort.begin)
-        self.arr_voidd_idx = 0
 
         super.viewDidLoad()
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
-        //Update Data
-        self.arr_voidd = self.DBC.sortedVoidDuration(sattr: PVRVoidDurationSort.begin)
-        self.arr_voidd_idx = 0
+    override func viewWillAppear(_ animated: Bool) {
+        //Update Data & UI
+        self.updateData()
+        self.updateUI()
     }
 
     override func didReceiveMemoryWarning() {
@@ -76,10 +81,13 @@ class VoidDurationListVC: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        //Prepare Data
+        self.updateData()
+
         switch section
         {
         case 0: //First Section
-            return  (self.arr_voidd.count <= 0) ? 1 : self.arr_voidd.count //Introduce Space for no void duration cell
+            return  self.arr_voidd.count
         default:
             abort() //Unhandled Section
         }
@@ -90,15 +98,9 @@ class VoidDurationListVC: UITableViewController {
         {
             //Create/Update Table View Cell
             let cell = ((tableView.dequeueReusableCell(withIdentifier: self.utcell_id_voidd, for: indexPath)) as! VoidDurationListTBC)
-            let voidd = self.arr_voidd[self.arr_voidd_idx]
-            cell.updateData(name: voidd.name, begin: voidd.begin, duration: voidd.duration)
-
-            //Update Data
-            self.arr_voidd_idx! += 1
-            if self.arr_voidd_idx >= self.arr_voidd.count
-            {
-                self.arr_voidd_idx = 0
-            }
+            let voidd = self.arr_voidd[indexPath.row]
+            //NOTE: Duration adjustment due to void duration preadjustment
+            cell.updateData(name: voidd.name, begin: voidd.begin, duration: voidd.duration + 1)
 
             return cell
         }
@@ -130,8 +132,11 @@ class VoidDurationListVC: UITableViewController {
                 assert(rst) //Terminates Executable if delete fails
             default:
                 abort() //Unhandled Section
+
             }
 
+            //Update Data
+            self.updateData()
             tableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.automatic)
         }
         else if editingStyle == UITableViewCellEditingStyle.insert {
@@ -167,6 +172,6 @@ class VoidDurationListVC: UITableViewController {
 
     @IBAction func unwind_voidDurationList(sge:UIStoryboardSegue)
     {
-        
+        self.updateUI()
     }
 }

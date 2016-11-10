@@ -200,11 +200,12 @@ public class PVRRepeatVoidDuration: PVRVoidDuration
         aCoder.encode(self.repeat_index, forKey: "repeat_index")
         aCoder.encode(self.repeat_loop, forKey: "repeat_loop")
         aCoder.encode(self.repeat_deadline, forKey: "repeat_deadline")
+        aCoder.encode(self.repeat_duration, forKey: "repeat_duration")
     }
 
     //NSCopying
     public override func copy(with zone: NSZone?) -> Any {
-        return PVRRepeatVoidDuration(begin: self.begin, duration: self.duration, name: self.name, repeat_loop: self.repeat_loop, deadline: self.repeat_deadline, asserted: self.asserted)
+        return PVRRepeatVoidDuration(begin: self.begin, duration: self.repeat_duration, name: self.name, repeat_loop: self.repeat_loop, deadline: self.repeat_deadline, asserted: self.asserted)
     }
 
     //Data
@@ -240,7 +241,7 @@ public class PVRRepeatVoidDuration: PVRVoidDuration
     {
         //Prepare Data
         var rpt_idx_fwd = self.repeat_index &+ 1 //Overflow Addition
-        var tint_fwd = self.repeat_loop[rpt_idx_fwd % self.repeat_loop.count]
+        var tint_fwd = abs(self.repeat_loop[rpt_idx_fwd % self.repeat_loop.count])
 
         var rpt_idx_bwd = abs(self.repeat_index &- 1) //Overflow Subtraction
         var tint_bwd = -(self.repeat_loop[rpt_idx_bwd % self.repeat_loop.count])
@@ -249,6 +250,7 @@ public class PVRRepeatVoidDuration: PVRVoidDuration
         {
             while self.begin.addingTimeInterval(TimeInterval(self.duration)).compare(date as Date) == ComparisonResult.orderedAscending
             {
+
                 //current date/time is later then begin + duration
                 //Update Void Duration Data
                 rpt_idx_fwd = rpt_idx_fwd &+ 1 //Overflow Addition
