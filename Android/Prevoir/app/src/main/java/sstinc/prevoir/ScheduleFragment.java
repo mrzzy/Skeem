@@ -198,7 +198,7 @@ public class ScheduleFragment extends ListFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         // Reset menu
-        menu_shuffle = true;
+        //menu_shuffle = true; //TODO: implement this
         getActivity().invalidateOptionsMenu();
 
         // Set Floating Action Button
@@ -207,18 +207,13 @@ public class ScheduleFragment extends ListFragment {
             @Override
             public void onClick(View v) {
                 // TODO: Go to SelectCreateActivity
-//                Intent intent = new Intent(this, SelectCreateActivity.class);
-
+                Intent intent = new Intent(getActivity(), SelectCreateActivity.class);
+                startActivity(intent);
             }
         });
         fab.setVisibility(View.VISIBLE);
 
-        // Show shuffle button
-        MainActivity.menu_shuffle = true;
-        getActivity().invalidateOptionsMenu();
-
-//        ArrayList<Schedulable> schedule = evenSort();
-        ArrayList<Schedulable> schedule = new ArrayList<>();
+        ArrayList<Schedulable> schedule = evenSort();
         ArrayList<Schedulable> filtered_schedule = new ArrayList<>();
 
         Calendar cal = Calendar.getInstance();

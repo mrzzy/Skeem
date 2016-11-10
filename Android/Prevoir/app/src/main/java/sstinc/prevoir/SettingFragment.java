@@ -20,7 +20,7 @@ public class SettingFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         // Hide shuffle button
-        MainActivity.menu_shuffle = false;
+        //menu_shuffle = false;//TODO: uncomment this
         getActivity().invalidateOptionsMenu();
 
         // Set Floating Action Button

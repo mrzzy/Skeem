@@ -21,12 +21,12 @@
         <activity
             android:name=".AndroidDatabaseManager"
             android:theme="@style/Theme.AppCompat.Light" />
-
         <activity android:name=".TaskCreateActivity" />
         <activity android:name=".TaskCreateHelperActivity" />
         <activity android:name=".CreateRepeatedDaysActivity" />
         <activity android:name=".VoidblockCreateActivity" />
         <activity android:name=".CreateDatetimeActivity" />
+        <activity android:name=".SelectCreateActivity"></activity>
     </application>
 
 </manifest>

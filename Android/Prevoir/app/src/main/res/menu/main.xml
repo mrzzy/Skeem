@@ -5,6 +5,7 @@
         android:id="@+id/nav_shuffle"
         android:orderInCategory="100"
         android:title="@string/nav_shuffle"
+        android:visible="false"
         android:icon="@drawable/ic_loop_white_24dp"
         app:showAsAction="ifRoom" />
     <item

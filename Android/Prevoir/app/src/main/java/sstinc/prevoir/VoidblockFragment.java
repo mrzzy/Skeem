@@ -68,7 +68,7 @@ public class VoidblockFragment extends ListFragment implements AdapterView.OnIte
         getActivity().invalidateOptionsMenu();
 
         // Hide shuffle button
-        MainActivity.menu_shuffle = false;
+        menu_shuffle = false;
         getActivity().invalidateOptionsMenu();
 
         // Set bottom padding

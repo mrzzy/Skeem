@@ -63,9 +63,6 @@ Intent flow:
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    // Toolbar status
-    static boolean menu_shuffle = true;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,8 +114,6 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-        // Set the nav_shuffle button on the menu
-        menu.findItem(R.id.nav_shuffle).setVisible(menu_shuffle);
         return true;
     }
 

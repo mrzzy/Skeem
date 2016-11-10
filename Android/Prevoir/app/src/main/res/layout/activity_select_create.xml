@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_select_create"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="sstinc.prevoir.SelectCreateActivity">
+    <RelativeLayout
+        android:id="@+id/layout_create_task"
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@color/colorPrimaryDark">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/task_chevron_image"
+            android:layout_gravity="fill_vertical"
+            android:gravity="center_vertical"
+            android:textColor="@color/colorFontWhitePrimary"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/text_view_create_task" />
+
+        <ImageView
+            android:id="@+id/task_chevron_image"
+            app:srcCompat="@drawable/ic_chevron_right_white_24dp"
+            android:contentDescription="@string/image_view_task_description"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true" />
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/layout_create_voidblock"
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:background="@color/colorPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="fill_vertical"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/voidblock_chevron_image"
+            android:gravity="center_vertical"
+            android:textColor="@color/colorFontWhitePrimary"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/text_view_create_voidblock" />
+
+        <ImageView
+            android:id="@+id/voidblock_chevron_image"
+            app:srcCompat="@drawable/ic_chevron_right_white_24dp"
+            android:contentDescription="@string/image_view_voidblock_description"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true" />
+
+    </RelativeLayout>
+</LinearLayout>

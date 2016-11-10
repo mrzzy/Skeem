@@ -86,4 +86,10 @@
 
     <!-- Schedule Fragment -->
     <string name="text_view_schedule_voidblock_label">- Voidblock -</string>
+
+    <!-- Select Create Activity -->
+    <string name="text_view_create_task">Create a new task</string>
+    <string name="text_view_create_voidblock">Create a new voidblock</string>
+    <string name="image_view_task_description">Continue to create a new task</string>
+    <string name="image_view_voidblock_description">Continue to create a new voidblock</string>
 </resources>
