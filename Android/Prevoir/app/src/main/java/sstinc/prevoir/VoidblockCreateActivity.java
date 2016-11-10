@@ -19,9 +19,6 @@ import org.joda.time.DateTime;
 
 import java.util.Calendar;
 
-//TODO: Obsolete repeat
-//TODO: from and to do not have proper MAX and MIN
-//TODO: Retrieve days for repeated crashes
 /**
  * This activity handles the creation of a voidblock. The activity handles
  * the name of the voidblock and calls other activities to get more
@@ -120,9 +117,6 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                     intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_MAX,
                             voidblock.getScheduledStop());
                 }
-                // Set minimum to current datetime
-                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_MIN,
-                        currentDatetime);
                 // Set the current datetime to the scheduled_start
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_DATETIME,
                         voidblock.getScheduledStart());
@@ -160,17 +154,133 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                         CreateDatetimeActivity.HASTIME_YES);
                 // Set minimum to scheduled_start if it exists. If not, set
                 // it to the current datetime
-                if (voidblock.getScheduledStart().getHasDate() &&
-                        voidblock.getScheduledStart().getHasTime()) {
+                if (voidblock.getScheduledStart().getHasTime()) {
                     intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_MIN,
                             voidblock.getScheduledStart());
                 } else {
                     intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_MIN,
                             currentDatetime);
                 }
+                // Set the current datetime to scheduled stop
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_DATETIME,
+                        voidblock.getScheduledStop());
 
                 // Start activity
                 startActivityForResult(intent, createVoidblockToRequestCode);
+            }
+        });
+
+        // Show repeats button when repeats switch is checked
+        switch_repeat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // Set visibility of button
+                Button button_repeats = (Button) findViewById(R.id.button_voidblock_repeats);
+                button_repeats.setVisibility(isChecked? View.VISIBLE: View.GONE);
+
+                if (isChecked && !voidblock.getWeekDays().getWeekDays_list().isEmpty()) {
+                    // If the repeat switch is checked and there are
+                    // previously selected weekdays, hide the time.
+
+                    // Reset the "from" and "to" date and time values
+                    voidblock.getScheduledStart().setHasDate(false);
+                    voidblock.getScheduledStop().setHasDate(false);
+
+                    // Reset the textviews only if they are set
+                    TextView textView_from_datetime = (TextView) findViewById(
+                            R.id.text_view_voidblock_from);
+                    TextView textView_to_datetime = (TextView) findViewById(
+                            R.id.text_view_voidblock_to);
+
+                    if (textView_from_datetime.getText().length() != 0) {
+                        textView_from_datetime.setText(
+                                voidblock.getScheduledStart().toFormattedString());
+                    }
+                    if (textView_to_datetime.getText().length() != 0) {
+                        textView_to_datetime.setText(
+                                voidblock.getScheduledStop().toFormattedString());
+                    }
+                } else if (!isChecked) {
+                    // Reset the "from" and "to" date and time values
+                    voidblock.getScheduledStart().setHasDate(
+                            voidblock.getScheduledStart().getHasTime());
+                    voidblock.getScheduledStop().setHasDate(
+                            voidblock.getScheduledStop().getHasTime());
+
+                    // Reset the textviews only if they are set
+                    TextView textView_from_datetime = (TextView) findViewById(
+                            R.id.text_view_voidblock_from);
+                    TextView textView_to_datetime = (TextView) findViewById(
+                            R.id.text_view_voidblock_to);
+
+                    // Add a date if it doesn't have one for scheduled start
+                    if (voidblock.getScheduledStart().getDay() == 1 &&
+                            voidblock.getScheduledStart().getMonth() == 1 &&
+                            voidblock.getScheduledStart().getYear() == 1970) {
+                        if (!(voidblock.getScheduledStop().getDay() == 1 &&
+                                voidblock.getScheduledStop().getMonth() == 1 &&
+                                voidblock.getScheduledStop().getYear() == 1970)) {
+                            // Use the scheduled stop's date if it exists
+                            voidblock.getScheduledStart().setYear(
+                                    voidblock.getScheduledStop().getYear());
+                            voidblock.getScheduledStart().setMonth(
+                                    voidblock.getScheduledStop().getMonth());
+                            voidblock.getScheduledStart().setDay(
+                                    voidblock.getScheduledStop().getDay());
+                        } else {
+                            // Use current datetime
+                            Calendar calendar = Calendar.getInstance();
+                            voidblock.getScheduledStart().setYear(calendar.get(Calendar.YEAR));
+                            voidblock.getScheduledStart().setMonth(calendar.get(Calendar.MONTH));
+                            voidblock.getScheduledStart().setDay(
+                                    calendar.get(Calendar.DAY_OF_MONTH));
+                        }
+                    }
+                    // Add a date if it doesn't have on for scheduled stop
+                    if (voidblock.getScheduledStop().getDay() == 1 &&
+                            voidblock.getScheduledStop().getMonth() == 1 &&
+                            voidblock.getScheduledStop().getYear() == 1970) {
+                        if (!(voidblock.getScheduledStart().getDay() == 1 &&
+                                voidblock.getScheduledStart().getMonth() == 1 &&
+                                voidblock.getScheduledStart().getYear() == 1)) {
+                            // Use the scheduled start's date if it exists
+                            voidblock.getScheduledStop().setYear(
+                                    voidblock.getScheduledStart().getYear());
+                            voidblock.getScheduledStop().setMonth(
+                                    voidblock.getScheduledStart().getMonth());
+                            voidblock.getScheduledStop().setDay(
+                                    voidblock.getScheduledStart().getDay());
+                        } else {
+                            // Use current datetime
+                            Calendar calendar = Calendar.getInstance();
+                            voidblock.getScheduledStop().setYear(calendar.get(Calendar.YEAR));
+                            voidblock.getScheduledStop().setMonth(calendar.get(Calendar.MONTH));
+                            voidblock.getScheduledStop().setDay(
+                                    calendar.get(Calendar.DAY_OF_MONTH));
+                        }
+                    }
+                    if (textView_from_datetime.getText().length() != 0) {
+                        textView_from_datetime.setText(
+                                voidblock.getScheduledStart().toFormattedString());
+                    }
+                    if (textView_to_datetime.getText().length() != 0) {
+                        textView_to_datetime.setText(
+                                voidblock.getScheduledStop().toFormattedString());
+                    }
+                }
+            }
+        });
+
+        // Set repeats button onClickListener
+        button_repeats.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start new activity to set days
+                Intent intent = new Intent(getApplicationContext(),
+                        CreateRepeatedDaysActivity.class);
+                intent.putExtra(CreateRepeatedDaysActivity.EXTRA_RECEIVE_DAYS,
+                        voidblock.getWeekDays().toStringArray());
+                startActivityForResult(intent, createDaysRequestCode);
             }
         });
 
@@ -189,37 +299,16 @@ public class VoidblockCreateActivity extends AppCompatActivity {
             editText_name.setText(this.voidblock.getName());
             textView_from_datetime.setText(this.voidblock.getScheduledStart().toFormattedString());
             textView_to_datetime.setText(this.voidblock.getScheduledStop().toFormattedString());
+
             if (this.voidblock.getWeekDays().getWeekDays_list().isEmpty()) {
                 button_repeats.setText(R.string.button_repetitions_unset);
             } else {
                 button_repeats.setText(this.voidblock.getWeekDays().toString());
+                switch_repeat.setChecked(true);
             }
         } else {
             this.voidblock = new Voidblock();
         }
-
-        // Show repeats button when repeats switch is checked
-        switch_repeat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                // Set visibility of button
-                Button button_repeats = (Button) findViewById(R.id.button_voidblock_repeats);
-                button_repeats.setVisibility(isChecked? View.VISIBLE: View.GONE);
-            }
-        });
-
-        // Set repeats button onClickListener
-        button_repeats.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Start new activity to set days
-                Intent intent = new Intent(getApplicationContext(),
-                        CreateRepeatedDaysActivity.class);
-                intent.putExtra(CreateRepeatedDaysActivity.EXTRA_RECEIVE_DAYS,
-                        voidblock.getWeekDays().toStringArray());
-                startActivityForResult(intent, createDaysRequestCode);
-            }
-        });
     }
 
     @Override
@@ -258,11 +347,9 @@ public class VoidblockCreateActivity extends AppCompatActivity {
             stopping_not_set.setTitle(R.string.dialog_no_stopping_title);
             stopping_not_set.setMessage(R.string.dialog_no_stopping_message);
             stopping_not_set.show();
-        } else if (dateTime.getMillis() > this.voidblock.getScheduledStop().getMillis()) {
-            // "to" in millis is larger
-            Log.w(this.getClass().getName(), "Scheduled stop millis: " + this.voidblock.getScheduledStop().getMillis());
-            Log.w(this.getClass().getName(), "Current datetime in millis: " + dateTime.getMillis());
-            // "to" is before today
+        } else if (dateTime.getMillis() > this.voidblock.getScheduledStop().getMillis() &&
+                voidblock.getWeekDays().getWeekDays_list().isEmpty()) {
+            // "to" is before today and it is not set to repeat
             // If stopping time not set show an alert and don't do anything
             AlertDialog.Builder voidblock_obsolete = new AlertDialog.Builder(this);
             voidblock_obsolete.setTitle(R.string.dialog_voidblock_obsolete_title);

@@ -185,7 +185,25 @@ class Datetime implements Parcelable {
      * @return datetime calendar time in milliseconds
      */
     long getMillis() {
-        return this.datetime.getMillis();
+        if (this.getHasDate() && this.getHasTime()) {
+            return this.datetime.getMillis();
+        } else if (this.getHasDate()) {
+            org.joda.time.DateTime zero = new org.joda.time.DateTime(0);
+            Period period = new Period();
+            period = period.withDays(this.getDay());
+            period = period.withMonths(this.getMonth());
+            period = period.withYears(this.getYear());
+            return period.toDurationFrom(zero).getMillis();
+        } else if (this.getHasTime()) {
+            org.joda.time.DateTime zero = new org.joda.time.DateTime(0);
+            Period period = new Period();
+            period = period.withHours(this.getHour());
+            period = period.withMinutes(this.getMinute());
+
+            return period.toDurationFrom(zero).getMillis();
+        } else {
+            return 0;
+        }
     }
 
     /**

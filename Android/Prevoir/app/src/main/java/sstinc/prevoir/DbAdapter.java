@@ -188,18 +188,25 @@ class DbAdapter {
             switch (weekDay) {
                 case MONDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 1);
+                    break;
                 case TUESDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_TUESDAY, 1);
+                    break;
                 case WEDNESDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_WEDNESDAY, 1);
+                    break;
                 case THURSDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_THURSDAY, 1);
+                    break;
                 case FRIDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_FRIDAY, 1);
+                    break;
                 case SATURDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_SATURDAY, 1);
+                    break;
                 case SUNDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_SUNDAY, 1);
+                    break;
             }
         }
         long days_id = SQLdb.insert(DbAdapter.DAYS_TABLE, null, values);
@@ -241,20 +248,28 @@ class DbAdapter {
             switch (weekDay) {
                 case MONDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 1);
+                    break;
                 case TUESDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_TUESDAY, 1);
+                    break;
                 case WEDNESDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_WEDNESDAY, 1);
+                    break;
                 case THURSDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_THURSDAY, 1);
+                    break;
                 case FRIDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_FRIDAY, 1);
+                    break;
                 case SATURDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_SATURDAY, 1);
+                    break;
                 case SUNDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_SUNDAY, 1);
+                    break;
             }
         }
+
         long days_id = SQLdb.insert(DbAdapter.DAYS_TABLE, null, values);
 
         values = new ContentValues();
@@ -476,18 +491,25 @@ class DbAdapter {
             switch (weekDay) {
                 case MONDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 1);
+                    break;
                 case TUESDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_TUESDAY, 1);
+                    break;
                 case WEDNESDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_WEDNESDAY, 1);
+                    break;
                 case THURSDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_THURSDAY, 1);
+                    break;
                 case FRIDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_FRIDAY, 1);
+                    break;
                 case SATURDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_SATURDAY, 1);
+                    break;
                 case SUNDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_SUNDAY, 1);
+                    break;
             }
         }
         SQLdb.update(DbAdapter.DAYS_TABLE, values, DAYS_TABLE_COL_ID + "=" + days_id, null);
@@ -531,18 +553,25 @@ class DbAdapter {
             switch (weekDay) {
                 case MONDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 1);
+                    break;
                 case TUESDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_TUESDAY, 1);
+                    break;
                 case WEDNESDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_WEDNESDAY, 1);
+                    break;
                 case THURSDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_THURSDAY, 1);
+                    break;
                 case FRIDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_FRIDAY, 1);
+                    break;
                 case SATURDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_SATURDAY, 1);
+                    break;
                 case SUNDAY:
                     values.put(DbAdapter.DAYS_TABLE_COL_SUNDAY, 1);
+                    break;
             }
         }
         // Update days table with voidblock's values

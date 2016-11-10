@@ -59,9 +59,18 @@ public class CreateDatetimeActivity extends AppCompatActivity {
         Intent intent = getIntent();
         this.hasDate = intent.getBooleanExtra(EXTRA_RECEIVE_HASDATE, true);
         this.hasTime = intent.getStringExtra(EXTRA_RECEIVE_HASTIME);
-        this.datetime = new Datetime((Datetime) intent.getParcelableExtra(EXTRA_RECEIVE_DATETIME));
-        this.max_datetime = new Datetime((Datetime) intent.getParcelableExtra(EXTRA_RECEIVE_MAX));
-        this.min_datetime = new Datetime((Datetime) intent.getParcelableExtra(EXTRA_RECEIVE_MIN));
+        this.datetime = intent.getParcelableExtra(EXTRA_RECEIVE_DATETIME);
+        this.max_datetime = intent.getParcelableExtra(EXTRA_RECEIVE_MAX);
+        this.min_datetime = intent.getParcelableExtra(EXTRA_RECEIVE_MIN);
+
+        if (this.min_datetime == null) {
+            this.min_datetime = new Datetime();
+        }
+        if (this.max_datetime == null) {
+            this.max_datetime = new Datetime();
+        }
+        Log.w(this.getClass().getName(), "Sending scheduled start: " +
+                this.min_datetime.toString());
 
         // Get date and time picker
         ScrollableDatePicker datePicker = (ScrollableDatePicker) findViewById(
@@ -114,7 +123,6 @@ public class CreateDatetimeActivity extends AppCompatActivity {
 
         // Fill in the values of datetime if there were any
         if (this.datetime.getHasDate()) {
-            Log.w(this.getClass().getName(), this.datetime.toFormattedString());
             datePicker.updateDate(this.datetime.getYear(), this.datetime.getMonth()-1,
                     this.datetime.getDay());
         }
@@ -128,7 +136,8 @@ public class CreateDatetimeActivity extends AppCompatActivity {
             datePicker.setMaxDate(this.max_datetime.getMillis());
         }
         if (this.min_datetime.getHasDate()) {
-            datePicker.setMinDate(this.min_datetime.getMillis());
+            // Move maximum one day back
+            datePicker.setMinDate(this.min_datetime.getMillis()-(24*60*60*1000));
         }
     }
 
@@ -161,11 +170,11 @@ public class CreateDatetimeActivity extends AppCompatActivity {
         // Flag to indicate if valid
         boolean flag = true;
         // If the minimum datetime is set
-        if (this.min_datetime.getHasDate()) {
+        if (this.min_datetime.getHasDate() || this.min_datetime.getHasTime()) {
             flag = this.min_datetime.getMillis() <= submitted_datetime.getMillis();
         }
         // If the maximum datetime is set
-        if (this.max_datetime.getHasDate()) {
+        if (this.max_datetime.getHasDate() || this.max_datetime.getHasTime()) {
             flag = flag && submitted_datetime.getMillis() <= this.max_datetime.getMillis();
         }
 
