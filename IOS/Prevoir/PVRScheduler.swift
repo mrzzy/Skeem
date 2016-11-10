@@ -283,22 +283,24 @@ public class PVRScheduler: NSObject
     public func vaildateSchedulable() -> Bool
     {
         //Generate Input Data
-        let dict_stsk = self.generateAllSubtask()
-        let drsn_left = self.durationLeft(date: self.lastTaskDate())
+        let tasks = (Array(self.dataCtrl.DB.retrieveAllEntry(lockey: PVRDBKey.task).values) as! Array<PVRTask>)
+        var drsn_schd = 0 //Duration that has already been scheduled
 
-        //Result Data
-        var tsk_need = 0
-
-        //Compute Task Duration
-        for arr_stsk in dict_stsk.values
+        for task in tasks
         {
-            for stsk in arr_stsk
+            let drsn_left = self.durationLeft(date: task.deadline) - drsn_schd
+
+            if drsn_left < task.duration
             {
-                tsk_need += stsk.duration
+                return false //Cannot fit current task
+            }
+            else
+            {
+                drsn_schd += task.duration
             }
         }
 
-        return drsn_left >= tsk_need
+        return true
     }
 
     /*
