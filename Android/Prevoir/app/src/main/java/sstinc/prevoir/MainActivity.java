@@ -150,16 +150,16 @@ public class MainActivity extends AppCompatActivity
                     voidblockFragment.getTag()
             ).commit();
             toolbar.setTitle(R.string.menu_voidblocks);
-        } else if (id == R.id.nav_settings) {
-            // Settings
-            SettingFragment settingFragment= new SettingFragment();
-            getFragmentManager().beginTransaction().replace(
-                    R.id.content_main,
-                    settingFragment,
-                    settingFragment.getTag()
-            ).commit();
-            toolbar.setTitle(R.string.menu_settings);
-        }
+        }// else if (id == R.id.nav_settings) {
+//            // Settings
+//            SettingFragment settingFragment= new SettingFragment();
+//            getFragmentManager().beginTransaction().replace(
+//                    R.id.content_main,
+//                    settingFragment,
+//                    settingFragment.getTag()
+//            ).commit();
+//            toolbar.setTitle(R.string.menu_settings);
+//        }
 
         // Close the drawer once done
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

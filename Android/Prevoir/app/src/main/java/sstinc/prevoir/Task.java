@@ -3,8 +3,14 @@ package sstinc.prevoir;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormat;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 //TODO: Check dependencies on deadline per day
 
@@ -221,6 +227,49 @@ class Task extends Schedulable implements Parcelable {
         this.deadline = deadline;
     }
 
+    //TODO: Documentation
+    Task[] getSeparatedRepeatedTasks() {
+        // List of tasks
+        ArrayList<Task> tasks = new ArrayList<>();
+        // Convert repeated days to integer
+        ArrayList<Integer> repeated_days = new ArrayList<>();
+        ArrayList<WeekDays.WeekDay> weekdays_index =
+                new ArrayList<>(Arrays.asList(WeekDays.WeekDay.values()));
+        for (WeekDays.WeekDay weekDay : this.weekDays.getWeekDays_list()) {
+            repeated_days.add(weekdays_index.indexOf(weekDay) + 1);
+        }
+
+        DateTime dateTime = new DateTime();
+        while (dateTime.isBefore(this.deadline.getMillis())) {
+            for (int day_value : repeated_days) {
+                int difference;
+                // Calculate number of days to the next repeated weekday
+                if (day_value < dateTime.getDayOfWeek()) {
+                    difference = day_value + dateTime.getDayOfWeek() -7;
+                } else {
+                    difference = dateTime.getDayOfWeek() - day_value;
+                }
+                if (difference < 0) {
+                    // if difference is < 0, the next day is before today, move to
+                    // the next repeated day
+                    // 1, 2, 3, 4, 5, 6, 7
+                    dateTime = dateTime.plusDays(-difference);
+                } else if (difference == 0) {
+                    // today is a repeated day, add it to the list of tasks
+                    Task new_task = new Task(this);
+                    Datetime datetime = new Datetime(dateTime);
+                    datetime.setHasTime(true);
+                    new_task.setScheduledStart(datetime);
+                    tasks.add(new_task);
+                } else if (difference > 0){
+                    // the repeated day is a few days later, move to the day
+                    dateTime = dateTime.plus(difference);
+                }
+            }
+        }
+
+        return tasks.toArray(new Task[tasks.size()]);
+    }
 
     // Empty describe contents function for parcel
     @Override

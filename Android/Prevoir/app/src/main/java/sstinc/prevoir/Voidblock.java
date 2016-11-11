@@ -4,7 +4,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * This class handles the user's voidblocks. Each voidblock has a name and a
@@ -27,6 +30,15 @@ class Voidblock extends Schedulable implements Parcelable {
     Voidblock() {
         this.name = "";
         this.weekDays = new WeekDays();
+    }
+
+    // Copy constructor
+    Voidblock(Voidblock voidblock) {
+        this.name = voidblock.getName();
+        this.weekDays = new WeekDays(voidblock.getWeekDays());
+
+        this.scheduled_start = new Datetime(voidblock.getScheduledStart());
+        this.scheduled_stop = new Datetime(voidblock.getScheduledStop());
     }
 
     // Getters and Setters
@@ -61,6 +73,55 @@ class Voidblock extends Schedulable implements Parcelable {
         this.weekDays = weekDays;
     }
 
+    //TODO: Documentation
+    Voidblock[] getSeparatedRepeatedVoidblocks(Datetime end_datetime) {
+        // List of voidblocks
+        ArrayList<Voidblock> voidblocks = new ArrayList<>();
+        // Convert repeated days to integer
+        ArrayList<Integer> repeated_days = new ArrayList<>();
+        ArrayList<WeekDays.WeekDay> weekdays_index =
+                new ArrayList<>(Arrays.asList(WeekDays.WeekDay.values()));
+        for (WeekDays.WeekDay weekDay : this.weekDays.getWeekDays_list()) {
+            repeated_days.add(weekdays_index.indexOf(weekDay) + 1);
+        }
+
+        DateTime dateTime = new DateTime();
+        while (dateTime.isBefore(end_datetime.getMillis())) {
+            for (int day_value : repeated_days) {
+                int difference;
+                // Calculate number of days to the next repeated weekday
+                if (day_value < dateTime.getDayOfWeek()) {
+                    difference = day_value + dateTime.getDayOfWeek() -7;
+                } else {
+                    difference = dateTime.getDayOfWeek() - day_value;
+                }
+                if (difference < 0) {
+                    // if difference is < 0, the next day is before today, move to
+                    // the next repeated day
+                    // 1, 2, 3, 4, 5, 6, 7
+                    dateTime = dateTime.plusDays(-difference);
+                } else if (difference == 0) {
+                    // today is a repeated day, add it to the list of tasks
+                    Voidblock new_voidblock = new Voidblock(this);
+                    // Set scheduled start and stop
+                    new_voidblock.getScheduledStart().setYear(dateTime.getYear());
+                    new_voidblock.getScheduledStart().setMonth(dateTime.getMonthOfYear());
+                    new_voidblock.getScheduledStart().setDay(dateTime.getDayOfMonth());
+
+                    new_voidblock.getScheduledStop().setYear(dateTime.getYear());
+                    new_voidblock.getScheduledStop().setMonth(dateTime.getMonthOfYear());
+                    new_voidblock.getScheduledStop().setDay(dateTime.getDayOfMonth());
+
+                    voidblocks.add(new_voidblock);
+                } else if (difference > 0){
+                    // the repeated day is a few days later, move to the day
+                    dateTime = dateTime.plus(difference);
+                }
+            }
+        }
+
+        return voidblocks.toArray(new Voidblock[voidblocks.size()]);
+    }
 
     // Empty describe contents function for parcel
     @Override

@@ -20,7 +20,15 @@ import org.joda.time.format.PeriodFormat;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 
+/*
+Make voidtimeblocks
+evenSort(start, sto)
+Schedule repeated tasks by even sort
+
+Schedule the rest of the tasks
+ */
 public class ScheduleFragment extends ListFragment {
     // Menu status
     boolean menu_shuffle = false;
@@ -38,11 +46,31 @@ public class ScheduleFragment extends ListFragment {
      * @return list of void and time blocks
      */
     private ArrayList<Schedulable> getVoidTimeblocks() {
-        // Get voidblocks
+        ArrayList<Voidblock> voidblocks = new ArrayList<>();
+        // Get voidblocks and tasks
         DbAdapter dbAdapter = new DbAdapter(getActivity());
         dbAdapter.open();
-        ArrayList<Voidblock> voidblocks = dbAdapter.getVoidblocks();
+        ArrayList<Voidblock> raw_voidblocks = dbAdapter.getVoidblocks();
+        ArrayList<Task> tasks = dbAdapter.getTasks();
         dbAdapter.close();
+
+        Datetime latest_deadline = tasks.get(tasks.size()-1).getDeadline();
+
+        // Expand all repeated voidblocks
+        for (Voidblock voidblock : raw_voidblocks) {
+            if (!voidblock.getWeekDays().getWeekDays_list().isEmpty()) {
+                // There are repeated days; expand and add to voidblocks
+                Voidblock[] expanded_voidblocks = voidblock.getSeparatedRepeatedVoidblocks(
+                        latest_deadline);
+                Collections.addAll(voidblocks, expanded_voidblocks);
+            } else {
+                voidblocks.add(voidblock);
+            }
+        }
+        // Sort the voidblocks
+        VoidblockComparator voidblockComparator = new VoidblockComparator();
+        voidblockComparator.setSortBy(VoidblockComparator.Order.SCHEDULED_START, true);
+        Collections.sort(voidblocks, voidblockComparator);
 
         ArrayList<Schedulable> voidTimeblocks = new ArrayList<>();
         for (int i=0; i<voidblocks.size(); i++) {

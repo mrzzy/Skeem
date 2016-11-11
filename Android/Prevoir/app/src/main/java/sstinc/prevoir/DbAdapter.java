@@ -53,7 +53,7 @@ import java.util.Collections;
  *     <li>days_id references Days(id)</li>
  * </ul>
  */
-//TODO: Add task deadline per day
+@SuppressWarnings("unused")
 class DbAdapter {
     // Define constants
     // Constants for database
@@ -172,10 +172,8 @@ class DbAdapter {
      * @param task task to add
      */
     void insertTask(Task task) {
-        ContentValues values = new ContentValues();
-
         // Days Table
-        values = new ContentValues();
+        ContentValues values = new ContentValues();
         values.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 0);
         values.put(DbAdapter.DAYS_TABLE_COL_TUESDAY, 0);
         values.put(DbAdapter.DAYS_TABLE_COL_WEDNESDAY, 0);
@@ -232,10 +230,8 @@ class DbAdapter {
      * @param voidblock voidblock to add
      */
     void insertVoidblock(Voidblock voidblock) {
-        ContentValues values = new ContentValues();
-
         // Days Table
-        values = new ContentValues();
+        ContentValues values = new ContentValues();
         values.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 0);
         values.put(DbAdapter.DAYS_TABLE_COL_TUESDAY, 0);
         values.put(DbAdapter.DAYS_TABLE_COL_WEDNESDAY, 0);
@@ -302,8 +298,7 @@ class DbAdapter {
 
         cursor.moveToFirst();
         for (int i=1; i<8; i++) {
-            // FIXME: 30/10/16 getString to getInt
-            if (cursor.getString(i).equals("1")) {
+            if (cursor.getInt(i) == 1) {
                 weekDays.add(weekDayIndex[i-1]);
             }
         }
@@ -325,8 +320,7 @@ class DbAdapter {
         // Create task instance
         Task task = new Task();
 
-        // FIXME: 31/10/16 getString to getLong
-        long days_id = Long.parseLong(cursor.getString(1));
+        long days_id = cursor.getLong(1);
         task.setName(cursor.getString(2));
         task.setSubject(cursor.getString(3));
         task.setDescription(cursor.getString(4));
@@ -357,10 +351,9 @@ class DbAdapter {
 
         for (cursor.moveToLast(); !cursor.isBeforeFirst(); cursor.moveToPrevious()) {
             Task task = new Task();
-            // FIXME: 30/10/16 getString to getLong
-            task.setId(Long.parseLong(cursor.getString(0)));
-            // FIXME: 31/10/16 getString to getLong
-            long days_id = Long.parseLong(cursor.getString(1));
+
+            task.setId(cursor.getLong(0));
+            long days_id = cursor.getLong(1);
             task.setWeekDays(getDays(days_id));
 
             task.setName(cursor.getString(2));
@@ -396,8 +389,7 @@ class DbAdapter {
 
         Voidblock voidblock = new Voidblock();
 
-        // FIXME: 31/10/16 getString to getLong
-        long days_id = Long.parseLong(cursor.getString(1));
+        long days_id = cursor.getLong(1);
 
         voidblock.setName(cursor.getString(2));
         voidblock.setScheduledStart(new Datetime(cursor.getString(3)));
@@ -425,10 +417,9 @@ class DbAdapter {
 
         for (cursor.moveToLast(); !cursor.isBeforeFirst(); cursor.moveToPrevious()) {
             Voidblock voidblock = new Voidblock();
-            // FIXME: 31/10/16 getString to getLong
-            voidblock.setId(Long.parseLong(cursor.getString(0)));
-            // FIXME: 31/10/16 getString to getLong
-            voidblock.setWeekDays(getDays(Long.parseLong(cursor.getString(1))));
+
+            voidblock.setId(cursor.getLong(0));
+            voidblock.setWeekDays(getDays(cursor.getLong(1)));
             voidblock.setName(cursor.getString(2));
             voidblock.setScheduledStart(new Datetime(cursor.getString(3)));
             voidblock.setScheduledStop(new Datetime(cursor.getString(4)));
@@ -473,8 +464,7 @@ class DbAdapter {
         cursor.moveToFirst();
 
         // Get the days id
-        // FIXME: 31/10/16 getString to getLong
-        long days_id = Long.parseLong(cursor.getString(0));
+        long days_id = cursor.getLong(0);
         cursor.close();
 
         // Days Table
@@ -536,8 +526,7 @@ class DbAdapter {
         cursor.moveToFirst();
 
         // Get the days id
-        // FIXME: 31/10/16 getString to getLong
-        long days_id = Long.parseLong(cursor.getString(0));
+        long days_id = cursor.getLong(0);
         cursor.close();
         // Days Table
         values = new ContentValues();
@@ -590,8 +579,7 @@ class DbAdapter {
         cursor.moveToFirst();
 
         // Get the days id
-        // FIXME: 31/10/16 getString to getLong
-        long days_id = Long.parseLong(cursor.getString(0));
+        long days_id = cursor.getLong(0);
         cursor.close();
         // Delete foreign keys first
         SQLdb.delete(DAYS_TABLE, DAYS_TABLE_COL_ID + "=" + days_id, null);
@@ -610,8 +598,7 @@ class DbAdapter {
         cursor.moveToFirst();
 
         // Get the days id
-        // FIXME: 31/10/16 getString to getLong
-        long days_id = Long.parseLong(cursor.getString(0));
+        long days_id = cursor.getLong(0);
         cursor.close();
         // Delete foreign key first
         SQLdb.delete(DAYS_TABLE, DAYS_TABLE_COL_ID + "=" + days_id, null);
@@ -652,22 +639,21 @@ class DbAdapter {
             db.execSQL("DROP TABLE IF EXISTS " + VOIDBLOCKS_TABLE);
             onCreate(db);
         }
-        public ArrayList<Cursor> getData(String Query){
+        ArrayList<Cursor> getData(String Query){
             //get writable database
             SQLiteDatabase sqlDB = this.getWritableDatabase();
             String[] columns = new String[] { "mesage" };
             //an array list of cursor to save two cursors one has results from the query
             //other cursor stores error message if any errors are triggered
-            ArrayList<Cursor> alc = new ArrayList<Cursor>(2);
+            ArrayList<Cursor> alc = new ArrayList<>(2);
             MatrixCursor Cursor2= new MatrixCursor(columns);
             alc.add(null);
             alc.add(null);
 
 
             try{
-                String maxQuery = Query ;
                 //execute the query results will be save in Cursor c
-                Cursor c = sqlDB.rawQuery(maxQuery, null);
+                Cursor c = sqlDB.rawQuery(Query, null);
 
 
                 //add value to cursor2
