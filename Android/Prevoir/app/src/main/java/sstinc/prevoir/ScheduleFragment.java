@@ -26,8 +26,49 @@ import java.util.Collections;
 Make voidtimeblocks
 evenSort(start, sto)
 Schedule repeated tasks by even sort
-
 Schedule the rest of the tasks
+
+def evenSort():
+    for task in tasks:
+        available_timeblocks = []
+        for timeblock in timeblocks:
+            if timeblock is before task.deadline:
+                available_timeblocks.append(timeblock)
+
+        period_needed = task.period_needed
+        time_per_block = period_needed/len(available_timeblocks)
+        while True:
+            for timeblock in available_timeblocks:
+                if timeblock.duration less than time_per_block:
+                    period_needed -= timblock.duration
+                    time_per_block = period_needed/len(available_timeblocks)-1
+                    available_timeblocks.remove(timeblock)
+
+                    schedule fill timeblock with task
+                else:
+                    period_needed -= time_per_block
+                    schdule timeblock with task
+
+            if period_needed < 1min:
+                break
+
+Sorting:
+    Get voidtimeblocks
+    Get all the tasks that repeat
+    for each repeated task:
+        for each expanded repeated task:
+            scheduled the expanded repeated task into the latest timeblock in the day
+    for each task with min_time_period:
+        excess = 0 ms
+        for each available timeblock:
+            if the timeblock's duration is shorter than min_time_period:
+                fill timeblock with task
+                add min_time_period - timeblock to excess
+            else:
+                fill timeblock with task
+        if excess != 0:
+            for each available timeblock:
+                evenSort task into timeblock
  */
 public class ScheduleFragment extends ListFragment {
     // Menu status
@@ -88,31 +129,30 @@ public class ScheduleFragment extends ListFragment {
     }
 
     /**
-     * This function returns the timeblocks which the given task can use,
-     * that is, timeblocks before it's deadline. The task's deadline may
-     * be cutting into the last timeblock but the whole timeblock will be
-     * returned.
+     * This function returns the index of the timeblocks which the given task
+     * can use, that is, timeblocks before it's deadline. The task's deadline
+     * may be cutting into the last timeblock but the index of the timeblock
+     * will still be returned.
      *
      * @param task the task to get available timeblocks for
-     * @return timeblocks before the task's deadline
+     * @param timeblocks the array list of timeblocks
+     * @return index of timeblocks before the task's deadline
      */
-    private ArrayList<Timeblock> getTaskAvailableTimeblocks(Task task) {
+    private ArrayList<Integer> getTaskAvailableTimeblocks(Task task,
+                                                            ArrayList<Timeblock> timeblocks) {
         // Array list to store results
-        ArrayList<Timeblock> timeblocksAvailable = new ArrayList<>();
+        ArrayList<Integer> timeblocksAvailable = new ArrayList<>();
         // Task deadline in milliseconds
         long taskDeadlineMillis = task.getDeadline().getMillis();
 
-        // Get the voidtimeblocks
-        ArrayList<Schedulable> voidTimeblocks = getVoidTimeblocks();
-        for (Schedulable schedulable : voidTimeblocks) {
-            if (schedulable instanceof Timeblock) {
-                Timeblock timeblock = (Timeblock) schedulable;
-                // If the timeblock is before the deadline
-                if (timeblock.getScheduledStart().getMillis() < taskDeadlineMillis) {
-                    timeblocksAvailable.add(timeblock);
-                }
+        for (int i; i<timeblocks.size(); i++) {
+            Timeblock timeblock = timeblocks.get(i);
+            // If the timeblock is before the deadline
+            if (timeblock.getScheduledStart().getMillis() < taskDeadlineMillis) {
+                timeblocksAvailable.add(i);
             }
         }
+
         return timeblocksAvailable;
     }
 
@@ -234,7 +274,6 @@ public class ScheduleFragment extends ListFragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Go to SelectCreateActivity
                 Intent intent = new Intent(getActivity(), SelectCreateActivity.class);
                 startActivity(intent);
             }
