@@ -1,0 +1,57 @@
+ALGORITHMS
+------------------------------------------------------------------------------
+| PREFACE
+This file includes algorithms for even sort--for now. You may want to run the
+following vim code to enable highlighting:
+Select the commands in visual mode (v) and yank (y). Run :@"
+
+For python highlighting:
+:syntax include @PYTHON syntax/python.vim
+:syntax region pythonSnip matchgroup=Snip start="@begin=python" end="@end=python" contains=@PYTHON
+:hi link Snip SpecialComment
+
+| EVEN SORT
+Even sort aims to schedule the tasks in the most even way possible keeping in
+mind the recommended (or minimum) time period suggested by the user.
+
+1. Validation
+2. Schedule repeated tasks
+3. Schedule tasks with recommended (or minimum) time periods
+4. Schedule the rest of the tasks
+
+|-| 1. Validation
+For this algorithm to work, the tasks must be able to fit into the time blocks.
+To validate (and this can be applied to all other algorithms) check that every
+task's duration can be fitted into their respective available time blocks (time
+blocks before the task's deadline).
+
+There are two main categories of tasks to worry about: tasks that have repeated
+days and tasks that don't. The validation process fits the repeated tasks first
+then it fits the task with the closest deadline.
+
+@begin=python
+## Python Pseudo code
+# tasks (list) - The tasks to schedule
+# timeblocks (list) - All the timeblocks
+
+# Schedule the tasks with repeated days
+for timeblock in timeblocks:
+    for task in tasks:
+        if not task.repeatedDays.isEmpty() and
+          timeblock.getDayOfWeek() in task.repeatedDays:
+            if task.duration > timeblock.duration:
+                timeblock.duration = 0
+                task.duration -= timeblock.duration
+            else:
+                timeblock.duration -= task.duration
+                continue
+
+# Check the tasks with repeated days
+for task in tasks:
+    if not task.repeatedDays.isEmpty():
+        if task.duration != 0:
+            # Not enough time, quitting
+            quit()
+
+
+@end=python
