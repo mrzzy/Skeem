@@ -119,7 +119,7 @@ class Timeblock extends Schedulable {
 
     /**
      * Adds a new task to the timeblock. Recalculates the time used and time
-     * left in the timeblock.
+     * left in the timeblock and set the scheduled start and stop of the task.
      *
      * @param task task to add
      * @return true if addition successful. false if there is not enough time
@@ -136,6 +136,11 @@ class Timeblock extends Schedulable {
         // Recalculate time used and time left
         this.period_left = this.period_left.minus(task.getPeriodNeeded());
         this.period_used = this.period_used.plus(task.getPeriodNeeded());
+
+        // Set the new scheduled start and stop
+        task.setScheduledStart(this.scheduled_start.add(this.period_left));
+        task.setScheduledStop(this.scheduled_start.add(this.period_left).add(
+                task.getPeriodNeeded()));
 
         return true;
     }

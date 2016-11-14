@@ -28,7 +28,7 @@ evenSort(start, sto)
 Schedule repeated tasks by even sort
 Schedule the rest of the tasks
 
-def evenSort():
+def evenSort(tasks, timeblocks, scheduled_start):
     for task in tasks:
         available_timeblocks = []
         for timeblock in timeblocks:
@@ -145,7 +145,7 @@ public class ScheduleFragment extends ListFragment {
         // Task deadline in milliseconds
         long taskDeadlineMillis = task.getDeadline().getMillis();
 
-        for (int i; i<timeblocks.size(); i++) {
+        for (int i=0; i<timeblocks.size(); i++) {
             Timeblock timeblock = timeblocks.get(i);
             // If the timeblock is before the deadline
             if (timeblock.getScheduledStart().getMillis() < taskDeadlineMillis) {
@@ -157,109 +157,194 @@ public class ScheduleFragment extends ListFragment {
     }
 
     /**
-     * Checks if there is enough time in timeblocks for all the tasks.
-     * @return true if there is enough time. false if there is not enough
-     * time
+     * Schedules the tasks as evenly as possible into each timeblock. This
+     * function assumes that the tasks can always be scheduled into the
+     * timeblocks.
+     *
+     * @param tasks array list of tasks to schedule
+     * @param voidtimeblocks array list of voidtimeblock scope
+     * @param timeblock_indices array list of voidtimeblock's indices to each
+     *                          timeblock
+     * @param scheduled_start datetime to schedule from
+     * @return array list of schedulables with timeblocks scheduled with the
+     * tasks
      */
-    private boolean validateTaskInTimeblocks() {
-        // Get voidTimeblocks and tasks
+    private ArrayList<Schedulable> evenSort(ArrayList<Task> tasks,
+                                          ArrayList<Schedulable> voidtimeblocks,
+                                          ArrayList<Integer> timeblock_indices,
+                                          Datetime scheduled_start) {
+        for (Task task : tasks) {
+            ArrayList<Integer> available_timeblocks = new ArrayList<>();
+            // Get available timeblocks
+            for (int i : timeblock_indices) {
+                Timeblock timeblock = (Timeblock) voidtimeblocks.get(i);
+                if (timeblock.getScheduledStart().getMillis() >= scheduled_start.getMillis() &&
+                        timeblock.getScheduledStop().getMillis() > task.getDeadline().getMillis()) {
+                    available_timeblocks.add(i);
+                }
+            }
+
+            Period period_needed = new Period(task.getPeriodNeeded());
+            Long time_per_block = period_needed.toStandardDuration().getMillis()/
+                    ((long) available_timeblocks.size());
+            while (true) {
+                for (int i : available_timeblocks) {
+                    Timeblock timeblock = (Timeblock) voidtimeblocks.get(i);
+                    if (timeblock.getPeriodLeft().toStandardDuration().getMillis() <
+                            time_per_block) {
+                        // timeblock is too small for task's time_per_block
+                        period_needed = period_needed.minus(timeblock.getPeriod());
+                        // Remove the Integer object i from the list (not index)
+                        available_timeblocks.remove(Integer.valueOf(i));
+                        // Calculate new time per block
+                        time_per_block = period_needed.toStandardDuration().getMillis()/
+                                ((long) available_timeblocks.size());
+
+                        // Create task to schedule
+                        Task timeblock_task = new Task(task);
+                        // Set scheduled start and stop
+                        Datetime task_scheduled_start = new Datetime(
+                                timeblock.getScheduledStart().add(timeblock.getPeriodUsed()));
+                        Datetime task_scheduled_stop = new Datetime(timeblock.getScheduledStop());
+                        // Set period needed
+                        timeblock_task.setPeriodNeeded(new Period(timeblock.getPeriodLeft()));
+                        // Schedule timeblock with task
+                        ((Timeblock) voidtimeblocks.get(i)).addTask(timeblock_task);
+                    } else {
+                        // timeblock has sufficient space for task
+                        period_needed = period_needed.minus(timeblock.getPeriodLeft());
+
+                        // Create task to schedule
+                        Task timeblock_task = new Task(task);
+                        // Set scheduled start and stop
+                        Datetime task_scheduled_start = new Datetime(
+                                timeblock.getScheduledStart().add(timeblock.getPeriodUsed()));
+                        Datetime task_scheduled_stop = new Datetime(
+                                timeblock.getScheduledStart().add(timeblock.getPeriodUsed()).add(
+                                        new Period(time_per_block)));
+                        // Set period needed
+                        timeblock_task.setPeriodNeeded(new Period(timeblock.getPeriodLeft()));
+                        // Schedule timeblock with task
+                        ((Timeblock) voidtimeblocks.get(i)).addTask(timeblock_task);
+                    }
+                }
+
+                if (period_needed.getHours() == 0 && period_needed.getMinutes() == 0) {
+                    break;
+                }
+            }
+        }
+        return voidtimeblocks;
+    }
+
+    /*
+    Sorting:
+    Get voidtimeblocks
+    Get all the tasks that repeat
+    for each repeated task:
+        for each expanded repeated task:
+            scheduled the expanded repeated task into the latest timeblock in the day
+
+     */
+    private ArrayList<Schedulable> schedule() {
+        // schedule with evenSort
+        // Get tasks
         DbAdapter dbAdapter = new DbAdapter(getActivity());
         dbAdapter.open();
         ArrayList<Task> tasks = dbAdapter.getTasks();
         dbAdapter.close();
+        // Get voidtimeblocks
+        ArrayList<Schedulable> voidtimeblocks = getVoidTimeblocks();
 
-        ArrayList<Schedulable> voidTimeblocks = getVoidTimeblocks();
-
-        Period time_needed = new Period();
-        for (Schedulable schedulable : tasks) {
-            Task task = (Task) schedulable;
-            time_needed.plus(task.getPeriodNeeded());
-        }
-
-        Period total_time = new Period();
-        for (Schedulable schedulable : getVoidTimeblocks()) {
-            if (schedulable instanceof Timeblock) {
-                Timeblock timeblock = (Timeblock) schedulable;
-                total_time.plus(timeblock.getPeriodLeft());
+        // Get timeblock indices
+        ArrayList<Integer> timeblock_indices = new ArrayList<>();
+        for (int i=0; i<voidtimeblocks.size(); i++) {
+            if (voidtimeblocks.get(i) instanceof Timeblock) {
+                timeblock_indices.add(i);
             }
         }
 
-        return PeriodFormat.getDefault().print(total_time).compareTo(
-                PeriodFormat.getDefault().print(time_needed)) != -1;
-    }
+        // Schedule repeated tasks
+        for (int i=0; i<tasks.size(); i++) {
+            Task task = tasks.get(i);
+            if (!task.getWeekDays().getWeekDays_list().isEmpty()) {
+                // If it is a repeated task
+                for (Task expanded_task : task.getSeparatedRepeatedTasks()) {
+                    ArrayList<Integer> expanded_task_timeblocks_indices = new ArrayList<>();
 
-
-    /**
-     * Sorts and scehdules the tasks evenely into each timeblock. Returns an
-     * empty list if there is insufficient time.
-     * @return array list of voidblocks and timeblocks.
-     */
-    private ArrayList<Schedulable> evenSort() {
-        if (!validateTaskInTimeblocks()) {
-            return new ArrayList<>();
-        }
-
-        DbAdapter dbAdapter = new DbAdapter(getActivity());
-        dbAdapter.open();
-        ArrayList<Task> tasks = dbAdapter.getTasks();
-        int number_of_timeblocks = dbAdapter.getVoidblocks().size()-1;
-        dbAdapter.close();
-
-        ArrayList<Schedulable> voidTimeblocks = getVoidTimeblocks();
-
-        for (Task task : tasks) {
-            Period time_per_block = new Period(
-                    task.getPeriodNeeded().getMillis()/number_of_timeblocks);
-            Period task_duration_left = task.getPeriodNeeded();
-
-            while (task_duration_left.getMinutes() != 0) {
-                for (Schedulable schedulable : voidTimeblocks) {
-                    if (schedulable instanceof Timeblock) {
-                        Timeblock timeblock = (Timeblock) schedulable;
-                        if (timeblock.getPeriod().getMinutes() == 0) {
-                            continue;
+                    // Get timeblocks available to the expanded task
+                    for (int timeblock_index : timeblock_indices) {
+                        Timeblock timeblock = (Timeblock) voidtimeblocks.get(timeblock_index);
+                        if (timeblock.getScheduledStart().getMillis() >=
+                                expanded_task.getScheduledStart().getMillis() &&
+                                timeblock.getScheduledStop().getMillis() <=
+                                        expanded_task.getScheduledStop().getMillis()) {
+                            // If the timeblock is within the range of the expanded task
+                            expanded_task_timeblocks_indices.add(timeblock_index);
                         }
+                    }
 
-                        if (PeriodFormat.getDefault().print(time_per_block).compareTo(
-                                PeriodFormat.getDefault().print(timeblock.getPeriod())) == -1) {
-                            task_duration_left = task_duration_left.minus(timeblock.getPeriod());
+                    // Reverse the expanded task's timeblock's indices to iterate backwards
+                    Collections.reverse(expanded_task_timeblocks_indices);
+                    Period expanded_task_period_needed = new Period(
+                            expanded_task.getPeriodNeeded());
+                    for (int expanded_task_timeblock_index : expanded_task_timeblocks_indices) {
+                        // Try and schedule it into the timeblock
+                        Timeblock timeblock = (Timeblock) voidtimeblocks.get(
+                                expanded_task_timeblock_index);
 
-                            Task timeblock_task = new Task(task);
-                            timeblock_task.setScheduledStart(
-                                    new Datetime(timeblock.getScheduledStart()));
-                            timeblock_task.setScheduledStop(
-                                    new Datetime(timeblock.getScheduledStop()));
-                            timeblock_task.setPeriodNeeded(new Period(timeblock.getPeriod()));
-                            timeblock.addTask(timeblock_task);
+                        if (timeblock.getPeriodLeft().toStandardDuration().getMillis() <
+                                expanded_task_period_needed.toStandardDuration().getMillis()) {
+                            // Not enough time, fill the timeblock
+                            expanded_task_period_needed = expanded_task_period_needed.minus(
+                                    timeblock.getPeriodLeft());
+                            // Set the period needed
+                            Task task_to_schedule = new Task(expanded_task);
+                            task_to_schedule.setPeriodNeeded(timeblock.getPeriodLeft());
+                            ((Timeblock) voidtimeblocks.get(expanded_task_timeblock_index)).addTask(
+                                    task_to_schedule);
                         } else {
-                            task_duration_left = task_duration_left.minus(time_per_block);
-
-                            Task timeblock_task = new Task(task);
-                            timeblock_task.setScheduledStart(new Datetime(
-                                    timeblock.getScheduledStart().add(timeblock.getPeriodUsed())));
-                            timeblock_task.setScheduledStop(new Datetime(
-                                    timeblock.getScheduledStart()
-                                            .add(timeblock.getPeriodUsed())
-                                            .add(time_per_block)));
-                            timeblock.addTask(timeblock_task);
+                            // Enough time for the task
+                            Task task_to_schedule = new Task(expanded_task);
+                            task_to_schedule.setPeriodNeeded(expanded_task_period_needed);
+                            ((Timeblock) voidtimeblocks.get(expanded_task_timeblock_index)).addTask(
+                                    task_to_schedule);
+                            break;
                         }
                     }
                 }
             }
         }
 
-        // Change all timeblocks to tasks
-        ArrayList<Schedulable> schedule = new ArrayList<>();
-        for (Schedulable schedulable : voidTimeblocks) {
-            if (schedulable instanceof Timeblock) {
-                Timeblock timeblock = (Timeblock) schedulable;
-                schedule.addAll(timeblock.getTasksScheduled());
-            } else {
-                schedule.add(schedulable);
+        // Try to schedule min_time_period
+        /*
+        for each task with min_time_period:
+        excess = 0 ms
+        for each available timeblock:
+            if the timeblock's duration is shorter than min_time_period:
+                fill timeblock with task
+                add min_time_period - timeblock to excess
+            else:
+                fill timeblock with task
+        if excess != 0:
+            for each available timeblock:
+                evenSort task into timeblock
+         */
+        for (Task task: tasks) {
+            if (task.getPeriodMinimum() != new Period()) {
+                // If the task has a minimum time period
+                Period excess = new Period();
+
+                ArrayList<Integer> available_timeblocks = new ArrayList<>();
+                // Get available timeblocks
+                for (int i : timeblock_indices) {
+                    Timeblock timeblock = (Timeblock) voidtimeblocks.get(i);
+                    if (timeblock.getScheduledStart().getMillis() )
+
+                }
             }
         }
 
-        return schedule;
     }
 
     @Override
