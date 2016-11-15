@@ -79,7 +79,7 @@ class TaskListVC: UITableViewController
             //Create/Update Table View Cell
             let cell = (tableView.dequeueReusableCell(withIdentifier: "uitcell.list.task", for: indexPath) as! TaskListTBC)
             let task = self.arr_task[indexPath.row]
-            cell.updateData(name: task.name, subject: task.subject ,completion: task.completion)
+            cell.updateUI(name: task.name, subject: task.subject ,completion: task.completion)
             return cell
         }
         else

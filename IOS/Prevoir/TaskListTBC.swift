@@ -18,14 +18,14 @@ class TaskListTBC: UITableViewCell {
     //Functions
     //Data Functions
     /*
-     * public func updateData(name:String,subject:String,completion:Double)
+     * public func updateUI(name:String,subject:String,completion:Double)
      * - Update UI elements to specified data
      * [Arguments]
      * name - name of the task
      * subject - subject of the task
      * completion - completion of the task
     */
-    public func updateData(name:String,subject:String,completion:Double)
+    public func updateUI(name:String,subject:String,completion:Double)
     {
         //Update UI to reflect data
         self.label_name.text = name

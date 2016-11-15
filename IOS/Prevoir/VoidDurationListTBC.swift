@@ -18,14 +18,14 @@ class VoidDurationListTBC: UITableViewCell {
     //Functions
     //Data Functions
     /*
-     * public func updateData(name:Stirng,begin:NSDate,duration:Int)
+     * public func updateUI(name:Stirng,begin:NSDate,duration:Int)
      * - Updates the cell for the specified data
      * [Argument]
      * name - Name of the void duration
      * begin - Begin date/time of the void duration
      * duration - Duration of the void duration
     */
-    public func updateData(name:String,begin:NSDate,duration:Int)
+    public func updateUI(name:String,begin:NSDate,duration:Int)
     {
         //Init Date Data
         let date = Date()

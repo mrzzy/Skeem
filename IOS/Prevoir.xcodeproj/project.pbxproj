@@ -19,6 +19,8 @@
 		5A5463A71DCB01BC0028261C /* VoidDurationListTBC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A5463A61DCB01BC0028261C /* VoidDurationListTBC.swift */; };
 		5A81D25D1DD020AB008E5FE4 /* RepeatEditVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A81D25C1DD020AB008E5FE4 /* RepeatEditVC.swift */; };
 		5A87A27B1DBCE40900A206B9 /* PVRDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A87A27A1DBCE40900A206B9 /* PVRDataView.swift */; };
+		5A891F0C1DD556A900868D91 /* ScheduleTaskTBC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A891F0B1DD556A900868D91 /* ScheduleTaskTBC.swift */; };
+		5A891F0E1DD556BA00868D91 /* ScheduleVoidDurationTBC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A891F0D1DD556BA00868D91 /* ScheduleVoidDurationTBC.swift */; };
 		5A8E08AF1DC9DBBC00A7DE53 /* VoidDurationListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8E08AE1DC9DBBC00A7DE53 /* VoidDurationListVC.swift */; };
 		5A8E08B71DC9DC5500A7DE53 /* ScheduleListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8E08B61DC9DC5500A7DE53 /* ScheduleListVC.swift */; };
 		5A8E08B91DC9DD2D00A7DE53 /* TaskListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8E08B81DC9DD2D00A7DE53 /* TaskListVC.swift */; };
@@ -47,8 +49,10 @@
 		5A5463A61DCB01BC0028261C /* VoidDurationListTBC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoidDurationListTBC.swift; sourceTree = "<group>"; };
 		5A81D25C1DD020AB008E5FE4 /* RepeatEditVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RepeatEditVC.swift; sourceTree = "<group>"; };
 		5A87A27A1DBCE40900A206B9 /* PVRDataView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRDataView.swift; sourceTree = "<group>"; };
+		5A891F0B1DD556A900868D91 /* ScheduleTaskTBC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleTaskTBC.swift; sourceTree = "<group>"; };
+		5A891F0D1DD556BA00868D91 /* ScheduleVoidDurationTBC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleVoidDurationTBC.swift; sourceTree = "<group>"; };
 		5A8E08AE1DC9DBBC00A7DE53 /* VoidDurationListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoidDurationListVC.swift; sourceTree = "<group>"; };
-		5A8E08B61DC9DC5500A7DE53 /* ScheduleListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleListVC.swift; sourceTree = "<group>"; };
+		5A8E08B61DC9DC5500A7DE53 /* ScheduleListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleListVC.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		5A8E08B81DC9DD2D00A7DE53 /* TaskListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskListVC.swift; sourceTree = "<group>"; };
 		5A8E08BA1DC9DD9100A7DE53 /* TaskViewVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskViewVC.swift; sourceTree = "<group>"; };
 		5A8E08BC1DC9DDDA00A7DE53 /* VoidDurationEditVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoidDurationEditVC.swift; sourceTree = "<group>"; };
@@ -115,6 +119,7 @@
 			children = (
 				5A4083CE1DAB68AF0057E896 /* Logic */,
 				5A50C7451D8CD5070002ACF8 /* UI */,
+				5A8E08BA1DC9DD9100A7DE53 /* TaskViewVC.swift */,
 				5AA4406C1DAF4873005B0E70 /* Data */,
 				5A50C7441D8CD4F40002ACF8 /* Resources */,
 			);
@@ -139,8 +144,7 @@
 				5A81D25E1DD02F5A008E5FE4 /* Repeat */,
 				5A5463A51DCB017D0028261C /* VoidDuration */,
 				5A455C6D1DD2BD610069F2AE /* Task */,
-				5A8E08B61DC9DC5500A7DE53 /* ScheduleListVC.swift */,
-				5A8E08BA1DC9DD9100A7DE53 /* TaskViewVC.swift */,
+				5A97F31E1DD50EDE003DC346 /* Schdule */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -169,6 +173,16 @@
 				5A81D25C1DD020AB008E5FE4 /* RepeatEditVC.swift */,
 			);
 			name = Repeat;
+			sourceTree = "<group>";
+		};
+		5A97F31E1DD50EDE003DC346 /* Schdule */ = {
+			isa = PBXGroup;
+			children = (
+				5A8E08B61DC9DC5500A7DE53 /* ScheduleListVC.swift */,
+				5A891F0B1DD556A900868D91 /* ScheduleTaskTBC.swift */,
+				5A891F0D1DD556BA00868D91 /* ScheduleVoidDurationTBC.swift */,
+			);
+			name = Schdule;
 			sourceTree = "<group>";
 		};
 		5AA4406C1DAF4873005B0E70 /* Data */ = {
@@ -267,8 +281,10 @@
 				5AD59AA01DB4DD130076FF0B /* PVRDataController.swift in Sources */,
 				5A4083D01DAB68FC0057E896 /* PVRScheduler.swift in Sources */,
 				5A8E08B91DC9DD2D00A7DE53 /* TaskListVC.swift in Sources */,
+				5A891F0E1DD556BA00868D91 /* ScheduleVoidDurationTBC.swift in Sources */,
 				5A5463A71DCB01BC0028261C /* VoidDurationListTBC.swift in Sources */,
 				5A8E08BD1DC9DDDA00A7DE53 /* VoidDurationEditVC.swift in Sources */,
+				5A891F0C1DD556A900868D91 /* ScheduleTaskTBC.swift in Sources */,
 				5A2755241DB5F0BE00213D60 /* PVRDuration.swift in Sources */,
 				5A50C72D1D8CD2E50002ACF8 /* AppDelegate.swift in Sources */,
 				5A8E08BB1DC9DD9100A7DE53 /* TaskViewVC.swift in Sources */,

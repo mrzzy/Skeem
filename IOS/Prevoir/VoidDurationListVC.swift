@@ -100,7 +100,7 @@ class VoidDurationListVC: UITableViewController {
             let cell = ((tableView.dequeueReusableCell(withIdentifier: self.utcell_id_voidd, for: indexPath)) as! VoidDurationListTBC)
             let voidd = self.arr_voidd[indexPath.row]
             //NOTE: Duration adjustment due to void duration preadjustment
-            cell.updateData(name: voidd.name, begin: voidd.begin, duration: voidd.duration + 1)
+            cell.updateUI(name: voidd.name, begin: voidd.begin, duration: voidd.duration + 1)
 
             return cell
         }
