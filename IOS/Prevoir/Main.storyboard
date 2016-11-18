@@ -47,7 +47,7 @@
                                         <rect key="frame" x="0.0" y="28" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="m7Q-mY-Bba" id="Qrw-z5-r0u">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Refresh schduled subtasks by shaking" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iqj-Bb-SME">
@@ -786,7 +786,7 @@
                                     <outlet property="label_duration" destination="usi-kx-I1l" id="Vje-Be-dyq"/>
                                     <outlet property="label_name" destination="82g-U2-SkU" id="zGi-WC-BEU"/>
                                     <outlet property="label_subject" destination="d7p-bh-Vjm" id="8KK-NZ-Zw8"/>
-                                    <segue destination="ikn-Lh-FqA" kind="show" id="ypl-yY-38O"/>
+                                    <segue destination="ikn-Lh-FqA" kind="show" identifier="uisge.voidd.view" id="ypl-yY-38O"/>
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="uitcell.null" id="wyK-h6-OMp">
@@ -816,16 +816,21 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Schedule" id="YZL-yZ-yDz">
-                        <barButtonItem key="leftBarButtonItem" systemItem="edit" id="yro-ZQ-OnE"/>
+                        <barButtonItem key="leftBarButtonItem" systemItem="edit" id="yro-ZQ-OnE">
+                            <connections>
+                                <action selector="bbtn_edit_action:" destination="m38-wZ-cvN" id="Uhz-Do-bbE"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="vFC-4g-HY1">
                             <connections>
-                                <segue destination="bIl-9o-nkg" kind="show" identifier="uisge.voidblock.add" id="whJ-hO-G53"/>
+                                <action selector="bbtn_add_action:" destination="m38-wZ-cvN" id="pOn-cd-tUA"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="bbtn_add" destination="vFC-4g-HY1" id="zOD-2e-7eE"/>
-                        <segue destination="URm-k8-ZPh" kind="show" identifier="uisge.task.add" id="RCZ-7m-4oh"/>
+                        <outlet property="bbtn_add" destination="vFC-4g-HY1" id="o9y-F7-Efe"/>
+                        <segue destination="bIl-9o-nkg" kind="show" identifier="uisge.voidd.add" id="12b-IG-93Q"/>
+                        <segue destination="URm-k8-ZPh" kind="show" identifier="uisge.task.add" id="dtX-Po-CZL"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vZN-Z4-vgY" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2634,8 +2639,8 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="RCZ-7m-4oh"/>
-        <segue reference="whJ-hO-G53"/>
+        <segue reference="12b-IG-93Q"/>
+        <segue reference="dtX-Po-CZL"/>
         <segue reference="6gq-wF-8pM"/>
     </inferredMetricsTieBreakers>
 </document>

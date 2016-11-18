@@ -159,7 +159,7 @@ class ScheduleListVC: UITableViewController {
                         cell.updateUI(name: stsk.name , subject: stsk.subject, description: stsk.descript, duration: stsk.duration, begin: self.date, completion: stsk.completion)
 
                         //Update Current Virtual Time
-                        self.date = Date(timeInterval: TimeInterval(stsk.duration), since: voidd.begin as Date)
+                        self.date = Date(timeInterval: TimeInterval(stsk.duration), since: date as Date)
 
                         return cell
                     }
@@ -176,6 +176,32 @@ class ScheduleListVC: UITableViewController {
         }
     }
 
+    @IBAction func bbtn_add_action(_ sender: UIBarButtonItem) {
+        //Display Action Sheet of Add Options
+        let artsht = UIAlertController(title: "Create New", message: "", preferredStyle: UIAlertControllerStyle.actionSheet)
+        artsht.addAction(UIAlertAction(title: "Task", style: UIAlertActionStyle.default, handler: {(artact:UIAlertAction) in
+            self.performSegue(withIdentifier: "uisge.task.add", sender: self)
+        }))
+        artsht.addAction(UIAlertAction(title: "Void Duration", style: UIAlertActionStyle.default, handler: {(artact:UIAlertAction) in
+            self.performSegue(withIdentifier: "uisge.voidd.add", sender: self)
+        }))
+        artsht.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: {(artact:UIAlertAction) in
+            self.dismiss(animated: true, completion: nil)
+        }))
+
+        self.present(artsht, animated: true, completion: nil)
+    }
+
+    @IBAction func bbtn_edit_action(_ sender: UIBarButtonItem) {
+        if sender.title! == "Edit"
+        {
+            self.setEditing(true, animated: true)
+        }
+        else
+        {
+            self.setEditing(false, animated: true)
+        }
+    }
 
 
     /*
@@ -193,11 +219,17 @@ class ScheduleListVC: UITableViewController {
     }
     */
 
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        if let sge_idf = segue.identifier
+        {
+            switch sge_idf {
+            default:
+                abort()
+            }
+        }
+        else
+        {
+            abort()
+        }
     }
 }

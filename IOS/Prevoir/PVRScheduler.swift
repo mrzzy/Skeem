@@ -103,38 +103,44 @@ public class PVRScheduler: NSObject
         self.dataCtrl.pruneVoidDuration()
         self.dataView.loadFromDB()
 
-        //Status Data
-        var date = Date() //Init to Current Date
-        var voidd = self.dataViewCtrl.sortedVoidDuration(sattr: PVRVoidDurationSort.begin)[0] //Closest begin date
+        //Result Data
         var arr_drsn = Array<PVRDuration>()
-
-        //Extract Duration from Void Duration
-        while date.compare(self.lastTaskDate() as Date) == ComparisonResult.orderedAscending && self.dataView.voidDuration.count >= 0
-
+        
+        //Status Data
+        if self.dataView.retrieveAllEntry(lockey: PVRDBKey.void_duration).count > 0
         {
-            //date < last task date
-            //Duration from date to voidd.begin
-            let tint = voidd.begin.timeIntervalSince(date)
+            var date = Date() //Init to Current Date
+            var voidd = self.dataViewCtrl.sortedVoidDuration(sattr: PVRVoidDurationSort.begin)[0] //Closest begin date
+
+            //Extract Duration from Void Duration
+            while date.compare(self.lastTaskDate() as Date) == ComparisonResult.orderedAscending && self.dataView.voidDuration.count >= 0
+
+            {
+                //date < last task date
+                //Duration from date to voidd.begin
+                let tint = voidd.begin.timeIntervalSince(date)
+                if tint > 0
+                {
+                    let drsn = PVRDuration(begin: date as NSDate, duration: Int(round(tint)))
+                    arr_drsn.append(drsn)
+                }
+
+                //Update Data
+                let tadd = voidd.duration + 1
+                date = (NSDate(timeInterval: TimeInterval(tadd), since: voidd.begin as Date)) as Date //1 Second after voidd
+                self.dataView.simulateDate(date: date as NSDate) //Update Repeat Task
+                self.dataViewCtrl.pruneVoidDuration()
+                voidd = self.dataViewCtrl.sortedVoidDuration(sattr: PVRVoidDurationSort.begin)[0] //Closest begin date
+            }
+
+            //Duration from date to last date/time
+            let tint = self.lastTaskDate().timeIntervalSince(date)
             if tint > 0
             {
                 let drsn = PVRDuration(begin: date as NSDate, duration: Int(round(tint)))
                 arr_drsn.append(drsn)
             }
 
-            //Update Data
-            let tadd = voidd.duration + 1
-            date = (NSDate(timeInterval: TimeInterval(tadd), since: voidd.begin as Date)) as Date //1 Second after voidd
-            self.dataView.simulateDate(date: date as NSDate) //Update Repeat Task
-            self.dataViewCtrl.pruneVoidDuration()
-            voidd = self.dataViewCtrl.sortedVoidDuration(sattr: PVRVoidDurationSort.begin)[0] //Closest begin date
-        }
-
-        //Duration from date to last date/time
-        let tint = self.lastTaskDate().timeIntervalSince(date)
-        if tint > 0
-        {
-            let drsn = PVRDuration(begin: date as NSDate, duration: Int(round(tint)))
-            arr_drsn.append(drsn)
         }
 
         //Cleanup Data
@@ -186,7 +192,7 @@ public class PVRScheduler: NSObject
      */
     public func generateSubtask(task:PVRTask) -> [PVRTask]
     {
-        //Prepar Data
+        //Prepare Data
         var arr_stsk = Array<PVRTask>()
         let stsk_cnt = Int(floor(Double(task.duration / task.duration_affinity)))
         var duration_left = task.duration
