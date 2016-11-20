@@ -28,17 +28,16 @@ class Voidblock extends Schedulable implements Parcelable {
      * weekdays.
      */
     Voidblock() {
+        super();
         this.name = "";
         this.weekDays = new WeekDays();
     }
 
     // Copy constructor
     Voidblock(Voidblock voidblock) {
+        super(voidblock);
         this.name = voidblock.getName();
         this.weekDays = new WeekDays(voidblock.getWeekDays());
-
-        this.scheduled_start = new Datetime(voidblock.getScheduledStart());
-        this.scheduled_stop = new Datetime(voidblock.getScheduledStop());
     }
 
     // Getters and Setters
@@ -137,13 +136,12 @@ class Voidblock extends Schedulable implements Parcelable {
      */
     @Override
     public void writeToParcel(Parcel out, int flags) {
+        // Write superclass
+        writeSchedulableToParcel(out, flags);
         // Write name as string
         out.writeString(this.name);
         // Write weekdays as string array
         out.writeStringArray(this.weekDays.toStringArray());
-        // Convert datetime values to string and write them
-        out.writeString(this.scheduled_start.toString());
-        out.writeString(this.scheduled_stop.toString());
         // Write the current id of the task
         out.writeLong(this.id);
     }
@@ -166,13 +164,12 @@ class Voidblock extends Schedulable implements Parcelable {
      * @param in parcel to read from
      */
     private Voidblock(Parcel in) {
+        // Read superclass
+        super(readSchedulableFromParcel(in));
         // Read name as string
         this.name = in.readString();
         // Read weekdays as string array
         this.weekDays = new WeekDays(in.createStringArray());
-        // Create datetime strings to datetime objects
-        this.scheduled_start = new Datetime(in.readString());
-        this.scheduled_stop = new Datetime(in.readString());
         // Read the id of the task
         this.id = in.readLong();
     }

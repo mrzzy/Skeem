@@ -40,8 +40,8 @@ class TimeblockComparator implements Comparator<Timeblock> {
         int c;
         switch (this.order) {
             case TOTAL_PERIOD:
-                c = mul_val* PeriodFormat.getDefault().print(o1.getPeriod()).compareTo(
-                        PeriodFormat.getDefault().print(o2.getPeriod()));
+                c = mul_val* PeriodFormat.getDefault().print(o1.getScheduledPeriod()).compareTo(
+                        PeriodFormat.getDefault().print(o2.getScheduledPeriod()));
                 // Sort by period left
                 if (c == 0) {
                     c = mul_val*PeriodFormat.getDefault().print(o1.getPeriodLeft()).compareTo(
@@ -57,8 +57,8 @@ class TimeblockComparator implements Comparator<Timeblock> {
                         PeriodFormat.getDefault().print(o2.getPeriodUsed()));
                 // Sort by total period
                 if (c == 0) {
-                    c = mul_val*PeriodFormat.getDefault().print(o1.getPeriod()).compareTo(
-                            PeriodFormat.getDefault().print(o2.getPeriod()));
+                    c = mul_val*PeriodFormat.getDefault().print(o1.getScheduledPeriod()).compareTo(
+                            PeriodFormat.getDefault().print(o2.getScheduledPeriod()));
                 }
                 // Sort by scheduled start datetime
                 if (c == 0) {
@@ -70,8 +70,8 @@ class TimeblockComparator implements Comparator<Timeblock> {
                         PeriodFormat.getDefault().print(o2.getPeriodLeft()));
                 // Sort by total period
                 if (c == 0) {
-                    c = mul_val*PeriodFormat.getDefault().print(o1.getPeriod()).compareTo(
-                            PeriodFormat.getDefault().print(o2.getPeriod()));
+                    c = mul_val*PeriodFormat.getDefault().print(o1.getScheduledPeriod()).compareTo(
+                            PeriodFormat.getDefault().print(o2.getScheduledPeriod()));
                 }
                 // Sort by scheduled start datetime
                 if (c == 0) {
@@ -83,8 +83,8 @@ class TimeblockComparator implements Comparator<Timeblock> {
                         o2.getScheduledStart().toString());
                 // Sort by total period
                 if (c == 0) {
-                    c = mul_val*PeriodFormat.getDefault().print(o1.getPeriod()).compareTo(
-                            PeriodFormat.getDefault().print(o2.getPeriod()));
+                    c = mul_val*PeriodFormat.getDefault().print(o1.getScheduledPeriod()).compareTo(
+                            PeriodFormat.getDefault().print(o2.getScheduledPeriod()));
                 }
                 // Sort by period left
                 if (c == 0) {
@@ -96,8 +96,8 @@ class TimeblockComparator implements Comparator<Timeblock> {
                         o2.getScheduledStop().toString());
                 // Sort by total period
                 if (c == 0) {
-                    c = mul_val*PeriodFormat.getDefault().print(o1.getPeriod()).compareTo(
-                            PeriodFormat.getDefault().print(o2.getPeriod()));
+                    c = mul_val*PeriodFormat.getDefault().print(o1.getScheduledPeriod()).compareTo(
+                            PeriodFormat.getDefault().print(o2.getScheduledPeriod()));
                 }
                 // Sort by period left
                 if (c == 0) {
@@ -106,8 +106,8 @@ class TimeblockComparator implements Comparator<Timeblock> {
                 }
             default:
                 // Default to total period
-                c = mul_val*PeriodFormat.getDefault().print(o1.getPeriod()).compareTo(
-                        PeriodFormat.getDefault().print(o2.getPeriod()));
+                c = mul_val*PeriodFormat.getDefault().print(o1.getScheduledPeriod()).compareTo(
+                        PeriodFormat.getDefault().print(o2.getScheduledPeriod()));
                 // Sort by period left
                 if (c == 0) {
                     c = mul_val*PeriodFormat.getDefault().print(o1.getPeriodLeft()).compareTo(

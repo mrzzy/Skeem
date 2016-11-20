@@ -14,7 +14,6 @@ import java.util.ArrayList;
  */
 class Timeblock extends Schedulable {
     private ArrayList<Task> tasks_scheduled;
-    private Period period;
     private Period period_used;
     private Period period_left;
 
@@ -22,8 +21,8 @@ class Timeblock extends Schedulable {
      * Default constructor. Instantiates all variables to empty values.
      */
     Timeblock() {
+        super();
         this.tasks_scheduled = new ArrayList<>();
-        this.period = new Period();
         this.period_used = new Period();
         this.period_left = new Period();
     }
@@ -37,15 +36,16 @@ class Timeblock extends Schedulable {
      * @param scheduled_stop timeblock's stop time
      */
     Timeblock(Datetime scheduled_start, Datetime scheduled_stop) {
+        super();
         this.scheduled_start = scheduled_start;
         this.scheduled_stop = scheduled_stop;
         this.tasks_scheduled = new ArrayList<>();
 
         // Calculate duration
-        this.period = new Period(this.scheduled_stop.getMillis() -
+        this.scheduled_period = new Period(this.scheduled_stop.getMillis() -
                 this.scheduled_start.getMillis());
         this.period_used = new Period();
-        this.period_left = new Period(this.period);
+        this.period_left = new Period(this.scheduled_period);
     }
 
     // Getters and Setters
@@ -57,13 +57,6 @@ class Timeblock extends Schedulable {
         return this.tasks_scheduled;
     }
 
-    /**
-     * Gets the period of the timeblock.
-     * @return timeblock's period
-     */
-    Period getPeriod() {
-        return this.period;
-    }
     /**
      * Gets the period used by the tasks in the timeblock
      * @return timeblock's used period
@@ -92,9 +85,9 @@ class Timeblock extends Schedulable {
         // If the scheduled stop is set
         if (this.scheduled_stop.getMillis() != new Period().getMillis()) {
             // Recalculate the period and period left
-            this.period = new Period(this.scheduled_stop.getMillis() -
+            this.scheduled_period = new Period(this.scheduled_stop.getMillis() -
                     this.scheduled_start.getMillis());
-            this.period_left = new Period(this.period).minus(this.period_used);
+            this.period_left = new Period(this.scheduled_period).minus(this.period_used);
         }
     }
 
@@ -111,9 +104,9 @@ class Timeblock extends Schedulable {
         // If the scheduled start is set
         if (this.scheduled_start.getMillis() != new Period().getMillis()) {
             // Recalculate the period and period left
-            this.period = new Period(this.scheduled_stop.getMillis() -
+            this.scheduled_period = new Period(this.scheduled_stop.getMillis() -
                     this.scheduled_start.getMillis());
-            this.period_left = new Period(this.period).minus(this.period_used);
+            this.period_left = new Period(this.scheduled_period).minus(this.period_used);
         }
     }
 
@@ -127,20 +120,20 @@ class Timeblock extends Schedulable {
      */
     boolean addTask(Task task) {
         // Check if there is enough time left for the task
-        if (this.period_left.getMillis() < task.getPeriodNeeded().getMillis()) {
+        if (this.period_left.getMillis() < task.getScheduledPeriod().getMillis()) {
             return false;
         }
         // Add to tasks_scheduled
         this.tasks_scheduled.add(task);
 
         // Recalculate time used and time left
-        this.period_left = this.period_left.minus(task.getPeriodNeeded());
-        this.period_used = this.period_used.plus(task.getPeriodNeeded());
+        this.period_left = this.period_left.minus(task.getScheduledPeriod());
+        this.period_used = this.period_used.plus(task.getScheduledPeriod());
 
         // Set the new scheduled start and stop
         task.setScheduledStart(this.scheduled_start.add(this.period_left));
         task.setScheduledStop(this.scheduled_start.add(this.period_left).add(
-                task.getPeriodNeeded()));
+                task.getScheduledPeriod()));
 
         return true;
     }

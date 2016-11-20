@@ -38,8 +38,6 @@ class Task extends Schedulable implements Parcelable {
     private Period period_needed;
     private Period period_minimum;
 
-    private Datetime scheduled_start;
-    private Datetime scheduled_stop;
     private Datetime deadline;
 
     /**
@@ -48,6 +46,7 @@ class Task extends Schedulable implements Parcelable {
      * constructors.
      */
     Task() {
+        super();
         this.name = "";
         this.description = "";
         this.subject = "";
@@ -58,13 +57,12 @@ class Task extends Schedulable implements Parcelable {
         this.period_needed = new Period();
         this.period_minimum = new Period();
 
-        this.scheduled_start = new Datetime();
-        this.scheduled_stop = new Datetime();
         this.deadline = new Datetime();
     }
 
     // Copy constructor
     Task(Task task) {
+        super(task);
         this.name = task.getName();
         this.description = task.getDescription();
         this.subject = task.getSubject();
@@ -75,8 +73,6 @@ class Task extends Schedulable implements Parcelable {
         this.period_needed = new Period(task.getPeriodNeeded());
         this.period_minimum = new Period(task.getPeriodMinimum());
 
-        this.scheduled_start = new Datetime(task.getScheduledStart());
-        this.scheduled_stop = new Datetime(task.getScheduledStop());
         this.deadline = new Datetime(task.getDeadline());
     }
 
@@ -100,8 +96,6 @@ class Task extends Schedulable implements Parcelable {
         this.period_needed = new Period();
         this.period_minimum = new Period();
 
-        this.scheduled_start = new Datetime();
-        this.scheduled_stop = new Datetime();
         this.deadline = new Datetime();
     }
 
@@ -285,6 +279,8 @@ class Task extends Schedulable implements Parcelable {
      */
     @Override
     public void writeToParcel(Parcel out, int flags) {
+        // Write superclass
+        writeSchedulableToParcel(out, flags);
         // Write name, description and subject as strings
         out.writeString(this.name);
         out.writeString(this.description);
@@ -297,8 +293,6 @@ class Task extends Schedulable implements Parcelable {
         out.writeString(PeriodFormat.getDefault().print(this.period_needed));
         out.writeString(PeriodFormat.getDefault().print(this.period_minimum));
         // Convert datetime values to string and write them
-        out.writeParcelable(this.scheduled_start, flags);
-        out.writeParcelable(this.scheduled_stop, flags);
         out.writeParcelable(this.deadline, flags);
         // Write the current id of the task
         out.writeLong(this.id);
@@ -321,6 +315,8 @@ class Task extends Schedulable implements Parcelable {
      * @param in parcel to read from
      */
     private Task(Parcel in) {
+        // Copy superclass
+        super(readSchedulableFromParcel(in));
         // Read name, description and subject as strings
         this.name = in.readString();
         this.description = in.readString();
@@ -333,8 +329,6 @@ class Task extends Schedulable implements Parcelable {
         this.period_needed = PeriodFormat.getDefault().parsePeriod(in.readString());
         this.period_minimum = PeriodFormat.getDefault().parsePeriod(in.readString());
         // Create datetime objects from datetime strings
-        this.scheduled_start = in.readParcelable(Datetime.class.getClassLoader());
-        this.scheduled_stop = in.readParcelable(Datetime.class.getClassLoader());
         this.deadline = in.readParcelable(Datetime.class.getClassLoader());
         // Read the id of the task
         this.id = in.readLong();
