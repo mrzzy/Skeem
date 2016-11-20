@@ -42,23 +42,25 @@ class EvenSchedule extends Scheduler {
         ArrayList<Task> tasks = dbAdapter.getTasks();
         dbAdapter.close();
 
-        Datetime latest_deadline = tasks.get(tasks.size()-1).getDeadline();
+        if (tasks.size() != 0) {
+            Datetime latest_deadline = tasks.get(tasks.size()-1).getDeadline();
 
-        // Expand all repeated voidblocks
-        for (Voidblock voidblock : raw_voidblocks) {
-            if (!voidblock.getWeekDays().getWeekDays_list().isEmpty()) {
-                // There are repeated days; expand and add to voidblocks
-                Voidblock[] expanded_voidblocks = voidblock.getSeparatedRepeatedVoidblocks(
-                        latest_deadline);
-                Collections.addAll(voidblocks, expanded_voidblocks);
-            } else {
-                voidblocks.add(voidblock);
+            // Expand all repeated voidblocks
+            for (Voidblock voidblock : raw_voidblocks) {
+                if (!voidblock.getWeekDays().getWeekDays_list().isEmpty()) {
+                    // There are repeated days; expand and add to voidblocks
+                    Voidblock[] expanded_voidblocks = voidblock.getSeparatedRepeatedVoidblocks(
+                            latest_deadline);
+                    Collections.addAll(voidblocks, expanded_voidblocks);
+                } else {
+                    voidblocks.add(voidblock);
+                }
             }
+            // Sort the voidblocks
+            VoidblockComparator voidblockComparator = new VoidblockComparator();
+            voidblockComparator.setSortBy(VoidblockComparator.Order.SCHEDULED_START, true);
+            Collections.sort(voidblocks, voidblockComparator);
         }
-        // Sort the voidblocks
-        VoidblockComparator voidblockComparator = new VoidblockComparator();
-        voidblockComparator.setSortBy(VoidblockComparator.Order.SCHEDULED_START, true);
-        Collections.sort(voidblocks, voidblockComparator);
 
         ArrayList<Schedulable> voidTimeblocks = new ArrayList<>();
         for (int i=0; i<voidblocks.size(); i++) {
@@ -203,6 +205,10 @@ class EvenSchedule extends Scheduler {
             if (voidtimeblocks.get(i) instanceof Timeblock) {
                 timeblock_indices.add(i);
             }
+        }
+
+        if (tasks.size() == 0 || timeblock_indices.size() == 0) {
+            return new ArrayList<>();
         }
 
         // Schedule repeated tasks

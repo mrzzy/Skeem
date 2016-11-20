@@ -12,6 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
 
+import org.joda.time.DateTime;
+
 public class CreateDatetimeActivity extends AppCompatActivity {
     // Extra strings
     public static final String EXTRA_RECEIVE_TITLE = "sstinc.prevoir.EXTRA_TITLE";
@@ -64,7 +66,7 @@ public class CreateDatetimeActivity extends AppCompatActivity {
         this.min_datetime = intent.getParcelableExtra(EXTRA_RECEIVE_MIN);
 
         if (this.min_datetime == null) {
-            this.min_datetime = new Datetime();
+            this.min_datetime = new Datetime(DateTime.now());
         }
         if (this.max_datetime == null) {
             this.max_datetime = new Datetime();
@@ -136,8 +138,9 @@ public class CreateDatetimeActivity extends AppCompatActivity {
             datePicker.setMaxDate(this.max_datetime.getMillis());
         }
         if (this.min_datetime.getHasDate()) {
+            //TODO: Test this thoroughly
             // Move maximum one day back
-            datePicker.setMinDate(this.min_datetime.getMillis()-(24*60*60*1000));
+            datePicker.setMinDate(this.min_datetime.getMillis());
         }
     }
 
