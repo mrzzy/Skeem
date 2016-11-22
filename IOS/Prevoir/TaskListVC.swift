@@ -1,6 +1,6 @@
 //
 //  TaskListVC.swift
-//  Prevoir
+//  Skeem
 //
 //  Created by Zhu Zhan Yan on 2/11/16.
 //  Copyright © 2016 SSTInc. All rights reserved.
@@ -11,10 +11,10 @@ import UIKit
 class TaskListVC: UITableViewController
 {
     //Link
-    var DBC:PVRDataController!
+    var DBC:SKMDataController!
 
     //Data
-    var arr_task:Array<PVRTask>!
+    var arr_task:Array<SKMTask>!
 
     //Data Functions
     /*
@@ -25,7 +25,7 @@ class TaskListVC: UITableViewController
     {
         //Update Data
         self.DBC.updateTask()
-        self.arr_task = self.DBC.sortedTask(sattr: PVRTaskSort.deadline)
+        self.arr_task = self.DBC.sortedTask(sattr: SKMTaskSort.deadline)
     }
 
     //UI Functions
@@ -42,7 +42,7 @@ class TaskListVC: UITableViewController
     //Event Functions
     override func viewDidLoad() {
         self.DBC = (UIApplication.shared.delegate as! AppDelegate).DBC
-        self.arr_task = Array<PVRTask>()
+        self.arr_task = Array<SKMTask>()
         self.updateData()
 
         //Reload UI Data

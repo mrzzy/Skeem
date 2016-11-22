@@ -8,7 +8,7 @@
 
 import UIKit
 
-public enum PVRUserDefaultKey:String {
+public enum SKMUserDefaultKey:String {
     case suite = "pvr_ud_suite"
     case use = "pvr_ud_use"
     case setting = "pvr_ud_setting"
@@ -24,12 +24,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var use_cnt:Int!
 
     //App Data
-    var DB:PVRDatabase!
-    var DBC:PVRDataController!
-    var CFG:PVRConfig!
+    var DB:SKMDatabase!
+    var DBC:SKMDataController!
+    var CFG:SKMConfig!
 
     //App Logic
-    var SCH:PVRScheduler!
+    var SCH:SKMScheduler!
 
     //Storage
     var ud:UserDefaults!
@@ -38,10 +38,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
         //Init Data
         self.use_cnt = 0
-        self.DB = PVRDatabase()
-        self.DBC = PVRDataController(db: DB)
-        self.CFG = PVRConfig(cfg: Dictionary<String,NSCoding>())
-        self.SCH = PVRScheduler(dataCtrl: self.DBC,cfg: self.CFG)
+        self.DB = SKMDatabase()
+        self.DBC = SKMDataController(db: DB)
+        self.CFG = SKMConfig(cfg: Dictionary<String,NSCoding>())
+        self.SCH = SKMScheduler(dataCtrl: self.DBC,cfg: self.CFG)
         self.loadUD()
         
         return true
@@ -74,24 +74,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     public func loadUD()
     {
         //Load user Defaults
-        if let ud = UserDefaults(suiteName: PVRUserDefaultKey.suite.rawValue)
+        if let ud = UserDefaults(suiteName: SKMUserDefaultKey.suite.rawValue)
         {
             self.ud = ud
-            self.use_cnt = ud.integer(forKey: PVRUserDefaultKey.use.rawValue)
+            self.use_cnt = ud.integer(forKey: SKMUserDefaultKey.use.rawValue)
         }
         else
         {
             //No Suite for User Defaults
-            UserDefaults().addSuite(named: PVRUserDefaultKey.suite.rawValue)
-            let ud = UserDefaults(suiteName: PVRUserDefaultKey.suite.rawValue)!
+            UserDefaults().addSuite(named: SKMUserDefaultKey.suite.rawValue)
+            let ud = UserDefaults(suiteName: SKMUserDefaultKey.suite.rawValue)!
             self.ud = ud
         }
 
         //Load App Settins If Present
         if self.use_cnt > 1
         {
-            let cfg_data = (ud.object(forKey: PVRUserDefaultKey.setting.rawValue) as! [String : NSCoding])
-            self.CFG = PVRConfig(cfg: cfg_data)
+            let cfg_data = (ud.object(forKey: SKMUserDefaultKey.setting.rawValue) as! [String : NSCoding])
+            self.CFG = SKMConfig(cfg: cfg_data)
         }
 
         //Update use count
@@ -101,8 +101,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     public func commitUD()
     {
         //Save App Status
-        ud.set(self.use_cnt, forKey: PVRUserDefaultKey.use.rawValue)
-        ud.set(self.CFG.cfg, forKey: PVRUserDefaultKey.setting.rawValue)
+        ud.set(self.use_cnt, forKey: SKMUserDefaultKey.use.rawValue)
+        ud.set(self.CFG.cfg, forKey: SKMUserDefaultKey.setting.rawValue)
         self.ud.synchronize()
     }
 }

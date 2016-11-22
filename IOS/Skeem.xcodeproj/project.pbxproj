@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5A2755241DB5F0BE00213D60 /* PVRDuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A2755231DB5F0BE00213D60 /* PVRDuration.swift */; };
-		5A4083D01DAB68FC0057E896 /* PVRScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A4083CF1DAB68FC0057E896 /* PVRScheduler.swift */; };
+		5A2755241DB5F0BE00213D60 /* SKMDuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A2755231DB5F0BE00213D60 /* SKMDuration.swift */; };
+		5A4083D01DAB68FC0057E896 /* SKMScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A4083CF1DAB68FC0057E896 /* SKMScheduler.swift */; };
 		5A455C6F1DD2BDA80069F2AE /* TaskListTBC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A455C6E1DD2BDA80069F2AE /* TaskListTBC.swift */; };
 		5A50C72D1D8CD2E50002ACF8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A50C72C1D8CD2E50002ACF8 /* AppDelegate.swift */; };
 		5A50C7341D8CD2E50002ACF8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5A50C7331D8CD2E50002ACF8 /* Assets.xcassets */; };
@@ -18,7 +18,7 @@
 		5A50C7431D8CD4750002ACF8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5A50C7421D8CD4750002ACF8 /* Main.storyboard */; };
 		5A5463A71DCB01BC0028261C /* VoidDurationListTBC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A5463A61DCB01BC0028261C /* VoidDurationListTBC.swift */; };
 		5A81D25D1DD020AB008E5FE4 /* RepeatEditVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A81D25C1DD020AB008E5FE4 /* RepeatEditVC.swift */; };
-		5A87A27B1DBCE40900A206B9 /* PVRDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A87A27A1DBCE40900A206B9 /* PVRDataView.swift */; };
+		5A87A27B1DBCE40900A206B9 /* SKMDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A87A27A1DBCE40900A206B9 /* SKMDataView.swift */; };
 		5A891F0C1DD556A900868D91 /* ScheduleTaskTBC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A891F0B1DD556A900868D91 /* ScheduleTaskTBC.swift */; };
 		5A891F0E1DD556BA00868D91 /* ScheduleVoidDurationTBC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A891F0D1DD556BA00868D91 /* ScheduleVoidDurationTBC.swift */; };
 		5A8E08AF1DC9DBBC00A7DE53 /* VoidDurationListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8E08AE1DC9DBBC00A7DE53 /* VoidDurationListVC.swift */; };
@@ -28,12 +28,12 @@
 		5A8E08BD1DC9DDDA00A7DE53 /* VoidDurationEditVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8E08BC1DC9DDDA00A7DE53 /* VoidDurationEditVC.swift */; };
 		5A8E08BF1DC9DF0400A7DE53 /* TaskEditVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8E08BE1DC9DF0400A7DE53 /* TaskEditVC.swift */; };
 		5A8E08C71DC9E19E00A7DE53 /* SettingListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8E08C61DC9E19E00A7DE53 /* SettingListVC.swift */; };
-		5AA4406E1DAF488F005B0E70 /* PVRTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA4406D1DAF488F005B0E70 /* PVRTask.swift */; };
-		5AA440701DAF81B3005B0E70 /* PVRDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA4406F1DAF81B3005B0E70 /* PVRDatabase.swift */; };
-		5AB7343B1DC499A500CCCC98 /* PVRSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB7343A1DC499A500CCCC98 /* PVRSetting.swift */; };
-		5AD59AA01DB4DD130076FF0B /* PVRDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AD59A9F1DB4DD130076FF0B /* PVRDataController.swift */; };
-		5AE3E1D71DE4306500975650 /* PrevoirTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AE3E1D61DE4306500975650 /* PrevoirTest.swift */; };
-		5AE3E1E11DE4317100975650 /* PVRDatabaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AE3E1E01DE4317100975650 /* PVRDatabaseTest.swift */; };
+		5AA4406E1DAF488F005B0E70 /* SKMTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA4406D1DAF488F005B0E70 /* SKMTask.swift */; };
+		5AA440701DAF81B3005B0E70 /* SKMDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA4406F1DAF81B3005B0E70 /* SKMDatabase.swift */; };
+		5AB7343B1DC499A500CCCC98 /* SKMSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB7343A1DC499A500CCCC98 /* SKMSetting.swift */; };
+		5AD59AA01DB4DD130076FF0B /* SKMDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AD59A9F1DB4DD130076FF0B /* SKMDataController.swift */; };
+		5AE3E1D71DE4306500975650 /* SkeemTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AE3E1D61DE4306500975650 /* SkeemTest.swift */; };
+		5AE3E1E11DE4317100975650 /* SKMDatabaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AE3E1E01DE4317100975650 /* SKMDatabaseTest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,10 +47,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		5A2755231DB5F0BE00213D60 /* PVRDuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRDuration.swift; sourceTree = "<group>"; };
-		5A4083CF1DAB68FC0057E896 /* PVRScheduler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRScheduler.swift; sourceTree = "<group>"; };
+		5A2755231DB5F0BE00213D60 /* SKMDuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SKMDuration.swift; sourceTree = "<group>"; };
+		5A4083CF1DAB68FC0057E896 /* SKMScheduler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SKMScheduler.swift; sourceTree = "<group>"; };
 		5A455C6E1DD2BDA80069F2AE /* TaskListTBC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskListTBC.swift; sourceTree = "<group>"; };
-		5A50C7291D8CD2E50002ACF8 /* Prevoir.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Prevoir.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5A50C7291D8CD2E50002ACF8 /* Skeem.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Skeem.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A50C72C1D8CD2E50002ACF8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5A50C7331D8CD2E50002ACF8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5A50C7361D8CD2E50002ACF8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -60,7 +60,7 @@
 		5A50C7421D8CD4750002ACF8 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		5A5463A61DCB01BC0028261C /* VoidDurationListTBC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoidDurationListTBC.swift; sourceTree = "<group>"; };
 		5A81D25C1DD020AB008E5FE4 /* RepeatEditVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RepeatEditVC.swift; sourceTree = "<group>"; };
-		5A87A27A1DBCE40900A206B9 /* PVRDataView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRDataView.swift; sourceTree = "<group>"; };
+		5A87A27A1DBCE40900A206B9 /* SKMDataView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SKMDataView.swift; sourceTree = "<group>"; };
 		5A891F0B1DD556A900868D91 /* ScheduleTaskTBC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleTaskTBC.swift; sourceTree = "<group>"; };
 		5A891F0D1DD556BA00868D91 /* ScheduleVoidDurationTBC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleVoidDurationTBC.swift; sourceTree = "<group>"; };
 		5A8E08AE1DC9DBBC00A7DE53 /* VoidDurationListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoidDurationListVC.swift; sourceTree = "<group>"; };
@@ -70,14 +70,14 @@
 		5A8E08BC1DC9DDDA00A7DE53 /* VoidDurationEditVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoidDurationEditVC.swift; sourceTree = "<group>"; };
 		5A8E08BE1DC9DF0400A7DE53 /* TaskEditVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskEditVC.swift; sourceTree = "<group>"; };
 		5A8E08C61DC9E19E00A7DE53 /* SettingListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingListVC.swift; sourceTree = "<group>"; };
-		5AA4406D1DAF488F005B0E70 /* PVRTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRTask.swift; sourceTree = "<group>"; };
-		5AA4406F1DAF81B3005B0E70 /* PVRDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PVRDatabase.swift; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; wrapsLines = 1; };
-		5AB7343A1DC499A500CCCC98 /* PVRSetting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRSetting.swift; sourceTree = "<group>"; };
-		5AD59A9F1DB4DD130076FF0B /* PVRDataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRDataController.swift; sourceTree = "<group>"; };
-		5AE3E1D41DE4306500975650 /* PrevoirTest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PrevoirTest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		5AE3E1D61DE4306500975650 /* PrevoirTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrevoirTest.swift; sourceTree = "<group>"; };
+		5AA4406D1DAF488F005B0E70 /* SKMTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SKMTask.swift; sourceTree = "<group>"; };
+		5AA4406F1DAF81B3005B0E70 /* SKMDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = SKMDatabase.swift; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; wrapsLines = 1; };
+		5AB7343A1DC499A500CCCC98 /* SKMSetting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SKMSetting.swift; sourceTree = "<group>"; };
+		5AD59A9F1DB4DD130076FF0B /* SKMDataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SKMDataController.swift; sourceTree = "<group>"; };
+		5AE3E1D41DE4306500975650 /* SkeemTest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SkeemTest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5AE3E1D61DE4306500975650 /* SkeemTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeemTest.swift; sourceTree = "<group>"; };
 		5AE3E1D81DE4306500975650 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5AE3E1E01DE4317100975650 /* PVRDatabaseTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRDatabaseTest.swift; sourceTree = "<group>"; };
+		5AE3E1E01DE4317100975650 /* SKMDatabaseTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SKMDatabaseTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,7 +104,7 @@
 			isa = PBXGroup;
 			children = (
 				5A50C72C1D8CD2E50002ACF8 /* AppDelegate.swift */,
-				5A4083CF1DAB68FC0057E896 /* PVRScheduler.swift */,
+				5A4083CF1DAB68FC0057E896 /* SKMScheduler.swift */,
 			);
 			name = Logic;
 			sourceTree = "<group>";
@@ -124,8 +124,8 @@
 			children = (
 				5A50C7401D8CD4390002ACF8 /* UIKit.framework */,
 				5A50C73E1D8CD4330002ACF8 /* Foundation.framework */,
-				5A50C72B1D8CD2E50002ACF8 /* Prevoir */,
-				5AE3E1D51DE4306500975650 /* PrevoirTest */,
+				5A50C72B1D8CD2E50002ACF8 /* Skeem */,
+				5AE3E1D51DE4306500975650 /* SkeemTest */,
 				5A50C72A1D8CD2E50002ACF8 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -133,13 +133,13 @@
 		5A50C72A1D8CD2E50002ACF8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5A50C7291D8CD2E50002ACF8 /* Prevoir.app */,
-				5AE3E1D41DE4306500975650 /* PrevoirTest.xctest */,
+				5A50C7291D8CD2E50002ACF8 /* Skeem.app */,
+				5AE3E1D41DE4306500975650 /* SkeemTest.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		5A50C72B1D8CD2E50002ACF8 /* Prevoir */ = {
+		5A50C72B1D8CD2E50002ACF8 /* Skeem */ = {
 			isa = PBXGroup;
 			children = (
 				5A4083CE1DAB68AF0057E896 /* Logic */,
@@ -148,6 +148,7 @@
 				5AA4406C1DAF4873005B0E70 /* Data */,
 				5A50C7441D8CD4F40002ACF8 /* Resources */,
 			);
+			name = Skeem;
 			path = Prevoir;
 			sourceTree = "<group>";
 		};
@@ -213,30 +214,31 @@
 		5AA4406C1DAF4873005B0E70 /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				5AB7343A1DC499A500CCCC98 /* PVRSetting.swift */,
-				5AA4406F1DAF81B3005B0E70 /* PVRDatabase.swift */,
-				5AD59A9F1DB4DD130076FF0B /* PVRDataController.swift */,
-				5A87A27A1DBCE40900A206B9 /* PVRDataView.swift */,
-				5AA4406D1DAF488F005B0E70 /* PVRTask.swift */,
-				5A2755231DB5F0BE00213D60 /* PVRDuration.swift */,
+				5AB7343A1DC499A500CCCC98 /* SKMSetting.swift */,
+				5AA4406F1DAF81B3005B0E70 /* SKMDatabase.swift */,
+				5AD59A9F1DB4DD130076FF0B /* SKMDataController.swift */,
+				5A87A27A1DBCE40900A206B9 /* SKMDataView.swift */,
+				5AA4406D1DAF488F005B0E70 /* SKMTask.swift */,
+				5A2755231DB5F0BE00213D60 /* SKMDuration.swift */,
 			);
 			name = Data;
 			sourceTree = "<group>";
 		};
-		5AE3E1D51DE4306500975650 /* PrevoirTest */ = {
+		5AE3E1D51DE4306500975650 /* SkeemTest */ = {
 			isa = PBXGroup;
 			children = (
-				5AE3E1D61DE4306500975650 /* PrevoirTest.swift */,
+				5AE3E1D61DE4306500975650 /* SkeemTest.swift */,
 				5AE3E1DF1DE4313800975650 /* Data Tests */,
 				5AE3E1D81DE4306500975650 /* Info.plist */,
 			);
+			name = SkeemTest;
 			path = PrevoirTest;
 			sourceTree = "<group>";
 		};
 		5AE3E1DF1DE4313800975650 /* Data Tests */ = {
 			isa = PBXGroup;
 			children = (
-				5AE3E1E01DE4317100975650 /* PVRDatabaseTest.swift */,
+				5AE3E1E01DE4317100975650 /* SKMDatabaseTest.swift */,
 			);
 			name = "Data Tests";
 			sourceTree = "<group>";
@@ -244,9 +246,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		5A50C7281D8CD2E50002ACF8 /* Prevoir */ = {
+		5A50C7281D8CD2E50002ACF8 /* Skeem */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5A50C73B1D8CD2E50002ACF8 /* Build configuration list for PBXNativeTarget "Prevoir" */;
+			buildConfigurationList = 5A50C73B1D8CD2E50002ACF8 /* Build configuration list for PBXNativeTarget "Skeem" */;
 			buildPhases = (
 				5A50C7251D8CD2E50002ACF8 /* Sources */,
 				5A50C7261D8CD2E50002ACF8 /* Frameworks */,
@@ -256,14 +258,14 @@
 			);
 			dependencies = (
 			);
-			name = Prevoir;
+			name = Skeem;
 			productName = Prevoir;
-			productReference = 5A50C7291D8CD2E50002ACF8 /* Prevoir.app */;
+			productReference = 5A50C7291D8CD2E50002ACF8 /* Skeem.app */;
 			productType = "com.apple.product-type.application";
 		};
-		5AE3E1D31DE4306500975650 /* PrevoirTest */ = {
+		5AE3E1D31DE4306500975650 /* SkeemTest */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5AE3E1DD1DE4306500975650 /* Build configuration list for PBXNativeTarget "PrevoirTest" */;
+			buildConfigurationList = 5AE3E1DD1DE4306500975650 /* Build configuration list for PBXNativeTarget "SkeemTest" */;
 			buildPhases = (
 				5AE3E1D01DE4306500975650 /* Sources */,
 				5AE3E1D11DE4306500975650 /* Frameworks */,
@@ -274,9 +276,9 @@
 			dependencies = (
 				5AE3E1DA1DE4306500975650 /* PBXTargetDependency */,
 			);
-			name = PrevoirTest;
+			name = SkeemTest;
 			productName = PrevoirTest;
-			productReference = 5AE3E1D41DE4306500975650 /* PrevoirTest.xctest */;
+			productReference = 5AE3E1D41DE4306500975650 /* SkeemTest.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -302,7 +304,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 5A50C7241D8CD2E50002ACF8 /* Build configuration list for PBXProject "Prevoir" */;
+			buildConfigurationList = 5A50C7241D8CD2E50002ACF8 /* Build configuration list for PBXProject "Skeem" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -315,8 +317,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5A50C7281D8CD2E50002ACF8 /* Prevoir */,
-				5AE3E1D31DE4306500975650 /* PrevoirTest */,
+				5A50C7281D8CD2E50002ACF8 /* Skeem */,
+				5AE3E1D31DE4306500975650 /* SkeemTest */,
 			);
 		};
 /* End PBXProject section */
@@ -346,24 +348,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5AA4406E1DAF488F005B0E70 /* PVRTask.swift in Sources */,
+				5AA4406E1DAF488F005B0E70 /* SKMTask.swift in Sources */,
 				5A8E08C71DC9E19E00A7DE53 /* SettingListVC.swift in Sources */,
-				5AB7343B1DC499A500CCCC98 /* PVRSetting.swift in Sources */,
-				5AA440701DAF81B3005B0E70 /* PVRDatabase.swift in Sources */,
+				5AB7343B1DC499A500CCCC98 /* SKMSetting.swift in Sources */,
+				5AA440701DAF81B3005B0E70 /* SKMDatabase.swift in Sources */,
 				5A81D25D1DD020AB008E5FE4 /* RepeatEditVC.swift in Sources */,
 				5A8E08AF1DC9DBBC00A7DE53 /* VoidDurationListVC.swift in Sources */,
 				5A455C6F1DD2BDA80069F2AE /* TaskListTBC.swift in Sources */,
-				5AD59AA01DB4DD130076FF0B /* PVRDataController.swift in Sources */,
-				5A4083D01DAB68FC0057E896 /* PVRScheduler.swift in Sources */,
+				5AD59AA01DB4DD130076FF0B /* SKMDataController.swift in Sources */,
+				5A4083D01DAB68FC0057E896 /* SKMScheduler.swift in Sources */,
 				5A8E08B91DC9DD2D00A7DE53 /* TaskListVC.swift in Sources */,
 				5A891F0E1DD556BA00868D91 /* ScheduleVoidDurationTBC.swift in Sources */,
 				5A5463A71DCB01BC0028261C /* VoidDurationListTBC.swift in Sources */,
 				5A8E08BD1DC9DDDA00A7DE53 /* VoidDurationEditVC.swift in Sources */,
 				5A891F0C1DD556A900868D91 /* ScheduleTaskTBC.swift in Sources */,
-				5A2755241DB5F0BE00213D60 /* PVRDuration.swift in Sources */,
+				5A2755241DB5F0BE00213D60 /* SKMDuration.swift in Sources */,
 				5A50C72D1D8CD2E50002ACF8 /* AppDelegate.swift in Sources */,
 				5A8E08BB1DC9DD9100A7DE53 /* TaskViewVC.swift in Sources */,
-				5A87A27B1DBCE40900A206B9 /* PVRDataView.swift in Sources */,
+				5A87A27B1DBCE40900A206B9 /* SKMDataView.swift in Sources */,
 				5A8E08BF1DC9DF0400A7DE53 /* TaskEditVC.swift in Sources */,
 				5A8E08B71DC9DC5500A7DE53 /* ScheduleListVC.swift in Sources */,
 			);
@@ -373,8 +375,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5AE3E1D71DE4306500975650 /* PrevoirTest.swift in Sources */,
-				5AE3E1E11DE4317100975650 /* PVRDatabaseTest.swift in Sources */,
+				5AE3E1D71DE4306500975650 /* SkeemTest.swift in Sources */,
+				5AE3E1E11DE4317100975650 /* SKMDatabaseTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -383,7 +385,7 @@
 /* Begin PBXTargetDependency section */
 		5AE3E1DA1DE4306500975650 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5A50C7281D8CD2E50002ACF8 /* Prevoir */;
+			target = 5A50C7281D8CD2E50002ACF8 /* Skeem */;
 			targetProxy = 5AE3E1D91DE4306500975650 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -532,7 +534,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Prevoir.app/Prevoir";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Skeem.app/Skeem";
 			};
 			name = Debug;
 		};
@@ -549,14 +551,14 @@
 				PRODUCT_BUNDLE_IDENTIFIER = sstinc.PrevoirTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Prevoir.app/Prevoir";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Skeem.app/Skeem";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		5A50C7241D8CD2E50002ACF8 /* Build configuration list for PBXProject "Prevoir" */ = {
+		5A50C7241D8CD2E50002ACF8 /* Build configuration list for PBXProject "Skeem" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5A50C7391D8CD2E50002ACF8 /* Debug */,
@@ -565,7 +567,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5A50C73B1D8CD2E50002ACF8 /* Build configuration list for PBXNativeTarget "Prevoir" */ = {
+		5A50C73B1D8CD2E50002ACF8 /* Build configuration list for PBXNativeTarget "Skeem" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5A50C73C1D8CD2E50002ACF8 /* Debug */,
@@ -574,13 +576,14 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5AE3E1DD1DE4306500975650 /* Build configuration list for PBXNativeTarget "PrevoirTest" */ = {
+		5AE3E1DD1DE4306500975650 /* Build configuration list for PBXNativeTarget "SkeemTest" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5AE3E1DB1DE4306500975650 /* Debug */,
 				5AE3E1DC1DE4306500975650 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

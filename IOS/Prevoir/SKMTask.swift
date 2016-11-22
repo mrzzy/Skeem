@@ -1,6 +1,6 @@
 //
-//  PVRTask.swift
-//  Prevoir
+//  SKMTask.swift
+//  Skeem
 //
 //  Created by Zhu Zhan Yan on 13/10/16.
 //  Copyright © 2016 SSTInc. All rights reserved.
@@ -9,10 +9,10 @@
 import UIKit
 
 /*
- * public class PVRTask: NSObject,NSCoding
+ * public class SKMTask: NSObject,NSCoding
  * - Defines an objects that represents a task
 */
-public class PVRTask: NSObject,NSCoding,NSCopying
+public class SKMTask: NSObject,NSCoding,NSCopying
 {
     //Properties
     //Data
@@ -72,7 +72,7 @@ public class PVRTask: NSObject,NSCoding,NSCopying
 
     //NSCopying
     public func copy(with zone: NSZone? = nil) -> Any {
-        return PVRTask(name: self.name, deadline: self.deadline, duration: self.duration, duration_affinity: self.duration_affinity, subject: self.subject, description: self.descript)
+        return SKMTask(name: self.name, deadline: self.deadline, duration: self.duration, duration_affinity: self.duration_affinity, subject: self.subject, description: self.descript)
     }
 
     /*
@@ -129,10 +129,10 @@ public class PVRTask: NSObject,NSCoding,NSCopying
 }
 
 /*
- * public class PVRRepeatTask: PVRTask
+ * public class SKMRepeatTask: SKMTask
  * - Defines an object that represents a task that repeats
  */
-public class PVRRepeatTask: PVRTask
+public class SKMRepeatTask: SKMTask
 {
     //Properties
     //Repeat
@@ -204,7 +204,7 @@ public class PVRRepeatTask: PVRTask
 
     //NSCopying
     public override func copy(with zone: NSZone?) -> Any {
-        return PVRRepeatTask(name: self.name, duration: self.repeat_duration, duration_affinity:self.duration_affinity,repeat_loop: self.repeat_loop, subject: self.subject, description: self.description, deadline: self.deadline)
+        return SKMRepeatTask(name: self.name, duration: self.repeat_duration, duration_affinity:self.duration_affinity,repeat_loop: self.repeat_loop, subject: self.subject, description: self.description, deadline: self.deadline)
     }
     
     //Data
@@ -232,7 +232,7 @@ public class PVRRepeatTask: PVRTask
      *
      * [Argument]
      * date - virtual current date
-     * PVRRepeatTask::update() - Updates based on date as current date
+     * SKMRepeatTask::update() - Updates based on date as current date
      */
     public override func update(date: NSDate)
     {
@@ -273,10 +273,10 @@ public class PVRRepeatTask: PVRTask
 }
 
 /*
- * public enum PVRTaskSort
+ * public enum SKMTaskSort
  * - Defines constants to specify sort attribute
 */
-public enum PVRTaskSort
+public enum SKMTaskSort
 {
     case name //Sort by name
     case deadline //Sort by deadline date/time
@@ -285,50 +285,50 @@ public enum PVRTaskSort
 }
 
 /*
- * public struct PVRTaskSortFunc
- * - Defines functions for use in sorting PVRTask
+ * public struct SKMTaskSortFunc
+ * - Defines functions for use in sorting SKMTask
 */
-public struct PVRTaskSortFunc
+public struct SKMTaskSortFunc
 {
     /*
-     * public func name(task1:PVRTask,task2:PVRTask) -> Bool
+     * public func name(task1:SKMTask,task2:SKMTask) -> Bool
      * - Defines sort by name. Sort Stable.   
      * - Smaller Alphanumeric First
     */
-    public static func name(task1:PVRTask,task2:PVRTask) -> Bool
+    public static func name(task1:SKMTask,task2:SKMTask) -> Bool
     {
         //if task1.name <= task2.name, task1 should before task2
         return task1.name <= task2.name
     }
 
     /*
-     * public func deadline(task1:PVRTask,task2:PVRTask) -> Bool
+     * public func deadline(task1:SKMTask,task2:SKMTask) -> Bool
      * - Defines sort by deadline.Sort Stable.
      * - Earlier deadline first
     */
-    public static func deadline(task1:PVRTask,task2:PVRTask) -> Bool
+    public static func deadline(task1:SKMTask,task2:SKMTask) -> Bool
     {
         //if task.deadline <= task2.deadline, task1 should be before task2
         return task1.deadline.compare((task2.deadline as Date)) != ComparisonResult.orderedDescending
     }
 
     /*
-     * public func duration(task1:PVRTask,task2:PVRTask) -> Bool
+     * public func duration(task1:SKMTask,task2:SKMTask) -> Bool
      * - Defines sort by duration of task. Sort Stable.
      * - Smaller Duration First
     */
-    public static func duration(task1:PVRTask,task2:PVRTask) -> Bool
+    public static func duration(task1:SKMTask,task2:SKMTask) -> Bool
     {
         //if task1.duration <= task2.duration, task1 should be before task2
         return task1.duration <= task2.duration
     }
 
     /*
-     * public func priority(task1:PVRTask,task2:PVRTask) -> Bool
+     * public func priority(task1:SKMTask,task2:SKMTask) -> Bool
      * - Defines sort by priority defined by task. Sort Stable.
      * - Smaller Duration First
     */
-    public static func priority(task1:PVRTask,task2:PVRTask) -> Bool
+    public static func priority(task1:SKMTask,task2:SKMTask) -> Bool
     {
         //if task.deadline <= task2.deadline, task1 shoudl be before task2
         return task1.priority() <= task2.priority()

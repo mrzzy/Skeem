@@ -1,6 +1,6 @@
 //
 //  SettingListVC.swift
-//  Prevoir
+//  Skeem
 //
 //  Created by Zhu Zhan Yan on 2/11/16.
 //  Copyright © 2016 SSTInc. All rights reserved.
@@ -10,8 +10,8 @@ import UIKit
 
 class SettingListVC: UITableViewController {
     //Link
-    weak var DBC:PVRDataController! /* Link to Data Controller */
-    weak var CFG:PVRConfig! /* Link to Config Object */
+    weak var DBC:SKMDataController! /* Link to Data Controller */
+    weak var CFG:SKMConfig! /* Link to Config Object */
 
     //UI Elements
     @IBOutlet weak var switch_shake: UISwitch!
@@ -37,6 +37,6 @@ class SettingListVC: UITableViewController {
     //UI Events
     @IBAction func switch_toggle_shake(_ sender: UISwitch) {
         let cfg_val = NSNumber(booleanLiteral: sender.isOn)
-        CFG.commitSetting(set: PVRSetting.ui_shake, val: cfg_val)
+        CFG.commitSetting(set: SKMSetting.ui_shake, val: cfg_val)
     }
 }

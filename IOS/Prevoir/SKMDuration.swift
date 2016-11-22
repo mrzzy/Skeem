@@ -1,6 +1,6 @@
 //
-//  PVRDuration.swift
-//  Prevoir
+//  SKMDuration.swift
+//  Skeem
 //
 //  Created by Zhu Zhan Yan on 18/10/16.
 //  Copyright © 2016 SSTInc. All rights reserved.
@@ -9,10 +9,10 @@
 import UIKit
 
 /* 
- * public class PVRDuration: NSObject,NSCoding
+ * public class SKMDuration: NSObject,NSCoding
  * - Defines a Duration of Time
 */
-public class PVRDuration: NSObject,NSCoding,NSCopying
+public class SKMDuration: NSObject,NSCoding,NSCopying
 {
     //Properties
     public var begin:NSDate /*Defines the start date/time of "Duration of time"*/
@@ -48,15 +48,15 @@ public class PVRDuration: NSObject,NSCoding,NSCopying
 
     //NSCopying
     public func copy(with zone: NSZone? = nil) -> Any {
-        return PVRDuration(begin: self.begin, duration: self.duration)
+        return SKMDuration(begin: self.begin, duration: self.duration)
     }
 }
 
 /*
- * public class PVRVoidDuration: PVRDuration
+ * public class SKMVoidDuration: SKMDuration
  * - Defines a "void" Duration of time where tasks should not be scheduled.
 */
-public class PVRVoidDuration: PVRDuration
+public class SKMVoidDuration: SKMDuration
 {
     //Properties
     public var name:String /*Defines the name of the void duration*/
@@ -100,7 +100,7 @@ public class PVRVoidDuration: PVRDuration
 
     //NSCopying
     public override func copy(with zone: NSZone?) -> Any {
-        return PVRVoidDuration(begin: self.begin, duration: self.duration, name: self.name, asserted: self.asserted)
+        return SKMVoidDuration(begin: self.begin, duration: self.duration, name: self.name, asserted: self.asserted)
     }
 
     //Data
@@ -136,11 +136,11 @@ public class PVRVoidDuration: PVRDuration
 }
 
 /*
- * public class PVRRepeatVoidDuration: PVRVoidDuration
+ * public class SKMRepeatVoidDuration: SKMVoidDuration
  * - Defines a "void" Duration of time which task should not be scheduled.
  * - Able to reschdule "void" Duration of time based on repeat_data
 */
-public class PVRRepeatVoidDuration: PVRVoidDuration
+public class SKMRepeatVoidDuration: SKMVoidDuration
 {
     //Properties
     //Repeat Data
@@ -205,7 +205,7 @@ public class PVRRepeatVoidDuration: PVRVoidDuration
 
     //NSCopying
     public override func copy(with zone: NSZone?) -> Any {
-        return PVRRepeatVoidDuration(begin: self.begin, duration: self.repeat_duration, name: self.name, repeat_loop: self.repeat_loop, deadline: self.repeat_deadline, asserted: self.asserted)
+        return SKMRepeatVoidDuration(begin: self.begin, duration: self.repeat_duration, name: self.name, repeat_loop: self.repeat_loop, deadline: self.repeat_deadline, asserted: self.asserted)
     }
 
     //Data
@@ -235,7 +235,7 @@ public class PVRRepeatVoidDuration: PVRVoidDuration
      *
      * [Argument]
      * date - virtual current date
-     * PVRRepeatVoidDuration::nextVoid() - Updates based on date as current date
+     * SKMRepeatVoidDuration::nextVoid() - Updates based on date as current date
      */
     public override func update(date: NSDate)
     {
@@ -277,38 +277,38 @@ public class PVRRepeatVoidDuration: PVRVoidDuration
 }
 
 /*
- * public enum PVRVoidDurationSort
+ * public enum SKMVoidDurationSort
  * - Defines constants that specify sort atttriable.
 */
-public enum PVRVoidDurationSort
+public enum SKMVoidDurationSort
 {
     case name //Sort by name
     case begin //Sort by begin date/time
 }
 
 /*
- * public struct PVRVoidDurationSortFunc
- * - Defines functions for use in sorting PVRVoidDuration
+ * public struct SKMVoidDurationSortFunc
+ * - Defines functions for use in sorting SKMVoidDuration
 */
-public struct PVRVoidDurationSortFunc
+public struct SKMVoidDurationSortFunc
 {
     /*
-     * public func name(voidd1:PVRVoidDuration,voidd2:PVRVoidDuartion) -> Bool
+     * public func name(voidd1:SKMVoidDuration,voidd2:SKMVoidDuartion) -> Bool
      * - Defines sort by name. Sort Stable.
      * - Smaller Alphanumeric Order first
     */
-    public static func name(voidd1:PVRVoidDuration,voidd2:PVRVoidDuration) -> Bool
+    public static func name(voidd1:SKMVoidDuration,voidd2:SKMVoidDuration) -> Bool
     {
         //if voidd1.name <= void2.name, voidd1 before voidd2
         return voidd1.name <= voidd2.name
     }
 
     /*
-     * public func begin(voidd1:PVRVoidDuration,voidd2:PVRVoidDuartion) -> Bool
+     * public func begin(voidd1:SKMVoidDuration,voidd2:SKMVoidDuartion) -> Bool
      * - Define sort by begin date. Sort Stable.
      * - Earlier begin date first
     */
-    public static func begin(voidd1:PVRVoidDuration,voidd2:PVRVoidDuration) -> Bool
+    public static func begin(voidd1:SKMVoidDuration,voidd2:SKMVoidDuration) -> Bool
     {
         //if voidd1.begin <= voidd2.begin, voidd1 before voidd2
         return voidd1.begin.compare((voidd2.begin as Date)) != ComparisonResult.orderedDescending

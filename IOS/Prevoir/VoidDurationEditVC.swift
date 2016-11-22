@@ -1,6 +1,6 @@
 //
 //  VoidDurationEditVC.swift
-//  Prevoir
+//  Skeem
 //
 //  Created by Zhu Zhan Yan on 2/11/16.
 //  Copyright © 2016 SSTInc. All rights reserved.
@@ -27,11 +27,11 @@ class VoidDurationEditVC: UIViewController,UITextFieldDelegate{
     @IBOutlet weak var cnstrt_datepicker_begin: NSLayoutConstraint!
 
     //Link
-    var DBC:PVRDataController!
+    var DBC:SKMDataController!
 
     //Data
-    //var voidd:PVRVoidDuration!
-    //var rpt_voidd:PVRRepeatVoidDuration!
+    //var voidd:SKMVoidDuration!
+    //var rpt_voidd:SKMRepeatVoidDuration!
     var voidd_name:String!
     var voidd_duration:Int!
     var voidd_begin:Date!
@@ -119,18 +119,18 @@ class VoidDurationEditVC: UIViewController,UITextFieldDelegate{
     }
 
     /*
-     * public func loadEditVoidDuration(voidd:PVRVoidDuration)
+     * public func loadEditVoidDuration(voidd:SKMVoidDuration)
      * - Prepare View for editing Void Duration specfied by argument voidd
      * [Argument]
      * voidd - The Void Duration to edit
     */
-    public func loadEditVoidDuration(voidd:PVRVoidDuration)
+    public func loadEditVoidDuration(voidd:SKMVoidDuration)
     {
         self.edit = true
         self.repeat_data = false
         
         //Load Void Duration Data
-        if let rpt_voidd = (voidd as? PVRRepeatVoidDuration)
+        if let rpt_voidd = (voidd as? SKMRepeatVoidDuration)
         {
             self.voidd_type = VoidDurationType.repetitive
             rpt_voidd.update(date: NSDate()) //Update to current date

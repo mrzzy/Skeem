@@ -1,6 +1,6 @@
 //
 //  TaskEditVC.swift
-//  Prevoir
+//  Skeem
 //
 //  Created by Zhu Zhan Yan on 2/11/16.
 //  Copyright © 2016 SSTInc. All rights reserved.
@@ -34,7 +34,7 @@ class TaskEditVC: UIViewController,UITextViewDelegate,UITextFieldDelegate {
     @IBOutlet weak var cnstrt_datepick_drsn_affinity: NSLayoutConstraint!
 
     //Link
-    var DBC:PVRDataController!
+    var DBC:SKMDataController!
 
     //Data
     var task_name:String!
@@ -69,17 +69,17 @@ class TaskEditVC: UIViewController,UITextViewDelegate,UITextFieldDelegate {
     }
 
     /*
-     * public loadEditTask(task:PVRTask)
-     * - Setup View Controller for editing PVRTask specifed by task
+     * public loadEditTask(task:SKMTask)
+     * - Setup View Controller for editing SKMTask specifed by task
      * [Arguments]
      * task - The task to edit
     */
-    public func loadEditTask(task:PVRTask)
+    public func loadEditTask(task:SKMTask)
     {
         //Update Status
         self.edit = true
         self.repeat_data = false
-        if let rpttask = (task as? PVRRepeatTask)
+        if let rpttask = (task as? SKMRepeatTask)
         {
             //Task is repetitive
             self.task_type = TaskType.repetitive

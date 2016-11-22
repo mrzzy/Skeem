@@ -6,7 +6,7 @@ IOS
 [PVRDBFile]
  () Tests
 [PVRDatabase]
- () Tests
+ (x) Tests
 [PVRScheduler]
  () Possible decoupling of objects
  () Tests
@@ -26,3 +26,8 @@ TYPE: Implementation Error
 PRIORITY: MEDIUM
 DESCRIPTION: abort() cause application crash, on closer inspection, abort() and else block should not exsist.
 STATUS:FIXED
+[BUG-3]
+LOCATION: PVRScheduler/public func generateSchedulableDuration() -> [PVRDuration]/:124
+PRIORIY: LOW
+DESCRIPTION: Duration in Time Interval is greater then Int.max, therefore conversion to Int is not possible..
+STATUS: NOT FIXED

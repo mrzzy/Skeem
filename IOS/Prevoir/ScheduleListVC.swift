@@ -1,6 +1,6 @@
 //
 //  ScheduleListVC.swift
-//  Prevoir
+//  Skeem
 //
 //  Created by Zhu Zhan Yan on 2/11/16.
 //  Copyright © 2016 SSTInc. All rights reserved.
@@ -10,13 +10,13 @@ import UIKit
 
 class ScheduleListVC: UITableViewController {
     //Links
-    var DBC:PVRDataController!
-    var SCH:PVRScheduler!
+    var DBC:SKMDataController!
+    var SCH:SKMScheduler!
 
     //Data
-    var arr_voidd:[PVRVoidDuration]!
-    var arr_drsn:[PVRDuration]!
-    var dict_schd:[PVRDuration:[PVRTask]]!
+    var arr_voidd:[SKMVoidDuration]!
+    var arr_drsn:[SKMDuration]!
+    var dict_schd:[SKMDuration:[SKMTask]]!
 
     //Status
     var date:Date! //Current Virtual Date
@@ -34,12 +34,13 @@ class ScheduleListVC: UITableViewController {
         //Prepare Data
         self.DBC.updateTask()
         self.DBC.updateVoidDuration()
-        self.arr_voidd = self.DBC.sortedVoidDuration(sattr: PVRVoidDurationSort.begin)
+        self.arr_voidd = self.DBC.sortedVoidDuration(sattr: SKMVoidDurationSort.begin)
 
         //Date
         self.date = Date() //Init to current date/time
 
         //Schedule Duration
+        /*
         self.arr_drsn = self.SCH.scheduleDuration()
 
         //Schedule Tasks
@@ -47,11 +48,11 @@ class ScheduleListVC: UITableViewController {
         {
             dict_schd = try self.SCH.scheduleTask()
         }
-        catch PVRSchedulerError.InsufficentData
+        catch SKMSchedulerError.InsufficentData
         {
             //TODO: Warn user of insufficent data
         }
-        catch PVRSchedulerError.DeadlineOverflow
+        catch SKMSchedulerError.DeadlineOverflow
         {
             //TODO: Warn usr of deadline overflow
         }
@@ -60,6 +61,7 @@ class ScheduleListVC: UITableViewController {
             //Unhandled Error
             abort()
         }
+ */
     }
 
     //UI Functions
@@ -110,13 +112,16 @@ class ScheduleListVC: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         //Compute total Cells
-        var cell_cnt = self.arr_voidd.count
+        /*var cell_cnt = self.arr_voidd.count
         for arr_stsk in self.dict_schd.values
         {
             cell_cnt += arr_stsk.count
         }
 
         return cell_cnt
+        */
+
+        return 0
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
@@ -128,7 +133,7 @@ class ScheduleListVC: UITableViewController {
             var loc = 0
             for drsn in self.arr_drsn
             {
-                if let voidd = (drsn as? PVRVoidDuration)
+                if let voidd = (drsn as? SKMVoidDuration)
                 {
                     //Void Duration
                     if loc == indexPath.row

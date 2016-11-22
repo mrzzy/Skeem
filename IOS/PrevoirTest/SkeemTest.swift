@@ -1,6 +1,6 @@
 //
-//  PrevoirTest.swift
-//  PrevoirTest
+//  SkeemTest.swift
+//  SkeemTest
 //
 //  Created by Zhu Zhan Yan on 22/11/16.
 //  Copyright © 2016 SSTInc. All rights reserved.
@@ -8,7 +8,7 @@
 
 import XCTest
 
-class PrevoirTest: XCTestCase {
+class SkeemTest: XCTestCase {
     
     override func setUp() {
         super.setUp()

@@ -1,6 +1,6 @@
 //
-//  PVRDataView.swift
-//  Prevoir
+//  SKMDataView.swift
+//  Skeem
 //
 //  Created by Zhu Zhan Yan on 23/10/16.
 //  Copyright © 2016 SSTInc. All rights reserved.
@@ -9,29 +9,29 @@
 import UIKit
 
 /*
- * public PVRDataView: NSObject
+ * public SKMDataView: NSObject
  * - Represents a view of Data.
  * - Able to Simulate Data under certain conditions
  * - Permits non-Persistent Editing of Data
 */
-public enum PVRDataViewError:Error
+public enum SKMDataViewError:Error
 {
     case methodDisabled
 }
-public class PVRDataView: PVRDatabase
+public class SKMDataView: SKMDatabase
 {
     //Properties
-    weak var DB:PVRDatabase!
+    weak var DB:SKMDatabase!
 
 
     //Methods
 
     /*
-     * init(db:PVRDatabase)
+     * init(db:SKMDatabase)
      * [Argument]
      * db - PJVDatabase to copy data from
     */
-    init(db:PVRDatabase)
+    init(db:SKMDatabase)
     {
         self.DB = db
 
@@ -43,12 +43,12 @@ public class PVRDataView: PVRDatabase
     //Disabled Methods
     public override func load() throws
     {
-        print("ERR:PVRDataView: Disabled method load() called")
+        print("ERR:SKMDataView: Disabled method load() called")
     }
     
     public override func commit()
     {
-        print("ERR:PVRDataView: Disabled method commit() called")
+        print("ERR:SKMDataView: Disabled method commit() called")
     }
 
     //Data
@@ -61,11 +61,11 @@ public class PVRDataView: PVRDatabase
         //Copy Database data
         for (name,task) in self.DB.task
         {
-            self.task[name] = (task.copy() as! PVRTask)
+            self.task[name] = (task.copy() as! SKMTask)
         }
         for (name,voidd) in self.DB.voidDuration
         {
-            self.voidDuration[name] = (voidd.copy() as! PVRVoidDuration)
+            self.voidDuration[name] = (voidd.copy() as! SKMVoidDuration)
         }
 
         self.cache = self.DB.cache

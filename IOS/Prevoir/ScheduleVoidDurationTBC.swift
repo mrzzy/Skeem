@@ -1,6 +1,6 @@
 //
 //  ScheduleVoidDurationTBC.swift
-//  Prevoir
+//  Skeem
 //
 //  Created by Zhu Zhan Yan on 11/11/16.
 //  Copyright © 2016 SSTInc. All rights reserved.

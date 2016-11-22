@@ -1,6 +1,6 @@
 //
-//  PVRDatabase.swift
-//  Prevoir
+//  SKMDatabase.swift
+//  Skeem
 //
 //  Created by Zhu Zhan Yan on 13/10/16.
 //  Copyright © 2016 SSTInc. All rights reserved.
@@ -9,10 +9,10 @@
 import UIKit
 
 /*
- * public enum PVRDBKey:String
+ * public enum SKMDBKey:String
  * - Defines key of virtual storage Locations
 */
-public enum PVRDBKey:String
+public enum SKMDBKey:String
 {
     //Persistent File
     case task = "pvrdb_task" //Task Location
@@ -26,10 +26,10 @@ public enum PVRDBKey:String
 }
 
 /* 
- * public enum PVRDBError:Error
- * - Defines errors that may occur when using PVRDatabase
+ * public enum SKMDBError:Error
+ * - Defines errors that may occur when using SKMDatabase
 */
-public enum PVRDBError:Error
+public enum SKMDBError:Error
 {
     case entry_exist //Entry already exist
     case entry_not_exist //Entry does not exist
@@ -37,10 +37,10 @@ public enum PVRDBError:Error
 }
 
 /*
- * public enum PVRDBFileError:Error
- * - Defines errors that may occur when using PVRDBFile
+ * public enum SKMDBFileError:Error
+ * - Defines errors that may occur when using SKMDBFile
 */
-public enum PVRDBFileError:Error
+public enum SKMDBFileError:Error
 {
     case file_not_exist //File does not exist
     case file_exist //File Already exists
@@ -49,11 +49,11 @@ public enum PVRDBFileError:Error
 }
 
 /*
- * public class PVRDBFile:NSObject
+ * public class SKMDBFile:NSObject
  * - Defines an object that represents a database file
  * - Performs I/O Operations
 */
-public class PVRDBFile:NSObject
+public class SKMDBFile:NSObject
 {
     //Properties
     //Storage
@@ -80,31 +80,31 @@ public class PVRDBFile:NSObject
         {
             try self.load()
         }
-        catch PVRDBFileError.file_not_exist
+        catch SKMDBFileError.file_not_exist
         {
-            print("Info:PVRDBFile: File does not exist, assumming new file")
+            print("Info:SKMDBFile: File does not exist, assumming new file")
         }
-        catch PVRDBFileError.file_unreadable
+        catch SKMDBFileError.file_unreadable
         {
-            print("FATAL:PVRDBFile: File not readable")
+            print("FATAL:SKMDBFile: File not readable")
             abort()
         }
         catch
         {
-            print("FATAL:PVRDBFile: Unknown Error")
+            print("FATAL:SKMDBFile: Unknown Error")
             abort()
         }
 
     }
 
     /*
-     * public func stage(key:PVRDBKey,data:Any)
+     * public func stage(key:SKMDBKey,data:Any)
      * - Stage data for writing
      * [Arguments]
      * key - Virtual Storage Location to store data
      * data - Data to store for key
      */
-    public func stage(key:PVRDBKey,data:Any)
+    public func stage(key:SKMDBKey,data:Any)
     {
         if self.staged == false
         {
@@ -118,20 +118,20 @@ public class PVRDBFile:NSObject
     }
 
     /*
-     * public func retrieve(key:PVRDBKey) throws -> Any
+     * public func retrieve(key:SKMDBKey) throws -> Any
      * - Retrieve data from virtual storage location
      * [Argument]
      * key - Virtual storage location to retrieve from
      * [Return]
      * Any - Data retrieved
      * [Exception]
-     * PVRDBFileError.data_staged - Changes have been staged
+     * SKMDBFileError.data_staged - Changes have been staged
      */
-    public func retrieve(key:PVRDBKey) throws -> Any
+    public func retrieve(key:SKMDBKey) throws -> Any
     {
         if self.staged == true
         {
-            throw PVRDBFileError.data_staged
+            throw SKMDBFileError.data_staged
         }
 
         return self.unach.decodeObject(forKey: key.rawValue)!
@@ -161,15 +161,15 @@ public class PVRDBFile:NSObject
      * public func load() throws
      * - Load data from disk
      * [Error]
-     * PVRDBFileError.data_staged - Changes have been staged
-     * PVRDBFileError.file_unreadable - File is unreadable, an unknown I/O error occured
-     * PVRDBFileError.file_not_exist - File does not exist
+     * SKMDBFileError.data_staged - Changes have been staged
+     * SKMDBFileError.file_unreadable - File is unreadable, an unknown I/O error occured
+     * SKMDBFileError.file_not_exist - File does not exist
     */
     public func load() throws
     {
         if self.staged == true
         {
-            throw PVRDBFileError.data_staged
+            throw SKMDBFileError.data_staged
         }
 
         if FileManager.default.fileExists(atPath: self.file_path) == true
@@ -182,29 +182,29 @@ public class PVRDBFile:NSObject
             }
             else
             {
-                throw PVRDBFileError.file_unreadable
+                throw SKMDBFileError.file_unreadable
             }
         }
         else
         {
-            throw PVRDBFileError.file_not_exist
+            throw SKMDBFileError.file_not_exist
         }
     }
 }
 
 
-public class PVRDatabase:NSObject
+public class SKMDatabase:NSObject
 {
     //Properties
     //Data
-    internal var task:[String:PVRTask] //Tasks
-    internal var voidDuration:[String:PVRVoidDuration] //Void Duration
+    internal var task:[String:SKMTask] //Tasks
+    internal var voidDuration:[String:SKMVoidDuration] //Void Duration
     internal var mcache:[String:Any]  //In-Memory Cache
     internal var cache:[String:NSCoding] //Cache
 
     //Storage
-    internal var pst_file:PVRDBFile
-    internal var tmp_file:PVRDBFile
+    internal var pst_file:SKMDBFile
+    internal var tmp_file:SKMDBFile
 
     //Status
     internal var modified:Bool
@@ -215,11 +215,11 @@ public class PVRDatabase:NSObject
     {
         //Persistent Storage
         let doc_path = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0]
-        self.pst_file = PVRDBFile(file_path: "\(doc_path)/pvr_pst.plist")
+        self.pst_file = SKMDBFile(file_path: "\(doc_path)/pvr_pst.plist")
 
         //Cache (Tmp Storage)
         let tmp_path = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.cachesDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0]
-        self.tmp_file = PVRDBFile(file_path: "\(tmp_path)/pvr_cache.plist")
+        self.tmp_file = SKMDBFile(file_path: "\(tmp_path)/pvr_cache.plist")
 
         self.task = [:]
         self.voidDuration = [:]
@@ -235,9 +235,9 @@ public class PVRDatabase:NSObject
     //I/O
     /*
      * public func load() throws
-     * - Loads all data from PVRDBFile, or inits data
+     * - Loads all data from SKMDBFile, or inits data
      * [Exception]
-     * PVRDBError.entry_modified - An Entry has been modified
+     * SKMDBError.entry_modified - An Entry has been modified
     */
     public func load() throws
     {
@@ -247,10 +247,10 @@ public class PVRDatabase:NSObject
             do
             {
                 try self.pst_file.load()
-                self.task = (try! self.pst_file.retrieve(key: PVRDBKey.task) as! [String : PVRTask])
-                self.voidDuration = (try! self.pst_file.retrieve(key: PVRDBKey.void_duration) as! [String:PVRDuration] as! [String : PVRVoidDuration])
+                self.task = (try! self.pst_file.retrieve(key: SKMDBKey.task) as! [String : SKMTask])
+                self.voidDuration = (try! self.pst_file.retrieve(key: SKMDBKey.void_duration) as! [String:SKMDuration] as! [String : SKMVoidDuration])
             }
-            catch PVRDBFileError.file_not_exist
+            catch SKMDBFileError.file_not_exist
             {
                 self.task = [:]
             }
@@ -263,7 +263,7 @@ public class PVRDatabase:NSObject
             do
             {
                 try self.tmp_file.load()
-                if let cch = (try? self.tmp_file.retrieve(key: PVRDBKey.cache) as! [String:NSCoding])
+                if let cch = (try? self.tmp_file.retrieve(key: SKMDBKey.cache) as! [String:NSCoding])
                 {
                     self.cache = cch
                 }
@@ -272,7 +272,7 @@ public class PVRDatabase:NSObject
                     self.cache = [:]
                 }
             }
-            catch PVRDBFileError.file_not_exist
+            catch SKMDBFileError.file_not_exist
             {
                 self.cache = [:]
             }
@@ -283,7 +283,7 @@ public class PVRDatabase:NSObject
         }
         else
         {
-            throw PVRDBError.entry_modified
+            throw SKMDBError.entry_modified
         }
     }
 
@@ -296,50 +296,50 @@ public class PVRDatabase:NSObject
         if self.modified == true
         {
             //Persistent File
-            self.pst_file.stage(key: PVRDBKey.task, data: self.task)
-            self.pst_file.stage(key: PVRDBKey.void_duration, data: self.voidDuration)
+            self.pst_file.stage(key: SKMDBKey.task, data: self.task)
+            self.pst_file.stage(key: SKMDBKey.void_duration, data: self.voidDuration)
             self.pst_file.commit()
 
             //Temporary File
-            self.tmp_file.stage(key: PVRDBKey.cache, data: self.cache)
+            self.tmp_file.stage(key: SKMDBKey.cache, data: self.cache)
             self.tmp_file.commit()
         }
     }
     /*
-     * public func createEntry(locKey:PVRDBKey,key:String,val:Any) throws
+     * public func createEntry(locKey:SKMDBKey,key:String,val:Any) throws
      * - Creates an entry in the virtual storage location specifed by loc key
      * [Argument]
      * lockey - Virtual storage location to store entry
      * key - Unique Identifier for the entry
      * val - Value of the entry
      * [Exception]
-     * PVRDBError.entry_exist - An entry already exists under the key
+     * SKMDBError.entry_exist - An entry already exists under the key
      */
-    public func createEntry(locKey:PVRDBKey,key:String,val:Any) throws
+    public func createEntry(locKey:SKMDBKey,key:String,val:Any) throws
     {
-        if locKey == PVRDBKey.task
+        if locKey == SKMDBKey.task
         {
             if self.task[key] == nil
             {
-                self.task[key] = (val as! PVRTask)
+                self.task[key] = (val as! SKMTask)
             }
             else
             {
-                throw PVRDBError.entry_exist
+                throw SKMDBError.entry_exist
             }
         }
-        else if locKey == PVRDBKey.void_duration
+        else if locKey == SKMDBKey.void_duration
         {
             if self.voidDuration[key] == nil
             {
-                self.voidDuration[key] = (val as! PVRVoidDuration)
+                self.voidDuration[key] = (val as! SKMVoidDuration)
             }
             else
             {
-                throw PVRDBError.entry_exist
+                throw SKMDBError.entry_exist
             }
         }
-        else if locKey == PVRDBKey.cache
+        else if locKey == SKMDBKey.cache
         {
             if self.cache[key] == nil
             {
@@ -347,10 +347,10 @@ public class PVRDatabase:NSObject
             }
             else
             {
-                throw PVRDBError.entry_exist
+                throw SKMDBError.entry_exist
             }
         }
-        else if locKey == PVRDBKey.mcache
+        else if locKey == SKMDBKey.mcache
         {
             if self.mcache[key] == nil
             {
@@ -358,7 +358,7 @@ public class PVRDatabase:NSObject
             }
             else
             {
-                throw PVRDBError.entry_exist
+                throw SKMDBError.entry_exist
             }
         }
 
@@ -366,40 +366,40 @@ public class PVRDatabase:NSObject
     }
 
     /*
-     public func updateEntry(lockey:PVRDBKey,key:String,val:Any) throws
+     public func updateEntry(lockey:SKMDBKey,key:String,val:Any) throws
      - Update value of entry specified by key in the virtual storage location specifed by lockey
      * [Argument]
      * locKey - Virtual storage location of the entry
      * key - Identifier for the entry
      * val - Value to update the entry
      * [Exception]
-     *  PVRDBError.entry_not_exist - Entry specifed by key does not exist
+     *  SKMDBError.entry_not_exist - Entry specifed by key does not exist
     */
-    public func updateEntry(locKey:PVRDBKey,key:String,val:Any) throws
+    public func updateEntry(locKey:SKMDBKey,key:String,val:Any) throws
     {
-        if locKey == PVRDBKey.task
+        if locKey == SKMDBKey.task
         {
             if self.task[key] != nil
             {
-                self.task[key] = (val as! PVRTask)
+                self.task[key] = (val as! SKMTask)
             }
             else
             {
-                throw PVRDBError.entry_not_exist
+                throw SKMDBError.entry_not_exist
             }
         }
-        else if locKey == PVRDBKey.void_duration
+        else if locKey == SKMDBKey.void_duration
         {
             if self.voidDuration[key] != nil
             {
-                self.voidDuration[key] = (val as! PVRVoidDuration)
+                self.voidDuration[key] = (val as! SKMVoidDuration)
             }
             else
             {
-                throw PVRDBError.entry_not_exist
+                throw SKMDBError.entry_not_exist
             }
         }
-        else if locKey == PVRDBKey.cache
+        else if locKey == SKMDBKey.cache
         {
             if self.cache[key] != nil
             {
@@ -407,10 +407,10 @@ public class PVRDatabase:NSObject
             }
             else
             {
-                throw PVRDBError.entry_not_exist
+                throw SKMDBError.entry_not_exist
             }
         }
-        else if locKey == PVRDBKey.mcache
+        else if locKey == SKMDBKey.mcache
         {
             if self.mcache[key] != nil
             {
@@ -418,7 +418,7 @@ public class PVRDatabase:NSObject
             }
             else
             {
-                throw PVRDBError.entry_not_exist
+                throw SKMDBError.entry_not_exist
             }
         }
 
@@ -426,27 +426,27 @@ public class PVRDatabase:NSObject
     }
 
     /*
-     * public func deleteEntry(lockey:PVRDBKey,key:String)
+     * public func deleteEntry(lockey:SKMDBKey,key:String)
      * - Deletes entry specifed by key in the virtual storage location specifed by lockey
      * [Argument]
      * lockey - Virtual storage location of the entry
      * key - Identifier of the entry
     */
-    public func deleteEntry(lockey:PVRDBKey,key:String)
+    public func deleteEntry(lockey:SKMDBKey,key:String)
     {
-        if lockey == PVRDBKey.task
+        if lockey == SKMDBKey.task
         {
             self.task[key] = nil
         }
-        else if lockey == PVRDBKey.void_duration
+        else if lockey == SKMDBKey.void_duration
         {
             self.voidDuration[key] = nil
         }
-        else if lockey == PVRDBKey.cache
+        else if lockey == SKMDBKey.cache
         {
             self.cache[key] = nil
         }
-        else if lockey == PVRDBKey.mcache
+        else if lockey == SKMDBKey.mcache
         {
             self.mcache[key] = nil
         }
@@ -455,7 +455,7 @@ public class PVRDatabase:NSObject
     }
 
     /*
-     * public func retrieveEntry(lockey:PVRDBKey,key:String) throws -> Any
+     * public func retrieveEntry(lockey:SKMDBKey,key:String) throws -> Any
      * - Retrieves the data of the entry specified key located in the virtual storage location specfied by lockey
      * NOTE: Might Terminate executable
      * [Argument]
@@ -464,11 +464,11 @@ public class PVRDatabase:NSObject
      * [Return]
      * Any - Data of the entry
      * [Exception]
-     * PVRDBError.entry_not_exist - Entry does not exist
+     * SKMDBError.entry_not_exist - Entry does not exist
     */
-    public func retrieveEntry(lockey:PVRDBKey,key:String) throws -> Any
+    public func retrieveEntry(lockey:SKMDBKey,key:String) throws -> Any
     {
-        if lockey == PVRDBKey.task
+        if lockey == SKMDBKey.task
         {
             if let rst = self.task[key]
             {
@@ -476,10 +476,10 @@ public class PVRDatabase:NSObject
             }
             else
             {
-                throw PVRDBError.entry_not_exist
+                throw SKMDBError.entry_not_exist
             }
         }
-        else if lockey == PVRDBKey.void_duration
+        else if lockey == SKMDBKey.void_duration
         {
             if let rst = self.voidDuration[key]
             {
@@ -487,10 +487,10 @@ public class PVRDatabase:NSObject
             }
             else
             {
-                throw PVRDBError.entry_not_exist
+                throw SKMDBError.entry_not_exist
             }
         }
-        else if lockey == PVRDBKey.cache
+        else if lockey == SKMDBKey.cache
         {
             if let rst = self.cache[key]
             {
@@ -498,10 +498,10 @@ public class PVRDatabase:NSObject
             }
             else
             {
-                throw PVRDBError.entry_not_exist
+                throw SKMDBError.entry_not_exist
             }
         }
-        else if lockey == PVRDBKey.mcache
+        else if lockey == SKMDBKey.mcache
         {
             if let rst = self.mcache[key]
             {
@@ -509,7 +509,7 @@ public class PVRDatabase:NSObject
             }
             else
             {
-                throw PVRDBError.entry_not_exist
+                throw SKMDBError.entry_not_exist
             }
         }
         else
@@ -520,7 +520,7 @@ public class PVRDatabase:NSObject
     }
 
     /*
-     * public func retrieveAllEntry(lockey:PVRDBKey) -> Any
+     * public func retrieveAllEntry(lockey:SKMDBKey) -> Any
      * - Retrieves all entries located in the virtual storage location specified by lockey
      * NOTE: Might Terminate Executable
      * [Argument]
@@ -528,21 +528,21 @@ public class PVRDatabase:NSObject
      * [Return]
      * Dictionary[String,Any] - Dictionary of entryies in virtual storage location
     */
-    public func retrieveAllEntry(lockey:PVRDBKey) -> [String:Any]
+    public func retrieveAllEntry(lockey:SKMDBKey) -> [String:Any]
     {
-        if lockey == PVRDBKey.task
+        if lockey == SKMDBKey.task
         {
             return self.task
         }
-        else if lockey == PVRDBKey.void_duration
+        else if lockey == SKMDBKey.void_duration
         {
             return self.voidDuration
         }
-        else if lockey == PVRDBKey.cache
+        else if lockey == SKMDBKey.cache
         {
             return self.cache
         }
-        else if lockey == PVRDBKey.mcache
+        else if lockey == SKMDBKey.mcache
         {
             return self.mcache
         }

@@ -1,6 +1,6 @@
 //
-//  PVRDataController.swift
-//  Prevoir
+//  SKMDataController.swift
+//  Skeem
 //
 //  Created by Zhu Zhan Yan on 17/10/16.
 //  Copyright © 2016 SSTInc. All rights reserved.
@@ -9,24 +9,24 @@
 import UIKit
 
 /*
- * public class PVRDataController: NSObject
+ * public class SKMDataController: NSObject
  * - Defines an adaptor between the database and other objects
  * - Suppliments functionality provided by database
 */
-public class PVRDataController: NSObject
+public class SKMDataController: NSObject
 {
     //Properties
-    public weak var DB:PVRDatabase! /* Links PVRDataController to Database
+    public weak var DB:SKMDatabase! /* Links SKMDataController to Database
                                      * NOTE: Will terminate execuable if Database is missing
                                     */
 
     //Methods
     /*
-     * init(db:PVRDatabase)
+     * init(db:SKMDatabase)
      * [Argument]
      * db - Data to link to
     */
-    init(db:PVRDatabase)
+    init(db:SKMDatabase)
     {
         self.DB = db
 
@@ -44,11 +44,11 @@ public class PVRDataController: NSObject
     */
     public func pruneTask()
     {
-        for (name,task) in (self.DB.retrieveAllEntry(lockey: PVRDBKey.task) as! [String:PVRTask])
+        for (name,task) in (self.DB.retrieveAllEntry(lockey: SKMDBKey.task) as! [String:SKMTask])
         {
             if task.vaild() == false
             {
-                self.DB.deleteEntry(lockey: PVRDBKey.task, key: name)
+                self.DB.deleteEntry(lockey: SKMDBKey.task, key: name)
             }
         }
     }
@@ -59,10 +59,10 @@ public class PVRDataController: NSObject
     */
     public func updateTask()
     {
-        for (name,task) in (self.DB.retrieveAllEntry(lockey: PVRDBKey.task) as! [String:PVRTask])
+        for (name,task) in (self.DB.retrieveAllEntry(lockey: SKMDBKey.task) as! [String:SKMTask])
         {
             task.update(date: NSDate()) //Update for current date/time
-            try! self.DB.updateEntry(locKey: PVRDBKey.task, key: name, val: task)
+            try! self.DB.updateEntry(locKey: SKMDBKey.task, key: name, val: task)
         }
     }
 
@@ -81,15 +81,15 @@ public class PVRDataController: NSObject
     */
     public func createOneshotTask(name:String,subject:String,description:String,deadline:NSDate,duration:Int,duration_affinity:Int) -> Bool
     {
-        let crt_task = PVRTask(name: name, deadline: deadline, duration: duration ,duration_affinity:duration_affinity, subject: subject,description:description)
+        let crt_task = SKMTask(name: name, deadline: deadline, duration: duration ,duration_affinity:duration_affinity, subject: subject,description:description)
 
         do
         {
-            try self.DB.createEntry(locKey: PVRDBKey.task, key: crt_task.name, val: crt_task)
+            try self.DB.createEntry(locKey: SKMDBKey.task, key: crt_task.name, val: crt_task)
         }
-        catch PVRDBError.entry_exist
+        catch SKMDBError.entry_exist
         {
-            print("ERR:PVRDataController: Failed to Create task, entry already exists in database.")
+            print("ERR:SKMDataController: Failed to Create task, entry already exists in database.")
             return false
         }
         catch
@@ -116,15 +116,15 @@ public class PVRDataController: NSObject
     */
     public func createRepeativeTask(name:String,subject:String,description:String,repeat_loop:[TimeInterval],repeat_deadline:NSDate?=nil,duration:Int,duration_affinity:Int,deadline:NSDate) -> Bool
     {
-        let crt_rttask = PVRRepeatTask(name: name, duration: duration,duration_affinity:duration_affinity, repeat_loop: repeat_loop, subject: subject,description:description,deadline:deadline,repeat_deadline:repeat_deadline)
+        let crt_rttask = SKMRepeatTask(name: name, duration: duration,duration_affinity:duration_affinity, repeat_loop: repeat_loop, subject: subject,description:description,deadline:deadline,repeat_deadline:repeat_deadline)
 
         do
         {
-            try self.DB.createEntry(locKey: PVRDBKey.task, key: crt_rttask.name, val:crt_rttask)
+            try self.DB.createEntry(locKey: SKMDBKey.task, key: crt_rttask.name, val:crt_rttask)
         }
-        catch PVRDBError.entry_exist
+        catch SKMDBError.entry_exist
         {
-            print("ERR:PVRDataController: Failed to create task, entry already exists in database.")
+            print("ERR:SKMDataController: Failed to create task, entry already exists in database.")
             return false
         }
         catch
@@ -150,16 +150,16 @@ public class PVRDataController: NSObject
     */
     public func updateOneshotTask(name:String,subject:String?=nil,description:String?=nil,deadline:NSDate?=nil,duration:Int?=nil,duration_affinity:Int?=nil) -> Bool
     {
-        var up_task:PVRTask!
+        var up_task:SKMTask!
 
         //Obtain task
         do
         {
-            up_task = (try self.DB.retrieveEntry(lockey: PVRDBKey.task, key: name) as! PVRTask)
+            up_task = (try self.DB.retrieveEntry(lockey: SKMDBKey.task, key: name) as! SKMTask)
         }
-        catch PVRDBError.entry_not_exist
+        catch SKMDBError.entry_not_exist
         {
-            print("ERR:PVRDataController: Failed to update task, entry does not exist in database")
+            print("ERR:SKMDataController: Failed to update task, entry does not exist in database")
             return false
         }
         catch
@@ -196,7 +196,7 @@ public class PVRDataController: NSObject
         //Update DataBase
         do
         {
-            try self.DB.updateEntry(locKey: PVRDBKey.task, key: name, val: up_task)
+            try self.DB.updateEntry(locKey: SKMDBKey.task, key: name, val: up_task)
         }
         catch
         {
@@ -221,16 +221,16 @@ public class PVRDataController: NSObject
     */
     public func updateRepeativeTask(name:String,subject:String?=nil,description:String?=nil,repeat_loop:[TimeInterval]?=nil,repeat_deadline:NSDate?=nil,duration:Int?=nil,duration_affinity:Int?=nil,deadline:NSDate?=nil) -> Bool
     {
-        var up_task:PVRRepeatTask!
+        var up_task:SKMRepeatTask!
 
         //Obtain task
         do
         {
-            up_task = (try self.DB.retrieveEntry(lockey: PVRDBKey.task, key: name) as! PVRRepeatTask)
+            up_task = (try self.DB.retrieveEntry(lockey: SKMDBKey.task, key: name) as! SKMRepeatTask)
         }
-        catch PVRDBError.entry_not_exist
+        catch SKMDBError.entry_not_exist
         {
-            print("ERR:PVRDataController: Failed to update task, entry does not exist in database")
+            print("ERR:SKMDataController: Failed to update task, entry does not exist in database")
             return false
         }
         catch
@@ -277,7 +277,7 @@ public class PVRDataController: NSObject
         //Update Database
         do
         {
-            try self.DB.updateEntry(locKey: PVRDBKey.task, key: name, val: up_task)
+            try self.DB.updateEntry(locKey: SKMDBKey.task, key: name, val: up_task)
         }
         catch
         {
@@ -297,14 +297,14 @@ public class PVRDataController: NSObject
     */
     public func completeTask(name:String) -> Bool
     {
-        if let comp_task = try? (self.DB.retrieveEntry(lockey: PVRDBKey.task, key: name) as! PVRTask)
+        if let comp_task = try? (self.DB.retrieveEntry(lockey: SKMDBKey.task, key: name) as! SKMTask)
         {
             comp_task.complete()
             return true
         }
         else
         {
-            print("ERR:PVRDataController: Failed to complete task, task does not exists.")
+            print("ERR:SKMDataController: Failed to complete task, task does not exists.")
             return false
         }
     }
@@ -320,16 +320,16 @@ public class PVRDataController: NSObject
     */
     public func deleteTask(name:String) -> Bool
     {
-        if let del_task = try? (self.DB.retrieveEntry(lockey: PVRDBKey.task, key: name) as! PVRTask)
+        if let del_task = try? (self.DB.retrieveEntry(lockey: SKMDBKey.task, key: name) as! SKMTask)
         {
             del_task.complete()
-            self.DB.deleteEntry(lockey: PVRDBKey.task, key: name)
+            self.DB.deleteEntry(lockey: SKMDBKey.task, key: name)
 
             return true
         }
         else
         {
-            print("ERR:PVRDataController: Failed to delete task, Task does not exist.")
+            print("ERR:SKMDataController: Failed to delete task, Task does not exist.")
             return false
         }
     }
@@ -347,14 +347,14 @@ public class PVRDataController: NSObject
     */
     public func updateTaskStatus(name:String,duration:Int,completion:Double) -> Bool
     {
-        if let up_task = try? (self.DB.retrieveEntry(lockey: PVRDBKey.task, key: name) as! PVRTask)
+        if let up_task = try? (self.DB.retrieveEntry(lockey: SKMDBKey.task, key: name) as! SKMTask)
         {
             up_task.duration = duration
             up_task.completion = completion
 
             do
             {
-                try self.DB.updateEntry(locKey: PVRDBKey.task, key: name, val: up_task)
+                try self.DB.updateEntry(locKey: SKMDBKey.task, key: name, val: up_task)
             }
             catch
             {
@@ -366,7 +366,7 @@ public class PVRDataController: NSObject
         }
         else
         {
-            print("ERR:PVRDataController: Failed to update task, Task does not exist.")
+            print("ERR:SKMDataController: Failed to update task, Task does not exist.")
             return false
         }
     }
@@ -384,14 +384,14 @@ public class PVRDataController: NSObject
     */
     public func adjustTaskStatus(name:String, duration:Int, completion:Double) -> Bool
     {
-        if let ad_task = try? (self.DB.retrieveEntry(lockey: PVRDBKey.task, key: name) as! PVRTask)
+        if let ad_task = try? (self.DB.retrieveEntry(lockey: SKMDBKey.task, key: name) as! SKMTask)
         {
             ad_task.duration += duration
             ad_task.completion += completion
 
             do
             {
-                try self.DB.updateEntry(locKey: PVRDBKey.task,key: name, val: ad_task)
+                try self.DB.updateEntry(locKey: SKMDBKey.task,key: name, val: ad_task)
             }
             catch
             {
@@ -403,32 +403,32 @@ public class PVRDataController: NSObject
         }
         else
         {
-            print("ERR:PVRDataController: Failed to adjust task, Task does not exist.")
+            print("ERR:SKMDataController: Failed to adjust task, Task does not exist.")
             return false
         }
     }
 
     /*
-     * public func sortedTask(sorder:PVRTaskSort) -> [PVRTask]
+     * public func sortedTask(sorder:SKMTaskSort) -> [SKMTask]
      * - Sorts task based on specifed attribute
      * NOTE: Will terminate executable if unknown database error occurs
      * [Argument]
      * sattr - Attribute to sort by
      * [Return]
-     * Array<PVRTask] - Sorted Array of tasks
+     * Array<SKMTask] - Sorted Array of tasks
     */
-    public func sortedTask(sattr:PVRTaskSort) -> [PVRTask]
+    public func sortedTask(sattr:SKMTaskSort) -> [SKMTask]
     {
-        if let task = (self.DB.retrieveAllEntry(lockey:PVRDBKey.task) as? [String:PVRTask])?.values
+        if let task = (self.DB.retrieveAllEntry(lockey:SKMDBKey.task) as? [String:SKMTask])?.values
         {
             switch sattr
             {
-            case PVRTaskSort.name:
-                return task.sorted(by:PVRTaskSortFunc.name)
-            case PVRTaskSort.deadline:
-                return task.sorted(by:PVRTaskSortFunc.deadline)
-            case PVRTaskSort.duration:
-                return task.sorted(by:PVRTaskSortFunc.duration)
+            case SKMTaskSort.name:
+                return task.sorted(by:SKMTaskSortFunc.name)
+            case SKMTaskSort.deadline:
+                return task.sorted(by:SKMTaskSortFunc.deadline)
+            case SKMTaskSort.duration:
+                return task.sorted(by:SKMTaskSortFunc.duration)
             }
         }
         else
@@ -444,25 +444,25 @@ public class PVRDataController: NSObject
      */
     public func pruneVoidDuration()
     {
-        for (name,voidd) in (self.DB.retrieveAllEntry(lockey: PVRDBKey.void_duration) as! [String:PVRVoidDuration])
+        for (name,voidd) in (self.DB.retrieveAllEntry(lockey: SKMDBKey.void_duration) as! [String:SKMVoidDuration])
         {
             if voidd.vaild() == false
             {
-                self.DB.deleteEntry(lockey: PVRDBKey.void_duration, key: name)
+                self.DB.deleteEntry(lockey: SKMDBKey.void_duration, key: name)
             }
         }
     }
 
     /*
      * public func updateVoidDuration()
-     * - Update PVRVoidDuration data for current date
+     * - Update SKMVoidDuration data for current date
      */
     public func updateVoidDuration()
     {
-        for (name,voidd) in (self.DB.retrieveAllEntry(lockey: PVRDBKey.void_duration) as! [String:PVRVoidDuration])
+        for (name,voidd) in (self.DB.retrieveAllEntry(lockey: SKMDBKey.void_duration) as! [String:SKMVoidDuration])
         {
             voidd.update(date: NSDate()) //Update for current date/time
-            try? self.DB.updateEntry(locKey: PVRDBKey.void_duration, key: name, val: voidd)
+            try? self.DB.updateEntry(locKey: SKMDBKey.void_duration, key: name, val: voidd)
         }
     }
 
@@ -480,15 +480,15 @@ public class PVRDataController: NSObject
     */
     public func createVoidDuration(name:String,begin:NSDate,duration:Int,asserted:Bool) -> Bool
     {
-        let crt_voidd = PVRVoidDuration(begin: begin, duration:duration , name: name, asserted: asserted)
+        let crt_voidd = SKMVoidDuration(begin: begin, duration:duration , name: name, asserted: asserted)
 
         do
         {
-            try self.DB.createEntry(locKey: PVRDBKey.void_duration, key: crt_voidd.name, val:  crt_voidd)
+            try self.DB.createEntry(locKey: SKMDBKey.void_duration, key: crt_voidd.name, val:  crt_voidd)
         }
-        catch PVRDBError.entry_exist
+        catch SKMDBError.entry_exist
         {
-            print("ERR:PVRDataController: Failed to create void duration, entry already exists in database.")
+            print("ERR:SKMDataController: Failed to create void duration, entry already exists in database.")
             return false
         }
         catch
@@ -515,15 +515,15 @@ public class PVRDataController: NSObject
     */
     public func createRepeatVoidDuration(name:String,begin:NSDate,duration:Int,repeat_loop:[TimeInterval],repeat_deadline:NSDate?,asserted:Bool) -> Bool
     {
-        let crt_rptvoidd = PVRRepeatVoidDuration(begin: begin, duration: duration, name: name, repeat_loop: repeat_loop, deadline: repeat_deadline, asserted: asserted)
+        let crt_rptvoidd = SKMRepeatVoidDuration(begin: begin, duration: duration, name: name, repeat_loop: repeat_loop, deadline: repeat_deadline, asserted: asserted)
 
         do
         {
-            try self.DB.createEntry(locKey: PVRDBKey.void_duration, key: crt_rptvoidd.name, val:  crt_rptvoidd)
+            try self.DB.createEntry(locKey: SKMDBKey.void_duration, key: crt_rptvoidd.name, val:  crt_rptvoidd)
         }
-        catch PVRDBError.entry_exist
+        catch SKMDBError.entry_exist
         {
-            print("ERR:PVRDataController: Failed to create void duration, entry already exists in database.")
+            print("ERR:SKMDataController: Failed to create void duration, entry already exists in database.")
             return false
         }
         catch
@@ -549,14 +549,14 @@ public class PVRDataController: NSObject
     public func updateVoidDuration(name:String,begin:NSDate?=nil,duration:Int?=nil,asserted:Bool?=nil) -> Bool
     {
         //Obtain Void Duration
-        var voidd:PVRVoidDuration!
+        var voidd:SKMVoidDuration!
         do
         {
-            voidd = (try self.DB.retrieveEntry(lockey: PVRDBKey.void_duration, key: name) as! PVRVoidDuration)
+            voidd = (try self.DB.retrieveEntry(lockey: SKMDBKey.void_duration, key: name) as! SKMVoidDuration)
         }
-        catch PVRDBError.entry_not_exist
+        catch SKMDBError.entry_not_exist
         {
-            print("ERR:PVRDataController: Faild to update void duration, entry does not exist in database.")
+            print("ERR:SKMDataController: Faild to update void duration, entry does not exist in database.")
             return false
         }
         catch
@@ -584,7 +584,7 @@ public class PVRDataController: NSObject
         //Update Database
         do
         {
-            try self.DB.updateEntry(locKey: PVRDBKey.void_duration, key: name, val: voidd)
+            try self.DB.updateEntry(locKey: SKMDBKey.void_duration, key: name, val: voidd)
         }
         catch
         {
@@ -611,14 +611,14 @@ public class PVRDataController: NSObject
     public func updateRepeatVoidDuration(name:String,begin:NSDate?=nil,duration:Int?=nil,repeat_loop:[TimeInterval]?=nil,repeat_deadline:NSDate??=nil,asserted:Bool?=nil) -> Bool
     {
         //Obtain Void Duration
-        var voidd:PVRRepeatVoidDuration!
+        var voidd:SKMRepeatVoidDuration!
         do
         {
-            voidd = (try self.DB.retrieveEntry(lockey: PVRDBKey.void_duration, key: name) as! PVRRepeatVoidDuration)
+            voidd = (try self.DB.retrieveEntry(lockey: SKMDBKey.void_duration, key: name) as! SKMRepeatVoidDuration)
         }
-        catch PVRDBError.entry_not_exist
+        catch SKMDBError.entry_not_exist
         {
-            print("ERR:PVRDataController: Faild to update void duration, entry does not exist in database.")
+            print("ERR:SKMDataController: Faild to update void duration, entry does not exist in database.")
             return false
         }
         catch
@@ -655,7 +655,7 @@ public class PVRDataController: NSObject
         //Update Database
         do
         {
-            try self.DB.updateEntry(locKey: PVRDBKey.void_duration, key: name, val: voidd)
+            try self.DB.updateEntry(locKey: SKMDBKey.void_duration, key: name, val: voidd)
         }
         catch
         {
@@ -675,37 +675,37 @@ public class PVRDataController: NSObject
     */
     public func deleteVoidDuration(name:String) -> Bool
     {
-        if let _ = try? (self.DB.retrieveEntry(lockey: PVRDBKey.void_duration, key: name) as! PVRVoidDuration)
+        if let _ = try? (self.DB.retrieveEntry(lockey: SKMDBKey.void_duration, key: name) as! SKMVoidDuration)
         {
-            self.DB.deleteEntry(lockey: PVRDBKey.void_duration, key: name)
+            self.DB.deleteEntry(lockey: SKMDBKey.void_duration, key: name)
             return true
         }
         else
         {
-            print("ERR:PVRDataController: Failed to delete void duration, void duration does not exist.")
+            print("ERR:SKMDataController: Failed to delete void duration, void duration does not exist.")
             return false
         }
     }
 
     /*
-     * public func sortedVoidDuration(sattr:PVRVoidDurationSort) -> [PVRVoidDuration]
+     * public func sortedVoidDuration(sattr:SKMVoidDurationSort) -> [SKMVoidDuration]
      * - Sorts stored Void Duration based on specifed attribute
      * NOTE: Will terminate executable if unknown database error occurs
      * [Argument]
      * sattr - Attriute to sort by
      * [Return]
-     * Array<PVRVoidDuration> - Sorted array of Void Duration.
+     * Array<SKMVoidDuration> - Sorted array of Void Duration.
     */
-    public func sortedVoidDuration(sattr:PVRVoidDurationSort) -> [PVRVoidDuration]
+    public func sortedVoidDuration(sattr:SKMVoidDurationSort) -> [SKMVoidDuration]
     {
-        if let voidd = (self.DB.retrieveAllEntry(lockey: PVRDBKey.void_duration) as? [String:PVRVoidDuration])?.values
+        if let voidd = (self.DB.retrieveAllEntry(lockey: SKMDBKey.void_duration) as? [String:SKMVoidDuration])?.values
         {
             switch sattr
             {
-            case PVRVoidDurationSort.name:
-                return voidd.sorted(by: PVRVoidDurationSortFunc.name)
-            case PVRVoidDurationSort.begin:
-                return voidd.sorted(by: PVRVoidDurationSortFunc.begin)
+            case SKMVoidDurationSort.name:
+                return voidd.sorted(by: SKMVoidDurationSortFunc.name)
+            case SKMVoidDurationSort.begin:
+                return voidd.sorted(by: SKMVoidDurationSortFunc.begin)
             }
         }
         else

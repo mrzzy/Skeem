@@ -1,6 +1,6 @@
 //
 //  VoidDurationListVC.swift
-//  Prevoir
+//  Skeem
 //
 //  Created by Zhu Zhan Yan on 2/11/16.
 //  Copyright © 2016 SSTInc. All rights reserved.
@@ -10,12 +10,12 @@ import UIKit
 
 class VoidDurationListVC: UITableViewController {
     //Links
-    weak var DBC:PVRDataController!
-    weak var SCH:PVRScheduler!
-    weak var CFG:PVRConfig!
+    weak var DBC:SKMDataController!
+    weak var SCH:SKMScheduler!
+    weak var CFG:SKMConfig!
 
     //Data
-    var arr_voidd:[PVRVoidDuration]!
+    var arr_voidd:[SKMVoidDuration]!
 
     var utcell_id_voidd:String!
     var utcell_id_voidd_null:String!
@@ -33,7 +33,7 @@ class VoidDurationListVC: UITableViewController {
     {
         //Update Data
         self.DBC.updateVoidDuration()
-        self.arr_voidd = self.DBC.sortedVoidDuration(sattr: PVRVoidDurationSort.begin)
+        self.arr_voidd = self.DBC.sortedVoidDuration(sattr: SKMVoidDurationSort.begin)
     }
 
     /*
@@ -58,7 +58,7 @@ class VoidDurationListVC: UITableViewController {
         self.utcell_id_voidd = "uitcell.list.voidd"
         self.utcell_id_voidd_null = "uitcell.list.voidd.null"
 
-        self.arr_voidd = self.DBC.sortedVoidDuration(sattr: PVRVoidDurationSort.begin)
+        self.arr_voidd = self.DBC.sortedVoidDuration(sattr: SKMVoidDurationSort.begin)
 
         super.viewDidLoad()
     }
@@ -127,7 +127,7 @@ class VoidDurationListVC: UITableViewController {
         if editingStyle == UITableViewCellEditingStyle.delete {
             switch indexPath.section {
             case 0:
-                let voidd = self.DBC.sortedVoidDuration(sattr: PVRVoidDurationSort.begin)[indexPath.row]
+                let voidd = self.DBC.sortedVoidDuration(sattr: SKMVoidDurationSort.begin)[indexPath.row]
                 let rst = self.DBC.deleteVoidDuration(name: voidd.name)
                 assert(rst) //Terminates Executable if delete fails
             default:

@@ -1,6 +1,6 @@
 //
-//  PVRSchduler.swift
-//  Prevoir
+//  SKMSchduler.swift
+//  Skeem
 //
 //  Created by Zhu Zhan Yan on 10/10/16.
 //  Copyright © 2016 SSTInc. All rights reserved.
@@ -9,10 +9,10 @@
 import UIKit
 
 /*
- * public enum PVRSchedulerError:Error
- * - Describles the errors that may occur when using PVRScheduler
+ * public enum SKMSchedulerError:Error
+ * - Describles the errors that may occur when using SKMScheduler
 */
-public enum PVRSchedulerError:Error
+public enum SKMSchedulerError:Error
 {
     
 case DeadlineOverflow /* Subtasks could not be scheduled before deadline */
@@ -21,22 +21,22 @@ case DeadlineOverflow /* Subtasks could not be scheduled before deadline */
 
 
 /*
- * public class PVRScheduler : NSObject
+ * public class SKMScheduler : NSObject
  * - Determines Schedulable time from void duration
  * - Determines Size of Task to Schedule
  * - Schedules Tasks based on attribute
 */
-public class PVRScheduler: NSObject
+public class SKMScheduler: NSObject
 {
     //Properties
     //Link
-    weak var dataCtrl:PVRDataController! /* Link to Data Controller
+    weak var dataCtrl:SKMDataController! /* Link to Data Controller
                                           * NOTE: Will Terminate executable if Missing
                                          */
-    weak var config:PVRConfig! /* Link to Config Object
+    weak var config:SKMConfig! /* Link to Config Object
                                * Note: Will Terminate executable if missing */
-    var dataViewCtrl:PVRDataController! /*Link to Data View Data controller */
-    var dataView:PVRDataView! /*Link to Data View */
+    var dataViewCtrl:SKMDataController! /*Link to Data View Data controller */
+    var dataView:SKMDataView! /*Link to Data View */
 
     //Status
     var schd_task_date:NSDate! /*Date Schedule was generated*/
@@ -44,26 +44,26 @@ public class PVRScheduler: NSObject
     var sch_affinity:Bool! /*Whether Duration Afinity is followed */
 
     //Data
-    var schd_task:[PVRDuration:[PVRTask]]! /* Generated Scheduling of subtask*/
-    var schd_drsn:[PVRDuration]! /* Generated Array of Chronologically Ordered Duration */
+    var schd_task:[SKMDuration:[SKMTask]]! /* Generated Scheduling of subtask*/
+    var schd_drsn:[SKMDuration]! /* Generated Array of Chronologically Ordered Duration */
 
 
 
     //Data
     //Methods
     /*
-     * init(datactrl:PVRDataController)
+     * init(datactrl:SKMDataController)
      * [Arguments]
-     * datactrl - PVRDataController to link to
+     * datactrl - SKMDataController to link to
     */
-    init(dataCtrl:PVRDataController,cfg:PVRConfig)
+    init(dataCtrl:SKMDataController,cfg:SKMConfig)
     {
         self.dataCtrl = dataCtrl
-        self.dataView = PVRDataView(db: dataCtrl.DB)
-        self.dataViewCtrl = PVRDataController(db: self.dataView)
+        self.dataView = SKMDataView(db: dataCtrl.DB)
+        self.dataViewCtrl = SKMDataController(db: self.dataView)
         self.schd_task_date = NSDate.distantPast as NSDate
         self.sch_affinity = true
-        self.schd_task = Dictionary<PVRDuration,Array<PVRTask>>()
+        self.schd_task = Dictionary<SKMDuration,Array<SKMTask>>()
         self.config = cfg
 
         super.init()
@@ -80,7 +80,7 @@ public class PVRScheduler: NSObject
         self.dataCtrl.updateTask()
         self.dataCtrl.pruneTask()
 
-        if let lastTask = self.dataCtrl.sortedTask(sattr: PVRTaskSort.deadline).last
+        if let lastTask = self.dataCtrl.sortedTask(sattr: SKMTaskSort.deadline).last
         {
             return lastTask.deadline
         }
@@ -92,11 +92,11 @@ public class PVRScheduler: NSObject
 
     /*
      * public func generateSchedulableDuration()
-     * - Genrate an Array of PVRDuration where tasks may be scheduled, sorted by time
+     * - Genrate an Array of SKMDuration where tasks may be scheduled, sorted by time
      * [Return]
-     * Array<PVRDuration> - Array of PVRDuration where tasks may be scheduled
+     * Array<SKMDuration> - Array of SKMDuration where tasks may be scheduled
     */
-    public func generateSchedulableDuration() -> [PVRDuration]
+    public func generateSchedulableDuration() -> [SKMDuration]
     {
         //Prepare Data View
         self.dataCtrl.updateVoidDuration()
@@ -104,13 +104,14 @@ public class PVRScheduler: NSObject
         self.dataView.loadFromDB()
 
         //Result Data
-        var arr_drsn = Array<PVRDuration>()
+        var arr_drsn = Array<SKMDuration>()
         
         //Status Data
-        if self.dataView.retrieveAllEntry(lockey: PVRDBKey.void_duration).count > 0
+        
+        if self.dataView.retrieveAllEntry(lockey: SKMDBKey.void_duration).count > 0
         {
             var date = Date() //Init to Current Date
-            var voidd = self.dataViewCtrl.sortedVoidDuration(sattr: PVRVoidDurationSort.begin)[0] //Closest begin date
+            var voidd = self.dataViewCtrl.sortedVoidDuration(sattr: SKMVoidDurationSort.begin)[0] //Closest begin date
 
             //Extract Duration from Void Duration
             while date.compare(self.lastTaskDate() as Date) == ComparisonResult.orderedAscending && self.dataView.voidDuration.count >= 0
@@ -121,7 +122,7 @@ public class PVRScheduler: NSObject
                 let tint = voidd.begin.timeIntervalSince(date)
                 if tint > 0
                 {
-                    let drsn = PVRDuration(begin: date as NSDate, duration: Int(round(tint)))
+                    let drsn = SKMDuration(begin: date as NSDate, duration: Int(round(tint)))
                     arr_drsn.append(drsn)
                 }
 
@@ -130,14 +131,14 @@ public class PVRScheduler: NSObject
                 date = (NSDate(timeInterval: TimeInterval(tadd), since: voidd.begin as Date)) as Date //1 Second after voidd
                 self.dataView.simulateDate(date: date as NSDate) //Update Repeat Task
                 self.dataViewCtrl.pruneVoidDuration()
-                voidd = self.dataViewCtrl.sortedVoidDuration(sattr: PVRVoidDurationSort.begin)[0] //Closest begin date
+                voidd = self.dataViewCtrl.sortedVoidDuration(sattr: SKMVoidDurationSort.begin)[0] //Closest begin date
             }
 
             //Duration from date to last date/time
             let tint = self.lastTaskDate().timeIntervalSince(date)
             if tint > 0
             {
-                let drsn = PVRDuration(begin: date as NSDate, duration: Int(round(tint)))
+                let drsn = SKMDuration(begin: date as NSDate, duration: Int(round(tint)))
                 arr_drsn.append(drsn)
             }
 
@@ -146,7 +147,7 @@ public class PVRScheduler: NSObject
         //Cleanup Data
         self.dataView.loadFromDB()
 
-        return arr_drsn
+        return [SKMDuration]()
     }
 
     /*
@@ -185,15 +186,15 @@ public class PVRScheduler: NSObject
     }
 
     /*
-     * public func generateSubtask(task:PVRTask) -> [PVRTask]
+     * public func generateSubtask(task:SKMTask) -> [SKMTask]
      * - Generate subtasks from task
      * [Return]
-     * Array<PVRTask> - Array of subtasks of task, sorted by time
+     * Array<SKMTask> - Array of subtasks of task, sorted by time
      */
-    public func generateSubtask(task:PVRTask) -> [PVRTask]
+    public func generateSubtask(task:SKMTask) -> [SKMTask]
     {
         //Prepare Data
-        var arr_stsk = Array<PVRTask>()
+        var arr_stsk = Array<SKMTask>()
         let stsk_cnt = Int(floor(Double(task.duration / task.duration_affinity)))
         var duration_left = task.duration
         var completion = task.completion
@@ -201,7 +202,7 @@ public class PVRScheduler: NSObject
         //Generate Subtasks
         for stsk_idx in 0..<stsk_cnt
         {
-            let stsk = PVRTask(name: task.name, deadline: task.deadline, duration:task.duration, duration_affinity: task.duration_affinity, subject: task.subject, description: task.descript)
+            let stsk = SKMTask(name: task.name, deadline: task.deadline, duration:task.duration, duration_affinity: task.duration_affinity, subject: task.subject, description: task.descript)
 
             if stsk_idx == (stsk_cnt - 1)
             {
@@ -224,12 +225,12 @@ public class PVRScheduler: NSObject
     }
 
     /*
-     * public func generateAllSubtask() -> [String:[PVRTask]]
+     * public func generateAllSubtask() -> [String:[SKMTask]]
      * - Generate subtasks from all tasks
      * [Return]
-     * Dictionary<String,Array<PVRTask>> - Dictionary with key as task name and value as subtasks generated from task specfied by name
+     * Dictionary<String,Array<SKMTask>> - Dictionary with key as task name and value as subtasks generated from task specfied by name
     */
-    public func generateAllSubtask() -> [String:[PVRTask]]
+    public func generateAllSubtask() -> [String:[SKMTask]]
     {
         //Prepare Data View
         self.dataCtrl.updateTask()
@@ -237,7 +238,7 @@ public class PVRScheduler: NSObject
         self.dataView.loadFromDB()
 
         //Result Data
-        var sch_stsk = Dictionary<String,Array<PVRTask>>()
+        var sch_stsk = Dictionary<String,Array<SKMTask>>()
 
         //Data Check
         if self.dataView.task.count <= 0
@@ -247,7 +248,7 @@ public class PVRScheduler: NSObject
 
         //Status Data
         var date = Date()
-        var task = self.dataViewCtrl.sortedTask(sattr: PVRTaskSort.deadline)[0] //Closest Deadline
+        var task = self.dataViewCtrl.sortedTask(sattr: SKMTaskSort.deadline)[0] //Closest Deadline
 
         //Iterate Tasks
         while date.compare(self.lastTaskDate() as Date) != ComparisonResult.orderedDescending && self.dataView.task.count > 0
@@ -263,7 +264,7 @@ public class PVRScheduler: NSObject
                 else
                 {
                     //Subtask array missing
-                    var arr_stsk = Array<PVRTask>()
+                    var arr_stsk = Array<SKMTask>()
                     arr_stsk.append(stsk)
                     sch_stsk[task.name] = arr_stsk
                 }
@@ -273,7 +274,7 @@ public class PVRScheduler: NSObject
             date = (task.deadline.addingTimeInterval(1) as Date)
             self.dataView.simulateDate(date: date as NSDate) //Update Repeat Tasks
             self.dataViewCtrl.pruneTask()
-            task = self.dataViewCtrl.sortedTask(sattr: PVRTaskSort.deadline)[0] //Closest Deadline
+            task = self.dataViewCtrl.sortedTask(sattr: SKMTaskSort.deadline)[0] //Closest Deadline
         }
 
         //Cleanup Data
@@ -292,7 +293,7 @@ public class PVRScheduler: NSObject
     public func vaildateSchedulable() -> Bool
     {
         //Generate Input Data
-        let tasks = (Array(self.dataCtrl.DB.retrieveAllEntry(lockey: PVRDBKey.task).values) as! Array<PVRTask>)
+        let tasks = (Array(self.dataCtrl.DB.retrieveAllEntry(lockey: SKMDBKey.task).values) as! Array<SKMTask>)
         var drsn_schd = 0 //Duration that has already been scheduled
 
         for task in tasks
@@ -318,16 +319,16 @@ public class PVRScheduler: NSObject
      * - Generate Schedule 
      * - Resultant Schedule has Schedulable Duration as Key and an Array of subtasks scheduled as value.
      * [Return]
-     * [PVRDuration:[PVRTask]] - Generated Schedule.
+     * [SKMDuration:[SKMTask]] - Generated Schedule.
      * [Error]
-     * PVRSchedulerError.DeadlineOverflow - Unable to schedule all Tasks before task's repective deadline
+     * SKMSchedulerError.DeadlineOverflow - Unable to schedule all Tasks before task's repective deadline
     */
-    public func scheduleTask() throws -> [PVRDuration:[PVRTask]]
+    public func scheduleTask() throws -> [SKMDuration:[SKMTask]]
     {
         //Safeguard check
         if self.vaildateSchedulable() == false
         {
-            throw PVRSchedulerError.DeadlineOverflow
+            throw SKMSchedulerError.DeadlineOverflow
         }
 
         //Prepare Data View
@@ -337,15 +338,15 @@ public class PVRScheduler: NSObject
 
         //Generate Input Data
         let arr_drsn = self.generateSchedulableDuration()
-        var dict_tsk = (self.dataView.retrieveAllEntry(lockey: PVRDBKey.task) as! [String:PVRTask])
+        var dict_tsk = (self.dataView.retrieveAllEntry(lockey: SKMDBKey.task) as! [String:SKMTask])
         var arr_tsk = Array(dict_tsk.keys)
         var dict_stsk = self.generateAllSubtask()
 
         //Result Data
-        var schd_task = Dictionary<PVRDuration,Array<PVRTask>>()
+        var schd_task = Dictionary<SKMDuration,Array<SKMTask>>()
         for drsn in arr_drsn
         {
-            schd_task[drsn] = Array<PVRTask>()
+            schd_task[drsn] = Array<SKMTask>()
         }
 
         //Slack - Duration schedulable till deadline - Duration need by task
@@ -389,7 +390,7 @@ public class PVRScheduler: NSObject
                         //Current Duration is less then subtask duration && Duration affinty following negative
                         //Split subtask into 2 subtasks
                         //Subtask_1
-                        let stsk_1 = (stsk.copy() as! PVRTask)
+                        let stsk_1 = (stsk.copy() as! SKMTask)
                         stsk_1.duration = drsn.duration
                         stsk_1.completion = stsk.completion * (Double(stsk_1.duration) / Double(stsk.duration))
                         //Subtask 2
@@ -451,14 +452,14 @@ public class PVRScheduler: NSObject
                 {
                     schd_task = try self.scheduleTask()
                 }
-                catch PVRSchedulerError.DeadlineOverflow
+                catch SKMSchedulerError.DeadlineOverflow
                 {
-                    print("Warn:PVRScehduler: Scheduler could not schedule all tasks before deadline")
-                    throw PVRSchedulerError.DeadlineOverflow
+                    print("Warn:SKMScehduler: Scheduler could not schedule all tasks before deadline")
+                    throw SKMSchedulerError.DeadlineOverflow
                 }
                 catch
                 {
-                    print("FATAL:PVRScheduler:Unknown Error Occured while scheduling, aborting.")
+                    print("FATAL:SKMScheduler:Unknown Error Occured while scheduling, aborting.")
                     abort()
                 }
             }
@@ -470,20 +471,20 @@ public class PVRScheduler: NSObject
     }
 
     /*
-     * public func scheduleDuration() -> [PVRDuration]
+     * public func scheduleDuration() -> [SKMDuration]
      * - Merges Void Duration and Schedulable duration into an chronologically ordered Array.
      * [Return]
-     * Array<PVRDuration> - Chronologically ordered Array of Void Duration and Schedulable DUration
+     * Array<SKMDuration> - Chronologically ordered Array of Void Duration and Schedulable DUration
      * [Error]
     */
-    public func scheduleDuration() -> [PVRDuration]
+    public func scheduleDuration() -> [SKMDuration]
     {
         //Obtain Data
-        var arr_voidd = self.dataCtrl.sortedVoidDuration(sattr: PVRVoidDurationSort.begin) //Void Duration
+        var arr_voidd = self.dataCtrl.sortedVoidDuration(sattr: SKMVoidDurationSort.begin) //Void Duration
         var arr_schdd = self.generateSchedulableDuration() //Schedulable Duration
 
         //Result Data
-        var arr_drsn =  Array<PVRDuration>()
+        var arr_drsn =  Array<SKMDuration>()
 
         //Merge Duration
         while arr_voidd.count > 0 && arr_schdd.count > 0
@@ -492,7 +493,7 @@ public class PVRScheduler: NSObject
             {
                 //Current Void Duration begin date < Current Schedulable Duration Date
                 let crt_voidd = arr_voidd.removeFirst()
-                arr_drsn.append((crt_voidd as PVRDuration))
+                arr_drsn.append((crt_voidd as SKMDuration))
             }
             else
             {
@@ -505,7 +506,7 @@ public class PVRScheduler: NSObject
         if arr_voidd.count > 0
         {
             //Append Remainding Void Duration
-            arr_drsn.append(contentsOf:(arr_voidd as [PVRDuration]))
+            arr_drsn.append(contentsOf:(arr_voidd as [SKMDuration]))
         }
         else if arr_schdd.count > 0
         {
