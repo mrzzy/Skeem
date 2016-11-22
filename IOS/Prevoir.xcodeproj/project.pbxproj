@@ -32,7 +32,19 @@
 		5AA440701DAF81B3005B0E70 /* PVRDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA4406F1DAF81B3005B0E70 /* PVRDatabase.swift */; };
 		5AB7343B1DC499A500CCCC98 /* PVRSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB7343A1DC499A500CCCC98 /* PVRSetting.swift */; };
 		5AD59AA01DB4DD130076FF0B /* PVRDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AD59A9F1DB4DD130076FF0B /* PVRDataController.swift */; };
+		5AE3E1D71DE4306500975650 /* PrevoirTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AE3E1D61DE4306500975650 /* PrevoirTest.swift */; };
+		5AE3E1E11DE4317100975650 /* PVRDatabaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AE3E1E01DE4317100975650 /* PVRDatabaseTest.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5AE3E1D91DE4306500975650 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5A50C7211D8CD2E50002ACF8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5A50C7281D8CD2E50002ACF8;
+			remoteInfo = Prevoir;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		5A2755231DB5F0BE00213D60 /* PVRDuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRDuration.swift; sourceTree = "<group>"; };
@@ -62,6 +74,10 @@
 		5AA4406F1DAF81B3005B0E70 /* PVRDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PVRDatabase.swift; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; wrapsLines = 1; };
 		5AB7343A1DC499A500CCCC98 /* PVRSetting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRSetting.swift; sourceTree = "<group>"; };
 		5AD59A9F1DB4DD130076FF0B /* PVRDataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRDataController.swift; sourceTree = "<group>"; };
+		5AE3E1D41DE4306500975650 /* PrevoirTest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PrevoirTest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5AE3E1D61DE4306500975650 /* PrevoirTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrevoirTest.swift; sourceTree = "<group>"; };
+		5AE3E1D81DE4306500975650 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5AE3E1E01DE4317100975650 /* PVRDatabaseTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRDatabaseTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +87,13 @@
 			files = (
 				5A50C7411D8CD4390002ACF8 /* UIKit.framework in Frameworks */,
 				5A50C73F1D8CD4330002ACF8 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5AE3E1D11DE4306500975650 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,6 +125,7 @@
 				5A50C7401D8CD4390002ACF8 /* UIKit.framework */,
 				5A50C73E1D8CD4330002ACF8 /* Foundation.framework */,
 				5A50C72B1D8CD2E50002ACF8 /* Prevoir */,
+				5AE3E1D51DE4306500975650 /* PrevoirTest */,
 				5A50C72A1D8CD2E50002ACF8 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -110,6 +134,7 @@
 			isa = PBXGroup;
 			children = (
 				5A50C7291D8CD2E50002ACF8 /* Prevoir.app */,
+				5AE3E1D41DE4306500975650 /* PrevoirTest.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -198,6 +223,24 @@
 			name = Data;
 			sourceTree = "<group>";
 		};
+		5AE3E1D51DE4306500975650 /* PrevoirTest */ = {
+			isa = PBXGroup;
+			children = (
+				5AE3E1D61DE4306500975650 /* PrevoirTest.swift */,
+				5AE3E1DF1DE4313800975650 /* Data Tests */,
+				5AE3E1D81DE4306500975650 /* Info.plist */,
+			);
+			path = PrevoirTest;
+			sourceTree = "<group>";
+		};
+		5AE3E1DF1DE4313800975650 /* Data Tests */ = {
+			isa = PBXGroup;
+			children = (
+				5AE3E1E01DE4317100975650 /* PVRDatabaseTest.swift */,
+			);
+			name = "Data Tests";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -218,13 +261,31 @@
 			productReference = 5A50C7291D8CD2E50002ACF8 /* Prevoir.app */;
 			productType = "com.apple.product-type.application";
 		};
+		5AE3E1D31DE4306500975650 /* PrevoirTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5AE3E1DD1DE4306500975650 /* Build configuration list for PBXNativeTarget "PrevoirTest" */;
+			buildPhases = (
+				5AE3E1D01DE4306500975650 /* Sources */,
+				5AE3E1D11DE4306500975650 /* Frameworks */,
+				5AE3E1D21DE4306500975650 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5AE3E1DA1DE4306500975650 /* PBXTargetDependency */,
+			);
+			name = PrevoirTest;
+			productName = PrevoirTest;
+			productReference = 5AE3E1D41DE4306500975650 /* PrevoirTest.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		5A50C7211D8CD2E50002ACF8 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0730;
+				LastSwiftUpdateCheck = 0810;
 				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = SSTInc;
 				TargetAttributes = {
@@ -232,6 +293,12 @@
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = 7K6ZTDFM48;
 						LastSwiftMigration = 0800;
+					};
+					5AE3E1D31DE4306500975650 = {
+						CreatedOnToolsVersion = 8.1;
+						DevelopmentTeam = 7K6ZTDFM48;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 5A50C7281D8CD2E50002ACF8;
 					};
 				};
 			};
@@ -249,6 +316,7 @@
 			projectRoot = "";
 			targets = (
 				5A50C7281D8CD2E50002ACF8 /* Prevoir */,
+				5AE3E1D31DE4306500975650 /* PrevoirTest */,
 			);
 		};
 /* End PBXProject section */
@@ -261,6 +329,13 @@
 				5A50C7431D8CD4750002ACF8 /* Main.storyboard in Resources */,
 				5A50C7371D8CD2E50002ACF8 /* LaunchScreen.storyboard in Resources */,
 				5A50C7341D8CD2E50002ACF8 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5AE3E1D21DE4306500975650 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -294,7 +369,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5AE3E1D01DE4306500975650 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5AE3E1D71DE4306500975650 /* PrevoirTest.swift in Sources */,
+				5AE3E1E11DE4317100975650 /* PVRDatabaseTest.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5AE3E1DA1DE4306500975650 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5A50C7281D8CD2E50002ACF8 /* Prevoir */;
+			targetProxy = 5AE3E1D91DE4306500975650 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		5A50C7351D8CD2E50002ACF8 /* LaunchScreen.storyboard */ = {
@@ -426,6 +518,41 @@
 			};
 			name = Release;
 		};
+		5AE3E1DB1DE4306500975650 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				DEVELOPMENT_TEAM = 7K6ZTDFM48;
+				INFOPLIST_FILE = PrevoirTest/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = sstinc.PrevoirTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Prevoir.app/Prevoir";
+			};
+			name = Debug;
+		};
+		5AE3E1DC1DE4306500975650 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				DEVELOPMENT_TEAM = 7K6ZTDFM48;
+				INFOPLIST_FILE = PrevoirTest/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = sstinc.PrevoirTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Prevoir.app/Prevoir";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -446,6 +573,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		5AE3E1DD1DE4306500975650 /* Build configuration list for PBXNativeTarget "PrevoirTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5AE3E1DB1DE4306500975650 /* Debug */,
+				5AE3E1DC1DE4306500975650 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
