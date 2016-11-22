@@ -512,10 +512,6 @@ public class PVRScheduler: NSObject
             //Append Remainding
             arr_drsn.append(contentsOf: arr_schdd)
         }
-        else
-        {
-            abort()
-        }
 
         //Save Data
         self.schd_drsn = arr_drsn
