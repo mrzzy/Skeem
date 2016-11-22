@@ -62,7 +62,7 @@ public class PVRDataController: NSObject
         for (name,task) in (self.DB.retrieveAllEntry(lockey: PVRDBKey.task) as! [String:PVRTask])
         {
             task.update(date: NSDate()) //Update for current date/time
-            try! self.DB.updateEntry(lockey: PVRDBKey.task, key: name, val: task)
+            try! self.DB.updateEntry(locKey: PVRDBKey.task, key: name, val: task)
         }
     }
 
@@ -196,7 +196,7 @@ public class PVRDataController: NSObject
         //Update DataBase
         do
         {
-            try self.DB.updateEntry(lockey: PVRDBKey.task, key: name, val: up_task)
+            try self.DB.updateEntry(locKey: PVRDBKey.task, key: name, val: up_task)
         }
         catch
         {
@@ -277,7 +277,7 @@ public class PVRDataController: NSObject
         //Update Database
         do
         {
-            try self.DB.updateEntry(lockey: PVRDBKey.task, key: name, val: up_task)
+            try self.DB.updateEntry(locKey: PVRDBKey.task, key: name, val: up_task)
         }
         catch
         {
@@ -354,7 +354,7 @@ public class PVRDataController: NSObject
 
             do
             {
-                try self.DB.updateEntry(lockey: PVRDBKey.task, key: name, val: up_task)
+                try self.DB.updateEntry(locKey: PVRDBKey.task, key: name, val: up_task)
             }
             catch
             {
@@ -391,7 +391,7 @@ public class PVRDataController: NSObject
 
             do
             {
-                try self.DB.updateEntry(lockey: PVRDBKey.task,key: name, val: ad_task)
+                try self.DB.updateEntry(locKey: PVRDBKey.task,key: name, val: ad_task)
             }
             catch
             {
@@ -462,7 +462,7 @@ public class PVRDataController: NSObject
         for (name,voidd) in (self.DB.retrieveAllEntry(lockey: PVRDBKey.void_duration) as! [String:PVRVoidDuration])
         {
             voidd.update(date: NSDate()) //Update for current date/time
-            try? self.DB.updateEntry(lockey: PVRDBKey.void_duration, key: name, val: voidd)
+            try? self.DB.updateEntry(locKey: PVRDBKey.void_duration, key: name, val: voidd)
         }
     }
 
@@ -584,7 +584,7 @@ public class PVRDataController: NSObject
         //Update Database
         do
         {
-            try self.DB.updateEntry(lockey: PVRDBKey.void_duration, key: name, val: voidd)
+            try self.DB.updateEntry(locKey: PVRDBKey.void_duration, key: name, val: voidd)
         }
         catch
         {
@@ -655,7 +655,7 @@ public class PVRDataController: NSObject
         //Update Database
         do
         {
-            try self.DB.updateEntry(lockey: PVRDBKey.void_duration, key: name, val: voidd)
+            try self.DB.updateEntry(locKey: PVRDBKey.void_duration, key: name, val: voidd)
         }
         catch
         {

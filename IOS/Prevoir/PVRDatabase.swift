@@ -369,15 +369,15 @@ public class PVRDatabase:NSObject
      public func updateEntry(lockey:PVRDBKey,key:String,val:Any) throws
      - Update value of entry specified by key in the virtual storage location specifed by lockey
      * [Argument]
-     * lockey - Virtual storage location of the entry
+     * locKey - Virtual storage location of the entry
      * key - Identifier for the entry
      * val - Value to update the entry
      * [Exception]
      *  PVRDBError.entry_not_exist - Entry specifed by key does not exist
     */
-    public func updateEntry(lockey:PVRDBKey,key:String,val:Any) throws
+    public func updateEntry(locKey:PVRDBKey,key:String,val:Any) throws
     {
-        if lockey == PVRDBKey.task
+        if locKey == PVRDBKey.task
         {
             if self.task[key] != nil
             {
@@ -388,7 +388,7 @@ public class PVRDatabase:NSObject
                 throw PVRDBError.entry_not_exist
             }
         }
-        else if lockey == PVRDBKey.void_duration
+        else if locKey == PVRDBKey.void_duration
         {
             if self.voidDuration[key] != nil
             {
@@ -399,7 +399,7 @@ public class PVRDatabase:NSObject
                 throw PVRDBError.entry_not_exist
             }
         }
-        else if lockey == PVRDBKey.cache
+        else if locKey == PVRDBKey.cache
         {
             if self.cache[key] != nil
             {
@@ -410,7 +410,7 @@ public class PVRDatabase:NSObject
                 throw PVRDBError.entry_not_exist
             }
         }
-        else if lockey == PVRDBKey.mcache
+        else if locKey == PVRDBKey.mcache
         {
             if self.mcache[key] != nil
             {
