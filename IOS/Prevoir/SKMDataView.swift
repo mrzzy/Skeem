@@ -21,9 +21,16 @@ public enum SKMDataViewError:Error
 public class SKMDataView: SKMDatabase
 {
     //Properties
+    //Links
     weak var DB:SKMDatabase!
+    //Properties
+    //Data
+    private var task:[String:SKMTask]! //Tasks
+    private var voidDuration:[String:SKMVoidDuration]! //Void Duration
+    private var mcache:[String:Any]!  //In-Memory Cache
+    private var cache:[String:NSCoding]! //Cache
 
-
+    
     //Methods
 
     /*
@@ -59,17 +66,18 @@ public class SKMDataView: SKMDatabase
     public func loadFromDB()
     {
         //Copy Database data
-        for (name,task) in self.DB.task
+        for (name,task) in (self.DB.retrieveAllEntry(lockey: SKMDBKey.task) as! [String:SKMTask])
         {
             self.task[name] = (task.copy() as! SKMTask)
         }
-        for (name,voidd) in self.DB.voidDuration
+        for (name,voidd) in (self.DB.retrieveAllEntry(lockey: SKMDBKey.void_duration) as! [String:SKMVoidDuration])
         {
             self.voidDuration[name] = (voidd.copy() as! SKMVoidDuration)
         }
 
-        self.cache = self.DB.cache
-        self.mcache = self.DB.mcache
+        self.cache = (self.DB.retrieveAllEntry(lockey: SKMDBKey.cache) as! [String : NSCoding])
+        self.mcache = self.DB.retrieveAllEntry(lockey: SKMDBKey.cache)
+        
     }
 
     //Simulation

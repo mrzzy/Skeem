@@ -57,7 +57,7 @@ public class SKMDBFile:NSObject
 {
     //Properties
     //Storage
-    public var file_path:String //Path to file of the object
+    public private(set) var file_path:String //Path to file of the object
     private var data:NSMutableData = NSMutableData() //Data of the archive
     private var unach:NSKeyedUnarchiver! //Unarchiver
     private var ach:NSKeyedArchiver! //Archiver
@@ -197,14 +197,14 @@ public class SKMDatabase:NSObject
 {
     //Properties
     //Data
-    internal var task:[String:SKMTask] //Tasks
-    internal var voidDuration:[String:SKMVoidDuration] //Void Duration
-    internal var mcache:[String:Any]  //In-Memory Cache
-    internal var cache:[String:NSCoding] //Cache
+    private var task:[String:SKMTask] //Tasks
+    private var voidDuration:[String:SKMVoidDuration] //Void Duration
+    private var mcache:[String:Any]  //In-Memory Cache
+    private var cache:[String:NSCoding] //Cache
 
     //Storage
-    internal var pst_file:SKMDBFile
-    internal var tmp_file:SKMDBFile
+    private var pst_file:SKMDBFile
+    private var tmp_file:SKMDBFile
 
     //Status
     internal var modified:Bool
@@ -215,11 +215,11 @@ public class SKMDatabase:NSObject
     {
         //Persistent Storage
         let doc_path = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0]
-        self.pst_file = SKMDBFile(file_path: "\(doc_path)/pvr_pst.plist")
+        self.pst_file = SKMDBFile(file_path: "\(doc_path)/skm_pst.plist")
 
         //Cache (Tmp Storage)
         let tmp_path = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.cachesDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0]
-        self.tmp_file = SKMDBFile(file_path: "\(tmp_path)/pvr_cache.plist")
+        self.tmp_file = SKMDBFile(file_path: "\(tmp_path)/skm_cache.plist")
 
         self.task = [:]
         self.voidDuration = [:]
