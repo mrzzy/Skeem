@@ -1,0 +1,20 @@
+=======[Refrence for Comments]======
+-----[RFC 1]-----
+Date: December 08, 2016
+Author: Zhu Zhan Yan
+
+While reading the code for the Android project, I found some questionable
+methods lying around in the DateTime class:
+
+DateTime.getMillis() - The class description only mentions that the 
+accuracy if the data type is only down to the minute however this outputs
+date/time in milli-seconds.
+
+DateTime.setHasDate()
+DateTime.setHasTime() - These setters set Status Variables (Variables
+that vary according to current data). What if someone called on of 
+these methods while internal datetime did not have time? At Least make
+them private.
+
+Also the Duration class should not be Deprecated and should at least
+acts as an abstraction for the current class used (org.joda.time.Period). 
