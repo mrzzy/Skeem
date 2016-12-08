@@ -1,4 +1,4 @@
-=======[Refrence for Comments]======
+=======[Request for Comments]======
 -----[RFC 1]-----
 Date: December 08, 2016
 Author: Zhu Zhan Yan
@@ -6,15 +6,56 @@ Author: Zhu Zhan Yan
 While reading the code for the Android project, I found some questionable
 methods lying around in the DateTime class:
 
-DateTime.getMillis() - The class description only mentions that the 
-accuracy if the data type is only down to the minute however this outputs
-date/time in milli-seconds.
+DateTime.getMillis() - The class description only mentions that the accuracy if
+the data type is only down to the minute however this outputs date/time in
+milli-seconds.
 
 DateTime.setHasDate()
-DateTime.setHasTime() - These setters set Status Variables (Variables
-that vary according to current data). What if someone called on of 
-these methods while internal datetime did not have time? At Least make
-them private.
+DateTime.setHasTime() - These setters set Status Variables (Variables that vary
+according to current data). What if someone called on of these methods while
+internal datetime did not have time? At Least make them private.
 
-Also the Duration class should not be Deprecated and should at least
-acts as an abstraction for the current class used (org.joda.time.Period). 
+Also the Duration class should not be Deprecated and should at least acts as an
+abstraction for the current class used (org.joda.time.Period). 
+
+-----------------
+Date: December 08, 2016
+Author: Joel Tio Jin Hon
+
+Do note that Datetime and DateTime are two separate classes. Datetime is
+Skeem's implementation of date and time while DateTime is jodatime's
+implementation of date and time.
+
+Datetime.getMillis()
+The Datetime class's comment for the accuracy of the data type was not fully
+updated after I have switched from the deprecated classes to the new jodatime
+library. Hence, the description only says the accuracy of the class is down to
+a minute. Previously, it was down to a minute due to its smaller use scope.
+However, the class has an expanded use scope for calculations of the time as
+well. By having accuracy down to milliseconds, division of timeblocks is more
+feasible.
+
+Datetime.setHasDate() and Datetime.setHasTime()
+These functions have their uses and should not be kept private. They are used
+to indicate if date and time values are present in the class. The use case is
+when setting date and time values that can be disabled. Instead of removing the
+date and time completely, the class continues to store the date and time values
+but the flags indicate that they do not exist. For example, when setting a
+task's deadline, it has an optional time field. The user sets a time but
+changes they're mind and disables it. The flag shows that it does not have time
+although it does.
+
+Of course, if you were to just set no date and time but indicate true for the
+variables, it will show up Unix Epoch, hence there you need to be careful not
+to set these flags wrongly. 
+
+You should note, however, that keeping it private will prove no use either, the
+other methods in the class do not rely on these methods to change the flags;
+they set the flags directly.
+
+Deprecation of Duration
+Providing a layer of abstraction does not prove much use. JodaTime's Period
+class provides almost the same functionality as Duration had when it was
+implemented. The methods that Duration used to have are also present in
+Period. Another thing to note is that JodaTime already has a class called
+Duration as well, bringing back the Duration class can cause conflict.
