@@ -22,6 +22,7 @@ import java.util.Locale;
  * @see Parcelable
  */
 class Datetime implements Parcelable {
+    //Properties
     private static final DateTimeFormatter default_format = DateTimeFormat.forPattern(
             "yyyy-MM-dd HH:mm:ss");
 
@@ -29,8 +30,11 @@ class Datetime implements Parcelable {
     private boolean hasDate;
     private boolean hasTime;
 
+
+    //Constructors
     /**
-     * Default constructor. Sets the calendar to the minimum date possible
+     * Default constructor.
+     * Sets the calendar to the minimum date possible
      * for calendar to hold. {@link #hasDate} and {@link #hasTime} are false
      * to indicate absence of date and time.
      */
@@ -41,14 +45,17 @@ class Datetime implements Parcelable {
         this.datetime = new org.joda.time.DateTime(0);
     }
 
-    // Copy constructor
+    /**
+     * Copy constructor.
+     * Initialises new DateTime Object such that new Object is a Clone of
+     * Datetime object passed to the method.
+     *
+     * @param datetime Object to clone/copy.
+     */
     Datetime(Datetime datetime) {
-        if (datetime == null) {
-            this.hasDate = false;
-            this.hasTime = false;
+        this();
 
-            this.datetime = new org.joda.time.DateTime(0);
-        } else {
+        if(datetime != null) {
             this.datetime = new org.joda.time.DateTime(datetime.getMillis());
 
             this.hasDate = datetime.getHasDate();
@@ -56,13 +63,16 @@ class Datetime implements Parcelable {
         }
     }
 
+    /**
+     * Construct Datetime from org.joda.time.DateTime.
+     * Initialises Datetime object from org.joda.time.DateTime.
+     *
+     * @param datetime datetime object to initialise form,
+     */
     Datetime(org.joda.time.DateTime datetime) {
-        if (datetime == null) {
-            this.hasDate = false;
-            this.hasTime = false;
+        this();
 
-            this.datetime = new org.joda.time.DateTime(0);
-        } else {
+        if(datetime != null) {
             this.hasDate = true;
             this.hasTime = true;
 
@@ -71,50 +81,44 @@ class Datetime implements Parcelable {
     }
 
     /**
-     * String constructor. Creates the object by parsing the string passed.
+     * String constructor.
+     * Creates the object by parsing the string passed.
      * Uses default empty constructor {@link #Datetime()} if string is empty.
      *
      * @param datetime The string of the datetime. Can be obtained by the
      *                 {@link #toString} method.
      */
     Datetime(String datetime) {
-        if (datetime == null || datetime.isEmpty()) {
-            // Set to default constructor
-            this.hasDate = false;
-            this.hasTime = false;
+        this();
 
-            this.datetime = new org.joda.time.DateTime(0);
-        } else {
+        if(datetime != null && ! datetime.isEmpty()) {
             // Parse data from string
             String[] datetime_list = datetime.split(" ");
             String[] date_list = datetime_list[0].split("/");
             String[] time_list = datetime_list[1].split(":");
 
-            // Set values
-            this.datetime = new org.joda.time.DateTime(0);
-
             // Check values
-            this.hasDate = false;
-            this.hasTime = false;
             if (Integer.parseInt(date_list[2]) != 0) {
                 this.datetime = this.datetime.withYear(Integer.parseInt(date_list[0]));
                 this.datetime = this.datetime.withMonthOfYear(Integer.parseInt(date_list[1]));
                 this.datetime = this.datetime.withDayOfMonth(Integer.parseInt(date_list[2]));
             }
+
+            //Parse Time
             if (Integer.parseInt(time_list[0]) != 0) {
-                // There is no time
                 this.datetime = this.datetime.withHourOfDay(Integer.parseInt(time_list[0]));
                 this.datetime = this.datetime.withMinuteOfHour(Integer.parseInt(time_list[1]));
-                this.hasTime = true;
             }
+
             // Set values
-//            this.datetime = new org.joda.time.DateTime(Integer.parseInt(date_list[0]), // Year
-//                                                       Integer.parseInt(date_list[1]), // Month
-//                                                       Integer.parseInt(date_list[2]), // Day
-//                                                       Integer.parseInt(time_list[0]), // Hour
-//                                                       Integer.parseInt(time_list[1]));// Minute
-            // Set hasDate (check that the date is not 1/1/1970
-            // "start of time" for computers (and jodatime))
+            this.datetime = new org.joda.time.DateTime(Integer.parseInt(date_list[0]), // Year
+                                                       Integer.parseInt(date_list[1]), // Month
+                                                       Integer.parseInt(date_list[2]), // Day
+                                                       Integer.parseInt(time_list[0]), // Hour
+                                                       Integer.parseInt(time_list[1]));// Minute
+
+            // Set hasDate
+            // /(check that the date is not 1/1/1970)
             this.hasDate = this.getDay() != 1 && this.getMonth() != 1 && this.getYear() != 1970;
             // Set hasTime
             this.hasTime = this.getHour() != 0;
@@ -122,6 +126,7 @@ class Datetime implements Parcelable {
     }
 
     // Getters and Setters
+
     /**
      * Gets the datetime's year.
      * @return datetime's year
@@ -129,6 +134,7 @@ class Datetime implements Parcelable {
     int getYear() {
         return this.datetime.getYear();
     }
+
     /**
      * Gets the datetime's month.
      * @return datetime's month
@@ -136,6 +142,7 @@ class Datetime implements Parcelable {
     int getMonth() {
         return this.datetime.getMonthOfYear();
     }
+
     /**
      * Gets the datetime's day of the month.
      * @return datetime's day of month
@@ -151,6 +158,7 @@ class Datetime implements Parcelable {
     int getHour() {
         return this.datetime.getHourOfDay();
     }
+
     /**
      * Gets the datetime's minute
      * @return datetime's minute
@@ -169,6 +177,7 @@ class Datetime implements Parcelable {
     boolean getHasDate() {
         return this.hasDate;
     }
+
     /**
      * Gets the value of {@link #hasTime}, which is set to true once date is
      * set by {@link #setHour(int)}, {@link #setMinute(int)}, or during
@@ -331,7 +340,7 @@ class Datetime implements Parcelable {
      *
      * @return datetime formatted string
      */
-    String toFormattedString() {
+    public String toFormattedString() {
         String formattedString = "";
         // Add date if it is present
         if (this.getHasDate()) {
