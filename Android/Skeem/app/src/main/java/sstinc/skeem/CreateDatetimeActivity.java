@@ -1,6 +1,7 @@
 package sstinc.skeem;
 
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,13 +13,20 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
 
-import org.joda.time.DateTime;
+import org.joda.time.chrono.StrictChronology;
 
 public class CreateDatetimeActivity extends AppCompatActivity {
     // Extra strings
-    public static final String EXTRA_RECEIVE_TITLE = "sstinc.sstinc.skeem.EXTRA_TITLE";
+    //NOTE: These Constants are Deprecated
+    @Deprecated
     public static final String EXTRA_RECEIVE_HASDATE = "sstinc.sstinc.skeem.EXTRA_RECEIVE_HASDATE";
+    @Deprecated
     public static final String EXTRA_RECEIVE_HASTIME = "sstinc.sstinc.skeem.EXTRA_RECEIVE_HASTIME";
+    //NOTE: Use these constants instead
+    public static final String EXTRA_RECEIVE_HAS_DATE = "sstinc.sstinc.skeem.EXTRA_RECEIVE_HASDATE";
+    public static final String EXTRA_RECEIVE_HAS_TIME = "sstinc.sstinc.skeem.EXTRA_RECEIVE_HASTIME";
+
+    public static final String EXTRA_RECEIVE_TITLE = "sstinc.sstinc.skeem.EXTRA_TITLE";
     public static final String EXTRA_RECEIVE_DATETIME = "sstinc.sstinc.skeem.EXTRA_RECEIVE_DATETIME";
     public static final String EXTRA_RECEIVE_MAX = "sstinc.sstinc.skeem.EXTRA_RECEIVE_MAX";
     public static final String EXTRA_RECEIVE_MIN = "sstinc.sstinc.skeem.EXTRA_RECEIVE_MIN";
@@ -30,9 +38,17 @@ public class CreateDatetimeActivity extends AppCompatActivity {
     boolean menu_duplicate = false;
     boolean menu_delete = false;
     // Misc
+    //NOTE: These Constants are Deprecated
+    @Deprecated
     public static final String HASTIME_YES = "YES";
+    @Deprecated
     public static final String HASTIME_OPTIONAL = "OPTIONAL";
+    @Deprecated
     public static final String HASTIME_NO = "NO";
+    //NOTE: Use these constants instead
+    public static final String HAS_TIME_TRUE = "YES";
+    public static final String HAS_TIME_OPTIONAL = "OPTIONAL";
+    public static final String HAS_TIME_FALSE = "NO";
 
     boolean hasDate;
     String hasTime;
@@ -43,6 +59,7 @@ public class CreateDatetimeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_create_datetime);
         // Animation
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
@@ -57,16 +74,15 @@ public class CreateDatetimeActivity extends AppCompatActivity {
         // Reset menu
         invalidateOptionsMenu();
 
-        // Get information from intent
+        // Retrieve Information from intent
         Intent intent = getIntent();
-        this.hasDate = intent.getBooleanExtra(EXTRA_RECEIVE_HASDATE, true);
-        this.hasTime = intent.getStringExtra(EXTRA_RECEIVE_HASTIME);
+        this.hasDate = intent.getBooleanExtra(EXTRA_RECEIVE_HAS_DATE, true);
+        this.hasTime = intent.getStringExtra(EXTRA_RECEIVE_HAS_TIME);
         this.datetime = intent.getParcelableExtra(EXTRA_RECEIVE_DATETIME);
         this.max_datetime = intent.getParcelableExtra(EXTRA_RECEIVE_MAX);
         this.min_datetime = intent.getParcelableExtra(EXTRA_RECEIVE_MIN);
-
         if (this.min_datetime == null) {
-            this.min_datetime = new Datetime(DateTime.now());
+            this.min_datetime = new Datetime(org.joda.time.DateTime.now());
         }
         if (this.max_datetime == null) {
             this.max_datetime = new Datetime();
@@ -74,34 +90,52 @@ public class CreateDatetimeActivity extends AppCompatActivity {
         Log.w(this.getClass().getName(), "Sending scheduled start: " +
                 this.min_datetime.toString());
 
-        // Get date and time picker
+        //Setup Date Picker
         ScrollableDatePicker datePicker = (ScrollableDatePicker) findViewById(
                 R.id.datetime_date_picker);
+        datePicker.setVisibility(this.hasDate? View.VISIBLE : View.GONE);
+        // Fill in the values of datetime if there were any
+        if (this.datetime.getHasDate()) {
+            datePicker.updateDate(this.datetime.getYear(), this.datetime.getMonth()-1,
+                    this.datetime.getDay());
+        }
+        // Set the maximum and minimum if any (time is verified later)
+        if (this.max_datetime.getHasDate()) {
+            datePicker.setMaxDate(this.max_datetime.getMillis());
+        }
+        if (this.min_datetime.getHasDate()) {
+            //TODO: Test this thoroughly
+            // Move maximum one day back
+            datePicker.setMinDate(this.min_datetime.getMillis());
+        }
+
+        //Setup Time Picker
         ScrollableTimePicker timePicker = (ScrollableTimePicker) findViewById(
                 R.id.datetime_time_picker);
-
-        // Set visibility of date and time picker
-        datePicker.setVisibility(this.hasDate? View.VISIBLE : View.GONE);
-        if (this.hasTime.equals(HASTIME_YES) || this.hasTime.equals(HASTIME_OPTIONAL)) {
+        if (this.datetime.getHasTime()) {
+            timePicker.setCurrentHour(this.datetime.getHour());
+            timePicker.setCurrentMinute(this.datetime.getMinute());
+        }
+        if (this.hasTime.equals(HAS_TIME_TRUE)) {
             timePicker.setVisibility(View.VISIBLE);
         } else {
             timePicker.setVisibility(View.GONE);
         }
 
         // Set visibility of optional time switch
-        if (this.hasTime.equals(HASTIME_OPTIONAL)) {
-            // Default hasTime to HASTIME_NO
-            this.hasTime = HASTIME_NO;
+        if (this.hasTime.equals(HAS_TIME_OPTIONAL)) {
+            // Default hasTime to HAS_TIME_FALSE
+            this.hasTime = HAS_TIME_FALSE;
 
             // Get switch
             Switch switch_addTime = (Switch) findViewById(R.id.datetime_switch_add_time);
             // Change the value of hasTime and the visibility of the time
-            // picker everytime it changes.
+            // picker every time it changes.
             switch_addTime.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     // Set value of hasTime
-                    hasTime = b? HASTIME_YES : HASTIME_NO;
+                    hasTime = b? HAS_TIME_TRUE : HAS_TIME_FALSE;
 
                     // Set visibility of time picker
                     ScrollableTimePicker timePicker = (ScrollableTimePicker) findViewById(
@@ -110,10 +144,6 @@ public class CreateDatetimeActivity extends AppCompatActivity {
                 }
             });
 
-            // Make time picker gone first
-            timePicker.setVisibility(View.GONE);
-
-            // Set checked if datetime has time
             if (this.datetime.getHasTime()) {
                 switch_addTime.setChecked(true);
             }
@@ -123,25 +153,6 @@ public class CreateDatetimeActivity extends AppCompatActivity {
             add_time_layout.setVisibility(View.VISIBLE);
         }
 
-        // Fill in the values of datetime if there were any
-        if (this.datetime.getHasDate()) {
-            datePicker.updateDate(this.datetime.getYear(), this.datetime.getMonth()-1,
-                    this.datetime.getDay());
-        }
-        if (this.datetime.getHasTime()) {
-            timePicker.setCurrentHour(this.datetime.getHour());
-            timePicker.setCurrentMinute(this.datetime.getMinute());
-        }
-
-        // Set the maximum and minimum if any (time is verified later
-        if (this.max_datetime.getHasDate()) {
-            datePicker.setMaxDate(this.max_datetime.getMillis());
-        }
-        if (this.min_datetime.getHasDate()) {
-            //TODO: Test this thoroughly
-            // Move maximum one day back
-            datePicker.setMinDate(this.min_datetime.getMillis());
-        }
     }
 
     /**
@@ -157,7 +168,6 @@ public class CreateDatetimeActivity extends AppCompatActivity {
                 R.id.datetime_time_picker);
         ScrollableDatePicker datePicker = (ScrollableDatePicker) findViewById(
                 R.id.datetime_date_picker);
-
         // Create datetime object from date and time picker
         Datetime submitted_datetime = new Datetime();
         if (this.hasDate) {
@@ -165,23 +175,23 @@ public class CreateDatetimeActivity extends AppCompatActivity {
             submitted_datetime.setMonth(datePicker.getMonth()+1);
             submitted_datetime.setDay(datePicker.getDayOfMonth());
         }
-        if (this.hasTime.equals(HASTIME_YES)) {
+        if (this.hasTime.equals(HAS_TIME_TRUE)) {
             submitted_datetime.setHour(timePicker.getCurrentHour());
             submitted_datetime.setMinute(timePicker.getCurrentMinute());
         }
 
         // Flag to indicate if valid
-        boolean flag = true;
+        boolean dateTimeVaild = true;
         // If the minimum datetime is set
         if (this.min_datetime.getHasDate() || this.min_datetime.getHasTime()) {
-            flag = this.min_datetime.getMillis() <= submitted_datetime.getMillis();
+            dateTimeVaild = this.min_datetime.getMillis() <= submitted_datetime.getMillis();
         }
         // If the maximum datetime is set
         if (this.max_datetime.getHasDate() || this.max_datetime.getHasTime()) {
-            flag = flag && submitted_datetime.getMillis() <= this.max_datetime.getMillis();
+            dateTimeVaild = dateTimeVaild && submitted_datetime.getMillis() <= this.max_datetime.getMillis();
         }
 
-        return flag;
+        return dateTimeVaild;
     }
 
     @Override
@@ -220,7 +230,7 @@ public class CreateDatetimeActivity extends AppCompatActivity {
                     datetime.setMonth(datePicker.getMonth()+1);
                     datetime.setDay(datePicker.getDayOfMonth());
                 }
-                if (this.hasTime.equals(HASTIME_YES)) {
+                if (this.hasTime.equals(HAS_TIME_TRUE)) {
                     datetime.setHour(timePicker.getCurrentHour());
                     datetime.setMinute(timePicker.getCurrentMinute());
                 }
