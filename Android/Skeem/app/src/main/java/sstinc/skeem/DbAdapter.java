@@ -149,19 +149,30 @@ class DbAdapter {
     private DbHelper dbHelper;
     private Context context;
 
-    // Database Methods
+    //Constructor
+
+    /**
+     * Construct a DbAdapter with Context
+     * @param ctx Context to construct with
+     */
     DbAdapter(Context ctx) {
         context = ctx;
     }
 
-    // Opens the database
+    /**
+     * Opens the database.
+     * @return Returns <code>this</code> DbAdapter Object
+     * @throws android.database.SQLException
+     */
     DbAdapter open() throws android.database.SQLException {
         dbHelper = new DbHelper(context);
         SQLdb = dbHelper.getWritableDatabase();
         return this;
     }
 
-    // Closes the database
+    /**
+     * Closes the database.
+     */
     void close() {
         dbHelper.close();
     }
@@ -173,56 +184,56 @@ class DbAdapter {
      */
     void insertTask(Task task) {
         // Days Table
-        ContentValues values = new ContentValues();
-        values.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 0);
-        values.put(DbAdapter.DAYS_TABLE_COL_TUESDAY, 0);
-        values.put(DbAdapter.DAYS_TABLE_COL_WEDNESDAY, 0);
-        values.put(DbAdapter.DAYS_TABLE_COL_THURSDAY, 0);
-        values.put(DbAdapter.DAYS_TABLE_COL_FRIDAY, 0);
-        values.put(DbAdapter.DAYS_TABLE_COL_SATURDAY, 0);
-        values.put(DbAdapter.DAYS_TABLE_COL_SUNDAY, 0);
+        ContentValues daysTableValues = new ContentValues();
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 0);
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_TUESDAY, 0);
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_WEDNESDAY, 0);
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_THURSDAY, 0);
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_FRIDAY, 0);
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_SATURDAY, 0);
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_SUNDAY, 0);
 
         for (WeekDays.WeekDay weekDay : task.getWeekDays().getWeekDays_list()) {
             switch (weekDay) {
                 case MONDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 1);
                     break;
                 case TUESDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_TUESDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_TUESDAY, 1);
                     break;
                 case WEDNESDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_WEDNESDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_WEDNESDAY, 1);
                     break;
                 case THURSDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_THURSDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_THURSDAY, 1);
                     break;
                 case FRIDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_FRIDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_FRIDAY, 1);
                     break;
                 case SATURDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_SATURDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_SATURDAY, 1);
                     break;
                 case SUNDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_SUNDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_SUNDAY, 1);
                     break;
             }
         }
-        long days_id = SQLdb.insert(DbAdapter.DAYS_TABLE, null, values);
+        long days_id = SQLdb.insert(DbAdapter.DAYS_TABLE, null, daysTableValues);
 
         // Tasks Table
-        values = new ContentValues();
-        values.put(DbAdapter.TASKS_TABLE_COL_DAYS_ID, days_id);
-        values.put(DbAdapter.TASKS_TABLE_COL_NAME, task.getName());
-        values.put(DbAdapter.TASKS_TABLE_COL_SUBJECT, task.getSubject());
-        values.put(DbAdapter.TASKS_TABLE_COL_DESCRIPTION, task.getDescription());
-        values.put(DbAdapter.TASKS_TABLE_COL_PERIOD_NEEDED,
+        ContentValues taskTableValues = new ContentValues();
+        taskTableValues.put(DbAdapter.TASKS_TABLE_COL_DAYS_ID, days_id);
+        taskTableValues.put(DbAdapter.TASKS_TABLE_COL_NAME, task.getName());
+        taskTableValues.put(DbAdapter.TASKS_TABLE_COL_SUBJECT, task.getSubject());
+        taskTableValues.put(DbAdapter.TASKS_TABLE_COL_DESCRIPTION, task.getDescription());
+        taskTableValues.put(DbAdapter.TASKS_TABLE_COL_PERIOD_NEEDED,
                 PeriodFormat.getDefault().print(task.getPeriodNeeded()));
-        values.put(DbAdapter.TASKS_TABLE_COL_PERIOD_MINIMUM,
+        taskTableValues.put(DbAdapter.TASKS_TABLE_COL_PERIOD_MINIMUM,
                 PeriodFormat.getDefault().print(task.getPeriodMinimum()));
-        values.put(DbAdapter.TASKS_TABLE_COL_DEADLINE, task.getDeadline().toString());
-        values.put(DbAdapter.TASKS_TABLE_COL_DEADLINE_PER_DAY, task.getDeadlinePerDay().toString());
+        taskTableValues.put(DbAdapter.TASKS_TABLE_COL_DEADLINE, task.getDeadline().toString());
+        taskTableValues.put(DbAdapter.TASKS_TABLE_COL_DEADLINE_PER_DAY, task.getDeadlinePerDay().toString());
         // Insert into database and set the task's id.
-        task.setId(SQLdb.insert(DbAdapter.TASKS_TABLE, null, values));
+        task.setId(SQLdb.insert(DbAdapter.TASKS_TABLE, null, taskTableValues));
     }
 
     /**
@@ -231,52 +242,52 @@ class DbAdapter {
      */
     void insertVoidblock(Voidblock voidblock) {
         // Days Table
-        ContentValues values = new ContentValues();
-        values.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 0);
-        values.put(DbAdapter.DAYS_TABLE_COL_TUESDAY, 0);
-        values.put(DbAdapter.DAYS_TABLE_COL_WEDNESDAY, 0);
-        values.put(DbAdapter.DAYS_TABLE_COL_THURSDAY, 0);
-        values.put(DbAdapter.DAYS_TABLE_COL_FRIDAY, 0);
-        values.put(DbAdapter.DAYS_TABLE_COL_SATURDAY, 0);
-        values.put(DbAdapter.DAYS_TABLE_COL_SUNDAY, 0);
+        ContentValues daysTableValues = new ContentValues();
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 0);
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_TUESDAY, 0);
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_WEDNESDAY, 0);
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_THURSDAY, 0);
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_FRIDAY, 0);
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_SATURDAY, 0);
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_SUNDAY, 0);
 
         for (WeekDays.WeekDay weekDay : voidblock.getWeekDays().getWeekDays_list()) {
             switch (weekDay) {
                 case MONDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 1);
                     break;
                 case TUESDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_TUESDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_TUESDAY, 1);
                     break;
                 case WEDNESDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_WEDNESDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_WEDNESDAY, 1);
                     break;
                 case THURSDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_THURSDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_THURSDAY, 1);
                     break;
                 case FRIDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_FRIDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_FRIDAY, 1);
                     break;
                 case SATURDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_SATURDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_SATURDAY, 1);
                     break;
                 case SUNDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_SUNDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_SUNDAY, 1);
                     break;
             }
         }
 
-        long days_id = SQLdb.insert(DbAdapter.DAYS_TABLE, null, values);
+        long days_id = SQLdb.insert(DbAdapter.DAYS_TABLE, null, daysTableValues);
 
-        values = new ContentValues();
-        values.put(DbAdapter.VOIDBLOCKS_TABLE_COL_DAYS_ID, days_id);
-        values.put(DbAdapter.VOIDBLOCKS_TABLE_COL_NAME, voidblock.getName());
-        values.put(DbAdapter.VOIDBLOCKS_TABLE_COL_SCHEDULED_START,
+        ContentValues taskTableValues = new ContentValues();
+        taskTableValues.put(DbAdapter.VOIDBLOCKS_TABLE_COL_DAYS_ID, days_id);
+        taskTableValues.put(DbAdapter.VOIDBLOCKS_TABLE_COL_NAME, voidblock.getName());
+        taskTableValues.put(DbAdapter.VOIDBLOCKS_TABLE_COL_SCHEDULED_START,
                 voidblock.getScheduledStart().toString());
-        values.put(DbAdapter.VOIDBLOCKS_TABLE_COL_SCHEDULED_STOP,
+        taskTableValues.put(DbAdapter.VOIDBLOCKS_TABLE_COL_SCHEDULED_STOP,
                 voidblock.getScheduledStop().toString());
         // Insert into database and set the voidblock's id
-        voidblock.setId(SQLdb.insert(DbAdapter.VOIDBLOCKS_TABLE, null, values));
+        voidblock.setId(SQLdb.insert(DbAdapter.VOIDBLOCKS_TABLE, null, taskTableValues));
     }
 
     // Read
@@ -429,9 +440,9 @@ class DbAdapter {
         cursor.close();
 
         // Sort the voidblocks, latest first
-        VoidblockComparator voidblockComparator = new VoidblockComparator();
-        voidblockComparator.setSortBy(VoidblockComparator.Order.SCHEDULED_START, true);
-        Collections.sort(voidblocks, voidblockComparator);
+        VoidblockComparator voidBlockComparator = new VoidblockComparator();
+        voidBlockComparator.setSortBy(VoidblockComparator.Order.SCHEDULED_START, true);
+        Collections.sort(voidblocks, voidBlockComparator);
 
         return voidblocks;
     }
@@ -444,20 +455,20 @@ class DbAdapter {
      */
     void updateTask(Task task) {
         long taskId = task.getId();
-        ContentValues values = new ContentValues();
+        ContentValues taskTableValues = new ContentValues();
 
         // Tasks Table
-        values.put(TASKS_TABLE_COL_NAME, task.getName());
-        values.put(TASKS_TABLE_COL_SUBJECT, task.getSubject());
-        values.put(TASKS_TABLE_COL_DESCRIPTION, task.getDescription());
-        values.put(TASKS_TABLE_COL_PERIOD_NEEDED,
+        taskTableValues.put(TASKS_TABLE_COL_NAME, task.getName());
+        taskTableValues.put(TASKS_TABLE_COL_SUBJECT, task.getSubject());
+        taskTableValues.put(TASKS_TABLE_COL_DESCRIPTION, task.getDescription());
+        taskTableValues.put(TASKS_TABLE_COL_PERIOD_NEEDED,
                 PeriodFormat.getDefault().print(task.getPeriodNeeded()));
-        values.put(TASKS_TABLE_COL_PERIOD_MINIMUM,
+        taskTableValues.put(TASKS_TABLE_COL_PERIOD_MINIMUM,
                 PeriodFormat.getDefault().print(task.getPeriodMinimum()));
-        values.put(TASKS_TABLE_COL_DEADLINE, task.getDeadline().toString());
-        values.put(TASKS_TABLE_COL_DEADLINE_PER_DAY, task.getDeadlinePerDay().toString());
+        taskTableValues.put(TASKS_TABLE_COL_DEADLINE, task.getDeadline().toString());
+        taskTableValues.put(TASKS_TABLE_COL_DEADLINE_PER_DAY, task.getDeadlinePerDay().toString());
 
-        SQLdb.update(TASKS_TABLE, values, TASKS_TABLE_COL_ID + "=" + taskId, null);
+        SQLdb.update(TASKS_TABLE, taskTableValues, TASKS_TABLE_COL_ID + "=" + taskId, null);
         // Query task table with task id
         Cursor cursor = SQLdb.query(TASKS_TABLE, new String[] {TASKS_TABLE_COL_DAYS_ID},
                 TASKS_TABLE_COL_ID + " = " + taskId, null, null, null, null);
@@ -468,41 +479,41 @@ class DbAdapter {
         cursor.close();
 
         // Days Table
-        values = new ContentValues();
-        values.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 0);
-        values.put(DbAdapter.DAYS_TABLE_COL_TUESDAY, 0);
-        values.put(DbAdapter.DAYS_TABLE_COL_WEDNESDAY, 0);
-        values.put(DbAdapter.DAYS_TABLE_COL_THURSDAY, 0);
-        values.put(DbAdapter.DAYS_TABLE_COL_FRIDAY, 0);
-        values.put(DbAdapter.DAYS_TABLE_COL_SATURDAY, 0);
-        values.put(DbAdapter.DAYS_TABLE_COL_SUNDAY, 0);
+        ContentValues daysTableValues = new ContentValues();
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 0);
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_TUESDAY, 0);
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_WEDNESDAY, 0);
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_THURSDAY, 0);
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_FRIDAY, 0);
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_SATURDAY, 0);
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_SUNDAY, 0);
 
         for (WeekDays.WeekDay weekDay : task.getWeekDays().getWeekDays_list()) {
             switch (weekDay) {
                 case MONDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 1);
                     break;
                 case TUESDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_TUESDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_TUESDAY, 1);
                     break;
                 case WEDNESDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_WEDNESDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_WEDNESDAY, 1);
                     break;
                 case THURSDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_THURSDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_THURSDAY, 1);
                     break;
                 case FRIDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_FRIDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_FRIDAY, 1);
                     break;
                 case SATURDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_SATURDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_SATURDAY, 1);
                     break;
                 case SUNDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_SUNDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_SUNDAY, 1);
                     break;
             }
         }
-        SQLdb.update(DbAdapter.DAYS_TABLE, values, DAYS_TABLE_COL_ID + "=" + days_id, null);
+        SQLdb.update(DbAdapter.DAYS_TABLE, daysTableValues, DAYS_TABLE_COL_ID + "=" + days_id, null);
     }
 
     /**
@@ -512,14 +523,14 @@ class DbAdapter {
      */
     void updateVoidblock(Voidblock voidblock) {
         long voidblockId = voidblock.getId();
-        ContentValues values = new ContentValues();
-        values.put(DbAdapter.VOIDBLOCKS_TABLE_COL_NAME, voidblock.getName());
-        values.put(DbAdapter.VOIDBLOCKS_TABLE_COL_SCHEDULED_START,
+        ContentValues voidBlockTableValues = new ContentValues();
+        voidBlockTableValues.put(DbAdapter.VOIDBLOCKS_TABLE_COL_NAME, voidblock.getName());
+        voidBlockTableValues.put(DbAdapter.VOIDBLOCKS_TABLE_COL_SCHEDULED_START,
                 voidblock.getScheduledStart().toString());
-        values.put(DbAdapter.VOIDBLOCKS_TABLE_COL_SCHEDULED_STOP,
+        voidBlockTableValues.put(DbAdapter.VOIDBLOCKS_TABLE_COL_SCHEDULED_STOP,
                 voidblock.getScheduledStop().toString());
         // Update voidblocks table
-        SQLdb.update(VOIDBLOCKS_TABLE, values, VOIDBLOCKS_TABLE_COL_ID + "=" + voidblockId, null);
+        SQLdb.update(VOIDBLOCKS_TABLE, voidBlockTableValues, VOIDBLOCKS_TABLE_COL_ID + "=" + voidblockId, null);
         // Query voidblock table with voidblock id
         Cursor cursor = SQLdb.query(VOIDBLOCKS_TABLE, new String[] {VOIDBLOCKS_TABLE_COL_DAYS_ID},
                 TASKS_TABLE_COL_ID + " = " + voidblockId, null, null, null, null);
@@ -529,42 +540,42 @@ class DbAdapter {
         long days_id = cursor.getLong(0);
         cursor.close();
         // Days Table
-        values = new ContentValues();
-        values.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 0);
-        values.put(DbAdapter.DAYS_TABLE_COL_TUESDAY, 0);
-        values.put(DbAdapter.DAYS_TABLE_COL_WEDNESDAY, 0);
-        values.put(DbAdapter.DAYS_TABLE_COL_THURSDAY, 0);
-        values.put(DbAdapter.DAYS_TABLE_COL_FRIDAY, 0);
-        values.put(DbAdapter.DAYS_TABLE_COL_SATURDAY, 0);
-        values.put(DbAdapter.DAYS_TABLE_COL_SUNDAY, 0);
+        ContentValues daysTableValues = new ContentValues();
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 0);
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_TUESDAY, 0);
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_WEDNESDAY, 0);
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_THURSDAY, 0);
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_FRIDAY, 0);
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_SATURDAY, 0);
+        daysTableValues.put(DbAdapter.DAYS_TABLE_COL_SUNDAY, 0);
 
         for (WeekDays.WeekDay weekDay : voidblock.getWeekDays().getWeekDays_list()) {
             switch (weekDay) {
                 case MONDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 1);
                     break;
                 case TUESDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_TUESDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_TUESDAY, 1);
                     break;
                 case WEDNESDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_WEDNESDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_WEDNESDAY, 1);
                     break;
                 case THURSDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_THURSDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_THURSDAY, 1);
                     break;
                 case FRIDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_FRIDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_FRIDAY, 1);
                     break;
                 case SATURDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_SATURDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_SATURDAY, 1);
                     break;
                 case SUNDAY:
-                    values.put(DbAdapter.DAYS_TABLE_COL_SUNDAY, 1);
+                    daysTableValues.put(DbAdapter.DAYS_TABLE_COL_SUNDAY, 1);
                     break;
             }
         }
-        // Update days table with voidblock's values
-        SQLdb.update(DbAdapter.DAYS_TABLE, values, DAYS_TABLE_COL_ID + "=" + days_id, null);
+        // Update days table with voidblock's daysTableValues
+        SQLdb.update(DbAdapter.DAYS_TABLE, daysTableValues, DAYS_TABLE_COL_ID + "=" + days_id, null);
     }
 
     // Delete
@@ -639,53 +650,53 @@ class DbAdapter {
             db.execSQL("DROP TABLE IF EXISTS " + VOIDBLOCKS_TABLE);
             onCreate(db);
         }
+
         ArrayList<Cursor> getData(String Query){
             //get writable database
             SQLiteDatabase sqlDB = this.getWritableDatabase();
-            String[] columns = new String[] { "mesage" };
+            String[] columns = new String[] { "message" };
             //an array list of cursor to save two cursors one has results from the query
             //other cursor stores error message if any errors are triggered
-            ArrayList<Cursor> alc = new ArrayList<>(2);
-            MatrixCursor Cursor2= new MatrixCursor(columns);
-            alc.add(null);
-            alc.add(null);
+            ArrayList<Cursor> cursorList = new ArrayList<>(2);
+            MatrixCursor errorCursor = new MatrixCursor(columns);
+            cursorList.add(null);
+            cursorList.add(null);
 
 
             try{
                 //execute the query results will be save in Cursor c
-                Cursor c = sqlDB.rawQuery(Query, null);
+                Cursor resultCursor = sqlDB.rawQuery(Query, null);
 
+                //add value to error Cursor
+                errorCursor.addRow(new Object[] {
+                        "Success"
+                });
 
-                //add value to cursor2
-                Cursor2.addRow(new Object[] { "Success" });
+                cursorList.set(1,errorCursor);
+                if (resultCursor != null && resultCursor.getCount() > 0) {
 
-                alc.set(1,Cursor2);
-                if (null != c && c.getCount() > 0) {
+                    cursorList.set(0,resultCursor);
+                    resultCursor.moveToFirst();
 
-
-                    alc.set(0,c);
-                    c.moveToFirst();
-
-                    return alc ;
+                    return cursorList;
                 }
-                return alc;
+
+                return cursorList;
             } catch(SQLException sqlEx){
                 Log.d("printing exception", sqlEx.getMessage());
                 //if any exceptions are triggered save the error message to cursor an return the arraylist
-                Cursor2.addRow(new Object[] { ""+sqlEx.getMessage() });
-                alc.set(1,Cursor2);
-                return alc;
+                errorCursor.addRow(new Object[] { ""+sqlEx.getMessage() });
+                cursorList.set(1,errorCursor);
+                return cursorList;
             } catch(Exception ex){
 
                 Log.d("printing exception", ex.getMessage());
 
                 //if any exceptions are triggered save the error message to cursor an return the arraylist
-                Cursor2.addRow(new Object[] { ""+ex.getMessage() });
-                alc.set(1,Cursor2);
-                return alc;
+                errorCursor.addRow(new Object[] { ""+ex.getMessage() });
+                cursorList.set(1,errorCursor);
+                return cursorList;
             }
-
-
         }
     }
 }

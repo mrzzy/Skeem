@@ -248,6 +248,7 @@ class Datetime implements Parcelable {
         this.hasTime = true;
         this.datetime = this.datetime.withHourOfDay(hour);
     }
+
     /**
      * {@link #getMinute()}
      * @param minute datetime's minute
