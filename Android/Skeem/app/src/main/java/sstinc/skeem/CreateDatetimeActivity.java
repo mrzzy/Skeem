@@ -16,7 +16,7 @@ import android.widget.Switch;
 import org.joda.time.chrono.StrictChronology;
 
 public class CreateDatetimeActivity extends AppCompatActivity {
-    // Extra strings
+    // Intent Extras
     //NOTE: These Constants are Deprecated
     @Deprecated
     public static final String EXTRA_RECEIVE_HASDATE = "sstinc.sstinc.skeem.EXTRA_RECEIVE_HASDATE";

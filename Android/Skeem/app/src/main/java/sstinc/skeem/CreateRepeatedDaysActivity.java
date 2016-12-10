@@ -23,6 +23,7 @@ public class CreateRepeatedDaysActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_create_days);
 
+        // Setup Checkboxes
         CheckBox monday = (CheckBox) findViewById(R.id.checkBox_monday);
         CheckBox tuesday = (CheckBox) findViewById(R.id.checkBox_tuesday);
         CheckBox wednesday = (CheckBox) findViewById(R.id.checkBox_wednesday);
@@ -30,17 +31,6 @@ public class CreateRepeatedDaysActivity extends AppCompatActivity {
         CheckBox friday = (CheckBox) findViewById(R.id.checkBox_friday);
         CheckBox saturday = (CheckBox) findViewById(R.id.checkBox_saturday);
         CheckBox sunday = (CheckBox) findViewById(R.id.checkBox_sunday);
-
-        // Set the proper menu
-        invalidateOptionsMenu();
-
-        // Set back button
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("Set Repeated Days");
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }
-
         String[] weekDays = getIntent().getStringArrayExtra(EXTRA_RECEIVE_DAYS);
         for (String weekDay : weekDays) {
             if (weekDay.equals("MONDAY")) {
@@ -65,6 +55,15 @@ public class CreateRepeatedDaysActivity extends AppCompatActivity {
                 sunday.setChecked(true);
             }
         }
+
+        // Setup Menu
+        invalidateOptionsMenu();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("Set Repeated Days");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
     }
 
     @Override
