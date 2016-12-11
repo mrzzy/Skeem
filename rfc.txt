@@ -18,7 +18,7 @@ internal datetime did not have time? At Least make them private.
 Also the Duration class should not be Deprecated and should at least acts as an
 abstraction for the current class used (org.joda.time.Period). 
 
------------------
+-----[RFC 2]-----
 Date: December 08, 2016
 Author: Joel Tio Jin Hon
 
@@ -59,3 +59,49 @@ class provides almost the same functionality as Duration had when it was
 implemented. The methods that Duration used to have are also present in
 Period. Another thing to note is that JodaTime already has a class called
 Duration as well, bringing back the Duration class can cause conflict.
+
+-----[RFC 3]-----
+Date: December 10, 2016
+Author: Zhu Zhan Yan
+
+Datetime.setHasDate() and Datetime.setHasTime()
+Previously, you mentioned that "it has its uses" so I searched for uses of these 
+methods and found some questionable use cases:
+[BEGIN Java Code]
+voidblock.getScheduledStart().setHasDate(
+    voidblock.getScheduledStart().getHasTime());
+voidblock.getScheduledStop().setHasDate(
+    voidblock.getScheduledStop().getHasTime());
+[END Java Code]
+How is having time related to having date?
+I am clueless to what this code is supposed to do. Please explain.
+[BEGIN Java Code]
+// Reset the "from" and "to" date and time values
+voidblock.getScheduledStart().setHasDate(false);
+voidblock.getScheduledStop().setHasDate(false);
+[END Java Code]
+This can be replaced with something that makes more sense:
+[BEGIN Java Code]
+voidblock.setScheduledStart(new Datetime());
+voidblock.setScheduledStop(new Datetime());
+[END Java Code]
+My point is that these variables must reflect the current presence of date or
+time in the date time object. Providing this method is an invitation for bugs.
+
+Deprecation of Duration
+Providing a layer of abstraction is important to ensuring that the application 
+would maintainable if we depend on things we cannot control such as in this case
+the JodaTime Library.  What if we wanted to adapt another library? What if the 
+amended their public interface? Are we going to track down every reference to 
+library in the entire application? Adding a layer of abstraction ensures that 
+the references and dependence on the library stays inside a object, such that 
+in case we want to do the above things, we could do them easily. Personal
+experience for depending on a certain library without a layer of abstraction
+proved to be a headache when Apple Changed their NSDate,NSString,NSCalendar...
+class to Date,String,Calendar... class and shortened most method names.
+
+I can redevelop the duration class and migrate the code base from 
+org.joda.time.Period, I just need the go ahead.
+
+I have introduced some refactoring work on the rftr branch, take a look
+and use git cherry-pick to introduce the refactoring if good enough.
