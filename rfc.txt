@@ -65,8 +65,8 @@ Date: December 10, 2016
 Author: Zhu Zhan Yan
 
 Datetime.setHasDate() and Datetime.setHasTime()
-Previously, you mentioned that "it has its uses" so I searched for uses of these 
-methods and found some questionable use cases:
+Previously, you mentioned that "it has its uses" so I searched for uses of
+these methods and found some questionable use cases:
 [BEGIN Java Code]
 voidblock.getScheduledStart().setHasDate(
     voidblock.getScheduledStart().getHasTime());
@@ -90,12 +90,12 @@ time in the date time object. Providing this method is an invitation for bugs.
 
 Deprecation of Duration
 Providing a layer of abstraction is important to ensuring that the application 
-would maintainable if we depend on things we cannot control such as in this case
-the JodaTime Library.  What if we wanted to adapt another library? What if the 
-amended their public interface? Are we going to track down every reference to 
-library in the entire application? Adding a layer of abstraction ensures that 
-the references and dependence on the library stays inside a object, such that 
-in case we want to do the above things, we could do them easily. Personal
+would maintainable if we depend on things we cannot control such as in this
+case the JodaTime Library.  What if we wanted to adapt another library? What if
+the amended their public interface? Are we going to track down every reference
+to library in the entire application? Adding a layer of abstraction ensures
+that the references and dependence on the library stays inside a object, such
+that in case we want to do the above things, we could do them easily. Personal
 experience for depending on a certain library without a layer of abstraction
 proved to be a headache when Apple Changed their NSDate,NSString,NSCalendar...
 class to Date,String,Calendar... class and shortened most method names.
@@ -105,3 +105,46 @@ org.joda.time.Period, I just need the go ahead.
 
 I have introduced some refactoring work on the rftr branch, take a look
 and use git cherry-pick to introduce the refactoring if good enough.
+
+-----[RFC 4]-----
+Date: December 12, 2016
+Author: Joel Tio Jin Hon
+
+Datetime.setHasDate() and Datetime.setHasTime()
+I will explain further what I mean by its uses. I think a clearer way to name
+these methods could be "setDisplayDate" and "setDisplayTime" for the cases you
+have brought up. The first example that you raised was in the
+VoidblockCreateActivity java file. At that part of the file, it is checking to
+see what to do with the new repeated days it has received. There are a few
+cases to consider:
+    1. The user has not set the date and time but has set a day to repeat
+    2. The user has set the date and time and has set a day to repeat
+    3. The user has not set the date and time and has not set a day to repeat
+    4. The user has set the date and time but has not set a day to repeat
+When a repeated day is set, you would want to remove the date if it is set.
+If the user removed all the repeated days, you would want to show the date
+again.
+
+With that in mind, for the first example use you have given, it falls into case
+3 and 4. What it basically is trying to say is "Show back the date if the user
+has set something into the start and stop date times previously.". This would
+not be possible if the user's previously set date is reset (your second
+recommended example), what would happen is it will just give Epoch date which
+destroys the safeguards (as the safeguards only check when setting).
+
+For your second example given, it is used to hide the dates but not completely
+reset them as I have mentioned above. The reason behind hiding them are, also
+as above, to retrieve them when you need to display them again.
+
+
+Deprecation of Duration
+I understand the purpose now, you have my green light. In fact, the more recent
+java versions support time better, JodaTime is a library for older java
+versions that cannot do time as well. (java.time library actually incorporated
+the features from JodaTime)
+
+
+RFCs
+Just to implement a general styling guide, I feel that we should keep to 80
+characters maximum and have two newlines between each subject of 
+recommendation so that we can have sub-paragraphs.
