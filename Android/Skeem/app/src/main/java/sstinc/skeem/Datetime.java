@@ -8,6 +8,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 //TODO: Locale datetime string format
@@ -67,7 +68,7 @@ class Datetime implements Parcelable {
      * Construct Datetime from org.joda.time.DateTime.
      * Initialises Datetime object from org.joda.time.DateTime.
      *
-     * @param datetime datetime object to initialise form,
+     * @param datetime datetime object to initialise form.
      */
     Datetime(org.joda.time.DateTime datetime) {
         this();
@@ -122,6 +123,35 @@ class Datetime implements Parcelable {
             this.hasDate = this.getDay() != 1 && this.getMonth() != 1 && this.getYear() != 1970;
             // Set hasTime
             this.hasTime = this.getHour() != 0;
+        }
+    }
+
+    // Object Operations
+
+    @Override
+    public boolean equals(Object object)
+    {
+        //Safety Check
+        if(this == object) return true;
+        if(object == null) return false;
+        if(this.getClass() != object.getClass()) return false;
+
+        //Property Check
+        Datetime datetimeObject = (Datetime)object;
+        if(this.getHasDate() == datetimeObject.getHasDate()
+                && this.getHasTime() == datetimeObject.getHasDate()
+                && this.getYear() == datetimeObject.getYear()
+                && this.getMonth() == datetimeObject.getMonth()
+                && this.getDay() == datetimeObject.getDay()
+                && this.getHour() == datetimeObject.getHour()
+                && this.getMinute() == datetimeObject.getMinute()
+                && this.getMillis() == datetimeObject.getMillis())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
