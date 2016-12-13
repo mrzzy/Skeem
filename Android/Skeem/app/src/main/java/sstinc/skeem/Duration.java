@@ -1,111 +1,141 @@
 package sstinc.skeem;
 
 /**
- * @deprecated Use JodaTime {@link org.joda.time.Period} instead.
- * @see org.joda.time.Period
- */
-class Duration {
-    private int years;
-    private int months;
-    private int days;
+ * Defines Representation of Duration of Time
+ * Defines an Object Representation of a Duration of Time, where Duration of time refers to an
+ * an amount of time between 2 specified points of time, where the amount of time can be positive or
+ * negative.
+ * Maximum Time Resolution: 1 milisecond
+ *
+*/
+public class Duration {
+    //Constants
+    private final int MILLISECOND_IN_SECOND = 1000;
+    private final int MILLISECOND_IN_MINUTE = 60000;
+    private final int MILLISECOND_IN_HOUR = 3600000;
 
-    private int hours;
-    private int minutes;
-
-    Duration() {
-        this.years = 0;
-        this.months = 0;
-        this.days = 0;
-
-        this.hours = 0;
-        this.minutes = 0;
+    /**
+     * Defines an enum of the units that Duration supports to construct from or retrieve to.
+     */
+    public enum TimeUnit {
+        millisecond,
+        second,
+        minute,
+        hour
     }
 
-    Duration(long minutes) {
-        this.years = (int) minutes/525600;
-        minutes -= this.years*525600;
-        this.months = (int) minutes/43801;
-        minutes -= this.months*43801;
-        this.days = (int) minutes/1440;
-        minutes -= this.days*1440;
-        this.hours = (int) minutes/60;
-        minutes -= this.hours*60;
-        this.minutes = (int) minutes;
-    }
+    //Constructors
 
-    Duration(int hours, int minutes) {
-        this.hours = hours;
-        this.minutes = minutes;
-    }
+    /**
+     * Duration default constructor.
+     * Constructs a new Duration object that represent null amount of time.
+     */
+    public Duration();
 
-    Duration(int years, int months, int days, int hours, int minutes) {
-        this.years = years;
-        this.months = months;
-        this.days = days;
-        this.hours = hours;
-        this.minutes = minutes;
-    }
+    /**
+     * Duration copy constructor.
+     * Constructs a new Duration object is equal to the object specifed by <code>duration</code>
+     * Eg. <code>this.equals(duration)</code> is true.
+     *
+     * @param duration
+     */
+    public Duration(Duration duration);
 
-    Duration(String duration_string) {
-        String[] split = duration_string.split(":");
-        this.hours = Integer.parseInt(split[0]);
-        this.minutes = Integer.parseInt(split[1]);
-    }
+    /**
+     * Duration Microsecond Constructor
+     * Constructs a new Duration Object that represents <code>millisecond</code>
+     * milliseconds of time.
+     *
+     * @param milisecond Number of milliseconds
+     */
+    public Duration(long milisecond);
 
-    long toMinutes() {
-        return this.years * 525600 + this.months * 43801 + this.days * 1440 +
-                this.hours*60 + this.minutes;
-    }
+    /**
+     * Duration TimeUnit Constructor
+     * Constructs a new Duration Object that represents <code>count</code> number of
+     * <code>unit</code> of time.
+     *
+     * @param count Number of units of time.
+     * @param unit  The unit to use.
+     * @see TimeUnit
+     */
+    public Duration(long count, TimeUnit unit);
 
-    Duration add(Duration duration) {
-        int years = this.years + duration.years;
-        int months = this.months + duration.months;
-        int days = this.days + duration.days;
-        int hours = this.hours + duration.hours;
-        int minutes = this.minutes + duration.minutes;
-        if (months > 12) {
-            years += months/12;
-            months = months%12;
-        }
-        return new Duration(years, months, days, hours, minutes);
-    }
+    //Object Methods
 
-    Duration subtract(Duration duration) {
-        int years = this.years - duration.years;
-        int months = this.months - duration.months;
-        int days = this.days - duration.days;
-        int hours = this.hours - duration.hours;
-        int minutes = this.minutes - duration.minutes;
-        return new Duration(years, months, days, hours, minutes);
-    }
-
-    Duration divide(int divisor) {
-        long divided_value = toMinutes()/divisor;
-        return new Duration(divided_value);
-    }
-
-
+    /**
+     * Determines equality between objects.
+     *
+     * @param otherObject
+     * @return Returns true if objects are equal false otherwise
+     * @see Object#equals(Object)
+     */
     @Override
-    public String toString() {
-        // Only give hours and minutes
-        return this.hours + ":" + this.minutes;
-    }
+    public boolean equals(Object otherObject);
 
-    public String toFullString() {
-        return this.years + "/" + this.months + "/" + this.days + " " +
-                this.hours + ":" + this.minutes;
-    }
+    /**
+     * Compares this object with another object
+     * Compares this object with other object <code>otherObject</code>.
+     *
+     * @param otherObject
+     * @return Returns 0 if objects are equal, -1 if this object less then otherObject, 1 otherwise.
+     */
+    public byte compare(Object otherObject);
 
-    // Getters and setters
-    int getYears() { return this.years; }
-    int getMonths() { return this.months; }
-    int getDays() { return this.days; }
-    int getHours() { return this.hours; }
-    int getMinutes() { return this.minutes; }
+    //Object Manipulations
 
-    void setYears(int years) { this.years = years; }
-    void setMonths(int months) { this.months = months; }
-    void setDays(int days) { this.days = days; }
-    void setHours(int hours) { this.hours = hours; }
-    void setMinutes(int minutes) { this.minutes = minutes; }
+    /**
+     * Add current duration by specified duration
+     * Add the amount of time by: <code>count * unit</code> amount of time
+     *
+     * @param count The number of units to add
+     * @param unit The unit to use
+     */
+    public void add(long count, TimeUnit unit);
+
+    /**
+     * Add current duration by specified Duration Object
+     * Add the amount of time by the amount of time of specified by <code>duration</code> object
+     *
+     * @param duration The Duration to add
+     */
+    public void add(Duration duration);
+
+    /**
+     * Minus current duration by specified duration
+     * Minus the amount of time by: <code>count * unit</code> amount of time
+     *
+     * @param count The number of units to minus
+     * @param unit The unit to use
+     */
+    public void minus(long count, TimeUnit unit);
+
+    /**
+     * Minus current duration by specified Duration Object
+     * Minus the amount of time by the amount of time specified by the <code>duration</code> object
+     *
+     * @param duration The Duration to minus
+     */
+    public void minus(Duration duration);
+
+    //Setters & Getters
+
+    /**
+     * Retrieves amount of time represented in milliseconds
+     *
+     * @return Current amount of time represented in milliseconds
+     */
+    public long getMillisecond();
+
+    /**
+     * Retrieves current duration in units
+     * Retrieves the amount of time represented in the current Duration object converted
+     * to <code>unit</code> time unit. The conversion is floored: 1 minute 30second 55 microsecond
+     * is converted 1 minutes if unit specified is minutes.
+     *
+     * @param unit The unit to use
+     * @return Floored conversion of the current duration in specified units
+     */
+    public long getCount(TimeUnit unit);
 }
+
