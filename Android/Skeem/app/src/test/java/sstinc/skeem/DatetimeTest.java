@@ -24,6 +24,7 @@ import static org.junit.Assert.*;
  *  @see Test
  */
 public class DatetimeTest {
+    //NOTE: Unit Tests takes about 3 minutes to run.
     private Datetime testObject = null;
     private int[][] possibleDatetimeCases = null;
     private String[] possibleDatetimeString = null;
