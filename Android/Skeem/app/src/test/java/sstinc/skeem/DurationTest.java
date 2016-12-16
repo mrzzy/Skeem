@@ -1,6 +1,7 @@
 package sstinc.skeem;
 
 import android.content.ContentProviderOperation;
+import android.view.ViewDebug;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -29,11 +30,11 @@ public class DurationTest
         this.testObject = new Duration();
 
         assertTrue(this.testObject != null);
-        assertTrue(this.testObject.getMillisecond() == 0 );
-        assertTrue(this.testObject.getCount(Duration.TimeUnit.millisecond) == 0);
-        assertTrue(this.testObject.getCount(Duration.TimeUnit.second) == 0);
-        assertTrue(this.testObject.getCount(Duration.TimeUnit.minute) == 0);
-        assertTrue(this.testObject.getCount(Duration.TimeUnit.hour) == 0);
+        assertTrue(this.testObject.getDurationMillis() == 0 );
+        assertTrue(this.testObject.getDuration(Duration.TimeUnit.millisecond) == 0);
+        assertTrue(this.testObject.getDuration(Duration.TimeUnit.second) == 0);
+        assertTrue(this.testObject.getDuration(Duration.TimeUnit.minute) == 0);
+        assertTrue(this.testObject.getDuration(Duration.TimeUnit.hour) == 0);
 
         clean();
     }
@@ -57,11 +58,11 @@ public class DurationTest
             this.testObject = new Duration(i);
 
             assertTrue(this.testObject != null);
-            assertTrue(this.testObject.getMillisecond() == i);
-            assertTrue(this.testObject.getCount(Duration.TimeUnit.millisecond) == i);
-            assertTrue(this.testObject.getCount(Duration.TimeUnit.second) == i / 1000);
-            assertTrue(this.testObject.getCount(Duration.TimeUnit.minute) == i /(60 * 1000));
-            assertTrue(this.testObject.getCount(Duration.TimeUnit.hour) == i /(60 * 1000 * 1000));
+            assertTrue(this.testObject.getDurationMillis() == i);
+            assertTrue(this.testObject.getDuration(Duration.TimeUnit.millisecond) == i);
+            assertTrue(this.testObject.getDuration(Duration.TimeUnit.second) == i / 1000);
+            assertTrue(this.testObject.getDuration(Duration.TimeUnit.minute) == i /(60 * 1000));
+            assertTrue(this.testObject.getDuration(Duration.TimeUnit.hour) == i /(60 * 60 * 1000));
 
             clean();
         }
@@ -70,13 +71,13 @@ public class DurationTest
     @Test
     public void timeUnitConstructor()
     {
-        //Test Milisecond
+        //Test Millisecond
         for (long i = 0; i <= DurationTest.testLimit; i++)
         {
             this.testObject = new Duration(i, Duration.TimeUnit.millisecond);
 
             assertTrue(this.testObject != null);
-            assertTrue(this.testObject.getCount(Duration.TimeUnit.millisecond) == i);
+            assertTrue(this.testObject.getDuration(Duration.TimeUnit.millisecond) == i);
 
             clean();
         }
@@ -87,29 +88,29 @@ public class DurationTest
             this.testObject = new Duration(i, Duration.TimeUnit.second);
 
             assertTrue(this.testObject != null);
-            assertTrue(this.testObject.getCount(Duration.TimeUnit.second) == i);
+            assertTrue(this.testObject.getDuration(Duration.TimeUnit.second) == i);
 
             clean();
         }
 
         //Test Minute
-        for (long i = 0; i <= DurationTest.testLimit / 60 * 1000; i++)
+        for (long i = 0; i <= DurationTest.testLimit / (60 * 1000); i++)
         {
             this.testObject = new Duration(i, Duration.TimeUnit.minute);
 
             assertTrue(this.testObject != null);
-            assertTrue(this.testObject.getCount(Duration.TimeUnit.minute) == i);
+            assertTrue(this.testObject.getDuration(Duration.TimeUnit.minute) == i);
 
             clean();
         }
 
         //Test Hour
-        for (long i = 0; i <= DurationTest.testLimit / 60 * 1000; i++)
+        for (long i = 0; i <= DurationTest.testLimit / (60 * 60 * 1000); i++)
         {
             this.testObject = new Duration(i, Duration.TimeUnit.hour);
 
             assertTrue(this.testObject != null);
-            assertTrue(this.testObject.getCount(Duration.TimeUnit.hour) == i);
+            assertTrue(this.testObject.getDuration(Duration.TimeUnit.hour) == i);
 
             clean();
         }
@@ -151,7 +152,7 @@ public class DurationTest
         this.testObject.add(1, Duration.TimeUnit.minute);
         this.testObject.add(1, Duration.TimeUnit.hour);
 
-        assertTrue(this.testObject.getMillisecond() == 3662001);
+        assertTrue(this.testObject.getDurationMillis() == 3662001);
 
         clean();
     }
@@ -164,7 +165,7 @@ public class DurationTest
 
         this.testObject.add(addObject);
 
-        assertTrue(this.testObject.getMillisecond() == 5000);
+        assertTrue(this.testObject.getDurationMillis() == 5000);
         clean();
     }
 
@@ -178,7 +179,7 @@ public class DurationTest
         this.testObject.minus(1, Duration.TimeUnit.minute);
         this.testObject.minus(1, Duration.TimeUnit.hour);
 
-        assertTrue(this.testObject.getMillisecond() == -411001);
+        assertTrue(this.testObject.getDurationMillis() == -3660001);
         clean();
     }
 
@@ -190,7 +191,29 @@ public class DurationTest
 
         this.testObject.minus(minusObject);
 
-        assertTrue(this.testObject.getMillisecond() == -3000);
+        assertTrue(this.testObject.getDurationMillis() == -3000);
+        clean();
+    }
+
+    @Test
+    public void getDurationMillis()
+    {
+        setup();
+
+        assertTrue(this.testObject.getDurationMillis() == 1000);
+        clean();
+    }
+
+    @Test
+    public void getDuration()
+    {
+        this.testObject = new Duration(3600000);
+
+        assertTrue(this.testObject.getDuration(Duration.TimeUnit.millisecond) == 3600000);
+        assertTrue(this.testObject.getDuration(Duration.TimeUnit.second) == 3600);
+        assertTrue(this.testObject.getDuration(Duration.TimeUnit.minute) == 60);
+        assertTrue(this.testObject.getDuration(Duration.TimeUnit.hour) == 1);
+
         clean();
     }
 }
