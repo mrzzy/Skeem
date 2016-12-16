@@ -16,7 +16,7 @@ import java.util.Locale;
 
 /**
  * This class handles information relating to an instance in time using
- * Calendar. Minutes is the smallest denomination this class handles. The
+ * Calendar. Milliseconds is the smallest denomination this class handles. The
  * class is parcelable.
  *
  * @see Calendar
