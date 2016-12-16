@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="sstinc.sstinc.skeem.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -19,14 +19,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="sstinc.sstinc.skeem.AndroidDatabaseManager"
+            android:name=".AndroidDatabaseManager"
             android:theme="@style/Theme.AppCompat.Light" />
-        <activity android:name="sstinc.sstinc.skeem.TaskCreateActivity" />
-        <activity android:name="sstinc.sstinc.skeem.TaskCreateHelperActivity" />
-        <activity android:name="sstinc.sstinc.skeem.CreateRepeatedDaysActivity" />
-        <activity android:name="sstinc.sstinc.skeem.VoidblockCreateActivity" />
-        <activity android:name="sstinc.sstinc.skeem.CreateDatetimeActivity" />
-        <activity android:name="sstinc.sstinc.skeem.SelectCreateActivity"></activity>
+        <activity android:name=".TaskCreateActivity" />
+        <activity android:name=".TaskCreateHelperActivity" />
+        <activity android:name=".CreateRepeatedDaysActivity" />
+        <activity android:name=".VoidblockCreateActivity" />
+        <activity android:name=".CreateDatetimeActivity" />
+        <activity android:name=".SelectCreateActivity"></activity>
     </application>
 
 </manifest>

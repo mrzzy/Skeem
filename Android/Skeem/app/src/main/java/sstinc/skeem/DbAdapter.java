@@ -57,7 +57,7 @@ import java.util.Collections;
 class DbAdapter {
     // Define constants
     // Constants for database
-    private static final String DATABASE_NAME = "sstinc.skeem.db";
+    private static final String DATABASE_NAME = "skeem.db";
     private static final int DATABASE_VERSION = 2;
 
     // Constants for Days Table

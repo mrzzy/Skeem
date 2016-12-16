@@ -15,10 +15,10 @@ import org.joda.time.format.PeriodFormat;
  * @see Voidblock
  */
 class Schedulable {
-    private long id = -1;
-    private Datetime scheduled_stop;
-    private Datetime scheduled_start;
-    private Period scheduled_period;
+    long id = -1;
+    Datetime scheduled_stop;
+    Datetime scheduled_start;
+    Period scheduled_period;
 
     /**
      * Default constructor. Sets the id to -1 to indicate that there is no

@@ -15,8 +15,8 @@ public class CreateRepeatedDaysActivity extends AppCompatActivity {
     boolean menu_duplicate = false;
     boolean menu_delete = false;
     // Intent Extras
-    public static final String EXTRA_RECEIVE_DAYS = "sstinc.sstinc.skeem.EXTRA_RECEIVE_DAYS";
-    public static final String EXTRA_DAYS = "sstinc.sstinc.skeem.EXTRA_DAYS";
+    public static final String EXTRA_RECEIVE_DAYS = "sstinc.skeem.EXTRA_RECEIVE_DAYS";
+    public static final String EXTRA_DAYS = "sstinc.skeem.EXTRA_DAYS";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

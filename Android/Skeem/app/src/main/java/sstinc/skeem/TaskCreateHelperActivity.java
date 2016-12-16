@@ -48,11 +48,11 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
     static final int createDeadlineRequestCode = 111;
     static final int createDeadlinePerDayRequestCode = 112;
     // Intent Extras
-    public static final String EXTRA_WEEKDAYS = "sstinc.sstinc.skeem.EXTRA_WEEKDAYS";
-    public static final String EXTRA_DURATION = "sstinc.sstinc.skeem.EXTRA_DURATION";
-    public static final String EXTRA_MIN_TIME_PERIOD = "sstinc.sstinc.skeem.EXTRA_MIN_TIME_PERIOD";
-    public static final String EXTRA_DEADLINE = "sstinc.sstinc.skeem.EXTRA_DEADLINE";
-    public static final String EXTRA_DEADLINE_PER_DAY = "sstinc.sstinc.skeem.EXTRA_DEADLINE_PER_DAY";
+    public static final String EXTRA_WEEKDAYS = "sstinc.skeem.EXTRA_WEEKDAYS";
+    public static final String EXTRA_DURATION = "sstinc.skeem.EXTRA_DURATION";
+    public static final String EXTRA_MIN_TIME_PERIOD = "sstinc.skeem.EXTRA_MIN_TIME_PERIOD";
+    public static final String EXTRA_DEADLINE = "sstinc.skeem.EXTRA_DEADLINE";
+    public static final String EXTRA_DEADLINE_PER_DAY = "sstinc.skeem.EXTRA_DEADLINE_PER_DAY";
     // Misc
     Task task = null;
 

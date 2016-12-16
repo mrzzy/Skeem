@@ -32,7 +32,7 @@ public class VoidblockFragment extends ListFragment implements AdapterView.OnIte
     public static final int createVoidblockRequestCode = 210;
     public static final int updateVoidblockRequestCode = 220;
     // Extra strings
-    public static final String EXTRA_VOIDBLOCK = "sstinc.sstinc.skeem.EXTRA_VOIDBLOCK";
+    public static final String EXTRA_VOIDBLOCK = "sstinc.skeem.EXTRA_VOIDBLOCK";
 
     private View getViewByPosition(int pos, ListView listView) {
         final int firstListItemPosition = listView.getFirstVisiblePosition();
