@@ -1,6 +1,7 @@
 package sstinc.skeem;
 
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,18 +17,18 @@ public class CreateDatetimeActivity extends AppCompatActivity {
     // Intent Extras
     //NOTE: These Constants are Deprecated
     @Deprecated
-    public static final String EXTRA_RECEIVE_HASDATE = "sstinc.sstinc.skeem.EXTRA_RECEIVE_HASDATE";
+    public static final String EXTRA_RECEIVE_HASDATE = "sstinc.skeem.EXTRA_RECEIVE_HASDATE";
     @Deprecated
-    public static final String EXTRA_RECEIVE_HASTIME = "sstinc.sstinc.skeem.EXTRA_RECEIVE_HASTIME";
+    public static final String EXTRA_RECEIVE_HASTIME = "sstinc.skeem.EXTRA_RECEIVE_HASTIME";
     //NOTE: Use these constants instead
-    public static final String EXTRA_RECEIVE_HAS_DATE = "sstinc.sstinc.skeem.EXTRA_RECEIVE_HASDATE";
-    public static final String EXTRA_RECEIVE_HAS_TIME = "sstinc.sstinc.skeem.EXTRA_RECEIVE_HASTIME";
+    public static final String EXTRA_RECEIVE_HAS_DATE = "sstinc.skeem.EXTRA_RECEIVE_HASDATE";
+    public static final String EXTRA_RECEIVE_HAS_TIME = "sstinc.skeem.EXTRA_RECEIVE_HASTIME";
 
-    public static final String EXTRA_RECEIVE_TITLE = "sstinc.sstinc.skeem.EXTRA_TITLE";
-    public static final String EXTRA_RECEIVE_DATETIME = "sstinc.sstinc.skeem.EXTRA_RECEIVE_DATETIME";
-    public static final String EXTRA_RECEIVE_MAX = "sstinc.sstinc.skeem.EXTRA_RECEIVE_MAX";
-    public static final String EXTRA_RECEIVE_MIN = "sstinc.sstinc.skeem.EXTRA_RECEIVE_MIN";
-    public static final String EXTRA_DATETIME = "sstinc.sstinc.skeem.EXTRA_DATETIME";
+    public static final String EXTRA_RECEIVE_TITLE = "sstinc.skeem.EXTRA_TITLE";
+    public static final String EXTRA_RECEIVE_DATETIME = "sstinc.skeem.EXTRA_RECEIVE_DATETIME";
+    public static final String EXTRA_RECEIVE_MAX = "sstinc.skeem.EXTRA_RECEIVE_MAX";
+    public static final String EXTRA_RECEIVE_MIN = "sstinc.skeem.EXTRA_RECEIVE_MIN";
+    public static final String EXTRA_DATETIME = "sstinc.skeem.EXTRA_DATETIME";
     // Menu status
     boolean menu_shuffle = false;
     boolean menu_continue = false;

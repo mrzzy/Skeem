@@ -168,8 +168,8 @@ to add time to the period, which are providied by the plus*() methods.
 Task && VoidBlock
 How does the Task ecosystem work? How do you differentiate repetitive tasks
 and non repetitive tasks/void blocks? Using a method to get repetitive 
-tasks/void blocks seems weird. A task object should not be able to generate task 
-objects?
+asks/void blocks seems weird. A task object should not be able to generate
+task objects?
 
 Timeblock
 How are these generated from void blocks? It would be to name them 
@@ -177,20 +177,83 @@ ScheduleableBlock/Duration instead?
 
 
 The New Duration Class and Tests
-I finished implementing and testing the new Duration class, smallest time interval
-is 1 millisecond, supports construction, addition, subtraction using millisecond,
-second, minute, hours. However I hit a roadblock. The org.joda.Period class has a
-whopping 66 uses. And there are no tests for those classes that use the Period class.
-Which means if I migrate, I have no way of determining I broke something. This project
-is way to big to avoid writing tests. If you are stalling because you face a problem 
-that is too hard? Why not write tests, which are simple to write, and helps you obtain
-certainty of what components work or what does not work. I can write tests for these 
-classes: Datetime, Scheduleable, Task, Timeblock, VoidBlock, Weekdays. Could you write 
+I finished implementing and testing the new Duration class, smallest time
+interval is 1 millisecond, supports construction, addition, subtraction using
+millisecond, second, minute, hours. However I hit a roadblock. The
+org.joda.Period class has a whopping 66 uses. And there are no tests for those
+classes that use the Period class. Which means if I migrate, I have no way of
+determining I broke something. This project is way to big to avoid writing
+tests. If you are stalling because you face a problem that is too hard? Why not
+write tests, which are simple to write, and helps you obtain certainty of what
+components work or what does not work. I can write tests for these classes:
+Datetime, Scheduleable, Task, Timeblock, VoidBlock, Weekdays. Could you write
 for the rest? UI Classes can be omitted for now.
  
 
 Schedule (Literal)
-We need to work out a schedule to finish to the app fast. The holidays, which is the
-prime time to develop the App is about 3/4 finished. So for now, write tests and fix bugs. 
-We need to work out a Schedule to finish the app as soon as I return to Singapore only
-20/12/2016.
+We need to work out a schedule to finish to the app fast. The holidays, which
+is the prime time to develop the App is about 3/4 finished. So for now, write
+tests and fix bugs. We need to work out a Schedule to finish the app as soon as
+I return to Singapore only 20/12/2016.
+
+-----[RFC 6]-----
+Date: December 16, 2016
+Author: Joel Tio Jin Hon
+
+Datetime.getMillis()
+The issue that you raised is not a bug or at least all of my logic points in
+that direction. Why I said that it was based on my logic was because the
+documentation states that it returns a new period with the new value added.
+This could mean two different things. It could either mean that it returns
+"5 months" when you do period.withMonths(5) whatever period is or it could mean
+to set the value of months to 5 (which makes more sense). After you raised this
+possible bug, I did a test and found that it was the latter, so there is no
+bug. However, since I created a new Period before doing all this, adding or
+setting does not make a difference.
+
+
+I am not sure what you mean by a "Task ecosystem" but I will just follow along
+your otehr questions. To differentiate between a repetitive task and a
+non-repetitive task, you would have to get the weekdays that it repeats and
+check if it is empty.
+
+I used a method to get all the repeated tasks separately for scheduling. For
+storage, it would be better to keep them individually.
+
+
+Timeblock
+Timeblocks are generated from voidblocks by getting the latest deadline of all
+the tasks and filling this span of time with voidblocks. The rest of the gaps
+would be timeblocks. Renaming it to SchedulableBlock or Duration seems a bit
+weird since we have voidblocks and the opposite of voidblocks is more like
+timeblocks instead of SchedulableBlock. Duration also can conflict with
+JodaTime's Duration.
+
+
+The New Duration Class and Tests
+Tests are good but at the current moment, I can still move forward without TDD,
+the classes have not gone to that big of a scale. I will put tests to second
+priority to actual progress. Although JodaTime's Period class has so many uses,
+when I migrate, I usually look through all of the code to check for any uses.
+
+Datetime and Duration equals method
+It seems excessive to have to equate every value given in the fields. You
+could, instead, use the toString method and just equate that.
+
+Commits
+While I was testing today, I tried to build the project and it failed. I
+checked the error and it turns out that the android manifest and gradle files
+were pointing to the wrong package. It was set to "sstinc.sstinc.skeem" instead
+of "sstinc.skeem". Almost all of them. I checked the origins of the error on
+git and it was done during the name migration commit (8 December!).
+
+Another thing that prevented the build was changing the access modifiers in
+Schedulable from local (which is nothing) to private. If you build it, it
+throws an error. The reason I kept it to local was so that subclasses can
+access it (which they do). This is in one of the commits of rftr, it does not
+affect dev.
+
+The point is, everytime before you commit, test your code. Try to build it, if
+it is a test, test the test. Does it work? If it does, commit. If it doesn't,
+fix.
+

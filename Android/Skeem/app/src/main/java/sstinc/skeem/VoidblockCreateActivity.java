@@ -57,7 +57,7 @@ public class VoidblockCreateActivity extends AppCompatActivity {
     public static final int createVoidblockToRequestCode = 201;
     public static final int createDaysRequestCode = 310;
     // Intent extras
-    public static final String EXTRA_VOIDBLOCK = "sstinc.sstinc.skeem.EXTRA_VOIDBLOCK";
+    public static final String EXTRA_VOIDBLOCK = "sstinc.skeem.EXTRA_VOIDBLOCK";
     // Voidblock information
     Voidblock voidblock = null;
 

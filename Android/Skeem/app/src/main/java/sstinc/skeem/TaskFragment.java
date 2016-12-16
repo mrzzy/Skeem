@@ -35,7 +35,7 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
     static final int createTaskRequestCode = 110;
     static final int updateTaskRequestCode = 120;
     // Intent extras
-    public static final String EXTRA_TASK = "sstinc.sstinc.skeem.EXTRA_TASK";
+    public static final String EXTRA_TASK = "sstinc.skeem.EXTRA_TASK";
 
     AdapterView.OnItemClickListener editItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
