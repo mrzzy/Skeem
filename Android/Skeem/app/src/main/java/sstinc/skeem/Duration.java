@@ -1,5 +1,10 @@
 package sstinc.skeem;
 
+import org.joda.time.DurationFieldType;
+import org.joda.time.Period;
+
+import java.sql.Time;
+
 /**
  * Defines Representation of Duration of Time
  * Defines an Object Representation of a Duration of Time, where Duration of time refers to an
@@ -10,9 +15,12 @@ package sstinc.skeem;
 */
 public class Duration {
     //Constants
-    private final int MILLISECOND_IN_SECOND = 1000;
-    private final int MILLISECOND_IN_MINUTE = 60000;
-    private final int MILLISECOND_IN_HOUR = 3600000;
+    private static final int MILLISECOND_IN_SECOND = 1000;
+    private static final int MILLISECOND_IN_MINUTE = 60000;
+    private static final int MILLISECOND_IN_HOUR = 3600000;
+
+    //Duration Data
+    private long durationMillis; //Duration in Milliseconds
 
     /**
      * Defines an enum of the units that Duration supports to construct from or retrieve to.
@@ -30,7 +38,10 @@ public class Duration {
      * Duration default constructor.
      * Constructs a new Duration object that represent null amount of time.
      */
-    public Duration();
+    public Duration()
+    {
+        this.durationMillis = 0;
+    }
 
     /**
      * Duration copy constructor.
@@ -39,16 +50,22 @@ public class Duration {
      *
      * @param duration
      */
-    public Duration(Duration duration);
+    public Duration(Duration duration)
+    {
+        this.durationMillis = duration.getDurationMillis();
+    }
 
     /**
      * Duration Microsecond Constructor
      * Constructs a new Duration Object that represents <code>millisecond</code>
      * milliseconds of time.
      *
-     * @param milisecond Number of milliseconds
+     * @param millisecond Number of milliseconds
      */
-    public Duration(long milisecond);
+    public Duration(long millisecond)
+    {
+        this.durationMillis = millisecond;
+    }
 
     /**
      * Duration TimeUnit Constructor
@@ -59,7 +76,13 @@ public class Duration {
      * @param unit  The unit to use.
      * @see TimeUnit
      */
-    public Duration(long count, TimeUnit unit);
+    public Duration(long count, TimeUnit unit)
+    {
+        if(unit == TimeUnit.millisecond) this.durationMillis = count;
+        else if(unit == TimeUnit.second) this.durationMillis = count * Duration.MILLISECOND_IN_SECOND;
+        else if(unit == TimeUnit.minute) this.durationMillis = count * Duration.MILLISECOND_IN_MINUTE;
+        else if(unit == TimeUnit.hour) this.durationMillis = count * Duration.MILLISECOND_IN_HOUR;
+    }
 
     //Object Methods
 
@@ -71,16 +94,31 @@ public class Duration {
      * @see Object#equals(Object)
      */
     @Override
-    public boolean equals(Object otherObject);
+    public boolean equals(Object otherObject)
+    {
+        if(otherObject == null) return false;
+        if(this.getClass() != otherObject.getClass()) return false;
+
+        Duration otherDuration = (Duration)otherObject;
+        boolean equal = false;
+
+        if(this.getDurationMillis() == otherDuration.getDurationMillis()) equal = true;
+
+        return equal;
+    }
 
     /**
-     * Compares this object with another object
+     * Compares this Duration with Another Duration
      * Compares this object with other object <code>otherObject</code>.
      *
-     * @param otherObject
+     * @param otherDuration
      * @return Returns 0 if objects are equal, -1 if this object less then otherObject, 1 otherwise.
      */
-    public byte compare(Object otherObject);
+    public int compare(Duration otherDuration)
+    {
+        if(this.equals(otherDuration)) return 0;
+        return (this.getDurationMillis() < otherDuration.getDurationMillis()) ? -1 : 1;
+    }
 
     //Object Manipulations
 
@@ -91,7 +129,16 @@ public class Duration {
      * @param count The number of units to add
      * @param unit The unit to use
      */
-    public void add(long count, TimeUnit unit);
+    public void add(long count, TimeUnit unit)
+    {
+        long addDuration = 0;
+        if(unit == TimeUnit.millisecond) addDuration = count;
+        else if(unit == TimeUnit.second) addDuration = (count * Duration.MILLISECOND_IN_SECOND);
+        else if(unit == TimeUnit.minute) addDuration = (count * Duration.MILLISECOND_IN_MINUTE);
+        else if(unit == TimeUnit.hour) addDuration = (count * Duration.MILLISECOND_IN_HOUR);
+
+        this.durationMillis += addDuration;
+    }
 
     /**
      * Add current duration by specified Duration Object
@@ -99,7 +146,10 @@ public class Duration {
      *
      * @param duration The Duration to add
      */
-    public void add(Duration duration);
+    public void add(Duration duration)
+    {
+        add(duration.getDurationMillis(), TimeUnit.millisecond);
+    }
 
     /**
      * Minus current duration by specified duration
@@ -108,7 +158,17 @@ public class Duration {
      * @param count The number of units to minus
      * @param unit The unit to use
      */
-    public void minus(long count, TimeUnit unit);
+    public void minus(long count, TimeUnit unit)
+    {
+        long minusDuration = 0;
+        if(unit == TimeUnit.millisecond) minusDuration = count;
+        else if(unit == TimeUnit.second) minusDuration = (count * Duration.MILLISECOND_IN_SECOND);
+        else if(unit == TimeUnit.minute) minusDuration = (count * Duration.MILLISECOND_IN_MINUTE);
+        else if(unit == TimeUnit.hour) minusDuration = (count * Duration.MILLISECOND_IN_HOUR);
+
+        this.durationMillis -= minusDuration;
+    }
+
 
     /**
      * Minus current duration by specified Duration Object
@@ -116,7 +176,10 @@ public class Duration {
      *
      * @param duration The Duration to minus
      */
-    public void minus(Duration duration);
+    public void minus(Duration duration)
+    {
+        minus(duration.getDurationMillis(), TimeUnit.millisecond);
+    }
 
     //Setters & Getters
 
@@ -125,7 +188,10 @@ public class Duration {
      *
      * @return Current amount of time represented in milliseconds
      */
-    public long getMillisecond();
+    public long getDurationMillis()
+    {
+        return this.durationMillis;
+    }
 
     /**
      * Retrieves current duration in units
@@ -136,6 +202,14 @@ public class Duration {
      * @param unit The unit to use
      * @return Floored conversion of the current duration in specified units
      */
-    public long getCount(TimeUnit unit);
-}
+    public long getDuration(TimeUnit unit)
+    {
+        long retrieveCount = 0;
+        if(unit == TimeUnit.millisecond) retrieveCount = this.getDurationMillis();
+        else if(unit == TimeUnit.second) retrieveCount = (this.getDurationMillis() / MILLISECOND_IN_SECOND);
+        else if(unit == TimeUnit.minute) retrieveCount = (this.getDurationMillis() / MILLISECOND_IN_MINUTE);
+        else if(unit == TimeUnit.hour) retrieveCount = (this.getDurationMillis() / MILLISECOND_IN_HOUR);
 
+        return retrieveCount;
+    }
+}
