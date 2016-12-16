@@ -1,4 +1,4 @@
-=======[Request for Comments]======
+======[Request for Comments]======
 -----[RFC 1]-----
 Date: December 08, 2016
 Author: Zhu Zhan Yan
@@ -148,3 +148,49 @@ RFCs
 Just to implement a general styling guide, I feel that we should keep to 80
 characters maximum and have two newlines between each subject of 
 recommendation so that we can have sub-paragraphs.
+
+-----[RFC 5]-----
+Date: December 16, 2016
+Author: Zhu Zhan Yan
+
+Datetime.getmillis()
+There seems to be a possible bug here:
+[BEGIN Java Code]
+period = period.withDays(this.getDay());
+period = period.withMonths(this.getMonth());
+period = period.withYears(this.getYear());
+[END Java Code]
+The documentation for the with*() methods is 'Returns a **NEW** period with 
+specified amount of (Days, Months, Years).' It seems that you were trying 
+to add time to the period, which are providied by the plus*() methods.
+
+
+Task && VoidBlock
+How does the Task ecosystem work? How do you differentiate repetitive tasks
+and non repetitive tasks/void blocks? Using a method to get repetitive 
+tasks/void blocks seems weird. A task object should not be able to generate task 
+objects?
+
+Timeblock
+How are these generated from void blocks? It would be to name them 
+ScheduleableBlock/Duration instead?
+
+
+The New Duration Class and Tests
+I finished implementing and testing the new Duration class, smallest time interval
+is 1 millisecond, supports construction, addition, subtraction using millisecond,
+second, minute, hours. However I hit a roadblock. The org.joda.Period class has a
+whopping 66 uses. And there are no tests for those classes that use the Period class.
+Which means if I migrate, I have no way of determining I broke something. This project
+is way to big to avoid writing tests. If you are stalling because you face a problem 
+that is too hard? Why not write tests, which are simple to write, and helps you obtain
+certainty of what components work or what does not work. I can write tests for these 
+classes: Datetime, Scheduleable, Task, Timeblock, VoidBlock, Weekdays. Could you write 
+for the rest? UI Classes can be omitted for now.
+ 
+
+Schedule (Literal)
+We need to work out a schedule to finish to the app fast. The holidays, which is the
+prime time to develop the App is about 3/4 finished. So for now, write tests and fix bugs. 
+We need to work out a Schedule to finish the app as soon as I return to Singapore only
+20/12/2016.
