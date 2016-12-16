@@ -1,7 +1,6 @@
 package sstinc.skeem;
 
 import android.content.Intent;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,8 +11,6 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
-
-import org.joda.time.chrono.StrictChronology;
 
 public class CreateDatetimeActivity extends AppCompatActivity {
     // Intent Extras
