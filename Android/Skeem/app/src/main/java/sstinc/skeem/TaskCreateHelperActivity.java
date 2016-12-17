@@ -168,9 +168,9 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), CreateDatetimeActivity.class);
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_TITLE, "Set deadline");
-                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE, true);
-                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASTIME,
-                        CreateDatetimeActivity.HASTIME_OPTIONAL);
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HAS_DATE, true);
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HAS_TIME,
+                        CreateDatetimeActivity.HAS_TIME_OPTIONAL);
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_DATETIME, task.getDeadline());
                 startActivityForResult(intent, createDeadlineRequestCode);
             }
@@ -181,9 +181,9 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), CreateDatetimeActivity.class);
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_TITLE,
                         "Set time to finish before");
-                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE, false);
-                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASTIME,
-                        CreateDatetimeActivity.HASTIME_YES);
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HAS_DATE, false);
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HAS_TIME,
+                        CreateDatetimeActivity.HAS_TIME_TRUE);
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_DATETIME,
                         task.getDeadlinePerDay());
                 startActivityForResult(intent, createDeadlinePerDayRequestCode);
