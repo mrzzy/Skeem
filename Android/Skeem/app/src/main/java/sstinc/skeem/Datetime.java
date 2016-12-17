@@ -128,6 +128,48 @@ class Datetime implements Parcelable {
 
     // Object Operations
 
+    /**
+     * Compares only the dates of this instance of Datetime and another
+     * Datetime.
+     * @param datetime The Datetime instance to compare to
+     * @return -1 if the current instance is before the compared instance
+     *          0 if the current instance is equal to the compared instance
+     *          1 if the current instance is after the compared instance
+     */
+    int compareDates(Datetime datetime) {
+        // Make a copy of the current instance and the compared instance
+        Datetime current_instance = new Datetime(this);
+        Datetime compared_instance = new Datetime(datetime);
+
+        // Disable time
+        current_instance.setHasTime(false);
+        compared_instance.setHasTime(false);
+
+        // Compare dates by milliseconds
+        return Long.compare(current_instance.getMillis(), compared_instance.getMillis());
+    }
+
+    /**
+     * Compares only the times of this instance of Datetime and another
+     * Datetime.
+     * @param datetime The Datetime instance to compare to
+     * @return -1 if the current instance is before the compared instance
+     *          0 if the current instance is equal to the compared instance
+     *          1 if the current instance is after the compared instance
+     */
+    int compareTimes(Datetime datetime) {
+        // Make a copy of the current instance and the compared instance
+        Datetime current_instance = new Datetime(this);
+        Datetime compared_instance = new Datetime(datetime);
+
+        // Disable time
+        current_instance.setHasDate(false);
+        compared_instance.setHasDate(false);
+
+        // Compare dates by milliseconds
+        return Long.compare(current_instance.getMillis(), compared_instance.getMillis());
+    }
+
     @Override
     public boolean equals(Object object)
     {
@@ -221,6 +263,7 @@ class Datetime implements Parcelable {
 
     /**
      * Gets the datetime's calendar time in milliseconds.
+     * ALERT: DO NOT USE THIS TO COMPARE ONLY DATES OR ONLY TIME.
      * @return datetime calendar time in milliseconds
      */
     long getMillis() {

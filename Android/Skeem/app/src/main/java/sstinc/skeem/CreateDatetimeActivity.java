@@ -1,7 +1,6 @@
 package sstinc.skeem;
 
 import android.content.Intent;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +11,11 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
+
+/* TODO: You can go before the current time but that would not be allowed.
+   To replicate: Go to next year. Set date to a day before the minimum day and month of last year.
+   Go to the previous year.
+ */
 
 public class CreateDatetimeActivity extends AppCompatActivity {
     // Intent Extras
@@ -85,8 +89,6 @@ public class CreateDatetimeActivity extends AppCompatActivity {
         if (this.max_datetime == null) {
             this.max_datetime = new Datetime();
         }
-        Log.w(this.getClass().getName(), "Sending scheduled start: " +
-                this.min_datetime.toString());
 
         //Setup Date Picker
         ScrollableDatePicker datePicker = (ScrollableDatePicker) findViewById(
@@ -181,12 +183,25 @@ public class CreateDatetimeActivity extends AppCompatActivity {
         // Flag to indicate if valid
         boolean dateTimeVaild = true;
         // If the minimum datetime is set
-        if (this.min_datetime.getHasDate() || this.min_datetime.getHasTime()) {
-            dateTimeVaild = this.min_datetime.getMillis() <= submitted_datetime.getMillis();
+        if (this.min_datetime.getHasDate() && this.hasDate) {
+            // Compare date
+            dateTimeVaild = this.min_datetime.compareDates(submitted_datetime) != 1;
+        }
+        if (this.min_datetime.getHasTime() && this.hasTime.equals(HAS_TIME_TRUE)) {
+            // Compare time
+            dateTimeVaild = dateTimeVaild &&
+                    this.min_datetime.compareTimes(submitted_datetime) != 1;
         }
         // If the maximum datetime is set
-        if (this.max_datetime.getHasDate() || this.max_datetime.getHasTime()) {
-            dateTimeVaild = dateTimeVaild && submitted_datetime.getMillis() <= this.max_datetime.getMillis();
+        if (this.max_datetime.getHasDate() && this.hasDate) {
+            // Compare date
+            dateTimeVaild = dateTimeVaild &&
+                    this.max_datetime.compareDates(submitted_datetime) != 1;
+        }
+        if (this.max_datetime.getHasTime() && this.hasTime.equals(HAS_TIME_TRUE)) {
+            // Compare time
+            dateTimeVaild = dateTimeVaild &&
+                    this.max_datetime.compareTimes(submitted_datetime) != 1;
         }
 
         return dateTimeVaild;
