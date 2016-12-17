@@ -111,15 +111,8 @@ class Datetime implements Parcelable {
                 this.datetime = this.datetime.withMinuteOfHour(Integer.parseInt(time_list[1]));
             }
 
-            // Set values
-            this.datetime = new org.joda.time.DateTime(Integer.parseInt(date_list[0]), // Year
-                                                       Integer.parseInt(date_list[1]), // Month
-                                                       Integer.parseInt(date_list[2]), // Day
-                                                       Integer.parseInt(time_list[0]), // Hour
-                                                       Integer.parseInt(time_list[1]));// Minute
-
             // Set hasDate
-            // /(check that the date is not 1/1/1970)
+            // (check that the date is not 1/1/1970)
             this.hasDate = this.getDay() != 1 && this.getMonth() != 1 && this.getYear() != 1970;
             // Set hasTime
             this.hasTime = this.getHour() != 0;
