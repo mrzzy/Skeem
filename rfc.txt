@@ -213,7 +213,7 @@ setting does not make a difference.
 
 
 I am not sure what you mean by a "Task ecosystem" but I will just follow along
-your otehr questions. To differentiate between a repetitive task and a
+your other questions. To differentiate between a repetitive task and a
 non-repetitive task, you would have to get the weekdays that it repeats and
 check if it is empty.
 
@@ -227,7 +227,7 @@ the tasks and filling this span of time with voidblocks. The rest of the gaps
 would be timeblocks. Renaming it to SchedulableBlock or Duration seems a bit
 weird since we have voidblocks and the opposite of voidblocks is more like
 timeblocks instead of SchedulableBlock. Duration also can conflict with
-JodaTime's Duration.
+odaTime's Duration.
 
 
 The New Duration Class and Tests
@@ -257,3 +257,87 @@ The point is, everytime before you commit, test your code. Try to build it, if
 it is a test, test the test. Does it work? If it does, commit. If it doesn't,
 fix.
 
+-----[RFC 7]-----
+Date: December 17, 2016
+Author: Zhu Zhan Yan
+
+Commits
+Apologizes for breaking the project, will note to try build the project next 
+time, regarding the change of access modifiers, I think my brain malfunctioned,
+or I wrote Too much swift code, where everything in the same file can access 
+all privates in the same file. It should be changed to protected right?
+
+Name Conflicts
+Simple solution to conflicting with JodaTime's classes, remove the import 
+statements.
+
+Tests && TDD
+To be clear, I was not advocating for TDD, I am advocating for certainty. Given 
+that we have ~15 days left, we won't want to have an bug pop up in the most 
+inconvenient of times. When that happens we won't know if the bug is a simple 
+isolated one or multiple things breaking all together. We need bugs come up now. 
+Not when we are about to deploy it on the Play Store.
+
+In the same spirit as the "Test before Committing" section in the your previous
+RFC, it instead of just making sure it complies, how about running the Test 
+suite to make sure your code runs as expected and you didn't introduce any 
+bugs?  I kept refactoring on a separate branch because I was not certain I was 
+not going to break anything.
+
+TDD is a style of development where failing test is written first, only just 
+enough code is written to pass the test, just enough test is written to fail 
+and so on, until you have the finished product. That would take a really long 
+time. 
+
+I am not asking for that, I am just asking for certainty.
+Write tests to make sure  that the model classes (Task, VoidBlock, TimeBlock, 
+Scheduler, DateTime,...) classes behave as expected, UI classes can be tested 
+manually. You say that you prefer "actual progress", but is it really actual 
+progress, or have you written your next debugging nightmare? Only with a 
+passing test would you be certain. 
+
+Over the next three days (17-20/12/2016) I would develop tests for these 
+classes:
+Datetime
+Schedulable
+Task
+Scheduler
+Timeblock
+Voidblock
+Weekdays
+It would be great if you can write tests for the non-UI classes.
+I won't force (I can't) you to write tests. It just would be better if we had
+them.
+
+
+Datetime & Duration Equals method
+You seem to be okay with jumping through hoops to just make sure the Object 
+already equal. The equals method saves me typing and does not create a new 
+dependency on the toString() to encode every field in the object. If someone 
+touches that toString() method, great, now all code comparing objects of that 
+type is new bug. Worse still  all types of the fields must be a primitive type 
+or support a toString() method which also must encode all fields in that objects
+as well.
+
+Migrating from JodaTime's Period to Duration && Refractoring
+Without tests, I would not be able to migrate without knowing if I introduced
+bugs or not. So that task would be postponed for now, until we have an concrete
+test suite.
+
+Necessary improvements to the code, such as Refractoring, are also avoided due 
+to the fear of breaking something. This can be averted with a test suite. 
+I can simply run the tests and know for certain that nothing is broken.
+
+
+Tasks && DRY
+So the way to determine if the task is repetitive is not in a method? If not so
+ignore the following text. Else, think about having to maintain multiple complies
+of the  same code (possibly with the same bugs). If you had a method to do the
+same thing. The maintenance would only be in one place (and any bugs).
+Thus, try to follow the DRY principle: Don't Repeat Yourself. Or suffer later.
+
+
+Conclusion
+Testing gives certainty, It is not a waste of Time. It would be great if you
+could write some. Try to follow the DRY principle.
+-----
