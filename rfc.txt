@@ -262,9 +262,9 @@ Date: December 17, 2016
 Author: Zhu Zhan Yan
 
 Commits
-Apologizes for breaking the project, will note to try build the project next 
+Apologies for breaking the project, will note to try build the project next 
 time, regarding the change of access modifiers, I think my brain malfunctioned,
-or I wrote Too much swift code, where everything in the same file can access 
+or I wrote too much swift code, where everything in the same file can access 
 all privates in the same file. It should be changed to protected right?
 
 Name Conflicts
@@ -279,7 +279,7 @@ isolated one or multiple things breaking all together. We need bugs come up now.
 Not when we are about to deploy it on the Play Store.
 
 In the same spirit as the "Test before Committing" section in the your previous
-RFC, it instead of just making sure it complies, how about running the Test 
+RFC, it instead of just making sure it complies, how about running the test 
 suite to make sure your code runs as expected and you didn't introduce any 
 bugs?  I kept refactoring on a separate branch because I was not certain I was 
 not going to break anything.
@@ -315,7 +315,7 @@ You seem to be okay with jumping through hoops to just make sure the Object
 already equal. The equals method saves me typing and does not create a new 
 dependency on the toString() to encode every field in the object. If someone 
 touches that toString() method, great, now all code comparing objects of that 
-type is new bug. Worse still  all types of the fields must be a primitive type 
+type is new bug. Worse still all types of the fields must be a primitive type 
 or support a toString() method which also must encode all fields in that objects
 as well.
 
@@ -324,7 +324,7 @@ Without tests, I would not be able to migrate without knowing if I introduced
 bugs or not. So that task would be postponed for now, until we have an concrete
 test suite.
 
-Necessary improvements to the code, such as Refractoring, are also avoided due 
+Necessary improvements to the code, such as refactoring, are also avoided due 
 to the fear of breaking something. This can be averted with a test suite. 
 I can simply run the tests and know for certain that nothing is broken.
 
@@ -341,3 +341,21 @@ Conclusion
 Testing gives certainty, It is not a waste of Time. It would be great if you
 could write some. Try to follow the DRY principle.
 -----
+
+-----[RFC 8]-----
+Date: December 17, 2016
+Author: Joel Tio Jin Hon
+
+Commits
+There is actually no exactly correct access modifier. Protected allows subclass
+and outside packages and package-private (apparently its not called "local")
+only allows anything in the package. There is no access modifier for "private
+and subclasses". However, I feel that we should pick the more restrictive one
+which is package-private. See this stackoverflow post: https://goo.gl/jI7KkL
+
+
+Tests & TDD
+Ok, I understand.
+
+Tasks && DRY
+Ok, I will implement the method.
