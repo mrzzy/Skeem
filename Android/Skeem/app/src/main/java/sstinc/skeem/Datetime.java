@@ -99,23 +99,23 @@ class Datetime implements Parcelable {
             String[] time_list = datetime_list[1].split(":");
 
             // Check values
+            // Date values
             if (Integer.parseInt(date_list[2]) != 0) {
                 this.datetime = this.datetime.withYear(Integer.parseInt(date_list[0]));
                 this.datetime = this.datetime.withMonthOfYear(Integer.parseInt(date_list[1]));
                 this.datetime = this.datetime.withDayOfMonth(Integer.parseInt(date_list[2]));
+
+                // Check that the date is not 1/1/1970
+                this.hasDate = this.getDay() != 1 && this.getMonth() != 1 && this.getYear() != 1970;
             }
 
-            //Parse Time
+            // Time values
             if (Integer.parseInt(time_list[0]) != 0) {
                 this.datetime = this.datetime.withHourOfDay(Integer.parseInt(time_list[0]));
                 this.datetime = this.datetime.withMinuteOfHour(Integer.parseInt(time_list[1]));
-            }
 
-            // Set hasDate
-            // (check that the date is not 1/1/1970)
-            this.hasDate = this.getDay() != 1 && this.getMonth() != 1 && this.getYear() != 1970;
-            // Set hasTime
-            this.hasTime = this.getHour() != 0;
+                this.hasTime = true;
+            }
         }
     }
 
@@ -268,10 +268,7 @@ class Datetime implements Parcelable {
 
             return dt.getMillis();
         } else if (this.getHasTime()) {
-            org.joda.time.DateTime dt = new org.joda.time.DateTime(
-                    0, 0, 0, this.getHour(), this.getMinute());
-
-            return dt.getMillis();
+            return (this.getHour()*60 + this.getMinute())*60000;
         } else {
             return 0;
         }
