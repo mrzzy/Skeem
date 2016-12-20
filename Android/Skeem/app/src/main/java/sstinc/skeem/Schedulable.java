@@ -18,7 +18,6 @@ class Schedulable {
     long id = -1;
     Datetime scheduled_stop;
     Datetime scheduled_start;
-    Period scheduled_period;
 
     /**
      * Default constructor. Sets the id to -1 to indicate that there is no
@@ -29,7 +28,6 @@ class Schedulable {
         this.id = -1;
         this.scheduled_start = new Datetime();
         this.scheduled_stop = new Datetime();
-        this.scheduled_period = new Period();
     }
 
     // Copy constructor
@@ -37,30 +35,26 @@ class Schedulable {
         this.id = schedulable.getId();
         this.scheduled_start = new Datetime(schedulable.getScheduledStart());
         this.scheduled_stop = new Datetime(schedulable.getScheduledStop());
-        this.scheduled_period = new Period(schedulable.getScheduledPeriod());
     }
 
     /**
      * Determines equality between objects.
      *
-     * @param otherObject
+     * @param otherObject the object to compare to
      * @return Returns true if objects are equal false otherwise
      * @see Object#equals(Object)
      */
     @Override
     public boolean equals(Object otherObject) {
-        //Safety Check
+        // Safety Check
         if (otherObject == null) return false;
         if (otherObject.getClass() != this.getClass()) return false;
 
-        //Field Check
+        // Field Check
         Schedulable otherSchedulable = (Schedulable) otherObject;
-        if (otherSchedulable.getId() == this.getId()
-                && otherSchedulable.getScheduledStart().equals(this.getScheduledStart())
-                && otherSchedulable.getScheduledStop().equals(this.getScheduledStop())
-                && otherSchedulable.getScheduledPeriod().equals(this.getScheduledPeriod()))
-            return true;
-        else return false;
+        return otherSchedulable.getId() == this.getId() &&
+                otherSchedulable.getScheduledStart().equals(this.getScheduledStart()) &&
+                otherSchedulable.getScheduledStop().equals(this.getScheduledStop());
     }
 
     // Getters and Setters
@@ -86,11 +80,11 @@ class Schedulable {
         return this.scheduled_stop;
     }
     /**
-     * Gets the scheduled period for the schedulable.
+     * Calculates the scheduled period for the schedulable.
      * @return schedulable's scheduled period
      */
     Period getScheduledPeriod() {
-        return this.scheduled_period;
+        return new Period(this.scheduled_stop.getMillis() - this.getScheduledStart().getMillis());
     }
 
     /**
@@ -113,18 +107,10 @@ class Schedulable {
     void setScheduledStop(Datetime scheduled_stop) {
         this.scheduled_stop = scheduled_stop;
     }
-    /**
-     * {@link #getScheduledPeriod()}
-     * @param scheduled_period schedulable's period
-     */
-    void setScheduledPeriod(Period scheduled_period) {
-        this.scheduled_period = scheduled_period;
-    }
 
     void writeSchedulableToParcel(Parcel out, int flags) {
         out.writeParcelable(this.scheduled_start, flags);
         out.writeParcelable(this.scheduled_stop, flags);
-        out.writeString(PeriodFormat.getDefault().print(this.scheduled_period));
     }
 
     static Schedulable readSchedulableFromParcel(Parcel in) {
@@ -133,7 +119,6 @@ class Schedulable {
                 Datetime.class.getClassLoader()));
         schedulable.setScheduledStop((Datetime) in.readParcelable(
                 Datetime.class.getClassLoader()));
-        schedulable.setScheduledPeriod(PeriodFormat.getDefault().parsePeriod(in.readString()));
         return schedulable;
     }
 }

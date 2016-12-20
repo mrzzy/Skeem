@@ -42,10 +42,8 @@ class Timeblock extends Schedulable {
         this.tasks_scheduled = new ArrayList<>();
 
         // Calculate duration
-        this.scheduled_period = new Period(this.scheduled_stop.getMillis() -
-                this.scheduled_start.getMillis());
         this.period_used = new Period();
-        this.period_left = new Period(this.scheduled_period);
+        this.period_left = new Period(this.getScheduledPeriod());
     }
 
     // Getters and Setters
@@ -85,9 +83,7 @@ class Timeblock extends Schedulable {
         // If the scheduled stop is set
         if (this.scheduled_stop.getMillis() != new Period().getMillis()) {
             // Recalculate the period and period left
-            this.scheduled_period = new Period(this.scheduled_stop.getMillis() -
-                    this.scheduled_start.getMillis());
-            this.period_left = new Period(this.scheduled_period).minus(this.period_used);
+            this.period_left = this.getScheduledPeriod().minus(this.period_used);
         }
     }
 
@@ -104,9 +100,7 @@ class Timeblock extends Schedulable {
         // If the scheduled start is set
         if (this.scheduled_start.getMillis() != new Period().getMillis()) {
             // Recalculate the period and period left
-            this.scheduled_period = new Period(this.scheduled_stop.getMillis() -
-                    this.scheduled_start.getMillis());
-            this.period_left = new Period(this.scheduled_period).minus(this.period_used);
+            this.period_left = this.getScheduledPeriod().minus(this.period_used);
         }
     }
 
