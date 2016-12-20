@@ -39,6 +39,29 @@ class Schedulable {
         this.scheduled_period = new Period(schedulable.getScheduledPeriod());
     }
 
+    /**
+     * Determines equality between objects.
+     *
+     * @param otherObject
+     * @return Returns true if objects are equal false otherwise
+     * @see Object#equals(Object)
+     */
+    @Override
+    public boolean equals(Object otherObject) {
+        //Safety Check
+        if (otherObject == null) return false;
+        if (otherObject.getClass() != this.getClass()) return false;
+
+        //Field Check
+        Schedulable otherSchedulable = (Schedulable) otherObject;
+        if (otherSchedulable.getId() == this.getId()
+                && otherSchedulable.getScheduledStart().equals(this.getScheduledStart())
+                && otherSchedulable.getScheduledStop().equals(this.getScheduledStop())
+                && otherSchedulable.getScheduledPeriod().equals(this.getScheduledPeriod()))
+            return true;
+        else return false;
+    }
+
     // Getters and Setters
     /**
      * Gets the schedulable's id.
@@ -78,8 +101,7 @@ class Schedulable {
     }
     /**
      * {@link #getScheduledStart()}
-     * @param scheduled_start schedulable's start time
-     */
+     * @param scheduled_start schedulable's start time */
     void setScheduledStart(Datetime scheduled_start) {
         this.scheduled_start = scheduled_start;
     }
