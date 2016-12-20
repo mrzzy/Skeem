@@ -101,12 +101,22 @@ public class CreateDatetimeActivity extends AppCompatActivity {
         }
         // Set the maximum and minimum if any (time is verified later)
         if (this.max_datetime.getHasDate()) {
-            datePicker.setMaxDate(this.max_datetime.getMillis());
+            // Remove the hours and minutes so that the date picker does not
+            // get confused.
+            Datetime date_picker_max_datetime = new Datetime(this.max_datetime);
+            date_picker_max_datetime.setHour(0);
+            date_picker_max_datetime.setMinute(0);
+            datePicker.setMaxDate(date_picker_max_datetime.getMillis());
         }
         if (this.min_datetime.getHasDate()) {
             //TODO: Test this thoroughly
             // Move maximum one day back
-            datePicker.setMinDate(this.min_datetime.getMillis());
+            // Remove the hours and minutes so that the date picker does not
+            // get confused.
+            Datetime date_picker_min_datetime = new Datetime(this.min_datetime);
+            date_picker_min_datetime.setHour(0);
+            date_picker_min_datetime.setMinute(0);
+            datePicker.setMinDate(date_picker_min_datetime.getMillis());
         }
 
         //Setup Time Picker
