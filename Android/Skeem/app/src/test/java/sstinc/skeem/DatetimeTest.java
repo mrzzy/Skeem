@@ -2,6 +2,7 @@ package sstinc.skeem;
 
 import android.database.DatabaseErrorHandler;
 import android.icu.text.SymbolTable;
+import android.icu.text.TimeZoneFormat;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 
@@ -14,6 +15,8 @@ import org.junit.internal.runners.statements.Fail;
 import java.util.Date;
 import java.util.Locale;
 
+import dalvik.annotation.TestTargetClass;
+
 import static org.junit.Assert.*;
 
 /**
@@ -24,172 +27,139 @@ import static org.junit.Assert.*;
  *  @see Test
  */
 public class DatetimeTest {
-    //NOTE: Unit Tests takes about 3 minutes to run.
-    private Datetime testObject = null;
-    private int[][] possibleDatetimeCases = null;
-    private String[] possibleDatetimeString = null;
-
-
-    private void setup()
-    {
-        this.testObject = new Datetime(org.joda.time.DateTime.now());
-
-        if(this.possibleDatetimeCases == null)
-        {
-            this.possibleDatetimeCases = generatePossibleDatetime();
-        }
-
-        if(this.possibleDatetimeString == null)
-        {
-            this.possibleDatetimeString = convertStringPossibleDatetime(this.possibleDatetimeCases);
-        }
-
-    }
-
-    private void cleanup()
-    {
-
-    }
+    private org.joda.time.DateTime[] testCases;
 
     /**
-     * Generates Test Cases for Possible date/time.
-     * Generates an multidimensional Array of test cases where the first index refers to the index
-     * of the test case, while the second index refers to the unit:
-     * 0 - Year
-     * 1 - Month of Year
-     * 2 - Day of Month
-     * 3 - Hour of Day
-     * 4 - Minute of Hour
-     * Test case generated would be from years 2015-2030.
-     * Each possible Minute between those years would be generated.
-     *
-     * @return Generated Test cases
+     * Generates Test Cases for testing Datetime.
+     * Outputs test cases to this.testCases, only generates if this.testCases is null.
+     * Total Cases: 62406
      */
-    private int[][] generatePossibleDatetime()
-    {
-        final int len = 8269440; //Number of test cases
-        int currentIndex = 0;
-        int possibleDatetime[][] = new int[len][5];
+    private void generateTestCases() {
+        if (this.testCases == null) {
+            this.testCases = new org.joda.time.DateTime[62406];
+            org.joda.time.DateTime now = org.joda.time.DateTime.now();
+            int index = 0;
 
-        //Test years from 2015 - 2030
-        for(int year = 2015;year <= 2030;  ++ year)
-        {
-            //Test months 1 - 12
-            for(int month = 1; month <= 12; ++ month)
-            {
-                //Test days 1 - (28,30,31) depending on month
-                int dayLimit = 0;
-                if (month == 2) dayLimit = 28;
-                else if (month <= 7 && month % 2 == 1) dayLimit = 31;
-                else if (month >= 8 && month % 2 == 0) dayLimit = 31;
-                else dayLimit = 30;
+            //Current Date/Time
+            this.testCases[index] = new org.joda.time.DateTime(now);
+            index++;
 
-                for(int day = 1; day <= dayLimit; ++ day)
-                {
-                    //Test hours 0 - 23
-                    for(int hour = 0; hour < 24; ++ hour)
-                    {
-                        //Test Minute
-                        for(int minute = 0; minute < 59; ++ minute)
-                        {
-                            possibleDatetime[currentIndex][0] = year;
-                            possibleDatetime[currentIndex][1] = month;
-                            possibleDatetime[currentIndex][2] = day;
-                            possibleDatetime[currentIndex][3] = hour;
-                            possibleDatetime[currentIndex][4] = minute;
-
-                            currentIndex ++;
-                        }
-                    }
-                }
-
+            //1 minute duration, resolution: 1 millisecond.
+            for (int i = 0; i < (60 * 1000); i++) {
+                this.testCases[index] = new org.joda.time.DateTime(now.plusMillis(i));
+                index++;
             }
 
-        }
+            //1 day test case, resolution: 1 min.
+            for (int i = 0; i < (24 * 60); i++) {
+                this.testCases[index] = new org.joda.time.DateTime(now.plusMinutes(i));
+                index++;
+            }
 
-        return possibleDatetime;
+            //1 year test case, resolution: 1 day.
+            for (int i = 0; i < 365; i++) {
+                this.testCases[index] = new org.joda.time.DateTime(now.plusDays(i));
+                index++;
+            }
+
+            //50 year test case, resolution: 1 month.
+            for (int i = 0; i < (50 * 12); i++) {
+                this.testCases[index] = new org.joda.time.DateTime(now.plusMonths(i));
+                index++;
+            }
+        }
     }
 
     /**
-     * Converts Possible Date/Time Test cases to String
-     * Converts Possible Date/Time multidimensional int array generated by
-     * <code>generatedPossibleDatetime()</code> to string in the format specified by Datetime class
+     * Converts Test Cases to String.
+     * Test cases would be in the format specified by Datetime.
      *
-     * @param possibleDatetime the int Multidimensional Array to convert from
-     * @return Coverted String Array
-     *
-     * @see #generatePossibleDatetime()
-     * @see Datetime
+     * @return Converted Test Cases
+     * @see Datetime#toString()
      */
-    private String[] convertStringPossibleDatetime(int[][] possibleDatetime)
-    {
-        String[] possibleDatetimeString = new String[possibleDatetime.length];
+    String[] convertTestCasesString() {
+        String[] stringTestCases = new String[this.testCases.length];
 
-        for(int index = 0; index < possibleDatetime.length; index ++)
-        {
-            possibleDatetimeString[index] = String.format(Locale.getDefault(), "%d/%d/%d %d:%d",
-                    possibleDatetime[index][0],
-                    possibleDatetime[index][1],
-                    possibleDatetime[index][2],
-                    possibleDatetime[index][3],
-                    possibleDatetime[index][4]);
+        for (int i = 0; i < this.testCases.length; i++) {
+            org.joda.time.DateTime testCase = this.testCases[i];
+            stringTestCases[i] = String.format(Locale.getDefault(), "%d/%d/%d %d:%d",
+                    testCase.getYear(),
+                    testCase.getMonthOfYear(),
+                    testCase.getDayOfMonth(),
+                    testCase.getHourOfDay(),
+                    testCase.getMinuteOfHour());
         }
 
-        return possibleDatetimeString;
+        return stringTestCases;
+    }
+
+    private void setup() {
+        generateTestCases();
+    }
+
+    private void clean() {
+
+    }
+
+    //Unit Tests
+    @Test
+    public void defaultConstructor() {
+        setup();
+
+        Datetime testObject = new Datetime();
+        org.joda.time.DateTime expectedDatetime = new org.joda.time.DateTime(0);
+
+        assertTrue(testObject != null);
+        assertTrue(testObject.getYear() == expectedDatetime.getYear());
+        assertTrue(testObject.getMonth() == expectedDatetime.getMonthOfYear());
+        assertTrue(testObject.getDay() == expectedDatetime.getDayOfMonth());
+        assertTrue(testObject.getHour() == expectedDatetime.getHourOfDay());
+        assertTrue(testObject.getMinute() == expectedDatetime.getMinuteOfHour());
+        assertTrue(testObject.getHasTime() == false);
+        assertTrue(testObject.getHasDate() == false);
+
+        clean();
     }
 
     @Test
-    public void defaultConstructor()
-    {
-        this.testObject = new Datetime();
+    public void copyConstructor() {
+        setup();
 
-        assertTrue((this.testObject != null));
-        assertTrue((this.testObject.getHasDate() == false));
-        assertTrue((this.testObject.getHasTime() == false));
+        for(org.joda.time.DateTime testCase: this.testCases)
+        {
+            Datetime testObject = new Datetime(testCase);
+            Datetime directCopy = new Datetime(testObject);
+            Datetime indirectCopy = new Datetime(testObject);
 
-        cleanup();
+            assertTrue(testObject != null);
+            assertTrue(testObject.equals(directCopy));
+            assertTrue(directCopy.equals(testObject));
+            assertTrue(testObject.equals(indirectCopy));
+        }
+
+        clean();
     }
 
     @Test
-    public void copyConstructor()
+    public void org_joda_time_DatetimeConstructor()
     {
         setup();
 
-        Datetime copyTestObject = new Datetime(this.testObject);
-        assertTrue(this.testObject.equals(copyTestObject));
+        for(org.joda.time.DateTime testCase: this.testCases)
+        {
+            Datetime testObject = new Datetime(testCase);
 
-        cleanup();
-    }
+            assertTrue(testObject != null);
+            assertTrue(testObject.getYear() == testCase.getYear());
+            assertTrue(testObject.getMonth() == testCase.getMonthOfYear());
+            assertTrue(testObject.getDay() == testCase.getDayOfMonth());
+            assertTrue(testObject.getHour() == testCase.getHourOfDay());
+            assertTrue(testObject.getMinute() == testCase.getMinuteOfHour());
+            assertTrue(testObject.getHasTime() == true);
+            assertTrue(testObject.getHasDate() == true);
+        }
 
-    @Test
-    public void org_joda_time_DateTime_constructor()
-    {
-        org.joda.time.DateTime testDatetime = org.joda.time.DateTime.now();
-        this.testObject = new Datetime(testDatetime);
-
-        assertTrue((this.testObject != null));
-        assertTrue((this.testObject.getYear() == testDatetime.getYear()));
-        assertTrue((this.testObject.getMonth() == testDatetime.getMonthOfYear()));
-        assertTrue((this.testObject.getDay()  == testDatetime.getDayOfMonth()));
-        assertTrue((this.testObject.getHour() == testDatetime.getHourOfDay()));
-        assertTrue((this.testObject.getMinute() == testDatetime.getMinuteOfHour()));
-
-        cleanup();
-    }
-
-    @Test
-    public void comparison()
-    {
-        setup();
-
-        Datetime testCopyObject = new Datetime(this.testObject);
-        Datetime anotherTestCopyObject = new Datetime(testCopyObject);
-
-        assertTrue(testCopyObject.equals(this.testObject));
-        assertTrue(this.testObject.equals(testCopyObject));
-        assertTrue(this.testObject.equals(anotherTestCopyObject));
-
-        cleanup();
+        clean();
     }
 
     @Test
@@ -197,35 +167,264 @@ public class DatetimeTest {
     {
         setup();
 
-
-        for(int i = 0; i < this.possibleDatetimeCases.length; i ++)
+        String[] stringTestCases = convertTestCasesString();
+        for(int i = 0; i < this.testCases.length; i ++)
         {
-            this.testObject = new Datetime(this.possibleDatetimeString[i]);
-            assertTrue(this.testObject != null);
+            Datetime testObject = new Datetime(stringTestCases[i]);
 
-            assertTrue(this.testObject.getYear() == this.possibleDatetimeCases[i][0]);
-            assertTrue(this.testObject.getMonth() == this.possibleDatetimeCases[i][1]);
-            assertTrue(this.testObject.getDay() == this.possibleDatetimeCases[i][2]);
-            assertTrue(this.testObject.getHour() == this.possibleDatetimeCases[i][3]);
-            assertTrue(this.testObject.getMinute() == this.possibleDatetimeCases[i][4]);
+            assertTrue(testObject != null);
+            assertTrue(testObject.getYear() == this.testCases[i].getYear());
+            assertTrue(testObject.getMonth() == this.testCases[i].getMonthOfYear());
+            assertTrue(testObject.getDay() == this.testCases[i].getDayOfMonth());
+            assertTrue(testObject.getHour() == this.testCases[i].getHourOfDay());
+            assertTrue(testObject.getMinute() == this.testCases[i].getMinuteOfHour());
+            assertTrue(testObject.getHasTime() == true);
+            assertTrue(testObject.getHasDate() == true);
         }
 
-        cleanup();
+        clean();
+    }
+
+    @Test
+    public void equals()
+    {
+        setup();
+
+        Datetime differObject = new Datetime();
+        for(org.joda.time.DateTime testCase : this.testCases)
+        {
+            Datetime testObject = new Datetime(testCase);
+            Datetime sameObject = new Datetime(testCase);
+
+            assertTrue(testObject.equals(sameObject) == true);
+            assertTrue(sameObject.equals(testObject) == true);
+            assertTrue(testObject.equals(differObject) == false);
+            assertTrue(differObject.equals(testObject) == false);
+        }
+
+        clean();
+    }
+
+    @Test
+    public void to_string()
+    {
+        setup();
+
+        String[] stringTestCases = convertTestCasesString();
+        for(int i = 0; i < this.testCases.length; i ++)
+        {
+            Datetime testObject = new Datetime(this.testCases[i]);
+
+            assertTrue(testObject.toString() == stringTestCases[i]);
+        }
+
+        clean();
+    }
+
+    //Get && Set
+    @Test
+    public void getMillis()
+    {
+        setup();
+
+        for(org.joda.time.DateTime testCase : this.testCases)
+        {
+            Datetime testObject = new Datetime(testCase);
+
+            assertTrue(testObject.getMillis() == testCase.getMillis());
+        }
+        clean();
+    }
+
+    @Test
+    public void getYear()
+    {
+        setup();
+
+        for(org.joda.time.DateTime testCase : this.testCases)
+        {
+            Datetime testObject = new Datetime(testCase);
+            assertTrue(testObject.getYear() == testCase.getYear());
+        }
+        clean();
+    }
+
+    @Test
+    public void getMonth()
+    {
+        setup();
+
+        for(org.joda.time.DateTime testCase : this.testCases)
+        {
+            Datetime testObject = new Datetime(testCase);
+            assertTrue(testObject.getMonth() == testCase.getMonthOfYear());
+        }
+        clean();
+    }
+
+    @Test
+    public void getDay()
+    {
+        setup();
+
+        for(org.joda.time.DateTime testCase : this.testCases)
+        {
+            Datetime testObject = new Datetime(testCase);
+            assertTrue(testObject.getDay() == testCase.getDayOfMonth());
+        }
+        clean();
+    }
+
+    @Test
+    public void getHour()
+    {
+        setup();
+
+        for(org.joda.time.DateTime testCase : this.testCases)
+        {
+            Datetime testObject = new Datetime(testCase);
+            assertTrue(testObject.getHour() == testCase.getHourOfDay());
+        }
+        clean();
     }
 
 
     @Test
-    public void convertString()
+    public void getMinute()
     {
         setup();
 
-        for(String datetimeTestCase : this.possibleDatetimeString)
+        for(org.joda.time.DateTime testCase : this.testCases)
         {
-            this.testObject = new Datetime(datetimeTestCase);
-                assertTrue(datetimeTestCase.equals(this.testObject.toString()));
+            Datetime testObject = new Datetime(testCase);
+            assertTrue(testObject.getMinute() == testCase.getMinuteOfHour());
         }
 
-        cleanup();
+
+        clean();
     }
 
+    @Test
+    public void setYear()
+    {
+        setup();
+
+        for(org.joda.time.DateTime testCase : this.testCases)
+        {
+            Datetime testObject = new Datetime();
+            testObject.setYear(testCase.getYear());
+
+            assertTrue(testObject.getHasDate() == true);
+            assertTrue(testObject.getYear() == testCase.getYear());
+        }
+        clean();
+    }
+
+
+    @Test
+    public void setMonth()
+    {
+        setup();
+
+        for(org.joda.time.DateTime testCase : this.testCases)
+        {
+            Datetime testObject = new Datetime();
+            testObject.setMonth(testCase.getMonthOfYear());
+
+            assertTrue(testObject.getHasDate() == true);
+            assertTrue(testObject.getMonth() == testCase.getMonthOfYear());
+        }
+        clean();
+    }
+
+    @Test
+    public void setDay()
+    {
+        setup();
+
+        for(org.joda.time.DateTime testCase : this.testCases)
+        {
+            Datetime testObject = new Datetime();
+            testObject.setDay(testCase.getDayOfMonth());
+
+            assertTrue(testObject.getHasDate() == true);
+            assertTrue(testObject.getDay() == testCase.getDayOfMonth());
+        }
+        clean();
+    }
+
+    @Test
+    public void setHour()
+    {
+        setup();
+
+        for(org.joda.time.DateTime testCase : this.testCases)
+        {
+            Datetime testObject = new Datetime();
+            testObject.setHour(testCase.getHourOfDay());
+
+            assertTrue(testObject.getHasTime() == true);
+            assertTrue(testObject.getHour() == testCase.getHourOfDay());
+        }
+        clean();
+    }
+
+    @Test
+    public void setMinute()
+    {
+        setup();
+
+        for(org.joda.time.DateTime testCase : this.testCases)
+        {
+            Datetime testObject = new Datetime();
+            testObject.setMinute(testCase.getMinuteOfHour());
+
+            assertTrue(testObject.getHasTime() == true);
+            assertTrue(testObject.getMinute() == testCase.getMinuteOfHour());
+        }
+        clean();
+    }
+
+
+
+    @Test
+    public void setMillis()
+    {
+        setup();
+
+        for(org.joda.time.DateTime testCase : this.testCases)
+        {
+            Datetime testObject = new Datetime();
+            testObject.setMillis(testCase.getMillis());
+
+            assertTrue(testObject.getHasDate() == true);
+            assertTrue(testObject.getHasTime() == true);
+            assertTrue(testObject.getMillis() == testCase.getMillis());
+        }
+        clean();
+    }
+
+    @Test
+    public void setHasTime()
+    {
+        Datetime testObject = new Datetime();
+
+        testObject.setHasTime(true);
+        assertTrue(testObject.getHasTime() == true);
+        testObject.setHasTime(false);
+        assertTrue(testObject.getHasTime() == false);
+        clean();
+    }
+
+    @Test
+    public void setHasDate()
+    {
+        Datetime testObject = new Datetime();
+
+        testObject.setHasDate(true);
+        assertTrue(testObject.getHasDate() == true);
+        testObject.setHasDate(false);
+        assertTrue(testObject.getHasDate() == false);
+        clean();
+    }
 }
