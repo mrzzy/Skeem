@@ -34,6 +34,7 @@ class Schedulable {
 
     // Copy constructor
     Schedulable(Schedulable schedulable) {
+        this.id = schedulable.getId();
         this.scheduled_start = new Datetime(schedulable.getScheduledStart());
         this.scheduled_stop = new Datetime(schedulable.getScheduledStop());
         this.scheduled_period = new Period(schedulable.getScheduledPeriod());
