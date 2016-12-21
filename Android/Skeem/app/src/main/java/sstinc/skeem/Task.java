@@ -219,6 +219,14 @@ class Task extends Schedulable implements Parcelable {
         this.deadline = deadline;
     }
 
+    /**
+     * Checks if the current task is repeated.
+     * @return true if the task instance is not repeated. False otherwise.
+     */
+    boolean isRepeated() {
+        return !this.weekDays.getWeekDays_list().isEmpty();
+    }
+
     //TODO: Documentation
     Task[] getSeparatedRepeatedTasks() {
         // List of tasks

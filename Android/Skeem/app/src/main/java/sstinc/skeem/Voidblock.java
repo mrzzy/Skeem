@@ -71,6 +71,14 @@ class Voidblock extends Schedulable implements Parcelable {
         this.weekDays = weekDays;
     }
 
+    /**
+     * Checks if the current voidblock is repeated.
+     * @return true if the task instance is not repeated. False otherwise.
+     */
+    boolean isRepeated() {
+        return !this.weekDays.getWeekDays_list().isEmpty();
+    }
+
     //TODO: Documentation
     Voidblock[] getSeparatedRepeatedVoidblocks(Datetime end_datetime) {
         // List of voidblocks
