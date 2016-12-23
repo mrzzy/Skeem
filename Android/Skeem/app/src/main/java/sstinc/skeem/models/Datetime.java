@@ -3,6 +3,8 @@ package sstinc.skeem.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -29,7 +31,6 @@ public class Datetime implements Parcelable {
     private org.joda.time.DateTime datetime;
     private boolean hasDate;
     private boolean hasTime;
-
 
     //Constructors
     /**
@@ -119,6 +120,15 @@ public class Datetime implements Parcelable {
     }
 
     // Object Operations
+
+    /**
+     * Static method to get the current datetime with the offset applied.
+     * @return current phone local datetime with timezone offset applied
+     */
+    public static Datetime getCurrentDatetime() {
+        return new Datetime(new DateTime(DateTimeZone.getDefault()).plus(
+                Calendar.getInstance().getTimeZone().getRawOffset()));
+    }
 
     /**
      * Compares only the dates of this instance of Datetime and another
