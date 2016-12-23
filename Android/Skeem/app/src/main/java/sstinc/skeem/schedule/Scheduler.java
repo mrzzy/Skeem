@@ -140,7 +140,7 @@ public abstract class Scheduler {
         ArrayList<Schedulable> schedule = unfilteredSchedule;
         // Apply filters
         schedule = removeTimeblocks(schedule);
-//        schedule = removeBeforeNow(schedule);
+        schedule = removeBeforeNow(schedule);
 
         return schedule;
     }

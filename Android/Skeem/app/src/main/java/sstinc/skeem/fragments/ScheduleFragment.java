@@ -5,13 +5,11 @@ import android.app.ListFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import sstinc.skeem.schedule.DirectSchedule;
 import sstinc.skeem.R;
@@ -20,8 +18,6 @@ import sstinc.skeem.schedule.Scheduler;
 import sstinc.skeem.activities.SelectCreateActivity;
 import sstinc.skeem.adapters.ScheduleArrayAdapter;
 import sstinc.skeem.models.Schedulable;
-import sstinc.skeem.models.Task;
-import sstinc.skeem.models.Voidblock;
 
 /*
 Make voidtimeblocks
