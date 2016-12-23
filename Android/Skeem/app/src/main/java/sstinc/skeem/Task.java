@@ -24,7 +24,7 @@ import java.util.Arrays;
  * @see Period
  * @see Datetime
  */
-class Task extends Schedulable implements Parcelable {
+public class Task extends Schedulable implements Parcelable {
     boolean checked = false;
     private String name;
     private String description;
@@ -43,7 +43,7 @@ class Task extends Schedulable implements Parcelable {
      * strings. Instantiates the other variables with their default empty
      * constructors.
      */
-    Task() {
+    public Task() {
         super();
         this.name = "";
         this.description = "";
@@ -59,7 +59,7 @@ class Task extends Schedulable implements Parcelable {
     }
 
     // Copy constructor
-    Task(Task task) {
+    public Task(Task task) {
         super(task);
         this.name = task.getName();
         this.description = task.getDescription();
@@ -83,7 +83,7 @@ class Task extends Schedulable implements Parcelable {
      * @param description the task's description
      * @param subject the task's subject
      */
-    Task(String name, String description, String subject) {
+    public Task(String name, String description, String subject) {
         this.name = name;
         this.description = description;
         this.subject = subject;
@@ -102,21 +102,21 @@ class Task extends Schedulable implements Parcelable {
      * Gets the task's name.
      * @return task's name
      */
-    String getName() {
+    public String getName() {
         return this.name;
     }
     /**
      * Gets the task's description.
      * @return task's description
      */
-    String getDescription() {
+    public String getDescription() {
         return this.description;
     }
     /**
      * Gets the task's subject.
      * @return task's subject
      */
-    String getSubject() {
+    public String getSubject() {
         return this.subject;
     }
 
@@ -124,14 +124,14 @@ class Task extends Schedulable implements Parcelable {
      * Gets the task's repeated weekdays.
      * @return task's repeated weekdays
      */
-    WeekDays getWeekDays() {
+    public WeekDays getWeekDays() {
         return this.weekDays;
     }
     /**
      * Gets the task's deadline each weekday.
      * @return task's deadline each weekday
      */
-    Datetime getDeadlinePerDay() {
+    public Datetime getDeadlinePerDay() {
         return this.deadline_per_day;
     }
 
@@ -139,7 +139,7 @@ class Task extends Schedulable implements Parcelable {
      * Gets the period needed for the task to be completed
      * @return period needed for task to be completed
      */
-    Period getPeriodNeeded() {
+    public Period getPeriodNeeded() {
         return this.period_needed;
     }
     /**
@@ -147,7 +147,7 @@ class Task extends Schedulable implements Parcelable {
      * timeblock.
      * @return recommended time to be spent on task
      */
-    Period getPeriodMinimum() {
+    public Period getPeriodMinimum() {
         return this.period_minimum;
     }
 
@@ -155,7 +155,7 @@ class Task extends Schedulable implements Parcelable {
      * Gets the task's deadline
      * @return task's deadline
      */
-    Datetime getDeadline() {
+    public Datetime getDeadline() {
         return this.deadline;
     }
 
@@ -163,21 +163,21 @@ class Task extends Schedulable implements Parcelable {
      * {@link #getName()}
      * @param name task's name
      */
-    void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
     /**
      * {@link #getDescription()}
      * @param description task's description
      */
-    void setDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
     /**
      * {@link #getSubject()}
      * @param subject task's subject
      */
-    void setSubject(String subject) {
+    public void setSubject(String subject) {
         this.subject = subject;
     }
 
@@ -185,14 +185,14 @@ class Task extends Schedulable implements Parcelable {
      * {@link #getWeekDays()}
      * @param weekDays task's weekDays instance
      */
-    void setWeekDays(WeekDays weekDays) {
+    public void setWeekDays(WeekDays weekDays) {
         this.weekDays = weekDays;
     }
     /**
      * {@link #getDeadlinePerDay()}
      * @param deadline_per_day task's deadline per day
      */
-    void setDeadlinePerDay(Datetime deadline_per_day) {
+    public void setDeadlinePerDay(Datetime deadline_per_day) {
         this.deadline_per_day = deadline_per_day;
     }
 
@@ -200,14 +200,14 @@ class Task extends Schedulable implements Parcelable {
      * {@link #getPeriodNeeded()}
      * @param period_needed period needed for task
      */
-    void setPeriodNeeded(Period period_needed) {
+    public void setPeriodNeeded(Period period_needed) {
         this.period_needed = period_needed;
     }
     /**
      * {@link #getPeriodMinimum()}
      * @param period_minimum recommended period for task
      */
-    void setPeriodMinimum(Period period_minimum) {
+    public void setPeriodMinimum(Period period_minimum) {
         this.period_minimum = period_minimum;
     }
 
@@ -215,7 +215,7 @@ class Task extends Schedulable implements Parcelable {
      * {@link #getDeadline()}
      * @param deadline task's deadline
      */
-    void setDeadline(Datetime deadline) {
+    public void setDeadline(Datetime deadline) {
         this.deadline = deadline;
     }
 
@@ -223,12 +223,12 @@ class Task extends Schedulable implements Parcelable {
      * Checks if the current task is repeated.
      * @return true if the task instance is not repeated. False otherwise.
      */
-    boolean isRepeated() {
+    public boolean isRepeated() {
         return !this.weekDays.getWeekDays_list().isEmpty();
     }
 
     //TODO: Documentation
-    Task[] getSeparatedRepeatedTasks() {
+    public Task[] getSeparatedRepeatedTasks() {
         // List of tasks
         ArrayList<Task> tasks = new ArrayList<>();
         // Convert repeated days to integer
