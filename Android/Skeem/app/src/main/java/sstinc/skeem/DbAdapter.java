@@ -54,7 +54,7 @@ import java.util.Collections;
  * </ul>
  */
 @SuppressWarnings("unused")
-class DbAdapter {
+public class DbAdapter {
     // Define constants
     // Constants for database
     private static final String DATABASE_NAME = "skeem.db";
@@ -155,7 +155,7 @@ class DbAdapter {
      * Construct a DbAdapter with Context
      * @param ctx Context to construct with
      */
-    DbAdapter(Context ctx) {
+    public DbAdapter(Context ctx) {
         context = ctx;
     }
 
@@ -164,7 +164,7 @@ class DbAdapter {
      * @return Returns <code>this</code> DbAdapter Object
      * @throws android.database.SQLException
      */
-    DbAdapter open() throws android.database.SQLException {
+    public DbAdapter open() throws android.database.SQLException {
         dbHelper = new DbHelper(context);
         SQLdb = dbHelper.getWritableDatabase();
         return this;
@@ -173,7 +173,7 @@ class DbAdapter {
     /**
      * Closes the database.
      */
-    void close() {
+    public void close() {
         dbHelper.close();
     }
 
@@ -182,7 +182,7 @@ class DbAdapter {
      * Add a new task to the database.
      * @param task task to add
      */
-    void insertTask(Task task) {
+    public void insertTask(Task task) {
         // Days Table
         ContentValues daysTableValues = new ContentValues();
         daysTableValues.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 0);
@@ -240,7 +240,7 @@ class DbAdapter {
      * Adds a new voidblock into the database.
      * @param voidblock voidblock to add
      */
-    void insertVoidblock(Voidblock voidblock) {
+    public void insertVoidblock(Voidblock voidblock) {
         // Days Table
         ContentValues daysTableValues = new ContentValues();
         daysTableValues.put(DbAdapter.DAYS_TABLE_COL_MONDAY, 0);
@@ -322,7 +322,7 @@ class DbAdapter {
      * @param taskId task's id
      * @return task queried from database
      */
-    Task getTask(long taskId) {
+    public Task getTask(long taskId) {
         // Query task table with task id
         Cursor cursor = SQLdb.query(TASKS_TABLE, TASKS_TABLE_COLUMNS,
                 TASKS_TABLE_COL_ID + " = " + taskId , null, null, null, null);
@@ -352,7 +352,7 @@ class DbAdapter {
      * Gets all the tasks in the database.
      * @return array list of all the tasks in the database
      */
-    ArrayList<Task> getTasks() {
+    public ArrayList<Task> getTasks() {
         // Prepare array list
         ArrayList<Task> tasks = new ArrayList<>();
 
@@ -392,7 +392,7 @@ class DbAdapter {
      * @param voidblockId voidblock's id
      * @return voidblock queried from database
      */
-    Voidblock getVoidblock(long voidblockId) {
+    public Voidblock getVoidblock(long voidblockId) {
         // Query database
         Cursor cursor = SQLdb.query(VOIDBLOCKS_TABLE, VOIDBLOCKS_TABLE_COLUMNS,
                 VOIDBLOCKS_TABLE_COL_ID + " = " + voidblockId, null, null, null, null);
@@ -418,7 +418,7 @@ class DbAdapter {
      * Gets all the voidblocks in the database.
      * @return array list of all the voidblocks in the database
      */
-    ArrayList<Voidblock> getVoidblocks() {
+    public ArrayList<Voidblock> getVoidblocks() {
         // Prepare array list
         ArrayList<Voidblock> voidblocks = new ArrayList<>();
 
@@ -453,7 +453,7 @@ class DbAdapter {
      * empty values.
      * @param task new values to update
      */
-    void updateTask(Task task) {
+    public void updateTask(Task task) {
         long taskId = task.getId();
         ContentValues taskTableValues = new ContentValues();
 
@@ -521,7 +521,7 @@ class DbAdapter {
      * empty values.
      * @param voidblock new values to update
      */
-    void updateVoidblock(Voidblock voidblock) {
+    public void updateVoidblock(Voidblock voidblock) {
         long voidblockId = voidblock.getId();
         ContentValues voidBlockTableValues = new ContentValues();
         voidBlockTableValues.put(DbAdapter.VOIDBLOCKS_TABLE_COL_NAME, voidblock.getName());
@@ -583,7 +583,7 @@ class DbAdapter {
      * Deletes a task based on it's id.
      * @param taskId id of task to delete
      */
-    void deleteTask(long taskId) {
+    public void deleteTask(long taskId) {
         // Query task table with task id
         Cursor cursor = SQLdb.query(TASKS_TABLE, new String[] {TASKS_TABLE_COL_DAYS_ID},
                 TASKS_TABLE_COL_ID + " = " + taskId, null, null, null, null);
@@ -602,7 +602,7 @@ class DbAdapter {
      * Delets a voidblock based on it's id.
      * @param voidblockId id of voidblock to delete
      */
-    void deleteVoidblock(long voidblockId) {
+    public void deleteVoidblock(long voidblockId) {
         // Query task table with task id
         Cursor cursor = SQLdb.query(TASKS_TABLE, new String[] {TASKS_TABLE_COL_DAYS_ID},
                 TASKS_TABLE_COL_ID + " = " + voidblockId, null, null, null, null);
@@ -620,7 +620,7 @@ class DbAdapter {
     /**
      * Deletes all values by dropping all tables and recreating them again.
      */
-    void deleteAll() {
+    public void deleteAll() {
         SQLdb.execSQL("DROP TABLE IF EXISTS " + TASKS_TABLE);
         SQLdb.execSQL("DROP TABLE IF EXISTS " + DAYS_TABLE);
         SQLdb.execSQL("DROP TABLE IF EXISTS " + VOIDBLOCKS_TABLE);
