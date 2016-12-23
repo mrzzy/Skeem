@@ -3,6 +3,7 @@ package sstinc.skeem.activities;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,6 +11,12 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDateTime;
+
+import java.util.Calendar;
 
 import sstinc.skeem.models.Datetime;
 import sstinc.skeem.R;
@@ -88,7 +95,8 @@ public class CreateDatetimeActivity extends AppCompatActivity {
         this.max_datetime = intent.getParcelableExtra(EXTRA_RECEIVE_MAX);
         this.min_datetime = intent.getParcelableExtra(EXTRA_RECEIVE_MIN);
         if (this.min_datetime == null) {
-            this.min_datetime = new Datetime(org.joda.time.DateTime.now());
+            this.min_datetime = Datetime.getCurrentDatetime();
+            Log.w(this.getClass().getName(), "KEY ASDF: ERROR " + this.min_datetime.toString());
         }
         if (this.max_datetime == null) {
             this.max_datetime = new Datetime();
@@ -194,31 +202,35 @@ public class CreateDatetimeActivity extends AppCompatActivity {
             submitted_datetime.setMinute(timePicker.getCurrentMinute());
         }
 
-        // Flag to indicate if valid
-        boolean dateTimeVaild = true;
-        // If the minimum datetime is set
-        if (this.min_datetime.getHasDate() && this.hasDate) {
-            // Compare date
-            dateTimeVaild = this.min_datetime.compareDates(submitted_datetime) != 1;
+        // Validate min max
+        boolean valid = true;
+        if (this.hasDate && this.hasTime.equals(HAS_TIME_TRUE)) {
+            if (this.max_datetime.getHasDate()) {
+                valid = this.max_datetime.getMillis() >= submitted_datetime.getMillis();
+            }
+            if (this.min_datetime.getHasDate()) {
+                valid = valid && this.min_datetime.getMillis() <= submitted_datetime.getMillis();
+            }
+            return valid;
+        } else if (this.hasDate) {
+            if (this.max_datetime.getHasDate()) {
+                valid = this.max_datetime.compareDates(submitted_datetime) != 1;
+            }
+            if (this.min_datetime.getHasDate()) {
+                valid = valid && this.min_datetime.compareDates(submitted_datetime) != 1;
+            }
+            return valid;
+        } else if (this.hasTime.equals(HAS_TIME_TRUE)) {
+            if (this.max_datetime.getHasDate()) {
+                valid = this.max_datetime.compareTimes(submitted_datetime) != 1;
+            }
+            if (this.min_datetime.getHasDate()) {
+                valid = valid && this.min_datetime.compareTimes(submitted_datetime) != 1;
+            }
+            return valid;
+        } else {
+            return false;
         }
-        if (this.min_datetime.getHasTime() && this.hasTime.equals(HAS_TIME_TRUE)) {
-            // Compare time
-            dateTimeVaild = dateTimeVaild &&
-                    this.min_datetime.compareTimes(submitted_datetime) != 1;
-        }
-        // If the maximum datetime is set
-        if (this.max_datetime.getHasDate() && this.hasDate) {
-            // Compare date
-            dateTimeVaild = dateTimeVaild &&
-                    this.max_datetime.compareDates(submitted_datetime) != 1;
-        }
-        if (this.max_datetime.getHasTime() && this.hasTime.equals(HAS_TIME_TRUE)) {
-            // Compare time
-            dateTimeVaild = dateTimeVaild &&
-                    this.max_datetime.compareTimes(submitted_datetime) != 1;
-        }
-
-        return dateTimeVaild;
     }
 
     @Override
