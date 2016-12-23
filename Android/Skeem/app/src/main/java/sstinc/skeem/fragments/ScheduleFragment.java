@@ -5,6 +5,7 @@ import android.app.ListFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import java.util.Calendar;
 
 import sstinc.skeem.schedule.DirectSchedule;
 import sstinc.skeem.R;
+import sstinc.skeem.schedule.EDFScheduler;
 import sstinc.skeem.schedule.Scheduler;
 import sstinc.skeem.activities.SelectCreateActivity;
 import sstinc.skeem.adapters.ScheduleArrayAdapter;
@@ -95,39 +97,10 @@ public class ScheduleFragment extends ListFragment {
         });
         fab.setVisibility(View.VISIBLE);
 
-        Scheduler scheduler = new DirectSchedule(getActivity());
-        ArrayList<Schedulable> schedule = scheduler.schedule();
-        ArrayList<Schedulable> filtered_schedule = new ArrayList<>();
+        Scheduler scheduler = new EDFScheduler(getActivity());
+        ArrayList<Schedulable> schedule = Scheduler.filterSchedule(scheduler.schedule());
 
-        Calendar cal = Calendar.getInstance();
-        int current_year = cal.get(Calendar.YEAR);
-        int current_month = cal.get(Calendar.MONTH);
-        int current_day = cal.get(Calendar.DAY_OF_MONTH);
-        for (Schedulable item : schedule) {
-            if (item instanceof Task) {
-                Task task = (Task) item;
-                if ((task.getScheduledStart().getDay() == current_day &&
-                        task.getScheduledStart().getMonth() == current_month &&
-                        task.getScheduledStart().getYear() == current_year) ||
-                        (task.getScheduledStop().getDay() == current_day &&
-                         task.getScheduledStop().getMonth() == current_month &&
-                         task.getScheduledStop().getYear() == current_year)) {
-                    filtered_schedule.add(task);
-                }
-            } else {
-                Voidblock voidblock = (Voidblock) item;
-                if ((voidblock.getScheduledStart().getDay() == current_day &&
-                        voidblock.getScheduledStart().getMonth() == current_month &&
-                        voidblock.getScheduledStart().getYear() == current_year) ||
-                        (voidblock.getScheduledStop().getDay() == current_day &&
-                                voidblock.getScheduledStop().getMonth() == current_month &&
-                                voidblock.getScheduledStop().getYear() == current_year)) {
-                    filtered_schedule.add(voidblock);
-                }
-            }
-        }
-
-        setListAdapter(new ScheduleArrayAdapter(getActivity(), filtered_schedule));
+        setListAdapter(new ScheduleArrayAdapter(getActivity(), schedule));
     }
 
     @Override

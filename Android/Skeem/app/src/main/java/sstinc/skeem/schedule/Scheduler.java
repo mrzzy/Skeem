@@ -11,6 +11,7 @@ import sstinc.skeem.models.Schedulable;
 import sstinc.skeem.models.Task;
 import sstinc.skeem.models.Timeblock;
 import sstinc.skeem.models.Voidblock;
+import sstinc.skeem.utils.TaskComparator;
 import sstinc.skeem.utils.VoidblockComparator;
 
 /**
@@ -20,9 +21,12 @@ import sstinc.skeem.utils.VoidblockComparator;
 public abstract class Scheduler {
     private String name;
     private ArrayList<Task> tasks;
+    private ArrayList<Task> expandedTasks;
     private ArrayList<Voidblock> voidblocks;
+    private ArrayList<Voidblock> expandedVoidblocks;
     private ArrayList<Timeblock> timeblocks;
     private ArrayList<Schedulable> emptySchedule;
+
 
     /**
      * Default constructor.
@@ -40,38 +44,50 @@ public abstract class Scheduler {
         this.voidblocks = dbAdapter.getVoidblocks();
         dbAdapter.close();
 
+        this.expandedTasks = new ArrayList<>();
+        this.expandedVoidblocks = new ArrayList<>();
         this.timeblocks = new ArrayList<>();
         this.emptySchedule = new ArrayList<>();
 
-        // Expand voidblocks to create timeblocks and emptySchedule
-        ArrayList<Voidblock> expanded_voidblocks = new ArrayList<>();
-
-        if (this.tasks.size() != 0) {
-            Datetime latest_deadline = tasks.get(tasks.size()-1).getDeadline();
-            // Expand all repeated voidblocks
+        // Expand voidblocks
+        if (this.tasks.size() > 0) {
+            Datetime latestDeadline = this.tasks.get(this.tasks.size()-1).getDeadline();
             for (Voidblock voidblock : this.voidblocks) {
                 if (voidblock.isRepeated()) {
-                    // Add it to the expanded voidblock
-                    Collections.addAll(expanded_voidblocks,
-                            voidblock.getSeparatedRepeatedVoidblocks(latest_deadline));
+                    Collections.addAll(this.expandedVoidblocks,
+                            voidblock.getSeparatedRepeatedVoidblocks(latestDeadline));
                 } else {
-                    expanded_voidblocks.add(voidblock);
+                    this.expandedVoidblocks.add(voidblock);
                 }
             }
-
-            // Sort the voidblocks
-            VoidblockComparator voidblockComparator = new VoidblockComparator();
-            voidblockComparator.setSortBy(VoidblockComparator.Order.SCHEDULED_START, true);
-            Collections.sort(expanded_voidblocks, voidblockComparator);
+            //TODO: test this
+            // Sort the expanded voidblocks, most recent first
+            VoidblockComparator voidBlockComparator = new VoidblockComparator();
+            voidBlockComparator.setSortBy(VoidblockComparator.Order.SCHEDULED_START, false);
+            Collections.sort(voidblocks, voidBlockComparator);
         }
 
-        // Create emptySchedule
-        for (int i=0;i<expanded_voidblocks.size();i++) {
-            if (i == 0) {
-                this.emptySchedule.add(expanded_voidblocks.get(i));
+        // Expand tasks
+        for (Task task : this.tasks) {
+            if (task.isRepeated()) {
+                Collections.addAll(this.expandedTasks, task.getSeparatedRepeatedTasks());
             } else {
-                Voidblock prev_voidblock = expanded_voidblocks.get(i-1);
-                Voidblock curr_voidblock = expanded_voidblocks.get(i);
+                this.expandedTasks.add(task);
+            }
+        }
+        //TODO: test this
+        // Sort the expanded tasks, most recent first
+        TaskComparator taskComparator = new TaskComparator();
+        taskComparator.setSortBy(TaskComparator.Order.DEADLINE, false);
+        Collections.sort(this.expandedTasks, taskComparator);
+
+        // Create emptySchedule and timeblocks
+        for (int i=0;i<this.expandedVoidblocks.size();i++) {
+            if (i == 0) {
+                this.emptySchedule.add(this.expandedVoidblocks.get(i));
+            } else {
+                Voidblock prev_voidblock = this.expandedVoidblocks.get(i-1);
+                Voidblock curr_voidblock = this.expandedVoidblocks.get(i);
 
                 Timeblock timeblockToAdd = new Timeblock(prev_voidblock.getScheduledStop(),
                         curr_voidblock.getScheduledStart());
@@ -81,6 +97,52 @@ public abstract class Scheduler {
                 this.timeblocks.add(timeblockToAdd);
             }
         }
+
+    }
+
+    /**
+     * Removes the timeblocks that contain the tasks.
+     * @param timeblockSchedule the schedule to expand timeblocks
+     * @return schedule with all the tasks from the timeblocks moved out and
+     * timeblocks removed
+     */
+    private static ArrayList<Schedulable> removeTimeblocks(ArrayList<Schedulable> timeblockSchedule) {
+        ArrayList<Schedulable> schedule = new ArrayList<>();
+        for (Schedulable schedulable : timeblockSchedule) {
+            if (schedulable instanceof Timeblock) {
+                Timeblock timeblock = (Timeblock) schedulable;
+                schedule.addAll(timeblock.getTasksScheduled());
+            } else {
+                schedule.add(schedulable);
+            }
+        }
+        return schedule;
+    }
+
+    /**
+     * Removes any schedulable that ends before the current Datetime.
+     * @param fullSchedule schedule to filter
+     * @return schedule without any schedulable before now
+     */
+    private static ArrayList<Schedulable> removeBeforeNow(ArrayList<Schedulable> fullSchedule) {
+        ArrayList<Schedulable> schedule = new ArrayList<>();
+        for (Schedulable schedulable : fullSchedule) {
+            if (schedulable.getScheduledStop().getMillis() >
+                    Datetime.getCurrentDatetime().getMillis()) {
+                schedule.add(schedulable);
+            }
+        }
+
+        return schedule;
+    }
+
+    public static ArrayList<Schedulable> filterSchedule(ArrayList<Schedulable> unfilteredSchedule) {
+        ArrayList<Schedulable> schedule = unfilteredSchedule;
+        // Apply filters
+        schedule = removeTimeblocks(schedule);
+//        schedule = removeBeforeNow(schedule);
+
+        return schedule;
     }
 
     /**
@@ -128,11 +190,29 @@ public abstract class Scheduler {
     }
 
     /**
+     * The tasks from the database with all of it's repeated days expanded
+     * into individual tasks.
+     * @return tasks and expanded repeated tasks
+     */
+    ArrayList<Task> getExpandedTasks() {
+        return this.expandedTasks;
+    }
+
+    /**
      * The voidblocks from the database when this class is initialized.
      * @return voidhblocks from database when initialized
      */
     ArrayList<Voidblock> getVoidblocks() {
         return this.voidblocks;
+    }
+
+    /**
+     * The voidblocks from the database with all of it's repeated days
+     * expanded into individual voidblocks.
+     * @return voidblocks and expanded repeated voidblocks
+     */
+    ArrayList<Voidblock> getExpandedVoidblocks() {
+        return this.expandedVoidblocks;
     }
 
     /**
@@ -151,6 +231,14 @@ public abstract class Scheduler {
      */
     ArrayList<Schedulable> getEmptySchedule() {
         return this.emptySchedule;
+    }
+
+    /**
+     * Checks if there is sufficient data to start scheduling.
+     * @return true if tasks or voidblocks are empty, false otherwise
+     */
+    boolean isEmpty() {
+        return this.getTasks().isEmpty() || this.getVoidblocks().isEmpty();
     }
 
     public abstract ArrayList<Schedulable> schedule();
