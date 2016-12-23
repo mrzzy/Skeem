@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * @see Task
  */
 public class WeekDays {
-    enum WeekDay {MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY}
+    public enum WeekDay {MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY}
     private ArrayList<WeekDay> weekDays_list = new ArrayList<>();
 
     // Empty constructor
