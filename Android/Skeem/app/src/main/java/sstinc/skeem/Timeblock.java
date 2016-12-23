@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * @see Voidblock
  * @see Schedulable
  */
-class Timeblock extends Schedulable {
+public class Timeblock extends Schedulable {
     private ArrayList<Task> tasks_scheduled;
     private Period period_used;
     private Period period_left;
@@ -20,7 +20,7 @@ class Timeblock extends Schedulable {
     /**
      * Default constructor. Instantiates all variables to empty values.
      */
-    Timeblock() {
+    public Timeblock() {
         super();
         this.tasks_scheduled = new ArrayList<>();
         this.period_used = new Period();
@@ -35,7 +35,7 @@ class Timeblock extends Schedulable {
      * @param scheduled_start timeblock's start time
      * @param scheduled_stop timeblock's stop time
      */
-    Timeblock(Datetime scheduled_start, Datetime scheduled_stop) {
+    public Timeblock(Datetime scheduled_start, Datetime scheduled_stop) {
         super();
         this.scheduled_start = scheduled_start;
         this.scheduled_stop = scheduled_stop;
@@ -51,7 +51,7 @@ class Timeblock extends Schedulable {
      * Gets the list of scheduled tasks within the timeblock.
      * @return array list of tasks scheduled
      */
-    ArrayList<Task> getTasksScheduled() {
+    public ArrayList<Task> getTasksScheduled() {
         return this.tasks_scheduled;
     }
 
@@ -59,14 +59,14 @@ class Timeblock extends Schedulable {
      * Gets the period used by the tasks in the timeblock
      * @return timeblock's used period
      */
-    Period getPeriodUsed() {
+    public Period getPeriodUsed() {
         return this.period_used;
     }
     /**
      * Gets the unused period of the timeblock by the tasks.
      * @return timeblock's available period
      */
-    Period getPeriodLeft() {
+    public Period getPeriodLeft() {
         return this.period_left;
     }
 
@@ -77,7 +77,7 @@ class Timeblock extends Schedulable {
      * @param datetime new scheduled start datetime to set
      */
     @Override
-    void setScheduledStart(Datetime datetime) {
+    public void setScheduledStart(Datetime datetime) {
         this.scheduled_start = datetime;
         // Get the new periods
         // If the scheduled stop is set
@@ -94,7 +94,7 @@ class Timeblock extends Schedulable {
      * @param datetime new scheduled stop datetime to set
      */
     @Override
-    void setScheduledStop(Datetime datetime) {
+    public void setScheduledStop(Datetime datetime) {
         this.scheduled_stop = datetime;
         // Get the new periods
         // If the scheduled start is set
@@ -112,7 +112,7 @@ class Timeblock extends Schedulable {
      * @return true if addition successful. false if there is not enough time
      * left in the timeblcok for the task to be added.
      */
-    boolean addTask(Task task) {
+    public boolean addTask(Task task) {
         // Check if there is enough time left for the task
         if (this.period_left.getMillis() < task.getScheduledPeriod().getMillis()) {
             return false;
@@ -138,7 +138,7 @@ class Timeblock extends Schedulable {
      *
      * @param task task to remove
      */
-    void removeTask(Task task) {
+    public void removeTask(Task task) {
         // Returns if the task is not in the tasks scheduled
         if (!this.tasks_scheduled.contains(task)) {
             return;
