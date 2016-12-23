@@ -1,15 +1,11 @@
 package sstinc.skeem;
 
-import android.media.DrmInitData;
-import android.support.design.widget.BottomSheetDialog;
-
-import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.junit.*;
 import static org.junit.Assert.*;
 
-import java.util.Date;
-import java.util.logging.SocketHandler;
+import sstinc.skeem.models.Datetime;
+import sstinc.skeem.models.Schedulable;
 
 /**
  * Unit Tests for the Schedulable Class

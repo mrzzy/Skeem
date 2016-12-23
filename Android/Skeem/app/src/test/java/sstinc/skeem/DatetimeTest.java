@@ -1,21 +1,10 @@
 package sstinc.skeem;
 
-import android.database.DatabaseErrorHandler;
-import android.icu.text.SymbolTable;
-import android.icu.text.TimeZoneFormat;
-import android.provider.ContactsContract;
-import android.provider.Settings;
-
-import org.joda.time.DateTime;
-import org.joda.time.chrono.StrictChronology;
 import org.junit.Test;
-import org.junit.internal.ArrayComparisonFailure;
-import org.junit.internal.runners.statements.Fail;
 
-import java.util.Date;
 import java.util.Locale;
 
-import dalvik.annotation.TestTargetClass;
+import sstinc.skeem.models.Datetime;
 
 import static org.junit.Assert.*;
 

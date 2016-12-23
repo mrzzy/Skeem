@@ -2,7 +2,7 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="sstinc.skeem.TaskCreateHelperActivity"
+    tools:context="sstinc.skeem.activities.TaskCreateHelperActivity"
     android:id="@+id/scrollView_task_settings"
     android:layout_height="match_parent"
     android:layout_width="match_parent">

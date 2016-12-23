@@ -61,14 +61,14 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
-        <sstinc.skeem.ScrollableDatePicker
+        <sstinc.skeem.utils.ScrollableDatePicker
             android:id="@+id/datetime_date_picker"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"/>
 
-        <sstinc.skeem.ScrollableTimePicker
+        <sstinc.skeem.utils.ScrollableTimePicker
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:id="@+id/datetime_time_picker"
             android:layout_width="wrap_content"

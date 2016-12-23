@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="sstinc.skeem.SettingFragment">
+    tools:context="sstinc.skeem.fragments.SettingFragment">
 
     <!-- This is the fragment for settings -->
     <TextView

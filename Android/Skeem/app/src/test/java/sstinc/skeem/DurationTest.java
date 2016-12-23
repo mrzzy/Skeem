@@ -1,9 +1,9 @@
 package sstinc.skeem;
 
-import android.content.ContentProviderOperation;
-import android.view.ViewDebug;
-
 import org.junit.*;
+
+import sstinc.skeem.models.Duration;
+
 import static org.junit.Assert.*;
 
 /**

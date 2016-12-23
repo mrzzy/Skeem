@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -21,12 +21,12 @@
         <activity
             android:name=".AndroidDatabaseManager"
             android:theme="@style/Theme.AppCompat.Light" />
-        <activity android:name=".TaskCreateActivity" />
-        <activity android:name=".TaskCreateHelperActivity" />
-        <activity android:name=".CreateRepeatedDaysActivity" />
-        <activity android:name=".VoidblockCreateActivity" />
-        <activity android:name=".CreateDatetimeActivity" />
-        <activity android:name=".SelectCreateActivity"></activity>
+        <activity android:name=".activities.TaskCreateActivity" />
+        <activity android:name=".activities.TaskCreateHelperActivity" />
+        <activity android:name=".activities.CreateRepeatedDaysActivity" />
+        <activity android:name=".activities.VoidblockCreateActivity" />
+        <activity android:name=".activities.CreateDatetimeActivity" />
+        <activity android:name=".activities.SelectCreateActivity"></activity>
     </application>
 
 </manifest>
