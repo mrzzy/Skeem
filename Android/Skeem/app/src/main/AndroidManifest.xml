@@ -19,7 +19,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AndroidDatabaseManager"
+            android:name=".utils.AndroidDatabaseManager"
             android:theme="@style/Theme.AppCompat.Light" />
         <activity android:name=".activities.TaskCreateActivity" />
         <activity android:name=".activities.TaskCreateHelperActivity" />
