@@ -14,7 +14,7 @@ import org.joda.time.format.PeriodFormat;
  * @see Timeblock
  * @see Voidblock
  */
-class Schedulable {
+public class Schedulable {
     long id = -1;
     Datetime scheduled_stop;
     Datetime scheduled_start;
@@ -24,14 +24,14 @@ class Schedulable {
      * id. Creates new {@link Datetime} instances for the scheduled start
      * and stop time.
      */
-    Schedulable() {
+    public Schedulable() {
         this.id = -1;
         this.scheduled_start = new Datetime();
         this.scheduled_stop = new Datetime();
     }
 
     // Copy constructor
-    Schedulable(Schedulable schedulable) {
+    public Schedulable(Schedulable schedulable) {
         this.id = schedulable.getId();
         this.scheduled_start = new Datetime(schedulable.getScheduledStart());
         this.scheduled_stop = new Datetime(schedulable.getScheduledStop());
@@ -62,28 +62,28 @@ class Schedulable {
      * Gets the schedulable's id.
      * @return schedulable's id
      */
-    long getId() {
+    public long getId() {
         return this.id;
     }
     /**
      * Gets the scheduled time for the schedulable to start.
      * @return schedulable's scheduled start time
      */
-    Datetime getScheduledStart() {
+    public Datetime getScheduledStart() {
         return this.scheduled_start;
     }
     /**
      * Gets the scheduled time for the schedulable to stop.
      * @return schedulable's scheduled stop time
      */
-    Datetime getScheduledStop() {
+    public Datetime getScheduledStop() {
         return this.scheduled_stop;
     }
     /**
      * Calculates the scheduled period for the schedulable.
      * @return schedulable's scheduled period
      */
-    Period getScheduledPeriod() {
+    public Period getScheduledPeriod() {
         return new Period(this.scheduled_stop.getMillis() - this.getScheduledStart().getMillis());
     }
 
@@ -91,20 +91,20 @@ class Schedulable {
      * {@link #getId()}
      * @param id schedulable's id
      */
-    void setId(long id) {
+    public void setId(long id) {
         this.id = id;
     }
     /**
      * {@link #getScheduledStart()}
      * @param scheduled_start schedulable's start time */
-    void setScheduledStart(Datetime scheduled_start) {
+    public void setScheduledStart(Datetime scheduled_start) {
         this.scheduled_start = scheduled_start;
     }
     /**
      * {@link #getScheduledStop()}
      * @param scheduled_stop schedulable's stop time
      */
-    void setScheduledStop(Datetime scheduled_stop) {
+    public void setScheduledStop(Datetime scheduled_stop) {
         this.scheduled_stop = scheduled_stop;
     }
 
