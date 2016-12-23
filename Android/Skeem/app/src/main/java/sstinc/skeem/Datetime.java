@@ -22,7 +22,7 @@ import java.util.Locale;
  * @see Calendar
  * @see Parcelable
  */
-class Datetime implements Parcelable {
+public class Datetime implements Parcelable {
     //Properties
     private static final DateTimeFormatter default_format = DateTimeFormat.forPattern(
             "yyyy-MM-dd HH:mm:ss");
@@ -39,7 +39,7 @@ class Datetime implements Parcelable {
      * for calendar to hold. {@link #hasDate} and {@link #hasTime} are false
      * to indicate absence of date and time.
      */
-    Datetime() {
+    public Datetime() {
         this.hasDate = false;
         this.hasTime = false;
 
@@ -53,7 +53,7 @@ class Datetime implements Parcelable {
      *
      * @param datetime Object to clone/copy.
      */
-    Datetime(Datetime datetime) {
+    public Datetime(Datetime datetime) {
         this();
 
         if(datetime != null) {
@@ -70,7 +70,7 @@ class Datetime implements Parcelable {
      *
      * @param datetime datetime object to initialise form.
      */
-    Datetime(org.joda.time.DateTime datetime) {
+    public Datetime(org.joda.time.DateTime datetime) {
         this();
 
         if(datetime != null) {
@@ -89,7 +89,7 @@ class Datetime implements Parcelable {
      * @param datetime The string of the datetime. Can be obtained by the
      *                 {@link #toString} method.
      */
-    Datetime(String datetime) {
+    public Datetime(String datetime) {
         this();
 
         if(datetime != null && ! datetime.isEmpty()) {
@@ -129,7 +129,7 @@ class Datetime implements Parcelable {
      *          0 if the current instance is equal to the compared instance
      *          1 if the current instance is after the compared instance
      */
-    int compareDates(Datetime datetime) {
+    public int compareDates(Datetime datetime) {
         // Make a copy of the current instance and the compared instance
         Datetime current_instance = new Datetime(this);
         Datetime compared_instance = new Datetime(datetime);
@@ -150,7 +150,7 @@ class Datetime implements Parcelable {
      *          0 if the current instance is equal to the compared instance
      *          1 if the current instance is after the compared instance
      */
-    int compareTimes(Datetime datetime) {
+    public int compareTimes(Datetime datetime) {
         // Make a copy of the current instance and the compared instance
         Datetime current_instance = new Datetime(this);
         Datetime compared_instance = new Datetime(datetime);
@@ -196,7 +196,7 @@ class Datetime implements Parcelable {
      * Gets the datetime's year.
      * @return datetime's year
      */
-    int getYear() {
+    public int getYear() {
         return this.datetime.getYear();
     }
 
@@ -204,7 +204,7 @@ class Datetime implements Parcelable {
      * Gets the datetime's month.
      * @return datetime's month
      */
-    int getMonth() {
+    public int getMonth() {
         return this.datetime.getMonthOfYear();
     }
 
@@ -212,7 +212,7 @@ class Datetime implements Parcelable {
      * Gets the datetime's day of the month.
      * @return datetime's day of month
      */
-    int getDay() {
+    public int getDay() {
         return this.datetime.getDayOfMonth();
     }
 
@@ -220,7 +220,7 @@ class Datetime implements Parcelable {
      * Gets the datetime's 24 hour value.
      * @return datetime's 24 hour value
      */
-    int getHour() {
+    public int getHour() {
         return this.datetime.getHourOfDay();
     }
 
@@ -228,7 +228,7 @@ class Datetime implements Parcelable {
      * Gets the datetime's minute
      * @return datetime's minute
      */
-    int getMinute() {
+    public int getMinute() {
         return this.datetime.getMinuteOfHour();
     }
 
@@ -239,7 +239,7 @@ class Datetime implements Parcelable {
      * {@link #Datetime(Datetime)} or {@link #Datetime(String)}.
      * @return value of {@link #hasDate}
      */
-    boolean getHasDate() {
+    public boolean getHasDate() {
         return this.hasDate;
     }
 
@@ -250,7 +250,7 @@ class Datetime implements Parcelable {
      * {@link #Datetime(String)}.
      * @return value of {@link #hasDate}
      */
-    boolean getHasTime() {
+    public boolean getHasTime() {
         return this.hasTime;
     }
 
@@ -259,7 +259,7 @@ class Datetime implements Parcelable {
      * ALERT: DO NOT USE THIS TO COMPARE ONLY DATES OR ONLY TIME.
      * @return datetime calendar time in milliseconds
      */
-    long getMillis() {
+    public long getMillis() {
         if (this.getHasDate() && this.getHasTime()) {
             return this.datetime.getMillis();
         } else if (this.getHasDate()) {
@@ -278,7 +278,7 @@ class Datetime implements Parcelable {
      * {@link #getYear()}
      * @param year datetime's year
      */
-    void setYear(int year) {
+    public void setYear(int year) {
         hasDate = true;
         this.datetime = this.datetime.withYear(year);
     }
@@ -286,7 +286,7 @@ class Datetime implements Parcelable {
      * {@link #getMonth()}
      * @param month datetime's month
      */
-    void setMonth(int month) {
+    public void setMonth(int month) {
         hasDate = true;
         this.datetime = this.datetime.withMonthOfYear(month);
     }
@@ -294,7 +294,7 @@ class Datetime implements Parcelable {
      * {@link #getDay()}
      * @param day datetime's day
      */
-    void setDay(int day) {
+    public void setDay(int day) {
         hasDate = true;
         this.datetime = this.datetime.withDayOfMonth(day);
     }
@@ -303,7 +303,7 @@ class Datetime implements Parcelable {
      * {@link #getHour()}
      * @param hour datetime's hour
      */
-    void setHour(int hour) {
+    public void setHour(int hour) {
         this.hasTime = true;
         this.datetime = this.datetime.withHourOfDay(hour);
     }
@@ -312,7 +312,7 @@ class Datetime implements Parcelable {
      * {@link #getMinute()}
      * @param minute datetime's minute
      */
-    void setMinute(int minute) {
+    public void setMinute(int minute) {
         this.hasTime = true;
         this.datetime = this.datetime.withMinuteOfHour(minute);
     }
@@ -321,7 +321,7 @@ class Datetime implements Parcelable {
      * {@link #getMillis()}
      * @param millis datetime's time in milliseconds
      */
-    void setMillis(long millis) {
+    public void setMillis(long millis) {
         this.hasDate = true;
         this.hasTime = true;
         this.datetime = new org.joda.time.DateTime(millis);
@@ -331,7 +331,7 @@ class Datetime implements Parcelable {
      * {@link #getHasDate()}
      * @param hasDate whether datetime has date enabled or not
      */
-    void setHasDate(boolean hasDate) {
+    public void setHasDate(boolean hasDate) {
         this.hasDate = hasDate;
     }
 
@@ -339,7 +339,7 @@ class Datetime implements Parcelable {
      * {@link #getHasTime()}
      * @param hasTime whether datetime has time enabled or not
      */
-    void setHasTime(boolean hasTime) {
+    public void setHasTime(boolean hasTime) {
         this.hasTime = hasTime;
     }
 
@@ -350,7 +350,7 @@ class Datetime implements Parcelable {
      * @param period the period to add
      * @return new datetime instance with period added
      */
-    Datetime add(Period period) {
+    public Datetime add(Period period) {
         return new Datetime(this.datetime.withPeriodAdded(period, 1));
     }
 
@@ -361,7 +361,7 @@ class Datetime implements Parcelable {
      * @param period the period to subtract
      * @return new datetime instance with period subtracted
      */
-    Datetime subtract(Period period) {
+    public Datetime subtract(Period period) {
         return new Datetime(this.datetime.withPeriodAdded(period, -1));
     }
 
