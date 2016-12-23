@@ -16,8 +16,8 @@ import java.util.ArrayList;
  * @see Timeblock
  */
 
-class DirectSchedule extends Scheduler {
-    DirectSchedule(Context ctx) {
+public class DirectSchedule extends Scheduler {
+    public DirectSchedule(Context ctx) {
         super(ctx, "direct");
     }
 
