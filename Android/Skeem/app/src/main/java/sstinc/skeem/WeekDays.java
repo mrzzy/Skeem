@@ -7,15 +7,15 @@ import java.util.ArrayList;
  *
  * @see Task
  */
-class WeekDays {
+public class WeekDays {
     enum WeekDay {MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY}
     private ArrayList<WeekDay> weekDays_list = new ArrayList<>();
 
     // Empty constructor
-    WeekDays() {}
+    public WeekDays() {}
 
     // Copy constructor
-    WeekDays(WeekDays weekDays) {
+    public WeekDays(WeekDays weekDays) {
         this.weekDays_list = new ArrayList<>();
         this.weekDays_list.addAll(weekDays.getWeekDays_list());
     }
@@ -26,7 +26,7 @@ class WeekDays {
      *
      * @param weekDays string array to copy
      */
-    WeekDays(String[] weekDays) {
+    public WeekDays(String[] weekDays) {
         this.weekDays_list = new ArrayList<>();
         for (String weekDay : weekDays) {
             this.weekDays_list.add(WeekDay.valueOf(weekDay));
@@ -35,7 +35,7 @@ class WeekDays {
 
     // Getters and Setters
     // Get weekDays_list
-    ArrayList<WeekDay> getWeekDays_list() {
+    public ArrayList<WeekDay> getWeekDays_list() {
         return this.weekDays_list;
     }
 
@@ -43,7 +43,7 @@ class WeekDays {
      * Adds a new weekday to the list.
      * @param weekDay new weekday to add
      */
-    void add(WeekDay weekDay) {
+    public void add(WeekDay weekDay) {
         this.weekDays_list.add(weekDay);
     }
 
@@ -51,7 +51,7 @@ class WeekDays {
      * Returns a string array of all WeekDays stored in the class.
      * @return string array value of WeekDays
      */
-    String[] toStringArray() {
+    public String[] toStringArray() {
         // New array of strings
         ArrayList<String> weekDays_string = new ArrayList<>();
         // Add the string values of the weekdays into the string array
