@@ -17,7 +17,7 @@ import java.util.Arrays;
  * @see Schedulable
  * @see Parcelable
  */
-class Voidblock extends Schedulable implements Parcelable {
+public class Voidblock extends Schedulable implements Parcelable {
     boolean checked = false;
     private String name;
     private WeekDays weekDays;
@@ -26,14 +26,14 @@ class Voidblock extends Schedulable implements Parcelable {
      * Default constructor. Sets the name to an empty string and instantiates
      * weekdays.
      */
-    Voidblock() {
+    public Voidblock() {
         super();
         this.name = "";
         this.weekDays = new WeekDays();
     }
 
     // Copy constructor
-    Voidblock(Voidblock voidblock) {
+    public Voidblock(Voidblock voidblock) {
         super(voidblock);
         this.name = voidblock.getName();
         this.weekDays = new WeekDays(voidblock.getWeekDays());
@@ -45,14 +45,14 @@ class Voidblock extends Schedulable implements Parcelable {
      * Gets the voidblock's name.
      * @return voidblock's name
      */
-    String getName() {
+    public String getName() {
         return this.name;
     }
     /**
      * Gets the voidblock's repeated weekdays.
      * @return voidblock's repeated weekdays
      */
-    WeekDays getWeekDays() {
+    public WeekDays getWeekDays() {
         return this.weekDays;
     }
 
@@ -60,14 +60,14 @@ class Voidblock extends Schedulable implements Parcelable {
      * {@link #getName()}
      * @param name voidblock's name
      */
-    void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
     /**
      * {@link #getWeekDays()}
      * @param weekDays voidblock's weekDays instance
      */
-    void setWeekDays(WeekDays weekDays) {
+    public void setWeekDays(WeekDays weekDays) {
         this.weekDays = weekDays;
     }
 
@@ -75,12 +75,12 @@ class Voidblock extends Schedulable implements Parcelable {
      * Checks if the current voidblock is repeated.
      * @return true if the task instance is not repeated. False otherwise.
      */
-    boolean isRepeated() {
+    public boolean isRepeated() {
         return !this.weekDays.getWeekDays_list().isEmpty();
     }
 
     //TODO: Documentation
-    Voidblock[] getSeparatedRepeatedVoidblocks(Datetime end_datetime) {
+    public Voidblock[] getSeparatedRepeatedVoidblocks(Datetime end_datetime) {
         // List of voidblocks
         ArrayList<Voidblock> voidblocks = new ArrayList<>();
         // Convert repeated days to integer
