@@ -1,5 +1,7 @@
 package sstinc.skeem.models;
 
+import android.util.Log;
+
 import org.joda.time.Period;
 
 import java.util.ArrayList;
@@ -125,9 +127,9 @@ public class Timeblock extends Schedulable {
         this.period_used = this.period_used.plus(task.getScheduledPeriod());
 
         // Set the new scheduled start and stop
-        task.setScheduledStart(this.scheduled_start.add(this.period_left));
-        task.setScheduledStop(this.scheduled_start.add(this.period_left).add(
-                task.getScheduledPeriod()));
+        task.setScheduledStart(this.scheduled_start.add(this.period_used));
+        task.setScheduledStop(this.scheduled_start.add(this.period_used).add(
+                task.getPeriodNeeded()));
 
         return true;
     }
