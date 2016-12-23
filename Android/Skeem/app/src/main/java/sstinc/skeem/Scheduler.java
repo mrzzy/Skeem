@@ -27,6 +27,7 @@ abstract class Scheduler {
 
         // Access database to get tasks and voidblocks
         DbAdapter dbAdapter = new DbAdapter(ctx);
+        dbAdapter.open();
         this.tasks = dbAdapter.getTasks();
         this.voidblocks = dbAdapter.getVoidblocks();
         dbAdapter.close();

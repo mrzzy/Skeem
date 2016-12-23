@@ -86,7 +86,7 @@ public class ScheduleFragment extends ListFragment {
         });
         fab.setVisibility(View.VISIBLE);
 
-        Scheduler scheduler = new EvenSchedule(getActivity());
+        Scheduler scheduler = new DirectSchedule(getActivity());
         ArrayList<Schedulable> schedule = scheduler.schedule();
         ArrayList<Schedulable> filtered_schedule = new ArrayList<>();
 
