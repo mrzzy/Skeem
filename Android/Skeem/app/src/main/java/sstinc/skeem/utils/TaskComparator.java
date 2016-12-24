@@ -12,11 +12,17 @@ import sstinc.skeem.models.Task;
  * @see Comparator
  */
 public class TaskComparator implements Comparator<Task> {
-    // Set default order
-    private Order order = Order.NAME;
-    private boolean isAscending = false;
+    private Order order;
+    private boolean isAscending;
     // Ways to order by
     public enum Order {NAME, SUBJECT, TASKTYPE, DEADLINE, DURATION, MIN_TIME_PERIOD}
+
+    // Default constructor
+    public TaskComparator() {
+        // Set default order
+        this.order = Order.NAME;
+        this.isAscending = false;
+    }
 
     /**
      * Sets the order to sort the tasks by based on the enum value given.
@@ -38,7 +44,7 @@ public class TaskComparator implements Comparator<Task> {
      */
     @Override
     public int compare(Task o1, Task o2) {
-        int mul_val = isAscending ? 1 : -1;
+        int mul_val = this.isAscending ? 1 : -1;
         int c;
         switch (this.order) {
             case NAME:
@@ -46,11 +52,13 @@ public class TaskComparator implements Comparator<Task> {
                 if (c == 0) {
                     c = mul_val*o1.getSubject().compareTo(o2.getSubject());
                 }
+                break;
             case SUBJECT:
                 c = mul_val*o1.getSubject().compareTo(o2.getSubject());
                 if (c == 0) {
                     c = mul_val*o1.getName().compareTo(o2.getName());
                 }
+                break;
             case DEADLINE:
                 c = mul_val*o1.getDeadline().toString().compareTo(o2.getDeadline().toString());
                 if (c == 0) {
@@ -59,6 +67,7 @@ public class TaskComparator implements Comparator<Task> {
                 if (c == 0) {
                     c = mul_val*o1.getSubject().compareTo(o2.getSubject());
                 }
+                break;
             case DURATION:
                 c = mul_val*PeriodFormat.getDefault().print(o1.getPeriodNeeded()).compareTo(
                         PeriodFormat.getDefault().print(o2.getPeriodNeeded()));
@@ -68,6 +77,7 @@ public class TaskComparator implements Comparator<Task> {
                 if (c == 0) {
                     c = mul_val*o1.getSubject().compareTo(o2.getSubject());
                 }
+                break;
             case MIN_TIME_PERIOD:
                 c = mul_val*PeriodFormat.getDefault().print(o1.getPeriodMinimum()).compareTo(
                         PeriodFormat.getDefault().print(o2.getPeriodMinimum()));
@@ -77,6 +87,7 @@ public class TaskComparator implements Comparator<Task> {
                 if (c == 0) {
                     c = mul_val*o1.getSubject().compareTo(o2.getSubject());
                 }
+                break;
             default:
                 // Default to name
                 c = mul_val*o1.getName().compareTo(o2.getName());

@@ -12,11 +12,17 @@ import sstinc.skeem.models.Timeblock;
  * @see Comparator
  */
 public class TimeblockComparator implements Comparator<Timeblock> {
-    // Set default order
-    private TimeblockComparator.Order order = Order.TOTAL_PERIOD;
-    private boolean isAscending = true;
+    private TimeblockComparator.Order order;
+    private boolean isAscending;
     // Ways to order by
     public enum Order {TOTAL_PERIOD, PERIOD_USED, PERIOD_LEFT, SCHEDULED_START, SCHEDULED_STOP}
+
+    // Default constructor
+    public TimeblockComparator() {
+        // Set default order
+        this.order = Order.TOTAL_PERIOD;
+        this.isAscending = true;
+    }
 
     /**
      * Sets the order to sort the voidblocks by based on the enum value given.
@@ -38,7 +44,7 @@ public class TimeblockComparator implements Comparator<Timeblock> {
      */
     @Override
     public int compare(Timeblock o1, Timeblock o2) {
-        int mul_val = isAscending ? 1 : -1;
+        int mul_val = this.isAscending ? 1 : -1;
         int c;
         switch (this.order) {
             case TOTAL_PERIOD:
@@ -54,6 +60,7 @@ public class TimeblockComparator implements Comparator<Timeblock> {
                     c = mul_val*o1.getScheduledStart().toString().compareTo(
                             o2.getScheduledStart().toString());
                 }
+                break;
             case PERIOD_USED:
                 c = mul_val*PeriodFormat.getDefault().print(o1.getPeriodUsed()).compareTo(
                         PeriodFormat.getDefault().print(o2.getPeriodUsed()));
@@ -67,6 +74,7 @@ public class TimeblockComparator implements Comparator<Timeblock> {
                     c = mul_val*o1.getScheduledStart().toString().compareTo(
                             o2.getScheduledStart().toString());
                 }
+                break;
             case PERIOD_LEFT:
                 c = mul_val*PeriodFormat.getDefault().print(o1.getPeriodLeft()).compareTo(
                         PeriodFormat.getDefault().print(o2.getPeriodLeft()));
@@ -80,6 +88,7 @@ public class TimeblockComparator implements Comparator<Timeblock> {
                     c = mul_val*o1.getScheduledStart().toString().compareTo(
                             o2.getScheduledStart().toString());
                 }
+                break;
             case SCHEDULED_START:
                 c = mul_val*o1.getScheduledStart().toString().compareTo(
                         o2.getScheduledStart().toString());
@@ -93,6 +102,7 @@ public class TimeblockComparator implements Comparator<Timeblock> {
                     c = mul_val*PeriodFormat.getDefault().print(o1.getPeriodLeft()).compareTo(
                             PeriodFormat.getDefault().print(o2.getPeriodLeft()));
                 }
+                break;
             case SCHEDULED_STOP:
                 c = mul_val*o1.getScheduledStop().toString().compareTo(
                         o2.getScheduledStop().toString());
@@ -106,6 +116,7 @@ public class TimeblockComparator implements Comparator<Timeblock> {
                     c = mul_val*PeriodFormat.getDefault().print(o1.getPeriodLeft()).compareTo(
                             PeriodFormat.getDefault().print(o2.getPeriodLeft()));
                 }
+                break;
             default:
                 // Default to total period
                 c = mul_val*PeriodFormat.getDefault().print(o1.getScheduledPeriod()).compareTo(

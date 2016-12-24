@@ -1,5 +1,7 @@
 package sstinc.skeem.utils;
 
+import android.util.Log;
+
 import java.util.Comparator;
 
 import sstinc.skeem.models.Voidblock;
@@ -10,11 +12,17 @@ import sstinc.skeem.models.Voidblock;
  * @see Comparator
  */
 public class VoidblockComparator implements Comparator<Voidblock> {
-    // Set default order
-    private VoidblockComparator.Order order = Order.SCHEDULED_START;
-    private boolean isAscending = true;
+    private VoidblockComparator.Order order;
+    private boolean isAscending;
     // Ways to order by
     public enum Order {NAME, SCHEDULED_START, SCHEDULED_STOP}
+
+    // Default constructor
+    public VoidblockComparator() {
+        // Set default order
+        this.order = Order.SCHEDULED_START;
+        this.isAscending = true;
+    }
 
     /**
      * Sets the order to sort the voidblocks by based on the enum value given.
@@ -37,7 +45,7 @@ public class VoidblockComparator implements Comparator<Voidblock> {
      */
     @Override
     public int compare(Voidblock o1, Voidblock o2) {
-        int mul_val = isAscending ? 1 : -1;
+        int mul_val = this.isAscending ? 1 : -1;
         int c;
         switch (this.order) {
             case NAME:
@@ -52,6 +60,7 @@ public class VoidblockComparator implements Comparator<Voidblock> {
                     c = mul_val*o1.getScheduledStop().toString().compareTo(
                             o2.getScheduledStop().toString());
                 }
+                break;
             case SCHEDULED_START:
                 c = mul_val*o1.getScheduledStart().toString().compareTo(
                         o2.getScheduledStart().toString());
@@ -64,6 +73,7 @@ public class VoidblockComparator implements Comparator<Voidblock> {
                 if (c == 0) {
                     c = mul_val*o1.getName().compareTo(o2.getName());
                 }
+                break;
             case SCHEDULED_STOP:
                 c = mul_val*o1.getScheduledStop().toString().compareTo(
                         o2.getScheduledStop().toString());
@@ -76,6 +86,7 @@ public class VoidblockComparator implements Comparator<Voidblock> {
                 if (c == 0) {
                     c = mul_val*o1.getName().compareTo(o2.getName());
                 }
+                break;
             default:
                 // Default to name
                 c = mul_val*o1.getName().compareTo(o2.getName());
@@ -88,6 +99,8 @@ public class VoidblockComparator implements Comparator<Voidblock> {
                             o2.getScheduledStop().toString());
                 }
         }
+
+        Log.w(this.getClass().getName(), "KEY ASDF: inside l " + c);
         return c;
     }
 }
