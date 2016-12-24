@@ -2,6 +2,8 @@ package sstinc.skeem.schedule;
 
 import android.content.Context;
 
+import org.joda.time.Period;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -99,8 +101,9 @@ public abstract class Scheduler {
                 Timeblock timeblockToAdd = new Timeblock(prev_voidblock.getScheduledStop(),
                         curr_voidblock.getScheduledStart());
 
-                if (timeblockToAdd.getScheduledPeriod().getMillis() != 0) {
+                if (!timeblockToAdd.getScheduledPeriod().equals(new Period())) {
                     this.emptySchedule.add(timeblockToAdd);
+                    this.emptySchedule.add(curr_voidblock);
                     this.timeblocks.add(timeblockToAdd);
                 } else {
                     this.emptySchedule.add(curr_voidblock);
