@@ -2,7 +2,9 @@ package sstinc.skeem.fragments;
 //TODO: Check for overlaps
 //TODO: long press
 
+import android.app.AlertDialog;
 import android.app.ListFragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -161,38 +163,102 @@ public class VoidblockFragment extends ListFragment implements AdapterView.OnIte
         menu.findItem(R.id.nav_delete).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                // Reset menu
-                menu_duplicate = false;
-                menu_delete = false;
-                getActivity().invalidateOptionsMenu();
+                // Delete immediately if there is only one task selected
+                if (getCheckedCheckBoxes() == 1) {
 
-                ArrayList<Voidblock> voidblocks_to_delete = new ArrayList<>();
-                // Get voidblocks selected
-                for (int i=getListAdapter().getCount()-1; i>=0; i--) {
-                    View v = getViewByPosition(i, getListView());
-                    CheckBox checkBox = (CheckBox) v.findViewById(
-                            R.id.list_item_voidblock_checkbox);
-                    if (checkBox.isChecked()) {
-                        voidblocks_to_delete.add((Voidblock) getListAdapter().getItem(i));
-                    }
-                }
-                // Delete
-                DbAdapter dbAdapter = new DbAdapter(getActivity());
-                dbAdapter.open();
-                for (Voidblock voidblock : voidblocks_to_delete) {
-                    dbAdapter.deleteVoidblock(voidblock.getId());
-                }
-                ArrayList<Voidblock> voidblocks = dbAdapter.getVoidblocks();
-                dbAdapter.close();
+                    // Reset menu
+                    menu_duplicate = false;
+                    menu_delete = false;
+                    getActivity().invalidateOptionsMenu();
 
-                setListAdapter(new VoidblockArrayAdapter(getActivity(), voidblocks));
-                getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view,
-                                            int position, long id) {
-                        editVoidblock(position);
+                    // Delete immediately
+                    DbAdapter dbAdapter = new DbAdapter(getActivity());
+                    for (int i=getListAdapter().getCount()-1; i>=0; i--) {
+                        View v = getViewByPosition(i, getListView());
+                        CheckBox checkBox = (CheckBox) v.findViewById(
+                                R.id.list_item_voidblock_checkbox);
+                        if (checkBox.isChecked()) {
+                            dbAdapter.open();
+                            dbAdapter.deleteVoidblock(
+                                    ((Voidblock) getListAdapter().getItem(i)).getId());
+                            break;
+                        }
                     }
-                });
+                    ArrayList<Voidblock> voidblocks = dbAdapter.getVoidblocks();
+                    dbAdapter.close();
+                    setListAdapter(new VoidblockArrayAdapter(getActivity(), voidblocks));
+
+                    getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view,
+                                                int position, long id) {
+                            editVoidblock(position);
+                        }
+                    });
+                }
+
+                // Ask for conformation to delete if there is more than one
+                // voidblock.
+                // Create alert dialog
+                AlertDialog.Builder confirm_delete_voidblocks = new AlertDialog.Builder(getActivity());
+                confirm_delete_voidblocks.setTitle(
+                        R.string.dialog_confirm_delete_title_voidblock);
+                confirm_delete_voidblocks.setMessage(
+                        R.string.dialog_confirm_delete_message_voidblock);
+
+                // Set onClickListener for positive button
+                confirm_delete_voidblocks.setPositiveButton(R.string.dialog_confirm_delete_positive,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // Disable menu
+                                menu_duplicate = false;
+                                menu_delete = false;
+                                getActivity().invalidateOptionsMenu();
+
+                                // Duplicate all the selected voidblocks
+                                DbAdapter dbAdapter = new DbAdapter(getActivity());
+                                dbAdapter.open();
+                                for (int index=getListAdapter().getCount()-1; index>=0; index--) {
+                                    // Get CheckBox
+                                    View view = getViewByPosition(index, getListView());
+                                    CheckBox checkBox = (CheckBox) view.findViewById(
+                                            R.id.list_item_voidblock_checkbox);
+
+                                    // Delete voidblock if it is checked
+                                    if (checkBox.isChecked()) {
+                                        dbAdapter.deleteVoidblock(
+                                                ((Voidblock) getListAdapter().getItem(index))
+                                                        .getId());
+                                    }
+                                }
+
+                                ArrayList<Voidblock> voidblocks = dbAdapter.getVoidblocks();
+                                dbAdapter.close();
+                                setListAdapter(new VoidblockArrayAdapter(getActivity(),
+                                        voidblocks));
+
+                                // Return to normal OnItemClickListener
+                                getListView().setOnItemClickListener(
+                                        new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> parent, View view,
+                                                            int position, long id) {
+                                        editVoidblock(position);
+                                    }
+                                });
+                            }
+                        });
+
+                // Set empty onClickListener for negative button
+                confirm_delete_voidblocks.setNegativeButton(R.string.dialog_confirm_delete_negative,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {}});
+
+                // Show dialog
+                confirm_delete_voidblocks.show();
+
                 return true;
             }
         });

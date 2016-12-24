@@ -316,8 +316,8 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
                     DbAdapter dbAdapter = new DbAdapter(getActivity());
                     for (int i=getListAdapter().getCount()-1; i>=0; i--) {
                         View view = getViewByPosition(i, getListView());
-                        CheckBox checkBox = (CheckBox) view.findViewById(R.id.list_item_task_checkBox);
-
+                        CheckBox checkBox = (CheckBox) view.findViewById(
+                                R.id.list_item_task_checkBox);
                         if (checkBox.isChecked()) {
                             dbAdapter.open();
                             dbAdapter.deleteTask(((Task) getListAdapter().getItem(i)).getId());
@@ -330,15 +330,15 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
 
                     // Return to normal OnItemClickListener
                     getListView().setOnItemClickListener(editItemClickListener);
-                    return false;
+                    return true;
                 }
 
                 // Ask for conformation to delete if there is more than one
                 // task.
                 // Create alert dialog
                 AlertDialog.Builder confirm_delete_tasks = new AlertDialog.Builder(getActivity());
-                confirm_delete_tasks.setTitle(R.string.dialog_confirm_delete_title);
-                confirm_delete_tasks.setMessage(R.string.dialog_confirm_delete_message);
+                confirm_delete_tasks.setTitle(R.string.dialog_confirm_delete_title_task);
+                confirm_delete_tasks.setMessage(R.string.dialog_confirm_delete_message_task);
 
                 // Set onClickListener for positive button
                 confirm_delete_tasks.setPositiveButton(R.string.dialog_confirm_delete_positive,
