@@ -189,6 +189,7 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HAS_DATE, false);
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HAS_TIME,
                         CreateDatetimeActivity.HAS_TIME_TRUE);
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_MIN, new Datetime());
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_DATETIME,
                         task.getDeadlinePerDay());
                 startActivityForResult(intent, createDeadlinePerDayRequestCode);
