@@ -122,14 +122,14 @@ public class Timeblock extends Schedulable {
         // Add to tasks_scheduled
         this.tasks_scheduled.add(task);
 
-        // Recalculate time used and time left
-        this.period_left = this.period_left.minus(task.getScheduledPeriod());
-        this.period_used = this.period_used.plus(task.getScheduledPeriod());
-
         // Set the new scheduled start and stop
         task.setScheduledStart(this.scheduled_start.add(this.period_used));
         task.setScheduledStop(this.scheduled_start.add(this.period_used).add(
                 task.getPeriodNeeded()));
+
+        // Recalculate time used and time left
+        this.period_left = this.period_left.minus(task.getPeriodNeeded());
+        this.period_used = this.period_used.plus(task.getPeriodNeeded());
 
         return true;
     }
