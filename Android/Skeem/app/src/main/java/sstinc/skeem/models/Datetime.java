@@ -394,9 +394,21 @@ public class Datetime implements Parcelable {
         string += " ";
         // Time
         if (this.getHasTime()) {
-            string += this.getHour() + ":" + this.getMinute();
+            if (this.getHour() > 9) {
+                string += this.getHour();
+            } else {
+                string += "0" + this.getHour();
+            }
+
+            string += ":";
+
+            if (this.getMinute() > 9) {
+                string += this.getMinute();
+            } else {
+                string += "0" + this.getMinute();
+            }
         } else {
-            string += "0:0";
+            string += "00:00";
         }
         return string;
     }
