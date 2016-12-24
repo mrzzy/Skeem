@@ -101,12 +101,31 @@ public abstract class Scheduler {
                 Timeblock timeblockToAdd = new Timeblock(prev_voidblock.getScheduledStop(),
                         curr_voidblock.getScheduledStart());
 
-                this.emptySchedule.add(timeblockToAdd);
-                this.emptySchedule.add(curr_voidblock);
-                this.timeblocks.add(timeblockToAdd);
+                if (timeblockToAdd.getScheduledPeriod().getMillis() != 0) {
+                    this.emptySchedule.add(timeblockToAdd);
+                    this.timeblocks.add(timeblockToAdd);
+                } else {
+                    this.emptySchedule.add(curr_voidblock);
+                }
             }
         }
 
+        // Add an ending timeblock for the day
+        if (this.voidblocks.size() != 0) {
+            Voidblock lastVoidblock = this.expandedVoidblocks.get(this.expandedVoidblocks.size()-1);
+            if (lastVoidblock.getScheduledStop().getHour() != 23 ||
+                    lastVoidblock.getScheduledStop().getMinute() != 59) {
+                Datetime endDatetime = new Datetime(lastVoidblock.getScheduledStop());
+                endDatetime.setHour(23);
+                endDatetime.setMinute(59);
+
+                Timeblock timeblock = new Timeblock();
+                timeblock.setScheduledStart(lastVoidblock.getScheduledStop());
+                timeblock.setScheduledStop(endDatetime);
+
+                this.emptySchedule.add(timeblock);
+            }
+        }
     }
 
     /**
