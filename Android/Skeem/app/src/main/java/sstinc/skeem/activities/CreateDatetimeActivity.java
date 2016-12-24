@@ -3,7 +3,6 @@ package sstinc.skeem.activities;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,12 +10,6 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
-
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDateTime;
-
-import java.util.Calendar;
 
 import sstinc.skeem.models.Datetime;
 import sstinc.skeem.R;
@@ -96,7 +89,6 @@ public class CreateDatetimeActivity extends AppCompatActivity {
         this.min_datetime = intent.getParcelableExtra(EXTRA_RECEIVE_MIN);
         if (this.min_datetime == null) {
             this.min_datetime = Datetime.getCurrentDatetime();
-            Log.w(this.getClass().getName(), "KEY ASDF: ERROR " + this.min_datetime.toString());
         }
         if (this.max_datetime == null) {
             this.max_datetime = new Datetime();
