@@ -28,9 +28,12 @@ public class EDFScheduler extends Scheduler {
         for (Schedulable schedulable : this.getEmptySchedule()) {
             if (schedulable instanceof Timeblock) {
                 Timeblock timeblock = (Timeblock) schedulable;
-                while (timeblock.getPeriodLeft() != new Period() && unscheduledTasks.size() != 0) {
-                    if (timeblock.getPeriodLeft().getMillis() >=
-                            unscheduledTasks.get(0).getPeriodNeeded().getMillis()) {
+                while (!timeblock.getPeriodLeft().equals(new Period()) &&
+                        unscheduledTasks.size() != 0) {
+
+                    if (timeblock.getPeriodLeft().toStandardDuration().getMillis() >=
+                            unscheduledTasks.get(0).getPeriodNeeded().toStandardDuration()
+                                    .getMillis()) {
                         timeblock.addTask(unscheduledTasks.get(0));
                         unscheduledTasks.remove(0);
                     } else {
