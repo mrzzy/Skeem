@@ -15,7 +15,6 @@
         <TextView
             android:id="@+id/list_item_schedule_start_time"
             android:paddingStart="@dimen/activity_horizontal_margin"
-            android:paddingEnd="@dimen/activity_horizontal_margin"
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
@@ -26,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_below="@id/list_item_schedule_start_time"
-            android:layout_alignParentStart="true"
+
             android:layout_alignEnd="@+id/list_item_schedule_start_time"
             android:ellipsize="end"
             android:maxLines="1"
