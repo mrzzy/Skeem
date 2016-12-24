@@ -389,7 +389,7 @@ public class DbAdapter {
 
         // Sort the tasks
         TaskComparator taskComparator = new TaskComparator();
-        taskComparator.setSortBy(TaskComparator.Order.DEADLINE, false);
+        taskComparator.setSortBy(TaskComparator.Order.DEADLINE, true);
         Collections.sort(tasks, taskComparator);
         return tasks;
     }
@@ -448,7 +448,7 @@ public class DbAdapter {
 
         // Sort the voidblocks, most recent first
         VoidblockComparator voidBlockComparator = new VoidblockComparator();
-        voidBlockComparator.setSortBy(VoidblockComparator.Order.SCHEDULED_START, false);
+        voidBlockComparator.setSortBy(VoidblockComparator.Order.SCHEDULED_START, true);
         Collections.sort(voidblocks, voidBlockComparator);
 
         return voidblocks;
@@ -611,8 +611,8 @@ public class DbAdapter {
      */
     public void deleteVoidblock(long voidblockId) {
         // Query task table with task id
-        Cursor cursor = SQLdb.query(TASKS_TABLE, new String[] {TASKS_TABLE_COL_DAYS_ID},
-                TASKS_TABLE_COL_ID + " = " + voidblockId, null, null, null, null);
+        Cursor cursor = SQLdb.query(VOIDBLOCKS_TABLE, new String[] {VOIDBLOCKS_TABLE_COL_DAYS_ID},
+                VOIDBLOCKS_TABLE_COL_ID + " = " + voidblockId, null, null, null, null);
         cursor.moveToFirst();
 
         // Get the days id

@@ -60,11 +60,10 @@ public abstract class Scheduler {
                     this.expandedVoidblocks.add(voidblock);
                 }
             }
-            //TODO: test this
             // Sort the expanded voidblocks, most recent first
             VoidblockComparator voidBlockComparator = new VoidblockComparator();
-            voidBlockComparator.setSortBy(VoidblockComparator.Order.SCHEDULED_START, false);
-            Collections.sort(voidblocks, voidBlockComparator);
+            voidBlockComparator.setSortBy(VoidblockComparator.Order.SCHEDULED_START, true);
+            Collections.sort(this.expandedVoidblocks, voidBlockComparator);
         }
 
         // Expand tasks
@@ -75,10 +74,9 @@ public abstract class Scheduler {
                 this.expandedTasks.add(task);
             }
         }
-        //TODO: test this
         // Sort the expanded tasks, most recent first
         TaskComparator taskComparator = new TaskComparator();
-        taskComparator.setSortBy(TaskComparator.Order.DEADLINE, false);
+        taskComparator.setSortBy(TaskComparator.Order.DEADLINE, true);
         Collections.sort(this.expandedTasks, taskComparator);
 
         // Create emptySchedule and timeblocks
