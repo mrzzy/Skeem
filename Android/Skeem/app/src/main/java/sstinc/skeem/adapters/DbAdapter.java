@@ -21,7 +21,6 @@ import sstinc.skeem.models.Voidblock;
 import sstinc.skeem.utils.VoidblockComparator;
 import sstinc.skeem.models.WeekDays;
 
-//TODO: getVoidblocks and getTasks sort differently, choose one and stick to it
 /**
  * This class handles the database CRUD, create, read, update and delete
  * operations. There are four tables, Task, Deadline, Days and Voidblock.
@@ -447,9 +446,9 @@ public class DbAdapter {
         }
         cursor.close();
 
-        // Sort the voidblocks, latest first
+        // Sort the voidblocks, most recent first
         VoidblockComparator voidBlockComparator = new VoidblockComparator();
-        voidBlockComparator.setSortBy(VoidblockComparator.Order.SCHEDULED_START, true);
+        voidBlockComparator.setSortBy(VoidblockComparator.Order.SCHEDULED_START, false);
         Collections.sort(voidblocks, voidBlockComparator);
 
         return voidblocks;
