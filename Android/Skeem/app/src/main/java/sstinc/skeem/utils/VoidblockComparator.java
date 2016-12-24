@@ -100,7 +100,6 @@ public class VoidblockComparator implements Comparator<Voidblock> {
                 }
         }
 
-        Log.w(this.getClass().getName(), "KEY ASDF: inside l " + c);
         return c;
     }
 }
