@@ -97,7 +97,7 @@ public class ScheduleArrayAdapter extends ArrayAdapter<Schedulable> {
             String task_start_time = task.getScheduledStart().toFormattedString();
             int current_day = cal.get(Calendar.DAY_OF_MONTH);
             if (task.getScheduledStart().getDay() == current_day) {
-                task_start_time = task_start_time.substring(0, 5);
+                task_start_time = task_start_time.substring(0, 5) + task_start_time.substring(8, 14);
             }
             viewHolder.task_start_time.setText(task_start_time);
 

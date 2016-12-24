@@ -83,7 +83,16 @@ public abstract class Scheduler {
 
         // Create emptySchedule and timeblocks
         for (int i=0;i<this.expandedVoidblocks.size();i++) {
+
             if (i == 0) {
+                if (Datetime.getCurrentDatetime().getMillis() <
+                        this.expandedVoidblocks.get(i).getScheduledStart().getMillis()) {
+                    Timeblock timeblockToAdd = new Timeblock();
+                    timeblockToAdd.setScheduledStart(Datetime.getCurrentDatetime());
+                    timeblockToAdd.setScheduledStop(
+                            this.expandedVoidblocks.get(i).getScheduledStart());
+                    this.emptySchedule.add(timeblockToAdd);
+                }
                 this.emptySchedule.add(this.expandedVoidblocks.get(i));
             } else {
                 Voidblock prev_voidblock = this.expandedVoidblocks.get(i-1);
@@ -238,7 +247,7 @@ public abstract class Scheduler {
      * @return true if tasks or voidblocks are empty, false otherwise
      */
     boolean isEmpty() {
-        return this.getTasks().isEmpty() || this.getVoidblocks().isEmpty();
+        return this.getTasks().isEmpty() && this.getVoidblocks().isEmpty();
     }
 
     public abstract ArrayList<Schedulable> schedule();
