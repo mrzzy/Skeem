@@ -2,6 +2,7 @@ package sstinc.skeem.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import org.joda.time.DateTime;
 
@@ -91,23 +92,22 @@ public class Voidblock extends Schedulable implements Parcelable {
             repeated_days.add(weekdays_index.indexOf(weekDay) + 1);
         }
 
-        DateTime dateTime = new DateTime();
-        while (dateTime.isBefore(end_datetime.getMillis())) {
+        DateTime dateTime = new DateTime(Datetime.getCurrentDatetime().getMillis());
+        while (dateTime.getMillis() < end_datetime.getMillis()) {
             for (int day_value : repeated_days) {
                 int difference;
                 // Calculate number of days to the next repeated weekday
                 if (day_value < dateTime.getDayOfWeek()) {
-                    difference = day_value + dateTime.getDayOfWeek() -7;
+                    difference = day_value + 7-dateTime.getDayOfWeek();
                 } else {
-                    difference = dateTime.getDayOfWeek() - day_value;
+                    difference = day_value - dateTime.getDayOfWeek();
                 }
-                if (difference < 0) {
-                    // if difference is < 0, the next day is before today, move to
-                    // the next repeated day
-                    // 1, 2, 3, 4, 5, 6, 7
-                    dateTime = dateTime.plusDays(-difference);
-                } else if (difference == 0) {
-                    // today is a repeated day, add it to the list of tasks
+                if (difference > 0) {
+                    // the repeated day is a few days later, move to the day
+                    dateTime = dateTime.plusDays(difference);
+                    if (dateTime.getMillis() < end_datetime.getMillis()) {
+                        break;
+                    }
                     Voidblock new_voidblock = new Voidblock(this);
                     // Set scheduled start and stop
                     new_voidblock.getScheduledStart().setYear(dateTime.getYear());
@@ -119,9 +119,6 @@ public class Voidblock extends Schedulable implements Parcelable {
                     new_voidblock.getScheduledStop().setDay(dateTime.getDayOfMonth());
 
                     voidblocks.add(new_voidblock);
-                } else if (difference > 0){
-                    // the repeated day is a few days later, move to the day
-                    dateTime = dateTime.plus(difference);
                 }
             }
         }
