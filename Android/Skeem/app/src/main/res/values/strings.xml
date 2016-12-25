@@ -53,9 +53,12 @@
     <string name="nav_delete">Delete</string>
 
     <!-- Strings for the dialog box -->
-    <string name="dialog_confirm_delete_title">Delete Selected Tasks</string>
-    <string name="dialog_confirm_delete_message">Are you sure you want to delete all the selected
+    <string name="dialog_confirm_delete_title_task">Delete Selected Tasks</string>
+    <string name="dialog_confirm_delete_message_task">Are you sure you want to delete all the selected
     Tasks?</string>
+    <string name="dialog_confirm_delete_title_voidblock">Delete Selected Voidblocks</string>
+    <string name="dialog_confirm_delete_message_voidblock">Are you sure you want to delete all the
+        selected Voidblocks?</string>
     <string name="dialog_confirm_delete_positive">Yes</string>
     <string name="dialog_confirm_delete_negative">No</string>
     <!-- No deadline dialog -->
