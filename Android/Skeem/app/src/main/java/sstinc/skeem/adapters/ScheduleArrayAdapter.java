@@ -102,6 +102,7 @@ public class ScheduleArrayAdapter extends ArrayAdapter<Schedulable> {
             viewHolder.task_start_time.setText(task_start_time);
 
             viewHolder.task_layout.setVisibility(View.VISIBLE);
+            viewHolder.voidblock_layout.setVisibility(View.GONE);
         } else {
             // If it is a voidblock
             Voidblock voidblock = (Voidblock) schedulable;
@@ -110,6 +111,7 @@ public class ScheduleArrayAdapter extends ArrayAdapter<Schedulable> {
                     " - " + voidblock.getScheduledStop().toFormattedString());
 
             viewHolder.voidblock_layout.setVisibility(View.VISIBLE);
+            viewHolder.task_layout.setVisibility(View.GONE);
         }
 
         return convertView;
