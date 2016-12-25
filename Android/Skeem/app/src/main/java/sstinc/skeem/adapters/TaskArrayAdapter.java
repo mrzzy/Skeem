@@ -86,9 +86,6 @@ public class TaskArrayAdapter extends ArrayAdapter<Task> {
             // Tag the view holder to the convert view so that it can be
             // reused in future calls.
             convertView.setTag(viewHolder);
-            convertView.setTag(R.id.list_item_task_title, viewHolder.title);
-            convertView.setTag(R.id.list_item_task_description, viewHolder.description);
-            convertView.setTag(R.id.list_item_task_checkBox, viewHolder.checkbox);
         } else {
             // The convert view and view holder has been preserved
             // Get view holder from the convert view
