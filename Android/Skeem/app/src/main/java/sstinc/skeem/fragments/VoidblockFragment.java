@@ -195,6 +195,7 @@ public class VoidblockFragment extends ListFragment implements AdapterView.OnIte
                             editVoidblock(position);
                         }
                     });
+                    return true;
                 }
 
                 // Ask for conformation to delete if there is more than one

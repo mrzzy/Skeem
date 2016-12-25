@@ -35,5 +35,5 @@
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:focusable="false"
-        android:visibility="visible" />
+        android:visibility="gone" />
 </RelativeLayout>

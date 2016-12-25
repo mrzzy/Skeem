@@ -36,7 +36,7 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
     boolean menu_continue = false;
     boolean menu_finish = false;
     boolean menu_duplicate = false;
-    boolean menu_delete = false;
+    public static boolean menu_delete = false;
     // Request codes
     public static final int createTaskRequestCode = 110;
     public static final int updateTaskRequestCode = 120;
@@ -225,12 +225,16 @@ public class TaskFragment extends ListFragment implements AdapterView.OnItemLong
             checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    int getPosition = (Integer) buttonView.getTag();
+                    ((TaskArrayAdapter) getListAdapter()).list.get(getPosition).checked =
+                            buttonView.isChecked();
                     if (getCheckedCheckBoxes() == 0) {
                         // Hide all the checkboxes
                         for (int i=getListAdapter().getCount()-1; i>=0; i--) {
                             View view = getViewByPosition(i, getListView());
                             // Make checkbox invisible and uncheck
-                            CheckBox checkBox = (CheckBox) view.findViewById(R.id.list_item_task_checkBox);
+                            CheckBox checkBox = (CheckBox) view.findViewById(
+                                    R.id.list_item_task_checkBox);
                             checkBox.setVisibility(View.GONE);
                             checkBox.setChecked(false);
                         }

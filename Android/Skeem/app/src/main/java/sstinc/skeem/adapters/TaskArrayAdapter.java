@@ -6,12 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import java.util.List;
 
 import sstinc.skeem.R;
+import sstinc.skeem.fragments.TaskFragment;
 import sstinc.skeem.models.Task;
 
 /**
@@ -23,7 +23,7 @@ import sstinc.skeem.models.Task;
  */
 public class TaskArrayAdapter extends ArrayAdapter<Task> {
     // List to contain all the tasks
-    private final List<Task> list;
+    public final List<Task> list;
 
     /**
      * Basic constructor. Uses the list of tasks and the activity context to
@@ -83,21 +83,12 @@ public class TaskArrayAdapter extends ArrayAdapter<Task> {
             viewHolder.checkbox = (CheckBox) convertView.findViewById(
                     R.id.list_item_task_checkBox);
 
-            //TODO: Move remove task's "checked" property by moving it to setTag
-            // Set on checked change listener for checkbox
-            viewHolder.checkbox.setOnCheckedChangeListener(
-                    new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    // Get position of checkbox
-                    int getPosition = (Integer) buttonView.getTag();
-                    list.get(getPosition).checked = buttonView.isChecked();
-                }
-            });
-
             // Tag the view holder to the convert view so that it can be
             // reused in future calls.
             convertView.setTag(viewHolder);
+            convertView.setTag(R.id.list_item_task_title, viewHolder.title);
+            convertView.setTag(R.id.list_item_task_description, viewHolder.description);
+            convertView.setTag(R.id.list_item_task_checkBox, viewHolder.checkbox);
         } else {
             // The convert view and view holder has been preserved
             // Get view holder from the convert view
@@ -112,10 +103,7 @@ public class TaskArrayAdapter extends ArrayAdapter<Task> {
         viewHolder.description.setText(task.getDescription());
         viewHolder.checkbox.setChecked(list.get(position).checked);
 
-        // Set the visibility of the checkbox
-        //TODO Test that there is no need for below statement
-        //viewHolder.checkbox.setVisibility(TaskFragment.menu_multi? View.VISIBLE: View.GONE);
-        viewHolder.checkbox.setVisibility(View.GONE);
+        viewHolder.checkbox.setVisibility(TaskFragment.menu_delete ? View.VISIBLE : View.GONE);
 
         return convertView;
     }
