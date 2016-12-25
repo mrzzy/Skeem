@@ -110,18 +110,24 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                 // Set if date is needed
                 if (!switch_repeat.isChecked() ||
                         voidblock.getWeekDays().getWeekDays_list().isEmpty()) {
-                    intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE, true);
+                    intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HAS_DATE, true);
                 } else {
-                    intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE, false);
+                    intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HAS_DATE, false);
                 }
-                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASTIME,
-                        CreateDatetimeActivity.HASTIME_YES);
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HAS_TIME,
+                        CreateDatetimeActivity.HAS_TIME_TRUE);
                 // Set maximum to scheduled_stop if it exists
                 if (voidblock.getScheduledStop().getHasDate() &&
                         voidblock.getScheduledStop().getHasTime()) {
                     intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_MAX,
                             voidblock.getScheduledStop());
                 }
+                if (voidblock.isRepeated()) {
+                    // Set the minimum to 0
+                    intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_MIN,
+                            new Datetime());
+                }
+
                 // Set the current datetime to the scheduled_start
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_DATETIME,
                         voidblock.getScheduledStart());
@@ -151,12 +157,12 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                 // Set if date is needed
                 if (!switch_repeat.isChecked() ||
                         voidblock.getWeekDays().getWeekDays_list().isEmpty()) {
-                    intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE, true);
+                    intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HAS_DATE, true);
                 } else {
-                    intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASDATE, false);
+                    intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HAS_DATE, false);
                 }
-                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HASTIME,
-                        CreateDatetimeActivity.HASTIME_YES);
+                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HAS_TIME,
+                        CreateDatetimeActivity.HAS_TIME_TRUE);
                 // Set minimum to scheduled_start if it exists. If not, set
                 // it to the current datetime
                 if (voidblock.getScheduledStart().getHasTime()) {
@@ -164,7 +170,7 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                             voidblock.getScheduledStart());
                 } else {
                     intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_MIN,
-                            currentDatetime);
+                            new Datetime());
                 }
                 // Set the current datetime to scheduled stop
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_DATETIME,
