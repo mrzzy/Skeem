@@ -130,7 +130,7 @@ public abstract class Scheduler {
 
         // Remove all voidblocks before now
         this.emptySchedule = removeBeforeNow(this.emptySchedule);
-        if (this.emptySchedule.get(0) instanceof Timeblock) {
+        if (this.emptySchedule.size() != 0 && this.emptySchedule.get(0) instanceof Timeblock) {
             this.emptySchedule.get(0).setScheduledStart(Datetime.getCurrentDatetime());
         }
     }
