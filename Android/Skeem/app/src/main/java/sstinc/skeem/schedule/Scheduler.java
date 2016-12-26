@@ -127,6 +127,12 @@ public abstract class Scheduler {
                 this.emptySchedule.add(timeblock);
             }
         }
+
+        // Remove all voidblocks before now
+        this.emptySchedule = removeBeforeNow(this.emptySchedule);
+        if (this.emptySchedule.get(0) instanceof Timeblock) {
+            this.emptySchedule.get(0).setScheduledStart(Datetime.getCurrentDatetime());
+        }
     }
 
     /**
@@ -165,11 +171,15 @@ public abstract class Scheduler {
         return schedule;
     }
 
+    /**
+     * Apply all the filters to the schedule before sending it to the adapter.
+     * @param unfilteredSchedule schedule with all the tasks scheduled
+     * @return filtered schedule depending on how to filter
+     */
     public static ArrayList<Schedulable> filterSchedule(ArrayList<Schedulable> unfilteredSchedule) {
         ArrayList<Schedulable> schedule = unfilteredSchedule;
         // Apply filters
         schedule = removeTimeblocks(schedule);
-        schedule = removeBeforeNow(schedule);
 
         return schedule;
     }
