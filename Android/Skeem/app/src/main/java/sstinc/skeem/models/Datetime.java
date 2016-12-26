@@ -92,7 +92,7 @@ public class Datetime implements Parcelable {
     public Datetime(String datetime) {
         this();
 
-        if(datetime != null && ! datetime.isEmpty()) {
+        if (datetime != null && ! datetime.isEmpty()) {
             // Parse data from string
             String[] datetime_list = datetime.split(" ");
             String[] date_list = datetime_list[0].split("/");
@@ -106,7 +106,7 @@ public class Datetime implements Parcelable {
                 this.datetime = this.datetime.withDayOfMonth(Integer.parseInt(date_list[2]));
 
                 // Check that the date is not 1/1/1970
-                this.hasDate = this.getDay() != 1 && this.getMonth() != 1 && this.getYear() != 1970;
+                this.hasDate = this.getDay() != 1 || this.getMonth() != 1 || this.getYear() != 1970;
             }
 
             // Time values
