@@ -1,0 +1,57 @@
+[[BUG TRACKING]]
+[Bug 3]
+Severity: MEDIUM
+Status: OPEN
+Description: Unexpected Error: Invalid Time Given error given when user sets 
+dates before current time even when user has set the repeat option. Only occurs
+on when first creating void block
+Expected: No error when creating a repetitive task.
+Reproduction:
+1.Create a new repetitive void block with time starting earlier than the current
+  time
+2.Try To Save
+3.Fail due to error.
+
+[Bug 4]
+Severity: LOW
+Status: OPEN
+Description: Unexpected UI: Calendar to select date is shown even when task in
+repetitive. Only occurs when first creating void block
+Expected: No Calendar should be shown, because dates  would set using 'set 
+repeated days'
+Reproduction:
+1. Create a new void block.
+2. Toggle repeat switch
+3. Set begin/end dates
+4. Observe that you have to set a calendar
+
+[BUG 5]
+Severity: HIGH
+Status: OPEN
+Description: Application crashes when switching to schedule tab
+Expected: Not Crash
+Reproduction:
+1.Create a new void block (type does not matter, both repeat and non-repeat).
+2.Switch to Schedule Tap
+3.Crash!
+
+[BUG 6]
+Severity: HIGH
+Status: OPEN
+Description: Scheduling does not work without void blocks.
+Expected: Scheduling works without void blocks.
+Reproduction:
+1. Create a new task
+2. Switch to schedule tab
+3. Does not schedule. (Nothing appears on schedule tab
+
+[BUG 7]
+Severity: HIGH
+Status: Open
+Description: Application hangs for ~10 seconds, then crashes
+Expected: Not hang or crash
+Reproduction:
+1. Create a new repetitive task.
+2. Switch to schedule tab
+3. Hangs for 10 secs
+4. Crash
