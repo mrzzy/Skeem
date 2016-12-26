@@ -35,7 +35,7 @@ public class VoidblockFragment extends ListFragment implements AdapterView.OnIte
     boolean menu_continue = false;
     boolean menu_finish = false;
     boolean menu_duplicate = false;
-    boolean menu_delete = false;
+    public static boolean menu_delete = false;
     // Request codes
     public static final int createVoidblockRequestCode = 210;
     public static final int updateVoidblockRequestCode = 220;
@@ -317,21 +317,22 @@ public class VoidblockFragment extends ListFragment implements AdapterView.OnIte
             checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (!isChecked) {
-                        if (getCheckedCheckBoxes() == 0) {
-                            setCheckBoxes(false);
-                            menu_duplicate = false;
-                            menu_delete = false;
-                            getActivity().invalidateOptionsMenu();
-                            getListView().setOnItemClickListener(
-                                    new AdapterView.OnItemClickListener() {
-                                @Override
-                                public void onItemClick(AdapterView<?> parent, View view,
-                                                        int position, long id) {
-                                    editVoidblock(position);
-                                }
-                            });
-                        }
+                    int getPosition = (Integer) buttonView.getTag();
+                    ((VoidblockArrayAdapter) getListAdapter()).list.get(getPosition).checked =
+                            buttonView.isChecked();
+                    if (!isChecked && getCheckedCheckBoxes() == 0) {
+                        setCheckBoxes(false);
+                        menu_duplicate = false;
+                        menu_delete = false;
+                        getActivity().invalidateOptionsMenu();
+                        getListView().setOnItemClickListener(
+                                new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> parent, View view,
+                                                            int position, long id) {
+                                        editVoidblock(position);
+                                    }
+                        });
                     }
                 }
             });

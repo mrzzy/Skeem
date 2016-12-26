@@ -12,11 +12,12 @@ import android.widget.TextView;
 import java.util.List;
 
 import sstinc.skeem.R;
+import sstinc.skeem.fragments.VoidblockFragment;
 import sstinc.skeem.models.Voidblock;
 
 public class VoidblockArrayAdapter extends ArrayAdapter<Voidblock> {
     // List to contain all the voidblocks
-    private final List<Voidblock> list;
+    public final List<Voidblock> list;
 
     public VoidblockArrayAdapter(Activity context, List<Voidblock> list) {
         super(context, R.layout.list_voidblock_row, list);
@@ -78,14 +79,11 @@ public class VoidblockArrayAdapter extends ArrayAdapter<Voidblock> {
         viewHolder.fromTime.setText(voidblock.getScheduledStart().toFormattedString());
         // Set the to time
         viewHolder.toTime.setText(voidblock.getScheduledStop().toFormattedString());
-        // Set visibility of checkbox
-//        if (TaskFragment.menu_multi) {
-//            viewHolder.checkBox.setVisibility(View.VISIBLE);
-//        } else {
-//            viewHolder.checkBox.setVisibility(View.GONE);
-//        }
         // Set if the checkbox is checked or not
         viewHolder.checkBox.setChecked(list.get(position).checked);
+
+        // Set visibility of checkbox
+        viewHolder.checkBox.setVisibility(VoidblockFragment.menu_delete? View.VISIBLE : View.GONE);
 
         return convertView;
     }
