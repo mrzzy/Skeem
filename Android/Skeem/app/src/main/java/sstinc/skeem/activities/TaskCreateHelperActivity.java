@@ -268,6 +268,55 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        // Return all values back to TaskCreateActivity
+        Intent intent = new Intent();
+        // Add weekdays to intent if repeat is checked
+        Switch switch_repeat = (Switch) findViewById(R.id.switch_onetime_repetitive);
+        if (switch_repeat.isChecked()) {
+            intent.putExtra(EXTRA_WEEKDAYS, this.task.getWeekDays().toStringArray());
+        } else {
+            intent.putExtra(EXTRA_WEEKDAYS, new String[] {});
+        }
+
+        // Add duration to intent
+        Spinner spinner_duration_hours = (Spinner) findViewById(R.id.spinner_duration_hours);
+        Spinner spinner_duration_minutes = (Spinner) findViewById(
+                R.id.spinner_duration_minutes);
+        // Create new period for duration
+        Period duration = new Period();
+        duration = duration.plusHours(
+                Integer.parseInt((String) spinner_duration_hours.getSelectedItem()));
+        duration = duration.plusMinutes(
+                Integer.parseInt((String) spinner_duration_minutes.getSelectedItem()));
+        // Convert duration to PeriodFormat String and add to intent
+        intent.putExtra(EXTRA_DURATION, PeriodFormat.getDefault().print(duration));
+
+        // Add minimum time period to intent
+        Spinner spinner_min_time_period_hours = (Spinner) findViewById(
+                R.id.spinner_min_time_period_hours);
+        Spinner spinner_min_time_period_minutes = (Spinner) findViewById(
+                R.id.spinner_min_time_period_minutes);
+        // Create new period for min_time_period
+        Period min_time_period = new Period();
+        min_time_period = min_time_period.plusHours(Integer.parseInt(
+                (String) spinner_min_time_period_hours.getSelectedItem()));
+        min_time_period = min_time_period.plusMinutes(Integer.parseInt(
+                (String) spinner_min_time_period_minutes.getSelectedItem()));
+        // Convert min_time_period to PeriodFormat String and add to intent
+        intent.putExtra(EXTRA_MIN_TIME_PERIOD, PeriodFormat.getDefault().print(min_time_period));
+
+        // Deadline
+        intent.putExtra(EXTRA_DEADLINE, this.task.getDeadline());
+        // Deadline per day
+        intent.putExtra(EXTRA_DEADLINE_PER_DAY, this.task.getDeadlinePerDay());
+
+        setResult(RESULT_CANCELED, intent);
+        finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Get the id of the menu item selected
         int id = item.getItemId();
