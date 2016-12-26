@@ -19,54 +19,6 @@ import sstinc.skeem.activities.SelectCreateActivity;
 import sstinc.skeem.adapters.ScheduleArrayAdapter;
 import sstinc.skeem.models.Schedulable;
 
-/*
-Make voidtimeblocks
-evenSort(start, sto)
-Schedule repeated tasks by even sort
-Schedule the rest of the tasks
-
-def evenSort(tasks, timeblocks, scheduled_start):
-    for task in tasks:
-        available_timeblocks = []
-        for timeblock in timeblocks:
-            if timeblock is before task.deadline:
-                available_timeblocks.append(timeblock)
-
-        period_needed = task.period_needed
-        time_per_block = period_needed/len(available_timeblocks)
-        while True:
-            for timeblock in available_timeblocks:
-                if timeblock.duration less than time_per_block:
-                    period_needed -= timblock.duration
-                    time_per_block = period_needed/len(available_timeblocks)-1
-                    available_timeblocks.remove(timeblock)
-
-                    schedule fill timeblock with task
-                else:
-                    period_needed -= time_per_block
-                    schdule timeblock with task
-
-            if period_needed < 1min:
-                break
-
-Sorting:
-    Get voidtimeblocks
-    Get all the tasks that repeat
-    for each repeated task:
-        for each expanded repeated task:
-            scheduled the expanded repeated task into the latest timeblock in the day
-    for each task with min_time_period:
-        excess = 0 ms
-        for each available timeblock:
-            if the timeblock's duration is shorter than min_time_period:
-                fill timeblock with task
-                add min_time_period - timeblock to excess
-            else:
-                fill timeblock with task
-        if excess != 0:
-            for each available timeblock:
-                evenSort task into timeblock
- */
 public class ScheduleFragment extends ListFragment {
     // Menu status
     boolean menu_shuffle = false;
