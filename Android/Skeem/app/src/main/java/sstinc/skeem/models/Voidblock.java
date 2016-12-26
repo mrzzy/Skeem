@@ -102,10 +102,10 @@ public class Voidblock extends Schedulable implements Parcelable {
                 } else {
                     difference = day_value - dateTime.getDayOfWeek();
                 }
-                if (difference > 0) {
+                if (difference >= 0) {
                     // the repeated day is a few days later, move to the day
                     dateTime = dateTime.plusDays(difference);
-                    if (dateTime.getMillis() < end_datetime.getMillis()) {
+                    if (dateTime.getMillis() >= end_datetime.getMillis()) {
                         break;
                     }
                     Voidblock new_voidblock = new Voidblock(this);
