@@ -1,7 +1,7 @@
 [[BUG TRACKING]]
 [Bug 3]
 Severity: MEDIUM
-Status: PENDING CLOSE
+Status: OPEN
 Description: Unexpected Error: Invalid Time Given error given when user sets 
 dates before current time even when user has set the repeat option. Only occurs
 on when first creating void block
@@ -12,15 +12,23 @@ Reproduction:
 2.Try To Save
 3.Fail due to error.
 ---------------
+Author: Joel Tio Jin Hon
 Is it a voidblock or task?
 For both cases, this is likely to be because the repeated days are not set,
 hence, the program still does not count the task/voidblock as repetitive,
 therefore, the restrictions are still in place. I tried reproducing the error
 to no avail. Is there a calendar?
+--------------
+Author: Zhu Zhan Yan
+It only happens when repeated days is set for the first time when creating a 
+void block. The calendar still appears. What I expected was the repeated 
+flag being set as soon as the switch is toggled. In the onClick method of the 
+switch you need to tell the application that the void block is repetitive
+even before you save the task/void block for the first time.
 
 [Bug 4]
 Severity: LOW
-Status: PENDING CLOSE
+Status: OPEN
 Description: Unexpected UI: Calendar to select date is shown even when task in
 repetitive. Only occurs when first creating void block
 Expected: No Calendar should be shown, because dates  would set using 'set 
@@ -31,13 +39,17 @@ Reproduction:
 3. Set begin/end dates
 4. Observe that you have to set a calendar
 ---------------
+Author: Joel Tio Jin Hon
 Same as Bug 3, is it a voidblock or task? Most likely because you have not set
 the repeated days, the voidblock or task is not counted as repeated. Hence, it
 still shows the calendar.
+--------------
+Author: Zhu Zhan Yan
+Same explaination as bug 3.
 
 [BUG 5]
 Severity: HIGH
-Status: PENDING CLOSED
+Status: PARITAL OPEN
 Description: Application crashes when switching to schedule tab
 Expected: Not Crash
 Reproduction:
@@ -45,7 +57,13 @@ Reproduction:
 2.Switch to Schedule Tap
 3.Crash!
 ---------------
+Author: Joel Tio Jin Hon
 Bug fixed.
+--------------
+Author: Zhu Zhan Yan
+Bug fix tested.
+Bug fix verified for normal void blocks. 
+Bug is NOT fixed for repetitve void blocks.
 
 [BUG 6]
 Severity: HIGH
@@ -55,18 +73,53 @@ Expected: Scheduling works without void blocks.
 Reproduction:
 1. Create a new task
 2. Switch to schedule tab
-3. Does not schedule. (Nothing appears on schedule tab
+3. Does not schedule. (Nothing appears on schedule tab)
 ---------------
 Bug fixed.
 
 [BUG 7]
 Severity: HIGH
-Status: OPEN Description: Application hangs for ~10 seconds, then crashes
+Status: OPEN 
+Description: Application hangs for ~10 seconds, then crashes
 Expected: Not hang or crash
 Reproduction:
 1. Create a new repetitive task.
 2. Switch to schedule tab
-3. Hangs for 10 secs
+3. Hangs
 4. Crash
 ---------------
+Author: Joel Tio Jin Hon
 Unable to reproduce, need more information.
+--------------
+Author: Zhu Zhan Yan
+I started with a clean app. (Cleared app storage).
+1.I created a repetitive task named "do chores",which repeats for 2 hours 
+everyday on weekdays. I set  the deadline to 31/12/17 and the finish before to 
+18:30.
+2. Switch to the schedule tab
+3. The app hangs
+4. The app crashes (Skeem has stopped.)
+5. Subseqent reopens of the app follow steps 3 and 4.
+
+[BUG 8]
+Severity: LOW
+Status: OPEN
+Desciption: In the schedule tab, void blocks are shown as "- Voidblock -". The
+name of the void block does not appear.
+Expected: Name is shown on the schedule.
+Reproduction:
+1. Create a normal void block
+2. Switch to schedule tab
+3. Schedule shows void block with no name.
+
+[BUG 9]
+Severity: MEDIUM
+Status: OPEN
+Description: Schedule does not show how long the user to should do a task or 
+how long an voidblock is.
+Expected: The duration of the void block or the task scheduled would be shown
+to the user.
+Reproduction:
+1. Create a normal task
+2. Switch to schedule task
+3. Observe that the duration of how long the task is not shown
