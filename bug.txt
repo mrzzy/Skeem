@@ -1,7 +1,7 @@
 [[BUG TRACKING]]
 [Bug 3]
 Severity: MEDIUM
-Status: OPEN
+Status: PENDING CLOSE
 Description: Unexpected Error: Invalid Time Given error given when user sets 
 dates before current time even when user has set the repeat option. Only occurs
 on when first creating void block
@@ -11,10 +11,16 @@ Reproduction:
   time
 2.Try To Save
 3.Fail due to error.
+---------------
+Is it a voidblock or task?
+For both cases, this is likely to be because the repeated days are not set,
+hence, the program still does not count the task/voidblock as repetitive,
+therefore, the restrictions are still in place. I tried reproducing the error
+to no avail. Is there a calendar?
 
 [Bug 4]
 Severity: LOW
-Status: OPEN
+Status: PENDING CLOSE
 Description: Unexpected UI: Calendar to select date is shown even when task in
 repetitive. Only occurs when first creating void block
 Expected: No Calendar should be shown, because dates  would set using 'set 
@@ -24,34 +30,43 @@ Reproduction:
 2. Toggle repeat switch
 3. Set begin/end dates
 4. Observe that you have to set a calendar
+---------------
+Same as Bug 3, is it a voidblock or task? Most likely because you have not set
+the repeated days, the voidblock or task is not counted as repeated. Hence, it
+still shows the calendar.
 
 [BUG 5]
 Severity: HIGH
-Status: OPEN
+Status: PENDING CLOSED
 Description: Application crashes when switching to schedule tab
 Expected: Not Crash
 Reproduction:
 1.Create a new void block (type does not matter, both repeat and non-repeat).
 2.Switch to Schedule Tap
 3.Crash!
+---------------
+Bug fixed.
 
 [BUG 6]
 Severity: HIGH
-Status: OPEN
+Status: PENDING CLOSED
 Description: Scheduling does not work without void blocks.
 Expected: Scheduling works without void blocks.
 Reproduction:
 1. Create a new task
 2. Switch to schedule tab
 3. Does not schedule. (Nothing appears on schedule tab
+---------------
+Bug fixed.
 
 [BUG 7]
 Severity: HIGH
-Status: Open
-Description: Application hangs for ~10 seconds, then crashes
+Status: OPEN Description: Application hangs for ~10 seconds, then crashes
 Expected: Not hang or crash
 Reproduction:
 1. Create a new repetitive task.
 2. Switch to schedule tab
 3. Hangs for 10 secs
 4. Crash
+---------------
+Unable to reproduce, need more information.

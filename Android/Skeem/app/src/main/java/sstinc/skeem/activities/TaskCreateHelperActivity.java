@@ -23,7 +23,6 @@ import sstinc.skeem.R;
 import sstinc.skeem.models.Task;
 import sstinc.skeem.models.WeekDays;
 
-//TODO: Settle UI First. Stop Repeating date(time) and deadline on day time buttons.
 /*
 taskCreate
     -> FROM: Helper VALUE: weekDays

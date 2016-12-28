@@ -66,6 +66,8 @@ public abstract class Scheduler {
             VoidblockComparator voidBlockComparator = new VoidblockComparator();
             voidBlockComparator.setSortBy(VoidblockComparator.Order.SCHEDULED_START, true);
             Collections.sort(this.expandedVoidblocks, voidBlockComparator);
+        } else {
+            this.expandedVoidblocks = this.voidblocks;
         }
 
         // Expand tasks
@@ -112,7 +114,7 @@ public abstract class Scheduler {
         }
 
         // Add an ending timeblock for the day
-        if (this.voidblocks.size() != 0) {
+        if (this.expandedVoidblocks.size() != 0) {
             Voidblock lastVoidblock = this.expandedVoidblocks.get(this.expandedVoidblocks.size()-1);
             if (lastVoidblock.getScheduledStop().getHour() != 23 ||
                     lastVoidblock.getScheduledStop().getMinute() != 59) {
@@ -126,6 +128,12 @@ public abstract class Scheduler {
 
                 this.emptySchedule.add(timeblock);
             }
+        } else if (this.tasks.size() != 0) {
+            // Add a timeblock that can be filled with all the tasks if there
+            // are no voidblocks
+            Datetime lastDeadline = this.tasks.get(this.tasks.size()-1).getDeadline();
+            Timeblock timeblock = new Timeblock(Datetime.getCurrentDatetime(), lastDeadline);
+            this.emptySchedule.add(timeblock);
         }
 
         // Remove all voidblocks before now
