@@ -49,7 +49,7 @@ Same explaination as bug 3.
 
 [BUG 5]
 Severity: HIGH
-Status: PARITAL OPEN
+Status: PARTIAL OPEN
 Description: Application crashes when switching to schedule tab
 Expected: Not Crash
 Reproduction:
@@ -79,7 +79,7 @@ Bug fixed.
 
 [BUG 7]
 Severity: HIGH
-Status: OPEN 
+Status: PENDING CLOSED
 Description: Application hangs for ~10 seconds, then crashes
 Expected: Not hang or crash
 Reproduction:
@@ -90,7 +90,7 @@ Reproduction:
 ---------------
 Author: Joel Tio Jin Hon
 Unable to reproduce, need more information.
---------------
+---------------
 Author: Zhu Zhan Yan
 I started with a clean app. (Cleared app storage).
 1.I created a repetitive task named "do chores",which repeats for 2 hours 
@@ -100,6 +100,9 @@ everyday on weekdays. I set  the deadline to 31/12/17 and the finish before to
 3. The app hangs
 4. The app crashes (Skeem has stopped.)
 5. Subseqent reopens of the app follow steps 3 and 4.
+---------------
+Author: Joel Tio Jin Hon
+Bug fixed.
 
 [BUG 8]
 Severity: LOW
@@ -123,3 +126,14 @@ Reproduction:
 1. Create a normal task
 2. Switch to schedule task
 3. Observe that the duration of how long the task is not shown
+
+[BUG 10]
+Severity: MEDIUM
+Status: OPEN
+Description: Entering 12:00 am into any date field will not be shown.
+Expected: All times should be shown.
+Reproduction:
+1. Create a new Voidblock
+2. Select 12:00 am for either "from" or "to"
+3. Save the voidblock
+4. Notice that the time which you set 12:00 am is not shown
