@@ -9,6 +9,9 @@ import org.joda.time.format.PeriodFormat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+
+import static java.lang.Math.abs;
 
 //TODO: Check dependencies on deadline per day
 
@@ -239,31 +242,42 @@ public class Task extends Schedulable implements Parcelable {
             repeated_days.add(weekdays_index.indexOf(weekDay) + 1);
         }
 
-        DateTime dateTime = new DateTime();
-        while (dateTime.isBefore(this.deadline.getMillis())) {
+        // Resort the repeated days
+        DateTime dateTime = new DateTime(Datetime.getCurrentDatetime().getMillis());
+        int diff = 8;
+        for (int i=0; i<repeated_days.size(); i++) {
+            if (abs(dateTime.getDayOfWeek() - repeated_days.get(0)) <= diff) {
+                diff = abs(repeated_days.get(0) - dateTime.getDayOfWeek());
+                Collections.rotate(repeated_days, -1);
+            } else {
+                break;
+            }
+        }
+        Collections.rotate(repeated_days, 1);
+
+        while (dateTime.getMillis() < this.deadline.getMillis()) {
             for (int day_value : repeated_days) {
                 int difference;
                 // Calculate number of days to the next repeated weekday
                 if (day_value < dateTime.getDayOfWeek()) {
-                    difference = day_value + dateTime.getDayOfWeek() -7;
+                    difference = day_value + 7-dateTime.getDayOfWeek();
                 } else {
-                    difference = dateTime.getDayOfWeek() - day_value;
+                    difference = day_value - dateTime.getDayOfWeek();
                 }
-                if (difference < 0) {
-                    // if difference is < 0, the next day is before today, move to
-                    // the next repeated day
-                    // 1, 2, 3, 4, 5, 6, 7
-                    dateTime = dateTime.plusDays(-difference);
-                } else if (difference == 0) {
+
+                if (difference >= 0) {
+                    dateTime = dateTime.plusDays(difference);
+                    if (dateTime.getMillis() >= this.deadline.getMillis()) {
+                        break;
+                    }
+
                     // today is a repeated day, add it to the list of tasks
                     Task new_task = new Task(this);
                     Datetime datetime = new Datetime(dateTime);
                     datetime.setHasTime(true);
                     new_task.setScheduledStart(datetime);
+
                     tasks.add(new_task);
-                } else if (difference > 0){
-                    // the repeated day is a few days later, move to the day
-                    dateTime = dateTime.plus(difference);
                 }
             }
         }

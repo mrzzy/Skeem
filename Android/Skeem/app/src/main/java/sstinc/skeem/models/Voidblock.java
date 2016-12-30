@@ -8,6 +8,9 @@ import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+
+import static java.lang.Math.abs;
 
 /**
  * This class handles the user's voidblocks. Each voidblock has a name and a
@@ -92,7 +95,19 @@ public class Voidblock extends Schedulable implements Parcelable {
             repeated_days.add(weekdays_index.indexOf(weekDay) + 1);
         }
 
+        // Resort the repeated days
         DateTime dateTime = new DateTime(Datetime.getCurrentDatetime().getMillis());
+        int diff = 8;
+        for (int i=0; i<repeated_days.size(); i++) {
+            if (abs(dateTime.getDayOfWeek() - repeated_days.get(0)) <= diff) {
+                diff = abs(repeated_days.get(0) - dateTime.getDayOfWeek());
+                Collections.rotate(repeated_days, -1);
+            } else {
+                break;
+            }
+        }
+        Collections.rotate(repeated_days, 1);
+
         while (dateTime.getMillis() < end_datetime.getMillis()) {
             for (int day_value : repeated_days) {
                 int difference;

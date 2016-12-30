@@ -15,7 +15,8 @@ public class TaskComparator implements Comparator<Task> {
     private Order order;
     private boolean isAscending;
     // Ways to order by
-    public enum Order {NAME, SUBJECT, TASKTYPE, DEADLINE, DURATION, MIN_TIME_PERIOD}
+    public enum Order {NAME, SUBJECT, TASKTYPE, DEADLINE,
+        DURATION, MIN_TIME_PERIOD, SCHEDULED_START, SCHEDULED_STOP}
 
     // Default constructor
     public TaskComparator() {
@@ -86,6 +87,32 @@ public class TaskComparator implements Comparator<Task> {
                 }
                 if (c == 0) {
                     c = mul_val*o1.getSubject().compareTo(o2.getSubject());
+                }
+                break;
+            case SCHEDULED_START:
+                c = mul_val*o1.getScheduledStart().toString().compareTo(
+                        o2.getScheduledStart().toString());
+                // Order by SCHEDULED_STOP next
+                if (c == 0) {
+                    c = mul_val*o1.getScheduledStop().toString().compareTo(
+                            o2.getScheduledStop().toString());
+                }
+                // Order by NAME last
+                if (c == 0) {
+                    c = mul_val*o1.getName().compareTo(o2.getName());
+                }
+                break;
+            case SCHEDULED_STOP:
+                c = mul_val*o1.getScheduledStop().toString().compareTo(
+                        o2.getScheduledStop().toString());
+                // Order by SCHEDULED_START next
+                if (c == 0) {
+                    c = mul_val*o1.getScheduledStart().toString().compareTo(
+                            o2.getScheduledStart().toString());
+                }
+                // Order by NAME last
+                if (c == 0) {
+                    c = mul_val*o1.getName().compareTo(o2.getName());
                 }
                 break;
             default:
