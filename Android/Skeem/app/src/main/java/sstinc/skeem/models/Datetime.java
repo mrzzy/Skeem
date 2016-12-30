@@ -12,6 +12,8 @@ import org.joda.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Locale;
 
+import static java.lang.Math.abs;
+
 //TODO: Locale datetime string format
 //TODO: Check dependencies for datetime parcelable
 
@@ -283,6 +285,10 @@ public class Datetime implements Parcelable {
         }
     }
 
+    public Period getDifference(Datetime datetime) {
+        return new Period(abs(this.datetime.getMillis() - datetime.getMillis()));
+    }
+
     /**
      * {@link #getYear()}
      * @param year datetime's year
@@ -386,27 +392,17 @@ public class Datetime implements Parcelable {
         String string = "";
         // Date
         if (this.getHasDate()) {
-            string += this.getYear() + "/" + this.getMonth() + "/" + this.getDay();
+            string += String.format(Locale.getDefault(), "%1$04d/%2$02d/%3$02d",
+                    this.getYear(), this.getMonth(), this.getDay());
         } else {
-            string += "0/0/0";
+            string += "0000/00/00";
         }
         // Add a space separator
         string += " ";
         // Time
         if (this.getHasTime()) {
-            if (this.getHour() > 9) {
-                string += this.getHour();
-            } else {
-                string += "0" + this.getHour();
-            }
-
-            string += ":";
-
-            if (this.getMinute() > 9) {
-                string += this.getMinute();
-            } else {
-                string += "0" + this.getMinute();
-            }
+            string += String.format(Locale.getDefault(), "%1$02d:%2$02d",
+                    this.getHour(), this.getMinute());
         } else {
             string += "00:00";
         }
