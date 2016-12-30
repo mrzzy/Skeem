@@ -1,7 +1,5 @@
 package sstinc.skeem.models;
 
-import android.util.Log;
-
 import org.joda.time.Period;
 
 import java.util.ArrayList;
@@ -64,12 +62,30 @@ public class Timeblock extends Schedulable {
     public Period getPeriodUsed() {
         return this.period_used;
     }
+
     /**
      * Gets the unused period of the timeblock by the tasks.
      * @return timeblock's available period
      */
     public Period getPeriodLeft() {
         return this.period_left;
+    }
+
+    /**
+     * Gets the unused period of the timeblock by the tasks before a certain
+     * datetime.
+     * @param before datetime before the timeblock ends
+     * @return timeblock's available period before given datetime
+     */
+    public Period getPeriodLeft(Datetime before) {
+        if (this.getScheduledStop().getMillis() <= before.getMillis()) {
+            return this.period_left;
+        } else if (this.getScheduledStart().getMillis() >= before.getMillis()) {
+            return new Period();
+        } else {
+            Period periodLeftBeforeTime = new Period(this.period_left);
+            return periodLeftBeforeTime.minus(before.getDifference(this.getScheduledStop()));
+        }
     }
 
     /**
