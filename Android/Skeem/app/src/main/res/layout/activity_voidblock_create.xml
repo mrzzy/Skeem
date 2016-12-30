@@ -20,6 +20,38 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:hint="@string/field_text_voidblock_name_hint" />
     <LinearLayout
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/colorFontPrimary"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/text_view_repetitions"/>
+
+        <Switch
+            android:id="@+id/switch_voidblock_repeat"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_gravity="end" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button_voidblock_repeats"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="@string/button_repetitions_unset" />
+
+    <LinearLayout
         android:id="@+id/layout_from"
         android:orientation="horizontal"
         android:paddingStart="@dimen/activity_horizontal_margin"
@@ -72,36 +104,4 @@
             android:textColor="@color/colorFontWhitePrimary"
             android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingStart="@dimen/activity_horizontal_margin"
-        android:paddingEnd="@dimen/activity_horizontal_margin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textColor="@color/colorFontPrimary"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/text_view_repetitions"/>
-
-        <Switch
-            android:id="@+id/switch_voidblock_repeat"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_gravity="end" />
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/button_voidblock_repeats"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:text="@string/button_repetitions_unset" />
 </LinearLayout>

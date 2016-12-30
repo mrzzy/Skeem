@@ -1,7 +1,7 @@
 [[BUG TRACKING]]
 [Bug 3]
 Severity: MEDIUM
-Status: OPEN
+Status: CLOSED
 Description: Unexpected Error: Invalid Time Given error given when user sets 
 dates before current time even when user has set the repeat option. Only occurs
 on when first creating void block
@@ -25,6 +25,10 @@ void block. The calendar still appears. What I expected was the repeated
 flag being set as soon as the switch is toggled. In the onClick method of the 
 switch you need to tell the application that the void block is repetitive
 even before you save the task/void block for the first time.
+--------------
+Author: Joel Tio Jin Hon
+This issue has been resolved as a UI feature. UI Fixed to show voidblock
+repeats more clearly by moving it below name.
 
 [Bug 4]
 Severity: LOW
@@ -90,7 +94,7 @@ Reproduction:
 ---------------
 Author: Joel Tio Jin Hon
 Unable to reproduce, need more information.
----------------
+--------------
 Author: Zhu Zhan Yan
 I started with a clean app. (Cleared app storage).
 1.I created a repetitive task named "do chores",which repeats for 2 hours 
@@ -100,7 +104,7 @@ everyday on weekdays. I set  the deadline to 31/12/17 and the finish before to
 3. The app hangs
 4. The app crashes (Skeem has stopped.)
 5. Subseqent reopens of the app follow steps 3 and 4.
----------------
+--------------
 Author: Joel Tio Jin Hon
 Bug fixed.
 
