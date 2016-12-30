@@ -112,7 +112,7 @@ public class Datetime implements Parcelable {
             }
 
             // Time values
-            if (!time_list[0].equals("-")) {
+            if (!time_list[0].equals("--")) {
                 this.datetime = this.datetime.withHourOfDay(Integer.parseInt(time_list[0]));
                 this.datetime = this.datetime.withMinuteOfHour(Integer.parseInt(time_list[1]));
 
