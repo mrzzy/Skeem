@@ -138,7 +138,7 @@ Reproduction:
 3. Observe that the duration of how long the task is not shown
 
 [BUG 10]
-Severity: MEDIUM
+Severity: PENDING CLOSED
 Status: OPEN
 Description: Entering 12:00 am into any date field will not be shown.
 Expected: All times should be shown.
@@ -147,3 +147,6 @@ Reproduction:
 2. Select 12:00 am for either "from" or "to"
 3. Save the voidblock
 4. Notice that the time which you set 12:00 am is not shown
+---------------
+Author: Joel Tio Jin Hon
+Bug Fixed.
