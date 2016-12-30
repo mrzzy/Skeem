@@ -43,6 +43,7 @@ public class ScheduleArrayAdapter extends ArrayAdapter<Schedulable> {
 
         RelativeLayout voidblock_layout;
         TextView voidblock_time;
+        TextView voidblock_name;
     }
 
     @Override
@@ -76,6 +77,8 @@ public class ScheduleArrayAdapter extends ArrayAdapter<Schedulable> {
                     R.id.list_item_schedule_layout_voidblock);
             viewHolder.voidblock_time = (TextView) convertView.findViewById(
                     R.id.list_item_schedule_voidblock_time);
+            viewHolder.voidblock_name = (TextView) convertView.findViewById(
+                    R.id.text_view_schedule_voidblock_label);
 
             // Set viewHolder to convertView
             convertView.setTag(viewHolder);
@@ -109,6 +112,7 @@ public class ScheduleArrayAdapter extends ArrayAdapter<Schedulable> {
 
             viewHolder.voidblock_time.setText(voidblock.getScheduledStart().toFormattedString() +
                     " - " + voidblock.getScheduledStop().toFormattedString());
+            viewHolder.voidblock_name.setText(voidblock.getName());
 
             viewHolder.voidblock_layout.setVisibility(View.VISIBLE);
             viewHolder.task_layout.setVisibility(View.GONE);
