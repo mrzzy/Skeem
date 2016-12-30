@@ -23,7 +23,8 @@ import sstinc.skeem.utils.VoidblockComparator;
 public abstract class Scheduler {
     private String name;
     private ArrayList<Task> tasks;
-    private ArrayList<Task> expandedTasks;
+    private ArrayList<Task> tasksWithExpandedRepeats;
+    private ArrayList<Task> repeatedTasksExpanded;
     private ArrayList<Voidblock> voidblocks;
     private ArrayList<Voidblock> expandedVoidblocks;
     private ArrayList<Timeblock> timeblocks;
@@ -46,7 +47,8 @@ public abstract class Scheduler {
         this.voidblocks = dbAdapter.getVoidblocks();
         dbAdapter.close();
 
-        this.expandedTasks = new ArrayList<>();
+        this.tasksWithExpandedRepeats = new ArrayList<>();
+        this.repeatedTasksExpanded = new ArrayList<>();
         this.expandedVoidblocks = new ArrayList<>();
         this.timeblocks = new ArrayList<>();
         this.emptySchedule = new ArrayList<>();
@@ -73,15 +75,14 @@ public abstract class Scheduler {
         // Expand tasks
         for (Task task : this.tasks) {
             if (task.isRepeated()) {
-                Collections.addAll(this.expandedTasks, task.getSeparatedRepeatedTasks());
-            } else {
-                this.expandedTasks.add(task);
+                Collections.addAll(this.repeatedTasksExpanded, task.getSeparatedRepeatedTasks());
             }
         }
-        // Sort the expanded tasks, most recent first
-        TaskComparator taskComparator = new TaskComparator();
-        taskComparator.setSortBy(TaskComparator.Order.DEADLINE, true);
-        Collections.sort(this.expandedTasks, taskComparator);
+
+        // Sort the repeated tasks expanded
+        TaskComparator repeatedTaskComparator = new TaskComparator();
+        repeatedTaskComparator.setSortBy(TaskComparator.Order.SCHEDULED_START, true);
+        Collections.sort(this.repeatedTasksExpanded, repeatedTaskComparator);
 
         // Create emptySchedule and timeblocks
         for (int i=0;i<this.expandedVoidblocks.size();i++) {
@@ -237,12 +238,60 @@ public abstract class Scheduler {
     }
 
     /**
+     * The non-repeated tasks from the database
+     * @return non-repeated tasks
+     */
+    ArrayList<Task> getNonRepeatedTasks() {
+        ArrayList<Task> nonRepeatedTasks = new ArrayList<>();
+        for (Task task : this.tasks) {
+            if (!task.isRepeated()) {
+                nonRepeatedTasks.add(task);
+            }
+        }
+
+        // Sort the expanded tasks, most recent first
+        TaskComparator taskComparator = new TaskComparator();
+        taskComparator.setSortBy(TaskComparator.Order.DEADLINE, true);
+        Collections.sort(nonRepeatedTasks, taskComparator);
+
+        return nonRepeatedTasks;
+    }
+
+    /**
+     * The repeated tasks from the database
+     * @return repeated tasks
+     */
+    ArrayList<Task> getRepeatedTasks() {
+        ArrayList<Task> repeatedTasks = new ArrayList<>();
+        for (Task task : this.tasks) {
+            if (task.isRepeated()) {
+                repeatedTasks.add(task);
+            }
+        }
+
+        // Sort the repeated tasks
+        TaskComparator taskComparator = new TaskComparator();
+        taskComparator.setSortBy(TaskComparator.Order.SCHEDULED_START, true);
+        Collections.sort(repeatedTasks, taskComparator);
+
+        return repeatedTasks;
+    }
+
+    /**
      * The tasks from the database with all of it's repeated days expanded
      * into individual tasks.
      * @return tasks and expanded repeated tasks
      */
-    ArrayList<Task> getExpandedTasks() {
-        return this.expandedTasks;
+    ArrayList<Task> getTasksWithExpandedRepeats() {
+        return this.tasksWithExpandedRepeats;
+    }
+
+    /**
+     * The repeated tasks from the database expanded into individual tasks.
+     * @return repeated tasks expanded
+     */
+    ArrayList<Task> getRepeatedTasksExpanded() {
+        return this.repeatedTasksExpanded;
     }
 
     /**
