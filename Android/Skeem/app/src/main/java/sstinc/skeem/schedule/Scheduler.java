@@ -94,7 +94,8 @@ public abstract class Scheduler {
                     timeblockToAdd.setScheduledStart(Datetime.getCurrentDatetime());
                     timeblockToAdd.setScheduledStop(
                             this.expandedVoidblocks.get(i).getScheduledStart());
-                    this.emptySchedule.add(timeblockToAdd);
+
+                    this.emptySchedule.addAll(timeblockToAdd.getSingleDayTimeblocks());
                 }
                 this.emptySchedule.add(this.expandedVoidblocks.get(i));
             } else {
@@ -105,9 +106,9 @@ public abstract class Scheduler {
                         curr_voidblock.getScheduledStart());
 
                 if (!timeblockToAdd.getScheduledPeriod().equals(new Period())) {
-                    this.emptySchedule.add(timeblockToAdd);
+                    this.emptySchedule.addAll(timeblockToAdd.getSingleDayTimeblocks());
                     this.emptySchedule.add(curr_voidblock);
-                    this.timeblocks.add(timeblockToAdd);
+                    this.timeblocks.addAll(timeblockToAdd.getSingleDayTimeblocks());
                 } else {
                     this.emptySchedule.add(curr_voidblock);
                 }
