@@ -135,7 +135,7 @@ public class TaskCreateActivity extends AppCompatActivity {
                 String subject = editText_subject.getText().toString();
                 String description = editText_description.getText().toString();
 
-                // Get weekdays, deadline, period and min_time_period
+                // Get weekdays, deadline and period
                 WeekDays weekDays = new WeekDays(data.getStringArrayExtra(
                         TaskCreateHelperActivity.EXTRA_WEEKDAYS));
                 Datetime deadline_per_day = data.getParcelableExtra(
@@ -144,8 +144,6 @@ public class TaskCreateActivity extends AppCompatActivity {
                         TaskCreateHelperActivity.EXTRA_DEADLINE);
                 Period period = PeriodFormat.getDefault().parsePeriod(
                         data.getStringExtra(TaskCreateHelperActivity.EXTRA_DURATION));
-                Period min_time_period = PeriodFormat.getDefault().parsePeriod(
-                        data.getStringExtra(TaskCreateHelperActivity.EXTRA_MIN_TIME_PERIOD));
 
                 // Create intent
                 Intent intent = new Intent();
@@ -156,7 +154,6 @@ public class TaskCreateActivity extends AppCompatActivity {
                 this.task.setDeadlinePerDay(deadline_per_day);
                 this.task.setDeadline(deadline);
                 this.task.setPeriodNeeded(period);
-                this.task.setPeriodMinimum(min_time_period);
                 intent.putExtra(TaskFragment.EXTRA_TASK, this.task);
 
                 // Pass task to TaskFragment
@@ -166,7 +163,7 @@ public class TaskCreateActivity extends AppCompatActivity {
                 // User cancelled setting the task settings. Store the values
                 // in the current task.
 
-                // Get weekdays, deadline, period and min_time_period
+                // Get weekdays, deadline and period
                 WeekDays weekDays = new WeekDays(data.getStringArrayExtra(
                         TaskCreateHelperActivity.EXTRA_WEEKDAYS));
                 Datetime deadline_per_day = data.getParcelableExtra(
@@ -175,15 +172,12 @@ public class TaskCreateActivity extends AppCompatActivity {
                         TaskCreateHelperActivity.EXTRA_DEADLINE);
                 Period period = PeriodFormat.getDefault().parsePeriod(
                         data.getStringExtra(TaskCreateHelperActivity.EXTRA_DURATION));
-                Period min_time_period = PeriodFormat.getDefault().parsePeriod(
-                        data.getStringExtra(TaskCreateHelperActivity.EXTRA_MIN_TIME_PERIOD));
 
                 // Set the activities task for future update
                 this.task.setWeekDays(weekDays);
                 this.task.setDeadlinePerDay(deadline_per_day);
                 this.task.setDeadline(deadline);
                 this.task.setPeriodNeeded(period);
-                this.task.setPeriodMinimum(min_time_period);
 
                 // Reset menu
                 menu_continue = true;

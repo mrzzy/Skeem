@@ -16,7 +16,7 @@ public class TaskComparator implements Comparator<Task> {
     private boolean isAscending;
     // Ways to order by
     public enum Order {NAME, SUBJECT, TASKTYPE, DEADLINE,
-        DURATION, MIN_TIME_PERIOD, SCHEDULED_START, SCHEDULED_STOP}
+        DURATION, SCHEDULED_START, SCHEDULED_STOP}
 
     // Default constructor
     public TaskComparator() {
@@ -72,16 +72,6 @@ public class TaskComparator implements Comparator<Task> {
             case DURATION:
                 c = mul_val*PeriodFormat.getDefault().print(o1.getPeriodNeeded()).compareTo(
                         PeriodFormat.getDefault().print(o2.getPeriodNeeded()));
-                if (c == 0) {
-                    c = mul_val*o1.getName().compareTo(o2.getName());
-                }
-                if (c == 0) {
-                    c = mul_val*o1.getSubject().compareTo(o2.getSubject());
-                }
-                break;
-            case MIN_TIME_PERIOD:
-                c = mul_val*PeriodFormat.getDefault().print(o1.getPeriodMinimum()).compareTo(
-                        PeriodFormat.getDefault().print(o2.getPeriodMinimum()));
                 if (c == 0) {
                     c = mul_val*o1.getName().compareTo(o2.getName());
                 }

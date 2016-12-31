@@ -122,11 +122,6 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                     intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_MAX,
                             voidblock.getScheduledStop());
                 }
-                if (voidblock.isRepeated()) {
-                    // Set the minimum to 0
-                    intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_MIN,
-                            new Datetime());
-                }
 
                 // Set the current datetime to the scheduled_start
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_DATETIME,
@@ -163,15 +158,6 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                 }
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HAS_TIME,
                         CreateDatetimeActivity.HAS_TIME_TRUE);
-                // Set minimum to scheduled_start if it exists. If not, set
-                // it to the current datetime
-                if (voidblock.getScheduledStart().getHasTime()) {
-                    intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_MIN,
-                            voidblock.getScheduledStart());
-                } else {
-                    intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_MIN,
-                            new Datetime());
-                }
                 // Set the current datetime to scheduled stop
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_DATETIME,
                         voidblock.getScheduledStop());

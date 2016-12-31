@@ -118,20 +118,6 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
             }
         });
 
-        // Minimum time period switch
-        Switch switch_min_time_period = (Switch) findViewById(
-                R.id.switch_min_time_period);
-        switch_min_time_period.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                // Toggle visibility of min_time_period_layout
-                LinearLayout min_time_period_layout = (LinearLayout) findViewById(
-                        R.id.min_time_period_layout);
-                min_time_period_layout.setVisibility(b? View.VISIBLE : View.GONE);
-            }
-        });
-
         // Set spinner values
         // Create defined set of values to choose from
         String[] hourValues = {"0", "1", "2", "3", "4", "5", "6"};
@@ -153,14 +139,6 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
         spinner_duration_hours.setAdapter(hourArrayAdapter);
         spinner_duration_minutes.setAdapter(minuteArrayAdapter);
 
-        // Get minimum time period spinners
-        Spinner spinner_min_time_period_hours = (Spinner) findViewById(
-                R.id.spinner_min_time_period_hours);
-        Spinner spinner_min_time_period_minutes = (Spinner) findViewById(
-                R.id.spinner_min_time_period_minutes);
-        // Set minimum time period spinner adapters
-        spinner_min_time_period_hours.setAdapter(hourArrayAdapter);
-        spinner_min_time_period_minutes.setAdapter(minuteArrayAdapter);
 
         // Set deadline and deadline per day datetime selectors
         LinearLayout deadline_layout = (LinearLayout) findViewById(R.id.layout_deadline);
@@ -188,7 +166,6 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HAS_DATE, false);
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_HAS_TIME,
                         CreateDatetimeActivity.HAS_TIME_TRUE);
-                intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_MIN, new Datetime());
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_DATETIME,
                         task.getDeadlinePerDay());
                 startActivityForResult(intent, createDeadlinePerDayRequestCode);
@@ -221,22 +198,6 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
                         Integer.toString(this.task.getPeriodNeeded().getHours())));
         spinner_duration_minutes.setSelection(minuteArrayAdapter.getPosition(
                         Integer.toString(this.task.getPeriodNeeded().getMinutes())));
-
-        // Set minimum time period
-        if (!this.task.getPeriodMinimum().equals(new Period())) {
-            // Check the min_time_period switch
-            switch_min_time_period.setChecked(true);
-            // Set the appropriate hours and minutes
-            spinner_min_time_period_hours.setSelection(hourArrayAdapter.getPosition(
-                    Integer.toString(this.task.getPeriodMinimum().getHours())));
-            spinner_min_time_period_minutes.setSelection(minuteArrayAdapter.getPosition(
-                    Integer.toString(this.task.getPeriodMinimum().getMinutes())));
-
-            // Get layout and make it visible
-            LinearLayout min_time_period_layout = (LinearLayout) findViewById(
-                    R.id.min_time_period_layout);
-            min_time_period_layout.setVisibility(View.VISIBLE);
-        }
 
         // Set Deadline
         TextView deadline = (TextView) findViewById(R.id.text_view_deadline);
@@ -291,20 +252,6 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
         // Convert duration to PeriodFormat String and add to intent
         intent.putExtra(EXTRA_DURATION, PeriodFormat.getDefault().print(duration));
 
-        // Add minimum time period to intent
-        Spinner spinner_min_time_period_hours = (Spinner) findViewById(
-                R.id.spinner_min_time_period_hours);
-        Spinner spinner_min_time_period_minutes = (Spinner) findViewById(
-                R.id.spinner_min_time_period_minutes);
-        // Create new period for min_time_period
-        Period min_time_period = new Period();
-        min_time_period = min_time_period.plusHours(Integer.parseInt(
-                (String) spinner_min_time_period_hours.getSelectedItem()));
-        min_time_period = min_time_period.plusMinutes(Integer.parseInt(
-                (String) spinner_min_time_period_minutes.getSelectedItem()));
-        // Convert min_time_period to PeriodFormat String and add to intent
-        intent.putExtra(EXTRA_MIN_TIME_PERIOD, PeriodFormat.getDefault().print(min_time_period));
-
         // Deadline
         intent.putExtra(EXTRA_DEADLINE, this.task.getDeadline());
         // Deadline per day
@@ -342,20 +289,6 @@ public class TaskCreateHelperActivity extends AppCompatActivity {
                 Integer.parseInt((String) spinner_duration_minutes.getSelectedItem()));
         // Convert duration to PeriodFormat String and add to intent
         intent.putExtra(EXTRA_DURATION, PeriodFormat.getDefault().print(duration));
-
-        // Add minimum time period to intent
-        Spinner spinner_min_time_period_hours = (Spinner) findViewById(
-                R.id.spinner_min_time_period_hours);
-        Spinner spinner_min_time_period_minutes = (Spinner) findViewById(
-                R.id.spinner_min_time_period_minutes);
-        // Create new period for min_time_period
-        Period min_time_period = new Period();
-        min_time_period = min_time_period.plusHours(Integer.parseInt(
-                (String) spinner_min_time_period_hours.getSelectedItem()));
-        min_time_period = min_time_period.plusMinutes(Integer.parseInt(
-                (String) spinner_min_time_period_minutes.getSelectedItem()));
-        // Convert min_time_period to PeriodFormat String and add to intent
-        intent.putExtra(EXTRA_MIN_TIME_PERIOD, PeriodFormat.getDefault().print(min_time_period));
 
         // Deadline
         intent.putExtra(EXTRA_DEADLINE, this.task.getDeadline());

@@ -37,7 +37,6 @@ public class Task extends Schedulable implements Parcelable {
     private Datetime deadline_per_day;
 
     private Period period_needed;
-    private Period period_minimum;
 
     private Datetime deadline;
 
@@ -56,7 +55,6 @@ public class Task extends Schedulable implements Parcelable {
         this.deadline_per_day = new Datetime();
 
         this.period_needed = new Period();
-        this.period_minimum = new Period();
 
         this.deadline = new Datetime();
     }
@@ -72,7 +70,6 @@ public class Task extends Schedulable implements Parcelable {
         this.deadline_per_day = new Datetime(task.getDeadlinePerDay());
 
         this.period_needed = new Period(task.getPeriodNeeded());
-        this.period_minimum = new Period(task.getPeriodMinimum());
 
         this.deadline = new Datetime(task.getDeadline());
     }
@@ -95,7 +92,6 @@ public class Task extends Schedulable implements Parcelable {
         this.deadline_per_day = new Datetime();
 
         this.period_needed = new Period();
-        this.period_minimum = new Period();
 
         this.deadline = new Datetime();
     }
@@ -144,14 +140,6 @@ public class Task extends Schedulable implements Parcelable {
      */
     public Period getPeriodNeeded() {
         return this.period_needed;
-    }
-    /**
-     * Gets the user's recommended time to be spent on this task for each
-     * timeblock.
-     * @return recommended time to be spent on task
-     */
-    public Period getPeriodMinimum() {
-        return this.period_minimum;
     }
 
     /**
@@ -205,13 +193,6 @@ public class Task extends Schedulable implements Parcelable {
      */
     public void setPeriodNeeded(Period period_needed) {
         this.period_needed = period_needed;
-    }
-    /**
-     * {@link #getPeriodMinimum()}
-     * @param period_minimum recommended period for task
-     */
-    public void setPeriodMinimum(Period period_minimum) {
-        this.period_minimum = period_minimum;
     }
 
     /**
@@ -311,7 +292,6 @@ public class Task extends Schedulable implements Parcelable {
         out.writeParcelable(this.deadline_per_day, flags);
         // Use the default period format and write that string
         out.writeString(PeriodFormat.getDefault().print(this.period_needed));
-        out.writeString(PeriodFormat.getDefault().print(this.period_minimum));
         // Convert datetime values to string and write them
         out.writeParcelable(this.deadline, flags);
         // Write the current id of the task
@@ -347,7 +327,6 @@ public class Task extends Schedulable implements Parcelable {
         this.deadline_per_day = in.readParcelable(Datetime.class.getClassLoader());
         // Parse the Periods with the default period format
         this.period_needed = PeriodFormat.getDefault().parsePeriod(in.readString());
-        this.period_minimum = PeriodFormat.getDefault().parsePeriod(in.readString());
         // Create datetime objects from datetime strings
         this.deadline = in.readParcelable(Datetime.class.getClassLoader());
         // Read the id of the task

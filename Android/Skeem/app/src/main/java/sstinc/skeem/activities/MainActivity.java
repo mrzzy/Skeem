@@ -46,14 +46,12 @@ Intent flow:
         taskCreate
             -> FROM: Helper VALUE: weekDays
             -> FROM: Helper VALUE: Duration
-            -> FROM: Helper VALUE: min_time_period
             -> FROM: Helper VALUE: Deadline
         taskCreateHelper
             -> FROM: days VALUE: weekDays
             -> TO: days VALUE: weekDays
             -> TO: Create VALUE: weekDays
             -> TO: Create VALUE: Duration
-            -> TO: Create VALUE: min_time_period
             -> TO: Create VALUE: Deadline
         days
             -> FROM: Helper VALUE: weekDays

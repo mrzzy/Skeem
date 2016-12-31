@@ -35,7 +35,6 @@ public class CreateDatetimeActivity extends AppCompatActivity {
     public static final String EXTRA_RECEIVE_TITLE = "sstinc.skeem.EXTRA_TITLE";
     public static final String EXTRA_RECEIVE_DATETIME = "sstinc.skeem.EXTRA_RECEIVE_DATETIME";
     public static final String EXTRA_RECEIVE_MAX = "sstinc.skeem.EXTRA_RECEIVE_MAX";
-    public static final String EXTRA_RECEIVE_MIN = "sstinc.skeem.EXTRA_RECEIVE_MIN";
     public static final String EXTRA_DATETIME = "sstinc.skeem.EXTRA_DATETIME";
     // Menu status
     boolean menu_shuffle = false;
@@ -60,7 +59,6 @@ public class CreateDatetimeActivity extends AppCompatActivity {
     String hasTime;
     Datetime datetime;
     Datetime max_datetime;
-    Datetime min_datetime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,10 +84,6 @@ public class CreateDatetimeActivity extends AppCompatActivity {
         this.hasTime = intent.getStringExtra(EXTRA_RECEIVE_HAS_TIME);
         this.datetime = intent.getParcelableExtra(EXTRA_RECEIVE_DATETIME);
         this.max_datetime = intent.getParcelableExtra(EXTRA_RECEIVE_MAX);
-        this.min_datetime = intent.getParcelableExtra(EXTRA_RECEIVE_MIN);
-        if (this.min_datetime == null) {
-            this.min_datetime = Datetime.getCurrentDatetime();
-        }
         if (this.max_datetime == null) {
             this.max_datetime = new Datetime();
         }
@@ -111,16 +105,6 @@ public class CreateDatetimeActivity extends AppCompatActivity {
             date_picker_max_datetime.setHour(0);
             date_picker_max_datetime.setMinute(0);
             datePicker.setMaxDate(date_picker_max_datetime.getMillis());
-        }
-        if (this.min_datetime.getHasDate()) {
-            //TODO: Test this thoroughly
-            // Move maximum one day back
-            // Remove the hours and minutes so that the date picker does not
-            // get confused.
-            Datetime date_picker_min_datetime = new Datetime(this.min_datetime);
-            date_picker_min_datetime.setHour(0);
-            date_picker_min_datetime.setMinute(0);
-            datePicker.setMinDate(date_picker_min_datetime.getMillis());
         }
 
         //Setup Time Picker
@@ -200,24 +184,15 @@ public class CreateDatetimeActivity extends AppCompatActivity {
             if (this.max_datetime.getHasDate()) {
                 valid = this.max_datetime.getMillis() >= submitted_datetime.getMillis();
             }
-            if (this.min_datetime.getHasDate()) {
-                valid = valid && this.min_datetime.getMillis() <= submitted_datetime.getMillis();
-            }
             return valid;
         } else if (this.hasDate) {
             if (this.max_datetime.getHasDate()) {
                 valid = this.max_datetime.compareDates(submitted_datetime) != 1;
             }
-            if (this.min_datetime.getHasDate()) {
-                valid = valid && this.min_datetime.compareDates(submitted_datetime) != 1;
-            }
             return valid;
         } else if (this.hasTime.equals(HAS_TIME_TRUE)) {
             if (this.max_datetime.getHasDate()) {
                 valid = this.max_datetime.compareTimes(submitted_datetime) != 1;
-            }
-            if (this.min_datetime.getHasDate()) {
-                valid = valid && this.min_datetime.compareTimes(submitted_datetime) != 1;
             }
             return valid;
         } else {

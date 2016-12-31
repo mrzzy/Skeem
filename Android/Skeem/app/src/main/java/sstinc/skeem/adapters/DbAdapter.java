@@ -235,8 +235,6 @@ public class DbAdapter {
         taskTableValues.put(DbAdapter.TASKS_TABLE_COL_DESCRIPTION, task.getDescription());
         taskTableValues.put(DbAdapter.TASKS_TABLE_COL_PERIOD_NEEDED,
                 PeriodFormat.getDefault().print(task.getPeriodNeeded()));
-        taskTableValues.put(DbAdapter.TASKS_TABLE_COL_PERIOD_MINIMUM,
-                PeriodFormat.getDefault().print(task.getPeriodMinimum()));
         taskTableValues.put(DbAdapter.TASKS_TABLE_COL_DEADLINE, task.getDeadline().toString());
         taskTableValues.put(DbAdapter.TASKS_TABLE_COL_DEADLINE_PER_DAY, task.getDeadlinePerDay().toString());
         // Insert into database and set the task's id.
@@ -344,7 +342,6 @@ public class DbAdapter {
         task.setDescription(cursor.getString(4));
 
         task.setPeriodNeeded(PeriodFormat.getDefault().parsePeriod(cursor.getString(5)));
-        task.setPeriodMinimum(PeriodFormat.getDefault().parsePeriod(cursor.getString(6)));
         task.setDeadline(new Datetime(cursor.getString(7)));
 
         cursor.close();
@@ -379,7 +376,6 @@ public class DbAdapter {
             task.setDescription(cursor.getString(4));
 
             task.setPeriodNeeded(PeriodFormat.getDefault().parsePeriod(cursor.getString(5)));
-            task.setPeriodMinimum(PeriodFormat.getDefault().parsePeriod(cursor.getString(6)));
             task.setDeadline(new Datetime(cursor.getString(7)));
             task.setDeadlinePerDay(new Datetime(cursor.getString(8)));
 
@@ -470,8 +466,6 @@ public class DbAdapter {
         taskTableValues.put(TASKS_TABLE_COL_DESCRIPTION, task.getDescription());
         taskTableValues.put(TASKS_TABLE_COL_PERIOD_NEEDED,
                 PeriodFormat.getDefault().print(task.getPeriodNeeded()));
-        taskTableValues.put(TASKS_TABLE_COL_PERIOD_MINIMUM,
-                PeriodFormat.getDefault().print(task.getPeriodMinimum()));
         taskTableValues.put(TASKS_TABLE_COL_DEADLINE, task.getDeadline().toString());
         taskTableValues.put(TASKS_TABLE_COL_DEADLINE_PER_DAY, task.getDeadlinePerDay().toString());
 
