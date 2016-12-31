@@ -29,6 +29,9 @@ even before you save the task/void block for the first time.
 Author: Joel Tio Jin Hon
 This issue has been resolved as a UI feature. UI Fixed to show voidblock
 repeats more clearly by moving it below name.
+--------------
+Author: Zhu Zhan Yan
+Bug Fix verified
 
 [Bug 4]
 Severity: LOW
@@ -53,10 +56,13 @@ Same explaination as bug 3.
 --------------
 Author: Joel Tio Jin Hon
 Resolved as in bug 3
+--------------
+Author: Zhu Zhan Yan
+Bug Fix verified
 
 [BUG 5]
 Severity: HIGH
-Status: PARTIAL OPEN
+Status: Close
 Description: Application crashes when switching to schedule tab
 Expected: Not Crash
 Reproduction:
@@ -71,10 +77,13 @@ Author: Zhu Zhan Yan
 Bug fix tested.
 Bug fix verified for normal void blocks. 
 Bug is NOT fixed for repetitve void blocks.
+--------------
+Author: Zhu Zhan Yan
+Bug Fix verified
 
 [BUG 6]
 Severity: HIGH
-Status: PENDING CLOSED
+Status: CLOSED
 Description: Scheduling does not work without void blocks.
 Expected: Scheduling works without void blocks.
 Reproduction:
@@ -83,10 +92,13 @@ Reproduction:
 3. Does not schedule. (Nothing appears on schedule tab)
 ---------------
 Bug fixed.
+--------------
+Author: Zhu Zhan Yan
+Bug Fix verified
 
 [BUG 7]
 Severity: HIGH
-Status: PENDING CLOSED
+Status: CLOSED
 Description: Application hangs for ~10 seconds, then crashes
 Expected: Not hang or crash
 Reproduction:
@@ -110,9 +122,12 @@ everyday on weekdays. I set  the deadline to 31/12/17 and the finish before to
 --------------
 Author: Joel Tio Jin Hon
 Bug fixed.
+--------------
+Author: Zhu Zhan Yan
+Bug Fix verified
 
 [BUG 8]
-Severity: PENDING CLOSED
+Severity: CLOSED
 Status: OPEN
 Desciption: In the schedule tab, void blocks are shown as "- Voidblock -". The
 name of the void block does not appear.
@@ -124,6 +139,9 @@ Reproduction:
 ---------------
 Author: Joel Tio Jin Hon
 Bug Fixed.
+--------------
+Author: Zhu Zhan Yan
+Bug Fix verified
 
 [BUG 9]
 Severity: MEDIUM
@@ -138,8 +156,8 @@ Reproduction:
 3. Observe that the duration of how long the task is not shown
 
 [BUG 10]
-Severity: PENDING CLOSED
-Status: OPEN
+Severity: MEDIUM
+Status: CLOSED
 Description: Entering 12:00 am into any date field will not be shown.
 Expected: All times should be shown.
 Reproduction:
@@ -150,3 +168,18 @@ Reproduction:
 ---------------
 Author: Joel Tio Jin Hon
 Bug Fixed.
+--------------
+Author: Zhu Zhan Yan
+Bug Fix verified
+
+[BUG 11]
+Severity: MEDIUM
+Status: OPEN
+Descripion: The user cannot scheduled a repeated void block across days
+Expected: To be able to schedule across days (include midnight)
+Reproduction:
+1. Create new repeated void block with start time 2230 and end time 0630.
+2. Switch to schedule tab.
+3. Observe how the schedule tab shows "date2230-date0630" where date is the same
+date.
+
