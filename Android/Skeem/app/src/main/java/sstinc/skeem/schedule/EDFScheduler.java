@@ -60,6 +60,9 @@ public class EDFScheduler extends Scheduler {
                             timeblock.addTask(taskToSchedule);
                             unscheduledRepeatedTasks.set(0, taskLeftover);
                         }
+                    } else if (timeblock.getScheduledStart().compareDates(
+                            taskToSchedule.getScheduledStart()) == 1) {
+                        unscheduledRepeatedTasks.remove(0);
                     } else {
                         break;
                     }
