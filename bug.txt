@@ -174,7 +174,7 @@ Bug Fix verified
 
 [BUG 11]
 Severity: MEDIUM
-Status: OPEN
+Status: PENDING CLOSED
 Descripion: The user cannot scheduled a repeated void block across days
 Expected: To be able to schedule across days (include midnight)
 Reproduction:
@@ -182,4 +182,6 @@ Reproduction:
 2. Switch to schedule tab.
 3. Observe how the schedule tab shows "date2230-date0630" where date is the same
 date.
-
+---------------
+Author: Joel Tio Jin Hon
+Bug Fixed.
