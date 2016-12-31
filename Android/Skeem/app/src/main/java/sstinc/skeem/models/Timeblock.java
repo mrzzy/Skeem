@@ -89,6 +89,39 @@ public class Timeblock extends Schedulable {
     }
 
     /**
+     * Get the timeblocks where each timeblock has a maximum duration of 1
+     * day. Each timeblock does not cross over two days.
+     * @return arraylist of timeblocks that do not cross over two days
+     */
+    public ArrayList<Timeblock> getSingleDayTimeblocks() {
+        ArrayList<Timeblock> timeblocks = new ArrayList<>();
+        if (this.getScheduledStart().compareDates(this.getScheduledStop()) == 0) {
+            timeblocks.add(this);
+        } else {
+            Datetime startDatetime = new Datetime(this.getScheduledStart());
+            while (startDatetime.compareDates(this.getScheduledStop()) != 0) {
+                // End of the day for the start datetime
+                Datetime endOfDay = new Datetime(startDatetime);
+                endOfDay.setHour(23);
+                endOfDay.setMinute(59);
+
+                timeblocks.add(new Timeblock(startDatetime, endOfDay));
+
+                // Move to next day
+                Datetime nextStartOfDay = new Datetime(endOfDay);
+                nextStartOfDay = nextStartOfDay.add(new Period().plusDays(1));
+                nextStartOfDay.setHour(0);
+                nextStartOfDay.setMinute(0);
+                startDatetime = nextStartOfDay;
+            }
+
+            timeblocks.add(new Timeblock(startDatetime, this.getScheduledStop()));
+        }
+
+        return timeblocks;
+    }
+
+    /**
      * Sets the scheduled start datetime and recalculates the total period
      * and period left if there is a set scheduled stop.
      *
