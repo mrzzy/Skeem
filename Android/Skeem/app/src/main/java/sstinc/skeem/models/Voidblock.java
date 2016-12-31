@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import org.joda.time.DateTime;
+import org.joda.time.Period;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -132,6 +133,10 @@ public class Voidblock extends Schedulable implements Parcelable {
                     new_voidblock.getScheduledStop().setYear(dateTime.getYear());
                     new_voidblock.getScheduledStop().setMonth(dateTime.getMonthOfYear());
                     new_voidblock.getScheduledStop().setDay(dateTime.getDayOfMonth());
+                    if (this.getScheduledStart().compareTimes(this.getScheduledStop()) == 1) {
+                        new_voidblock.setScheduledStop(new_voidblock.getScheduledStop().add(
+                                new Period().plusDays(1)));
+                    }
 
                     voidblocks.add(new_voidblock);
                 }
