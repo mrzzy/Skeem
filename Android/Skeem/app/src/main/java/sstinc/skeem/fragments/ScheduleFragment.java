@@ -11,7 +11,6 @@ import android.view.View;
 
 import java.util.ArrayList;
 
-import sstinc.skeem.schedule.DirectSchedule;
 import sstinc.skeem.R;
 import sstinc.skeem.schedule.EDFScheduler;
 import sstinc.skeem.schedule.Scheduler;
