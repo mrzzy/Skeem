@@ -204,7 +204,7 @@ public class DatetimeTest {
         {
             Datetime testObject = new Datetime(this.testCases[i]);
 
-            assertTrue(testObject.toString() == stringTestCases[i]);
+            assertTrue(testObject.toString().equals(stringTestCases[i]));
         }
 
         clean();
