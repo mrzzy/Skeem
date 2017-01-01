@@ -106,7 +106,7 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                 currentDatetime.setMillis(Calendar.getInstance().getTimeInMillis());
                 // Set datetime selector to have date and time
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_TITLE,
-                        "Set voidblock starting time");
+                        getString(R.string.activity_voidblock_create_from_title));
                 // Set if date is needed
                 if (!switch_repeat.isChecked() ||
                         voidblock.getWeekDays().getWeekDays_list().isEmpty()) {
@@ -148,7 +148,7 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                 currentDatetime.setMillis(Calendar.getInstance().getTimeInMillis());
                 // Set datetime selector to have date and time
                 intent.putExtra(CreateDatetimeActivity.EXTRA_RECEIVE_TITLE,
-                        "Set voidblock ending time");
+                        getString(R.string.activity_voidblock_create_to_title));
                 // Set if date is needed
                 if (!switch_repeat.isChecked() ||
                         voidblock.getWeekDays().getWeekDays_list().isEmpty()) {

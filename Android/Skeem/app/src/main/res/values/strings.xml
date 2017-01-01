@@ -81,6 +81,8 @@
     <string name="dialog_voidblock_obsolete_message">The Interrupt is obsolete.</string>
 
     <!-- Create voidblock Activity -->
+    <string name="activity_voidblock_create_from_title">Set interrupt starting time</string>
+    <string name="activity_voidblock_create_to_title">Set interrupt ending time</string>
     <string name="field_text_voidblock_name_hint">Name</string>
     <string name="text_view_from">From:</string>
     <string name="text_view_to">To:</string>
