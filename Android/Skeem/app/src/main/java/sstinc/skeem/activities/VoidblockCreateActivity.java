@@ -74,7 +74,7 @@ public class VoidblockCreateActivity extends AppCompatActivity {
 
         // Set back button and title
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("Create New Voidblock");
+            getSupportActionBar().setTitle(R.string.create_voidblock_activity_title);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
@@ -228,7 +228,9 @@ public class VoidblockCreateActivity extends AppCompatActivity {
                             // Use current datetime
                             Calendar calendar = Calendar.getInstance();
                             voidblock.getScheduledStart().setYear(calendar.get(Calendar.YEAR));
-                            voidblock.getScheduledStart().setMonth(calendar.get(Calendar.MONTH));
+                            //Calendar month of year starts from and DateTime expects month from 1
+                            voidblock.getScheduledStart().setMonth(
+                                    calendar.get(Calendar.MONTH) + 1);
                             voidblock.getScheduledStart().setDay(
                                     calendar.get(Calendar.DAY_OF_MONTH));
                         }

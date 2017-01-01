@@ -6,10 +6,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="menu_schedule">Schedule</string>
     <string name="menu_tasks">Tasks</string>
-    <string name="menu_voidblocks">Void Blocks</string>
-    <string name="menu_settings">Settings</string>
-
-    <string name="action_settings">Settings</string>
+    <string name="menu_voidblocks">Interrupts</string>
 
     <!-- Create Task and Helper Activity -->
     <string name="field_text_task_name_hint">Name</string>
@@ -35,6 +32,9 @@
 
     <string name="text_view_add_time">Add Time</string>
 
+    <!-- Create Void Block Activity -->
+    <string name="create_voidblock_activity_title">Create new Interrupt</string>
+
 
     <!-- Days of the week -->
     <string name="checkbox_monday">Monday</string>
@@ -56,9 +56,9 @@
     <string name="dialog_confirm_delete_title_task">Delete Selected Tasks</string>
     <string name="dialog_confirm_delete_message_task">Are you sure you want to delete all the selected
     Tasks?</string>
-    <string name="dialog_confirm_delete_title_voidblock">Delete Selected Voidblocks</string>
+    <string name="dialog_confirm_delete_title_voidblock">Delete Selected Interrupt</string>
     <string name="dialog_confirm_delete_message_voidblock">Are you sure you want to delete all the
-        selected Voidblocks?</string>
+        selected Interrupts?</string>
     <string name="dialog_confirm_delete_positive">Yes</string>
     <string name="dialog_confirm_delete_negative">No</string>
     <!-- No deadline dialog -->
@@ -72,13 +72,13 @@
     <string name="dialog_zero_duration_message">Please set the duration needed for the task.</string>
     <!-- No starting time dialog -->
     <string name="dialog_no_starting_title">Alert</string>
-    <string name="dialog_no_starting_message">Time when the voidblock starts is not set.</string>
+    <string name="dialog_no_starting_message">Time when the Interrupt starts is not set.</string>
     <!-- No stopping time dialog -->
     <string name="dialog_no_stopping_title">Alert</string>
-    <string name="dialog_no_stopping_message">Time when the voidblock stops is not set.</string>
+    <string name="dialog_no_stopping_message">Time when the Interrupt stops is not set.</string>
     <!-- Voidblock obsolete -->
     <string name="dialog_voidblock_obsolete_title">Alert</string>
-    <string name="dialog_voidblock_obsolete_message">The voidblock is obsolete.</string>
+    <string name="dialog_voidblock_obsolete_message">The Interrupt is obsolete.</string>
 
     <!-- Create voidblock Activity -->
     <string name="field_text_voidblock_name_hint">Name</string>
@@ -88,11 +88,11 @@
     <string name="text_view_error_time">Invalid Time Given</string>
 
     <!-- Schedule Fragment -->
-    <string name="text_view_schedule_voidblock_label">- Voidblock -</string>
+    <string name="text_view_schedule_voidblock_label">Interrupt</string>
 
     <!-- Select Create Activity -->
     <string name="text_view_create_task">Create a new task</string>
-    <string name="text_view_create_voidblock">Create a new voidblock</string>
+    <string name="text_view_create_voidblock">Create a new Interrupt</string>
     <string name="image_view_task_description">Continue to create a new task</string>
-    <string name="image_view_voidblock_description">Continue to create a new voidblock</string>
+    <string name="image_view_voidblock_description">Continue to create a new Interrupt</string>
 </resources>

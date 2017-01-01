@@ -174,7 +174,7 @@ Bug Fix verified
 
 [BUG 11]
 Severity: MEDIUM
-Status: PENDING CLOSED
+Status: CLOSED
 Descripion: The user cannot scheduled a repeated void block across days
 Expected: To be able to schedule across days (include midnight)
 Reproduction:
@@ -185,3 +185,19 @@ date.
 ---------------
 Author: Joel Tio Jin Hon
 Bug Fixed.
+--------------
+Author: Zhu Zhan Yan
+Bug Fix verified.
+
+[BUG 12]
+Severity MEDIUM
+Status: PENDING CLOSED
+Description: App Crashes when toggling off repeat switch
+Expected: Not crash
+Reproduction:
+1. Goto Create void block activity (create interrupt)
+2. Toggle repeat switch on
+3. Toggle repeat switch off, crash.
+------------
+Author: Zhu Zhan Yan
+Bug fixed 
