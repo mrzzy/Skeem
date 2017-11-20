@@ -1,0 +1,4 @@
+1. Design Object diagram.
+2. Write simulator - randomly generated
+3. Write simulation algorithms
+4. Write simulator data output - pyplot graphs.

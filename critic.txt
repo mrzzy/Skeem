@@ -4,11 +4,16 @@ Critic of the first version to create basis for second version.
 [User Interface/Experience]
 Cluttered UI
     - How do you select the fields needed easily?
+        Hide fields like description in advnace.
     - How should you display the schedule?
+        + Cells should be on duration of time allocated.
     - Splitting time, 1/3 of a minute?
+        - Round away the decimal part, the user wont notice.
     - How should you display it? With missing minutes or accurate to the second 
       or the nearest number with accuracy (e.g. 0.333.. h becomes 20min)?
+        - Round away the decimal part, the user wont notice.
     - How do you store the values in Java? What libraries?
+        - Jodatime
 
 Creating the schedule (UI)
     - Is it a worthwhile tradeoff to have less flexibility of task durations?
@@ -17,7 +22,7 @@ Creating the schedule (UI)
       provided?
     - The current naming scheme is not easily understood. What other alternatives 
       or possibly analogies can we use to convey the meaning of different parts 
-      of the schedule? (Tasks, interrupts)
+      of the schedule? (Tasks, interrupts = "Breaks")
 
 Misleading UI
     - When setting the deadline, the user has to press the back button on the
@@ -32,44 +37,53 @@ User experience
     - A setup menu can be added for the user to add basic "interrupts" such as 
       sleep or meals.
     - The user should only be presented with the schedule for the day.
+        - load more button - split between sleep interrupts
+
 
 [Functionality]
 Updating schedule
-    - How do you easily remove tasks?
+    - How do you easily remove tasks/interrupts?
+        - Put description and other advanced task in advanced submenu?
     - How do you know what is the time to start scheduling?
-    - It can't be "now" because the scheduler may change the schedule during 
-      the one minute of reading the schedule. Hence, the schedule needs to 
+        - Change in internal state ie tasks, interrupt.
+        - Explicit refresh thing.
+      The problem: the one minute of reading the schedule. Hence, the schedule needs to 
       be frozen.
     - Perhaps we can implement a "start time"?
-    - The updates to the schedule does not seem to be triggered properly
-
 
 Missing Functionality
-    - Link tasks to subjects/type or projects
-    - The ability to custormise the schedule to my liking on demand.
-    - The ability to schedule or take breaks on demand, or should be default?
+    - Link tasks to subjects/type/tags or projects? Weights for tags
+    - The ability to customise the schedule to my liking on demand.
+        1. Move the task around
+        2. The ability to fragment
+        3. The ability to merge
+    - The ability to schedule or take breaks on demand
+        - Tell me how much break time I have left
+        - Lock remaining task.
     - The ability to request for more time, or finish faster than expected.
     - The ability to record the users activity for the day.
     - How does a task get marked as complete? The user should mark themselves.
-    - The ability to pioritise tasks. (ie work > pla
-    - The ability to assign a time affinity, 
+    - The ability to prioritise tasks. (ie work > play, tag priority)
+    - The ability to assign a time affinity, or moving?
     (ie I want to finish this in the dawn, morning, afternoon, dusk, nightime)
 
 [Algorithm/Performance]
 The Scheduler(s)
-    - Is there a need for the different schedulers? Why?
-    - What schedulers should we provide? 
+    - Is there a need for the different schedulers? Panic mode - no time to 
+        finish everything.
     - Why would they be suitable for our target audience?
 
 What is the optimal algorithm for conducting scheduling?
-    - Random Task First
+    Panic Mode Algorithms: - switch to these algorithms if deadlines cannot be 
+        met
     - Earliest Deadline first - most tasks done before deadline
     - Smallest Task First (least duration) 
     - Most Important Task First (most weight)
+
+    - Random Task First
+    - Least Slack Algorithms 
     - Round Robin - Cycle around fixed time?
     - Dynamic Priority - weight/duration
     - Dynamic Priority - adjusted ratio of deadline, weight, duration 
-      and timing afinity.
-    - Brute Force?
-    - Dynamic Programming? 
+    - Dynamic Priority - adjusted ratio of deadline, weight, duration and 
 [LATER] How do we optmise the schedule through caching results?

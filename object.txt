@@ -1,0 +1,39 @@
+[Model]
+Repetition
+=====
+- days 
+- stopdate
+
+Schdulable
+=====
+- name
+- tags
+- description
+- duration 
+
+Task - Subclass Schdulable
+=====
+- weight
+- deadline
+- repetition
+
+Break - Subclass Schdulable
+=====
+- begin
+- repetition
+
+Tag
+=====
+- name
+- weight
+
+[Scheduling]
+Scheduler
+=====
+* Schedules until the last definite task or break *
+* Unrolls out repeated tasks and breaks *
+- algorithm
+- schedule() - returns array of schedulable
+
+SchedulingAlgorithm
+=====
