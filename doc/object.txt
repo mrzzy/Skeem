@@ -1,39 +1,82 @@
+------- Skeem Object Diagram ------
 [Model]
+!!!** Date/Time in ALL model objects are represented as seconds since the unix epoch **!!!
 Repetition
 =====
-- days 
-- stopdate
+(public)
+- offset - offset in seconds before the the very first interation.
+- stopdate - repeat until this "stop" date.
+- interval - interval loop that defines the interval between each repetition
+- vaild() - Whether the repetition object is vaild
+- next_repeat() - Returns the date/time of the next repetition
 
-Schdulable
-=====
-- name
-- tags
-- description
-- duration 
+(private)
+- prevdate - Object previous interation date state.
+- pointer - Keep track we are in the interval loop
 
-Task - Subclass Schdulable
+Schedulable
 =====
-- weight
-- deadline
-- repetition
+(public)
+- name - Name of the schedulable
+- describe - Description of the schedulable
+- duration  - The duration of the schedulable
+- tags - Tags of the schedulable
+- repeat - Repetition object that describes how the schedulable repeats
+- weight() - The importance of the schedulable
 
-Break - Subclass Schdulable
+Task - Subclass>Schdulable
 =====
-- begin
-- repetition
+(public)
+- deadline - Date/time defining when the task MUST be completed
+
+Interrupt - Subclass>Schdulable
+=====
+(public)
+- begin - Date/time defining when the break starts
 
 Tag
 =====
-- name
-- weight
+(public)
+- name - The name of the tag
+- weight - The user defined importance given by the tag to tasks.
 
 [Scheduling]
-Scheduler
-=====
-* Schedules until the last definite task or break *
-* Unrolls out repeated tasks and breaks *
-- algorithm
-- schedule() - returns array of schedulable
+Schedule
+====
+(public)
+- switch(algorithm) - switch schedule algorithm
+- add(schedulable) - add schedulable
+- remove(schedulable) - remove schedulable
+- update(schedulable) - update schedulable
+- commit() - Commits changes and creates schedule
+- size() - Retrieves the total number of internal schedulable objects
+- duration() - Retrieves the total of internal schedulable objects
+- begin() - schedule iterator pointing to start of schedule
+- end() - schedule iterator pointing to start of end
+
+(private)
+- invaildate() - Invaildate internal object state
+- limit() - Determine the schedule date INCLUSIVE limit
+            (ie latest date that it cares about)
+- unroll() - Unroll/Expand out repetitive schedulables. 
+            (ie the ones that repeat)
+
+Schedule iterator
+====
+(public)
+- next() - retrieve next schedulable iterator
+- prev() -  retrieve previous schedulable iterator
+- value() - retrieve schedulable that iterator points to (ie dereference pointer)
+*Class Methods*
++ iterate(schedule, pointer) - Return iterator that with specified pointer (ie index)
++ invaildate() - Invaildate all Schedule Iterators
 
 SchedulingAlgorithm
-=====
+====
+- order(lhs, rhs) - Compare function used to sort the schedulables before
+                    scheduling to create a specific order each scheduable is 
+                    scheduled.
+- schedule(task, time_left, avail_time):
+    - Schedule function used to determine the duration to schedule given task
+      for the given remainding time left in to complete the task and the max
+      available time left that can be scheduled.
