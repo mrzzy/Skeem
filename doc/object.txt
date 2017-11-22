@@ -48,7 +48,7 @@ Schedule
 - add(schedulable) - add schedulable
 - remove(schedulable) - remove schedulable
 - update(schedulable) - update schedulable
-- commit() - Commits changes and creates schedule
+- commit(genesis) - Commits changes and creates schedule starting from genesis
 - size() - Retrieves the total number of internal schedulable objects
 - duration() - Retrieves the total of internal schedulable objects
 - begin() - schedule iterator pointing to start of schedule
@@ -58,8 +58,9 @@ Schedule
 - invaildate() - Invaildate internal object state
 - limit() - Determine the schedule date INCLUSIVE limit
             (ie latest date that it cares about)
-- unroll() - Unroll/Expand out repetitive schedulables. 
+- unroll() - Unroll/Expand out repetitive into flat single only schedulables. 
             (ie the ones that repeat)
+- generate() - Generate the schedule from flatted schedulables and algorithm
 
 Schedule iterator
 ====
@@ -71,12 +72,27 @@ Schedule iterator
 + iterate(schedule, pointer) - Return iterator that with specified pointer (ie index)
 + invaildate() - Invaildate all Schedule Iterators
 
+SchedulingOrder
+- Defines the order (after sorting) which tasks presented to the scheduling 
+  algorithm to be scheduled
+====
+- sequential - Each task is presented and represented for scheduling until the
+               task is complete scheduled, where it would then move on to the 
+               next task, until all task have been scheduled.
+- cyclic -  Each task is presented once for scheduling in each iteration, which 
+            loops until all tasks are scheduled
+- dynamic - The tasks are sorted, then the top task is picked for scheduling, 
+            after scheduling, the tasks are sorted again, and top scheduled and 
+            so on until all task are scheduled.
+            
+
 SchedulingAlgorithm
 ====
-- order(lhs, rhs) - Compare function used to sort the schedulables before
+- order() - Tells the scheduler how the tasks should be arranged or order before
+            or after sorting, supported order(s) are defined in SchedulingOrder
+- compare(lhs, rhs) - Compare function used to sort the schedulables before
                     scheduling to create a specific order each scheduable is 
                     scheduled.
-- schedule(task, time_left, avail_time):
+- schedule(task, avail_time):
     - Schedule function used to determine the duration to schedule given task
-      for the given remainding time left in to complete the task and the max
-      available time left that can be scheduled.
+      given the maximumn available time left that can be scheduled.

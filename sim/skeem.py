@@ -5,6 +5,7 @@
 # Nov 21, 2017
 import datetime
 import functools
+import copy
 
 def epoch_time(time=datetime.datetime.now()):
     return (time - datetime.datetime(1970,1,1)).total_seconds()
@@ -14,6 +15,7 @@ class Tag:
     def __init__(self, name, weight):
         self.name = name
         self.weight = weight
+
 
 #Prove of concept only, not actually used.
 #Rewrite required
@@ -110,10 +112,21 @@ class Interrupt(Schedulable):
     def end(self):
         return self.begin + datetime.timedelta(seconds=self.duration)
 
+class SchedulingOrder:
+    sequential = 0
+    cyclic = 1
+    #Dynamic Scheduling Order not implemented
+    #dynamic = 2
+    
+
 class SchedulingAlgorithm: #Abstract Class
-    def order(lhs, rhs):
+    def order(self):
         raise NotImplementedError
-    def schedule(task, time_left, avail_time):
+
+    def compare(self,lhs, rhs):
+        raise NotImplementedError
+    
+    def schedule(self,task, avail_time):
         raise NotImplementedError
 
 class ScheduleIterator:
@@ -154,6 +167,7 @@ class Schedule:
         self.flat_tasks = False
         self.flat_interrupts = None
         self.itinerary = False
+        self.genesis = epoch_time()
 
     def switch(self, algorithm):
         self.algorithm = algorithm
@@ -203,6 +217,7 @@ class Schedule:
             #Schedulable not found
             raise ValueError
         self.invaildate()
+    
 
     def size(self):
         return len(self.tasks) + len(self.interrupts)
@@ -215,16 +230,16 @@ class Schedule:
             total += interrupt.duration
         return duration
 
-    def commit(self):
-        if self.itinerary == None:
+    def commit(self, genesis=epoch_time()):
+        if self.itinerary == None and not self.genesis == genesis:
+            self.genesis = genesis
             #Order State
             self.interrupt = sorted(self.interrupts, \
                     key=(lambda interrupt: interrupt.begin))
-            
             #Unroll Repeats
             self.unroll()
-
             #Create Itinenary
+            self.generate()
             
         else: pass # Do nothing if itinerary has not been invaildated
     
@@ -260,5 +275,50 @@ class Schedule:
             end = interrupt + duration
             dlimit = end if end > dlimit else dlimit
         return dlimit
+    
+    def generate(self):
+        tasks = sorted(self.flat_tasks, \
+                key=functools.cmp_to_key(self.algorithm.compare))
+        tasks = copy.deepcopy(tasks)
+        pointer = self.genesis
+        index = 0
         
-        
+        for interrupt in self.flat_interrupts:
+            if interrupt.begin <= pointer and \
+                interrupt.begin + interrupt.duration > pointer:
+                #Interrupt started before or coincides with time pointer and
+                #the interrupt has not yet ended.
+                #Schedule the interrupt
+                    self.itinerary += interrupt
+                    pointer = interrupt.begin + interrupt.duration
+            elif interrupt.begin > pointer:
+                #Interrupt will start after the time pointer
+                #Schedulable time from pointer to interrrupt begin time
+                #Hence tasks would be scheduled in that time.
+                while not interrupt.begin - pointer <= 0:
+                    task = tasks[index]
+                    time_left = interrupt.begin - pointer
+
+                    #Schedule Task in itinerary
+                    time_scheduled = self.algorithm.schedule(task, time_left)
+                    #Sanity Check: Dont schedule more than there is available...
+                    if time_scheduled > time_left: raise AssertionError
+                    subtask = copy.deepcopy(task)
+                    subtask.duration = time_scheduled
+                    self.itinerary += subtask
+
+                    task.duration -= time_scheduled
+                    if task.duration <= 0:
+                        del tasks[index]
+                    pointer += time_scheduled
+
+                    #Pick Next Task Based on order
+                    if self.algorithm.order() == SchedulingOrder.sequential:
+                        if task.duration <= 0: pass #Since task is deleted,
+                                                #index now points to next task.
+                        else: pass #Continue scheduling current task
+                    elif self.algorithm.order() == SchedulingOrder.cyclic:
+                        if task.duration <= 0: pass #Since task is deleted,
+                                                #index now points to next task.
+                        else: index = (index + 1) % len(tasks)
+                    else: raise NotImplementedError
