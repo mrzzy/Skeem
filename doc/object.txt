@@ -22,7 +22,7 @@ Schedulable
 - duration  - The duration of the schedulable
 - tags - Tags of the schedulable
 - repeat - Repetition object that describes how the schedulable repeats
-- weight() - The importance of the schedulable
+- weigh() - The importance of the schedulable
 
 Task - Subclass>Schdulable
 =====

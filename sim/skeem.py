@@ -79,7 +79,7 @@ class Schedulable:
         self.tags = tags
         self.repeat = repeat
 
-    def weight(self):
+    def weigh(self):
         return 1.0
 
 class Task(Schedulable):
@@ -91,14 +91,17 @@ class Task(Schedulable):
         self.deadline = deadline
         self.tags = tags
         self.repeat = repeat
+        self.weigh = 0.0
     
-    def weight():
-        weigh = 0.0
-        #Compute Weight from Tags
-        for tag in self.tags:
-            weigh += tag.weight
-        weigh /= float(len(self.tags))
-        return weigh
+    def weigh():
+        #Computer from tags disabled: see sim.txt
+        #weight = 0.0
+        #Compute weightt from Tags
+        #for tag in self.tags:
+            #weight += tag.weight
+        #weight /= float(len(self.tags))
+        #return weight
+        return self.weight
         
 class Interrupt(Schedulable):
     def __init__(self, name, duration, begin, describe="", tags=[], repeat=None):
