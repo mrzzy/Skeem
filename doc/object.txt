@@ -76,23 +76,31 @@ SchedulingOrder
 - Defines the order (after sorting) which tasks presented to the scheduling 
   algorithm to be scheduled
 ====
+* Mode of Feed * - bit 1
 - sequential - Each task is presented and represented for scheduling until the
                task is complete scheduled, where it would then move on to the 
                next task, until all task have been scheduled.
-- cyclic -  Each task is presented once for scheduling in each iteration, which 
+- iteration -  Each task is presented once for scheduling in each iteration, which 
             loops until all tasks are scheduled
-- dynamic - The tasks are sorted, then the top task is picked for scheduling, 
+    
+* Mode of sort * - bit 2 and 3
+- nosort - Disable sorting
+- onesort - The tasks are sorted once before scheduling
+- resort - The tasks are sorted, then the top task is picked for scheduling, 
             after scheduling, the tasks are sorted again, and top scheduled and 
             so on until all task are scheduled.
             
 
 SchedulingAlgorithm
+or Scheduler
 ====
-- order() - Tells the scheduler how the tasks should be arranged or order before
-            or after sorting, supported order(s) are defined in SchedulingOrder
+- order() - Tells the scheduler when how the tasks should to be fed to the 
+            schedule() method, and whether and when to the tasks.
 - compare(lhs, rhs) - Compare function used to sort the schedulables before
-                    scheduling to create a specific order each scheduable is 
-                    scheduled.
+                      scheduling to create a specific order each scheduable is 
+                      scheduled.
 - schedule(task, avail_time):
     - Schedule function used to determine the duration to schedule given task
-      given the maximumn available time left that can be scheduled.
+      given the maximumn available time left that can be scheduled. The duration
+      of the task passed will be updated to only give the tasks remainding time,
+      not the entire duration of the task

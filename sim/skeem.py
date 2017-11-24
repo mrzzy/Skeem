@@ -113,10 +113,12 @@ class Interrupt(Schedulable):
         return self.begin + datetime.timedelta(seconds=self.duration)
 
 class SchedulingOrder:
-    sequential = 0
-    cyclic = 1
-    #Dynamic Scheduling Order not implemented
-    #dynamic = 2
+    sequential = 0 << 0
+    iterative = 1 << 0
+    nosort = 0 << 1
+    sort =  1 << 1
+    onesort = 0 << 2 | SchedulingOrder.sort
+    resort = 1 << 2 | SchedulingOrder.sort
     
 
 class SchedulingAlgorithm: #Abstract Class
@@ -168,6 +170,7 @@ class Schedule:
         self.flat_interrupts = None
         self.itinerary = False
         self.genesis = epoch_time()
+        self.ordered = false
 
     def switch(self, algorithm):
         self.algorithm = algorithm
@@ -234,13 +237,12 @@ class Schedule:
         if self.itinerary == None and not self.genesis == genesis:
             self.genesis = genesis
             #Order State
-            self.interrupt = sorted(self.interrupts, \
+            self.interrupt = ordered(self.interrupts, \
                     key=(lambda interrupt: interrupt.begin))
             #Unroll Repeats
             self.unroll()
             #Create Itinenary
             self.generate()
-            
         else: pass # Do nothing if itinerary has not been invaildated
     
     def begin(self):
@@ -261,6 +263,7 @@ class Schedule:
         self.flat_tasks = None
         self.flat_interrupts = None
         self.itinerary = None
+        self.ordered = false
     
     def unroll(self):
         # Stub Implementation - Does not actually unroll schedulables
@@ -277,8 +280,8 @@ class Schedule:
         return dlimit
     
     def generate(self):
-        tasks = sorted(self.flat_tasks, \
-                key=functools.cmp_to_key(self.algorithm.compare))
+        tasks = self.tasks
+        tasks = self.reorder(task)
         tasks = copy.deepcopy(tasks)
         pointer = self.genesis
         index = 0
@@ -312,13 +315,31 @@ class Schedule:
                         del tasks[index]
                     pointer += time_scheduled
 
+                    tasks = self.reorder(tasks) #Reorder if resort enabled
+
                     #Pick Next Task Based on order
-                    if self.algorithm.order() == SchedulingOrder.sequential:
+                    if not self.algorithm.order() & SchedulingOrder.sequential == 0:
                         if task.duration <= 0: pass #Since task is deleted,
                                                 #index now points to next task.
                         else: pass #Continue scheduling current task
-                    elif self.algorithm.order() == SchedulingOrder.cyclic:
+                    elif not self.algorithm.order() & SchedulingOrder.iterative == 0:
                         if task.duration <= 0: pass #Since task is deleted,
                                                 #index now points to next task.
                         else: index = (index + 1) % len(tasks)
                     else: raise NotImplementedError
+    def reorder(tasks):
+        if not self.algorithm.order() & SchedulingOrder.nosort == 0:
+            return
+        elif not self.algorithm.order() & SchedulingOrder.resort == 0:
+            pass #Sort
+        elif not self.algorithm.order() & SchedulingOrder.sort == 0 and \
+                self.ordered ==  False:
+            pass
+        else:
+            NotImplementedError
+
+        tasks = sorted(tasks, \
+            key=functools.cmp_to_key(self.algorithm.compare))
+        self.ordered = True
+
+        
