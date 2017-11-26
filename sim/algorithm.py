@@ -11,7 +11,7 @@ import random
 #Basic Algorithms - Privative Non dynamic algorithms
 class RandomAlgorithm(skeem.SchedulingAlgorithm):
     def order(self):
-        return SchedulingOrder.nosort | SchedulingAlgorithm.iterative
+        return skeem.SchedulingOrder.nosort | skeem.SchedulingOrder.iterative
 
     def compare(self, lhs, rhs):
         return bool(random.getrandbits(1))
@@ -22,7 +22,7 @@ class RandomAlgorithm(skeem.SchedulingAlgorithm):
 
 class EarliestDeadlineAlgorithm(skeem.SchedulingAlgorithm):
     def order(self):
-        return SchedulingOrder.onesort | SchedulingOrder.sequential
+        return skeem.SchedulingOrder.onesort | skeem.SchedulingOrder.sequential
     
     def compare(self, lhs, rhs):
         return lhs.deadline < rhs.deadline
@@ -32,7 +32,7 @@ class EarliestDeadlineAlgorithm(skeem.SchedulingAlgorithm):
     
 class HeaviestWeightAlgorithm(skeem.SchedulingAlgorithm):
     def order(self):
-        return SchedulingOrder.onesort | SchedulingOrder.sequential
+        return skeem.SchedulingOrder.onesort | skeem.SchedulingOrder.sequential
     
     def compare(self, lhs, rhs):
         return lhs.weigh() > rhs.weigh()
@@ -42,7 +42,7 @@ class HeaviestWeightAlgorithm(skeem.SchedulingAlgorithm):
 
 class ShortestDurationAlgorithm(skeem.SchedulingAlgorithm):
     def order(self):
-        return SchedulingOrder.onesort | SchedulingOrder.sequential
+        return skeem.SchedulingOrder.onesort | skeem.SchedulingOrder.sequential
     
     def compare(self, lhs, rhs):
         return lhs.duration < lhs.duration
@@ -53,7 +53,7 @@ class ShortestDurationAlgorithm(skeem.SchedulingAlgorithm):
 #Simple Dynamic Algorithms
 class DynamicShortestDurationAlgorithm(skeem.SchedulingAlgorithm):
     def order(self):
-        return SchedulingOrder.resort | SchedulingOrder.sequential
+        return skeem.SchedulingOrder.resort | skeem.SchedulingOrder.sequential
     
     def compare(self, lhs, rhs):
         return lhs.duration < lhs.duration
@@ -66,7 +66,7 @@ class ShortestSlackAlgorithm(skeem.SchedulingAlgorithm):
         return task.deadline - task.duration
 
     def order(self):
-        return SchedulingAlgorithm.resort | SchedulingAlgorithm.sequential
+        return skeem.SchedulingOrder.resort | skeem.SchedulingOrder.sequential
 
     def compare(self, lhs, rhs):
         return self.slack(lhs) < self.slack(rhs)
