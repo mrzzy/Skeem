@@ -84,14 +84,14 @@ SchedulingOrder
                next task, until all task have been scheduled.
 - iteration -  Each task is presented once for scheduling in each iteration, which 
             loops until all tasks are scheduled
-    
+
 * Mode of sort * - bit 2 and 3
 - nosort - Disable sorting
 - onesort - The tasks are sorted once before scheduling
 - resort - The tasks are sorted, then the top task is picked for scheduling, 
             after scheduling, the tasks are sorted again, and top scheduled and 
             so on until all task are scheduled.
-            
+
 
 SchedulingAlgorithm
 or Scheduler
@@ -106,3 +106,12 @@ or Scheduler
       given the maximum available time left that can be scheduled. The duration
       of the task passed will be updated to only give the tasks remaining time,
       not the entire duration of the task
+
+RoundRobinScheduler
+===
+- startTime - The time to start scheduling from.
+- scheduleIterator - The ScheduleIterator of the schedule to be scheduled.
+- schedule(blockSize) - Schedules and returns an ArrayList<Schedulable>.
+    - blockSize - The duration to try to schedule each task to. Each task will
+                  be split into durations of this size and scheduled. The
+                  leftover time will also be scheduled.
