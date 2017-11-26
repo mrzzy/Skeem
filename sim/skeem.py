@@ -32,7 +32,7 @@ class Repetition:
         while not startdate.weekday() in days_of_week:
             startdate += [ td_day ]
         self.offset = (startdate - now).total_seconds()
-        
+
         #Generate Interval Loop & Compute Index
         interval = []
         self.pointer = days_of_week.index(startdate.weekday())
@@ -45,12 +45,12 @@ class Repetition:
 
         self.stopdate = stopdate
         self.prevdate = datetime.datetime.now()
-    
-    def vaild(self):
+
+    def valid(self):
         return self.stopdate > datetime.datetime.now()
-    
+
     def next_repeat(self):
-        if self.vaild() == True:
+        if self.valid() == True:
             nextdate = self.prevdate
             if not self.offset == 0:
                 nextdate += [ datetime.timedelta(seconds=self.offset) ]
@@ -64,7 +64,7 @@ class Repetition:
             return epoch_time(nextdate)
         else: 
             return None
-            
+
 class Schedulable:
     def __init__(self, name, duration, describe="", tags=[], repeat=None):
         self.name = name
@@ -119,14 +119,13 @@ class SchedulingOrder:
     onesort = 0 << 3
     resort = 1 << 3
     
-
 class SchedulingAlgorithm: #Abstract Class
     def order(self):
         raise NotImplementedError
 
     def compare(self,lhs, rhs):
         raise NotImplementedError
-    
+
     def schedule(self,task, avail_time):
         raise NotImplementedError
 
@@ -162,7 +161,7 @@ class ScheduleIterator:
         if ScheduleIterator.vaild == True:
             return ScheduleIterator.schedule[self.pointer]
         else: raise ValueError
-        
+
 
 class Schedule:
     def __init__(self,algorithm):
@@ -196,8 +195,8 @@ class Schedule:
         else:
             #Type not supported
             raise ValueError
-        self.invaildate()
-    
+        self.invalidate()
+
     def remove(self, schedulable):
         if isinstance(schedulable, Task):
             self.tasks.remove(schedulable)
@@ -206,8 +205,8 @@ class Schedule:
         else:
             #Schedulable not found
             raise ValueError
-        self.invaildate()
-    
+        self.invalidate()
+
     def update(self, schedulable):
         if isinstance(schedulable, Task):
             for i,sched in enumerate(self.tasks):
@@ -222,12 +221,12 @@ class Schedule:
         else:
             #Schedulable not found
             raise ValueError
-        self.invaildate()
-    
+        self.invalidate()
+
 
     def size(self):
         return len(self.tasks) + len(self.interrupts)
-    
+
     def duration(self):
         total = 0
         for task in self.tasks:
@@ -260,7 +259,7 @@ class Schedule:
     def begin(self):
         if not self.itinerary == None:
             return ScheduleIterator.iterate(self.itinerary, 0)
-        #No itinerary to interate
+        #No itinerary to iterate
         else: raise ValueError
 
     def end(self):
@@ -269,9 +268,9 @@ class Schedule:
             return ScheduleIterator.iterate(self.itinerary, len(self.itinerary)) 
         #No itinerary to interate
         else: raise ValueError
-    
-    def invaildate(self):
-        ScheduleIterator.vaild = False
+
+    def invalidate(self):
+        ScheduleIterator.valid = False
         self.flat_tasks = None
         self.flat_interrupts = None
         self.itinerary = None
@@ -282,7 +281,7 @@ class Schedule:
         # Stub Implementation - Does not actually unroll schedulables
         self.flat_tasks = self.tasks
         self.flat_interrupts = self.interrupts
-        
+
     def limit(self):
         dlimit = epoch_time() #Current Time
         for task in self.tasks:
@@ -374,4 +373,3 @@ class Schedule:
         if scheduled == len(self.flat_tasks): #All Tasks scheduled
             return -1
         else: return tpointer
-

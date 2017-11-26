@@ -4,14 +4,14 @@
 Repetition
 =====
 (public)
-- offset - offset in seconds before the the very first interation.
+- offset - offset in seconds before the the very first iteration.
 - stopdate - repeat until this "stop" date.
 - interval - interval loop that defines the interval between each repetition
-- vaild() - Whether the repetition object is vaild
+- valid() - Whether the repetition object is valid
 - next_repeat() - Returns the date/time of the next repetition
 
 (private)
-- prevdate - Object previous interation date state.
+- prevdate - Object previous iteration date state.
 - pointer - Keep track we are in the interval loop
 
 Schedulable
@@ -24,12 +24,12 @@ Schedulable
 - repeat - Repetition object that describes how the schedulable repeats
 - weigh() - The importance of the schedulable
 
-Task - Subclass>Schdulable
+Task - Subclass>Schedulable
 =====
 (public)
 - deadline - Date/time defining when the task MUST be completed
 
-Interrupt - Subclass>Schdulable
+Interrupt - Subclass>Schedulable
 =====
 (public)
 - begin - Date/time defining when the break starts
@@ -55,7 +55,7 @@ Schedule
 - end() - schedule iterator pointing to start of end
 
 (private)
-- invaildate() - Invaildate internal object state
+- invalidate() - Invalidate internal object state
 - limit() - Determine the schedule date INCLUSIVE limit
             (ie latest date that it cares about)
 - unroll() - Unroll/Expand out repetitive into flat single only schedulables. 
@@ -72,7 +72,7 @@ ScheduleIterator
 - value() - retrieve schedulable that iterator points to (ie dereference pointer)
 *Class Methods*
 + iterate(schedule, pointer) - Return iterator that with specified pointer (ie index)
-+ invaildate() - Invaildate all Schedule Iterators
++ invalidate() - Invalidate all Schedule Iterators
 
 SchedulingOrder
 - Defines the order (after sorting) which tasks presented to the scheduling 
@@ -103,6 +103,6 @@ or Scheduler
                       scheduled.
 - schedule(task, avail_time):
     - Schedule function used to determine the duration to schedule given task
-      given the maximumn available time left that can be scheduled. The duration
-      of the task passed will be updated to only give the tasks remainding time,
+      given the maximum available time left that can be scheduled. The duration
+      of the task passed will be updated to only give the tasks remaining time,
       not the entire duration of the task
