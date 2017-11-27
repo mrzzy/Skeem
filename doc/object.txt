@@ -55,7 +55,7 @@ Schedule
 - end() - schedule iterator pointing to start of end
 
 (private)
-- invaildate() - Invaildate internal object state
+- invalidate() - Invaildate internal object state
 - limit() - Determine the schedule date INCLUSIVE limit
             (ie latest date that it cares about)
 - unroll() - Unroll/Expand out repetitive into flat single only schedulables. 
