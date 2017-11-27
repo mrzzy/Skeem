@@ -17,35 +17,35 @@ class RandomAlgorithm(skeem.SchedulingAlgorithm):
         return bool(random.getrandbits(1))
 
     def schedule(self, task, available):
-        return max(task.duration, available)
+        return min(task.duration, available)
         
 
 class EarliestDeadlineAlgorithm(skeem.SchedulingAlgorithm):
     def order(self):
-        return skeem.SchedulingOrder.onesort | skeem.SchedulingOrder.sequential
+        return skeem.SchedulingOrder.sort | skeem.SchedulingOrder.onesort | skeem.SchedulingOrder.sequential
     
     def compare(self, lhs, rhs):
-        return lhs.deadline < rhs.deadline
+        return lhs.deadline <= rhs.deadline
 
     def schedule(self, task, available):
         return min(task.duration, available)
     
 class HeaviestWeightAlgorithm(skeem.SchedulingAlgorithm):
     def order(self):
-        return skeem.SchedulingOrder.onesort | skeem.SchedulingOrder.sequential
+        return skeem.SchedulingOrder.sort | skeem.SchedulingOrder.onesort | skeem.SchedulingOrder.sequential
     
     def compare(self, lhs, rhs):
-        return lhs.weigh() > rhs.weigh()
+        return lhs.weigh >= rhs.weigh
 
     def schedule(self, task, available):
         return min(task.duration, available)
 
 class ShortestDurationAlgorithm(skeem.SchedulingAlgorithm):
     def order(self):
-        return skeem.SchedulingOrder.onesort | skeem.SchedulingOrder.sequential
+        return skeem.SchedulingOrder.sort | skeem.SchedulingOrder.onesort | skeem.SchedulingOrder.sequential
     
     def compare(self, lhs, rhs):
-        return lhs.duration < lhs.duration
+        return lhs.duration <= lhs.duration
 
     def schedule(self, task, available):
         return min(task.duration, available)
@@ -53,23 +53,23 @@ class ShortestDurationAlgorithm(skeem.SchedulingAlgorithm):
 #Simple Dynamic Algorithms
 class DynamicShortestDurationAlgorithm(skeem.SchedulingAlgorithm):
     def order(self):
-        return skeem.SchedulingOrder.resort | skeem.SchedulingOrder.sequential
+        return skeem.SchedulingOrder.sort | skeem.SchedulingOrder.resort | skeem.SchedulingOrder.sequential
     
     def compare(self, lhs, rhs):
-        return lhs.duration < lhs.duration
+        return lhs.duration <= lhs.duration
 
     def schedule(self, task, available):
         return min(task.duration, available)
 
 class ShortestSlackAlgorithm(skeem.SchedulingAlgorithm):
-    def slack(task):
+    def slack(self, task):
         return task.deadline - task.duration
 
     def order(self):
-        return skeem.SchedulingOrder.resort | skeem.SchedulingOrder.sequential
+        return skeem.SchedulingOrder.sort | skeem.SchedulingOrder.resort | skeem.SchedulingOrder.sequential
 
     def compare(self, lhs, rhs):
-        return self.slack(lhs) < self.slack(rhs)
+        return self.slack(lhs) <= self.slack(rhs)
     
     def schedule(self, task, available):
         return min(task.duration, available)
@@ -77,10 +77,10 @@ class ShortestSlackAlgorithm(skeem.SchedulingAlgorithm):
 #List of Algorithms used in the simulator
 algorithms = \
     [
-        EarliestDeadlineAlgorithm()
+        #EarliestDeadlineAlgorithm(),
         #RandomAlgorithm(),
-        #HeaviestWeightAlgorithm(), 
+        #HeaviestWeightAlgorithm() 
         #ShortestDurationAlgorithm(),
         #DynamicShortestDurationAlgorithm(),
-        #ShortestDurationAlgorithm()
+        ShortestSlackAlgorithm()
     ]
