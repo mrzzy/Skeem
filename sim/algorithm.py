@@ -73,6 +73,15 @@ class ShortestSlackAlgorithm(skeem.SchedulingAlgorithm):
     
     def schedule(self, task, available):
         return min(task.duration, available)
+
+#Schedulers
+class RoundRobinScheduler:
+    def __init__(self, start_time, schedule_iterator):
+        self.start_time = start_time
+        self.schedule = list(schedule_iterator)
+
+    def schedule(self, block_size):
+        return None
     
 #List of Algorithms used in the simulator
 algorithms = \

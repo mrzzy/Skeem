@@ -374,10 +374,3 @@ class Schedule:
             return -1
         else: return tpointer
 
-class RoundRobinScheduler:
-    def __init__(self, start_time, schedule_iterator):
-        self.start_time = start_time
-        self.schedule = list(schedule_iterator)
-
-    def schedule(self, block_size):
-        return None
