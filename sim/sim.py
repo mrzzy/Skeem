@@ -38,7 +38,6 @@ def pdivider():
 def epoch_time(time=datetime.datetime.now()):
     return int((time - datetime.datetime(1970,1,1)).total_seconds())
 
-    
 
 #Parse Options
 #Default Program Configuration
@@ -88,6 +87,7 @@ if opts["verbose"]:
 #Progress
 simulations = opts["repetitions"] * len(algorithm.algorithms)
 completed = multiprocessing.Value('i')
+
 def progress_callback(result):
     global completed
     if opts["verbose"]:
@@ -175,7 +175,7 @@ class ScheduleTestCase:
 
 def simulate(alg, case):
     global completed
-    global clock
+
     case.switch(alg)
     case.commit()
     

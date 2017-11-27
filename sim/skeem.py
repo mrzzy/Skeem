@@ -138,27 +138,27 @@ class ScheduleIterator:
 
     @classmethod
     def iterate(cls, schedule, pointer=0):
-        cls.vaild = True
+        cls.valid = True
         cls.schedule = schedule
         return ScheduleIterator( pointer)
     
     @classmethod
-    def invaildate(cls):
-        cls.vaild = False
+    def invalidate(cls):
+        cls.valid = False
         ScheduleIterator.schedule = None
 
     def next(self):
-        if ScheduleIterator.vaild == True:
+        if ScheduleIterator.valid == True:
             return ScheduleIterator(self.pointer + 1)
         else: return None
 
     def prev(self):
-        if ScheduleIterator.vaild == True:
+        if ScheduleIterator.valid == True:
             return ScheduleIterator(self.pointer - 1)
         else: return None
 
     def value(self):
-        if ScheduleIterator.vaild == True:
+        if ScheduleIterator.valid == True:
             return ScheduleIterator.schedule[self.pointer]
         else: raise ValueError
 
@@ -177,7 +177,7 @@ class Schedule:
 
     def switch(self, algorithm):
         self.algorithm = algorithm
-        self.invaildate()
+        self.invalidate()
 
     def add(self, schedulable):
         if isinstance(schedulable, Task):
@@ -254,7 +254,7 @@ class Schedule:
                 raise AssertionError
             
                 
-        else: pass # Do nothing if itinerary has not been invaildated
+        else: pass # Do nothing if itinerary has not been invalidated
     
     def begin(self):
         if not self.itinerary == None:
