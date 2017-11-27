@@ -6,10 +6,22 @@
 import datetime
 import functools
 import copy
+import pprint
+
+#Program Output
+def pdivider():
+    print("================================================================================")
+    print()
+
+def pretty(arg):
+    pprint.pprint(arg, indent=2)
+    
+def proppretty(arg):
+    pretty(dict((name, getattr(arg, name)) for name in dir(arg) if not name.startswith('__')))
+
 
 def epoch_time(time=datetime.datetime.now()):
-    return (time - datetime.datetime(1970,1,1)).total_seconds()
-
+    return int((time - datetime.datetime(1970,1,1)).total_seconds())
 
 class Tag:
     def __init__(self, name, weight):
@@ -36,7 +48,7 @@ class Repetition:
         td_day = datetime.timedelta(days=1)
         startdate = datetime.datetime.today() + td_day
         while not startdate.weekday() in days_of_week:
-            startdate += td_day
+            startdate += [ td_day ]
         self.offset = (startdate - now).total_seconds()
         
         #Generate Interval Loop & Compute Index
@@ -59,11 +71,11 @@ class Repetition:
         if self.vaild() == True:
             nextdate = self.prevdate
             if not self.offset == 0:
-                nextdate += datetime.timedelta(seconds=self.offset)
+                nextdate += [ datetime.timedelta(seconds=self.offset) ]
                 self.offset = 0
-            nextdate += self.interval[self.pointer]
+            nextdate += [ self.interval[self.pointer] ]
             
-            self.pointer += 1
+            self.pointer +=  1
             self.pointer = self.pointer % len(self.interval)
             self.prevdate = nextdate
 
@@ -113,15 +125,17 @@ class Interrupt(Schedulable):
         self.repeat = repeat
 
     def end(self):
-        return self.begin + datetime.timedelta(seconds=self.duration)
+        return self.begin + self.duration 
 
 class SchedulingOrder:
-    sequential = 0 << 0
-    iterative = 1 << 0
-    nosort = 0 << 1
-    sort =  1 << 1
-    onesort = 0 << 2 | SchedulingOrder.sort
-    resort = 1 << 2 | SchedulingOrder.sort
+    #Ordering
+    sequential = 1 << 0
+    iterative = 1 << 1
+    #Sorting
+    nosort = 0 << 2
+    sort =  1 << 2
+    onesort = 0 << 3 | 1 << 2
+    resort = 1 << 3 | 1 << 2
     
 
 class SchedulingAlgorithm: #Abstract Class
@@ -138,6 +152,9 @@ class ScheduleIterator:
     def __init__(self, schedule, pointer):
         self.schedule = schedule
         self.pointer = pointer
+
+    def __eq__(self, other):
+        return self.pointer == other.pointer
 
     @classmethod
     def iterate(cls, schedule, pointer=0):
@@ -173,35 +190,34 @@ class Schedule:
         self.flat_interrupts = None
         self.itinerary = False
         self.genesis = epoch_time()
-        self.ordered = false
+        self.ordered = False
 
     def switch(self, algorithm):
         self.algorithm = algorithm
         self.invaildate()
-        self.commit()
 
     def add(self, schedulable):
-        if isinstance(schedulable, Task.kind):
+        if isinstance(schedulable, Task):
             if not len([t for t in self.tasks if t.name == schedulable.name]) \
                     == 0:
                 #Already has Task
                 raise ValueError
-            self.tasks += schedulable
-        elif isinstance(schedulable, Interrupt.kind) :
+            self.tasks += [ schedulable ]
+        elif isinstance(schedulable, Interrupt) :
             if not len([i for i in self.tasks if i.name == schedulable.name]) \
                     == 0:
                 #Already has Interrupt
                 raise ValueError 
-            self.interrupts += schedulable
+            self.interrupts += [ schedulable  ]
         else:
             #Type not supported
             raise ValueError
         self.invaildate()
     
     def remove(self, schedulable):
-        if isinstance(schedulable, Task.kind):
+        if isinstance(schedulable, Task):
             self.tasks.remove(schedulable)
-        elif isinstance(schedulable, Interrupt.kind):
+        elif isinstance(schedulable, Interrupt):
             self.interrupts.remove(schedulable)
         else:
             #Schedulable not found
@@ -209,15 +225,15 @@ class Schedule:
         self.invaildate()
     
     def update(self, schedulable):
-        if isinstance(schedulable, Task.kind):
-            for i,sched in enumerate(this.tasks):
+        if isinstance(schedulable, Task):
+            for i,sched in enumerate(self.tasks):
                 if sched.name == schedulable.name:
-                    this.tasks[i] = schedulable
+                    self.tasks[i] = schedulable
                     break
-        elif isinstance(schedulable, Interrupt.kind):
-            for i,sched in enumerate(this.interrupts):
+        elif isinstance(schedulable, Interrupt):
+            for i,sched in enumerate(self.interrupts):
                 if sched.name == schedulable.name:
-                    this.interrupts[i] = schedulable
+                    self.interrupts[i] = schedulable
                     break
         else:
             #Schedulable not found
@@ -237,15 +253,28 @@ class Schedule:
         return duration
 
     def commit(self, genesis=epoch_time()):
-        if self.itinerary == None and not self.genesis == genesis:
+        if self.itinerary == None:
+
             self.genesis = genesis
             #Order State
-            self.interrupt = ordered(self.interrupts, \
+            self.interrupts = sorted(self.interrupts, \
                     key=(lambda interrupt: interrupt.begin))
             #Unroll Repeats
             self.unroll()
             #Create Itinenary
             self.generate()
+
+            pdivider()
+            pretty(self.itinerary)
+            pdivider()
+            #for schd in self.itinerary:
+            #    print(schd)
+            #    if isinstance(schd, Task):
+            #        print("time:" + str(schd.deadline - self.genesis))
+            #    elif isinstance(schd, Interrupt):
+            #        print("time:" + str(schd.begin - self.genesis))
+                
+                
         else: pass # Do nothing if itinerary has not been invaildated
     
     def begin(self):
@@ -256,8 +285,8 @@ class Schedule:
 
     def end(self):
         if not self.itinerary == None:
-            return ScheduleIterator.iterate(self.itinerary, len(self.itinerary)\
-                    - 1) #Point to last on schedule
+            #Point to one past the last on schedule
+            return ScheduleIterator.iterate(self.itinerary, len(self.itinerary)) 
         #No itinerary to interate
         else: raise ValueError
     
@@ -266,7 +295,7 @@ class Schedule:
         self.flat_tasks = None
         self.flat_interrupts = None
         self.itinerary = None
-        self.ordered = false
+        self.ordered = False
     
     def unroll(self):
         # Stub Implementation - Does not actually unroll schedulables
@@ -281,41 +310,66 @@ class Schedule:
             end = interrupt + duration
             dlimit = end if end > dlimit else dlimit
         return dlimit
+
+    def reorder(self, tasks):
+        if not self.algorithm.order() & SchedulingOrder.resort == 0:
+            pass #Sort
+        elif not self.algorithm.order() & SchedulingOrder.sort == 0 and \
+                self.ordered ==  False:
+            pass
+        else: #Assume nosort
+            return tasks #Return unsorted tasks
+
+        tasks = sorted(tasks, \
+            key=functools.cmp_to_key(self.algorithm.compare))
+        self.ordered = True
+        return tasks
     
     def generate(self):
-        tasks = self.tasks
-        tasks = self.reorder(task)
-        tasks = copy.deepcopy(tasks)
+        tasks = self.flat_tasks
+        tasks = self.reorder(tasks)
+        task_index = 0
+
+        interrupts = self.flat_interrupts
+        irpt_index = 0
+
         pointer = self.genesis
-        index = 0
+        self.itinerary = []
         
-        for interrupt in self.flat_interrupts:
+        
+        while len(interrupts) > irpt_index:
+            interrupt = interrupts[irpt_index]
+
+            print(pointer)
+            
             if interrupt.begin <= pointer and \
                 interrupt.begin + interrupt.duration > pointer:
                 #Interrupt started before or coincides with time pointer and
                 #the interrupt has not yet ended.
                 #Schedule the interrupt
-                    self.itinerary += interrupt
+                    self.itinerary += [ interrupt ]
                     pointer = interrupt.begin + interrupt.duration
-            elif interrupt.begin > pointer:
+                    irpt_index += 1
+            elif interrupt.begin > pointer and len(tasks) > 0:
                 #Interrupt will start after the time pointer
                 #Schedulable time from pointer to interrrupt begin time
                 #Hence tasks would be scheduled in that time.
-                while not interrupt.begin - pointer <= 0:
-                    task = tasks[index]
+                while not interrupt.begin - pointer <= 0 and len(tasks) > 0:
+                    task = tasks[task_index]
                     time_left = interrupt.begin - pointer
 
                     #Schedule Task in itinerary
                     time_scheduled = self.algorithm.schedule(task, time_left)
                     #Sanity Check: Dont schedule more than there is available...
-                    if time_scheduled > time_left: raise AssertionError
+                    if time_scheduled > time_left: 
+                        raise AssertionError
                     subtask = copy.deepcopy(task)
                     subtask.duration = time_scheduled
-                    self.itinerary += subtask
-
+                    self.itinerary += [ subtask ]
+                    
                     task.duration -= time_scheduled
                     if task.duration <= 0:
-                        del tasks[index]
+                        del tasks[task_index]
                     pointer += time_scheduled
 
                     tasks = self.reorder(tasks) #Reorder if resort enabled
@@ -323,26 +377,18 @@ class Schedule:
                     #Pick Next Task Based on order
                     if not self.algorithm.order() & SchedulingOrder.sequential == 0:
                         if task.duration <= 0: pass #Since task is deleted,
-                                                #index now points to next task.
+                                                #task_index now points to next task.
                         else: pass #Continue scheduling current task
                     elif not self.algorithm.order() & SchedulingOrder.iterative == 0:
                         if task.duration <= 0: pass #Since task is deleted,
-                                                #index now points to next task.
-                        else: index = (index + 1) % len(tasks)
+                                                #task_index now points to next task.
+                        else: task_index = (task_index + 1) % len(tasks)
                     else: raise NotImplementedError
-    def reorder(tasks):
-        if not self.algorithm.order() & SchedulingOrder.nosort == 0:
-            return
-        elif not self.algorithm.order() & SchedulingOrder.resort == 0:
-            pass #Sort
-        elif not self.algorithm.order() & SchedulingOrder.sort == 0 and \
-                self.ordered ==  False:
-            pass
-        else:
-            NotImplementedError
-
-        tasks = sorted(tasks, \
-            key=functools.cmp_to_key(self.algorithm.compare))
-        self.ordered = True
+            else:
+                #Interrupt would start after the time pointer
+                #Schedulable time from pointer to intterupt begin time
+                #However, there are no tasks to schedule, hence
+                #we will just move the pointer to schedule the next interrupt
+                pointer = interrupt.begin
 
         

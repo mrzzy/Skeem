@@ -28,7 +28,7 @@ class EarliestDeadlineAlgorithm(skeem.SchedulingAlgorithm):
         return lhs.deadline < rhs.deadline
 
     def schedule(self, task, available):
-        return max(task.duration, available)
+        return min(task.duration, available)
     
 class HeaviestWeightAlgorithm(skeem.SchedulingAlgorithm):
     def order(self):
@@ -38,7 +38,7 @@ class HeaviestWeightAlgorithm(skeem.SchedulingAlgorithm):
         return lhs.weigh() > rhs.weigh()
 
     def schedule(self, task, available):
-        return max(task.duration, available)
+        return min(task.duration, available)
 
 class ShortestDurationAlgorithm(skeem.SchedulingAlgorithm):
     def order(self):
@@ -48,7 +48,7 @@ class ShortestDurationAlgorithm(skeem.SchedulingAlgorithm):
         return lhs.duration < lhs.duration
 
     def schedule(self, task, available):
-        return max(task.duration, available)
+        return min(task.duration, available)
 
 #Simple Dynamic Algorithms
 class DynamicShortestDurationAlgorithm(skeem.SchedulingAlgorithm):
@@ -59,7 +59,7 @@ class DynamicShortestDurationAlgorithm(skeem.SchedulingAlgorithm):
         return lhs.duration < lhs.duration
 
     def schedule(self, task, available):
-        return max(task.duration, available)
+        return min(task.duration, available)
 
 class ShortestSlackAlgorithm(skeem.SchedulingAlgorithm):
     def slack(task):
@@ -72,15 +72,15 @@ class ShortestSlackAlgorithm(skeem.SchedulingAlgorithm):
         return self.slack(lhs) < self.slack(rhs)
     
     def schedule(self, task, available):
-        return max(task.duration, available)
+        return min(task.duration, available)
     
 #List of Algorithms used in the simulator
 algorithms = \
     [
-        RandomAlgorithm(),
-        EarliestDeadlineAlgorithm(),
-        HeaviestWeightAlgorithm(), 
-        ShortestDurationAlgorithm(),
-        DynamicShortestDurationAlgorithm(),
-        ShortestDurationAlgorithm()
+        EarliestDeadlineAlgorithm()
+        #RandomAlgorithm(),
+        #HeaviestWeightAlgorithm(), 
+        #ShortestDurationAlgorithm(),
+        #DynamicShortestDurationAlgorithm(),
+        #ShortestDurationAlgorithm()
     ]
