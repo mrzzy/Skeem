@@ -55,14 +55,16 @@ Schedule
 - end() - schedule iterator pointing to start of end
 
 (private)
-- invalidate() - Invaildate internal object state
+- invaildate() - Invaildate internal object state
 - limit() - Determine the schedule date INCLUSIVE limit
             (ie latest date that it cares about)
 - unroll() - Unroll/Expand out repetitive into flat single only schedulables. 
             (ie the ones that repeat)
-- generate() - Generate the schedule from flatted schedulables and algorithm
+- knit() - Generate the schedule from flatted schedulables and algorithm
+- schedule(begin, end) - Schedule tasks using availble time between begin and
+                        end using algorithm
 
-Schedule iterator
+ScheduleIterator
 ====
 (public)
 - next() - retrieve next schedulable iterator
