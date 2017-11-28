@@ -17,9 +17,12 @@ import os
 import getopt
 import uuid
 import copy
-import sys
+import sys 
 import pprint
 import datetime
+import cProfile as profile
+import pstats
+import pickle
 
 #Utility Functions
 def pretty(arg):
@@ -76,6 +79,8 @@ for opt, arg in opt_list:
         #Unknown Argument
         raise ValueError
 
+if not os.path.exists(opts["directory"]):
+    os.makedirs(opts["directory"])
 os.chdir(opts["directory"])
 
 if opts["verbose"]:
@@ -88,12 +93,31 @@ if opts["verbose"]:
 simulations = opts["repetitions"] * len(algorithm.algorithms)
 completed = multiprocessing.Value('i')
 
-def progress_callback(result):
+def simulation_callback(result):
     global completed
+
+    schd, stats, case= result
+
+    itinerary = []
+    iterator = schd.begin()
+    while not iterator == schd.end():
+        itinerary += [ iterator.value() ]
+        iterator = iterator.next()
+    completed.value += 1
+
+    #Write output
+    fname = case.name + "." + schd.algorithm.__class__.__name__
+    with open(fname , 'wb') as f:
+        pickle.dump({"case" : case.name, "itinerary" : itinerary, "profile": stats}, f)
+
     if opts["verbose"]:
-        print("Simulation Completed with result:")
-        print("Duration:")
+        print("Simulation Completed!")
+        print("Simulation Completed with the following itinerary:")
+        pretty(itinerary)
+        print("\nSimulation Completed with the following performance stats:")
+        stats.print_stats()
         pdivider()
+
     print(("%.1f%%" % (float(completed.value) / float(simulations) * 100.0)))
 
 if opts["verbose"]:
@@ -112,6 +136,7 @@ if opts["verbose"]:
 class ScheduleTestCase:
     def __init__(self, size):
         self.size = size
+        self.name = "TestCase:" + str(uuid.uuid4())
 
     def generate(self):
         random.seed()
@@ -175,18 +200,17 @@ class ScheduleTestCase:
 
 def simulate(alg, case):
     global completed
+    schd = case.case()
 
-    case.switch(alg)
-    case.commit()
+    prof = profile.Profile()
+    prof.enable()
+    schd.switch(alg)
+    schd.commit()
+    prof.disable()
     
-    schedule = []
-    iterator = case.begin()
-    while not iterator == case.end():
-        schedule += [ iterator.value() ]
-        iterator = iterator.next()
-
-    completed.value += 1
-    return schedule
+    prof.create_stats()
+    
+    return (schd, prof.stats, case)
     
 #Main
 pool = multiprocessing.Pool(processes=opts["threads"])
@@ -196,8 +220,13 @@ try:
     tcase = ScheduleTestCase(opts["test_size"])
     for repeat in range(0, opts["repetitions"]):
         tcase.generate()
+        
+        #Write Test case
+        with open(tcase.name , 'wb') as f:
+            case = tcase.case()
+            pickle.dump({"tasks": case.tasks, "interrupts": case.interrupts}, f)
         for alg in algorithm.algorithms:
-            pool.apply_async(simulate, args=(alg, tcase.case()), callback=progress_callback)
+            pool.apply_async(simulate, args=(alg,tcase), callback=simulation_callback)
         
     pool.close()
     pool.join()
@@ -205,4 +234,4 @@ try:
     print("Simulation Finished.")
 
 except KeyboardInterrupt:
-    pool.kill()
+    pool.terminate()

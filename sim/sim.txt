@@ -42,14 +42,20 @@ sim.py
 - Uses getopt to parse arguments and options
 - Loads algorithms and skeem objects
 - Generate test case
+- make directory and write test case
 + foreach algorithm
     - make a copy of the test case
-    - run the test case on the algorithm while profiling the run using
-        concurrent queue that runs the simulations concurrently
-    - write the profiling in a file, the output of the program in another file
+    - run the test case on the algorithm while profiling the run using cprofile
+    - concurrent queue that runs the simulations concurrently
+    - write output to output directory
 -- Options --
 -v Verbrose mode - debugging infomation
 -j <threads> - Number of threads to use while simulating
 -t <tests> - Number of number tests cases to test per algorithm
 -l <size> - Size of the test cases to run.
 -o <directory> - put the output in this directory, else by default, sim_out
+
+--- Output ---
+dictionary object in a pickled file named in the format <test_case>.<algorithm>
+- profile - profiling from cprofile as string?
+- schedule object generated as array of schedulables
