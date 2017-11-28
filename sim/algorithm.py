@@ -86,10 +86,10 @@ class RoundRobinScheduler:
 #List of Algorithms used in the simulator
 algorithms = \
     [
-        #EarliestDeadlineAlgorithm(),
-        #RandomAlgorithm(),
-        #HeaviestWeightAlgorithm() 
-        #ShortestDurationAlgorithm(),
-        #DynamicShortestDurationAlgorithm(),
+        EarliestDeadlineAlgorithm(),
+        RandomAlgorithm(),
+        HeaviestWeightAlgorithm(),
+        ShortestDurationAlgorithm(),
+        DynamicShortestDurationAlgorithm(),
         ShortestSlackAlgorithm()
     ]
