@@ -109,9 +109,12 @@ or Scheduler
 
 RoundRobinScheduler
 ===
-- startTime - The time to start scheduling from.
-- scheduleIterator - The ScheduleIterator of the schedule to be scheduled.
-- schedule(blockSize) - Schedules and returns an ArrayList<Schedulable>.
+- schedule(startTime, tasks, interrupts, blockSize) - Schedules and returns an
+                                                      ArrayList<Schedulable>.
+    - tasks - Tasks to schedule.
+    - interrupts - Interrupts between startTime and end of the latest deadline in
+                   tasks.
+    - startTime - The time to start scheduling from.
     - blockSize - The duration to try to schedule each task to. Each task will
                   be split into durations of this size and scheduled. The
                   leftover time will also be scheduled.
