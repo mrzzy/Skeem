@@ -29,8 +29,9 @@ class TestSplitTask(unittest.TestCase):
         test_output = RoundRobinScheduler.split_task(test_input,
                                                      self.block_size)
 
-        answer = [self.create_task("A", 1, 3),
-                  self.create_task("A", 1, 3)]
+        answer = [
+                self.create_task("A", 1, 3),
+                self.create_task("A", 1, 3)]
 
         self.assertEqual(answer, test_output)
 
@@ -40,7 +41,8 @@ class TestSplitTask(unittest.TestCase):
         test_output = RoundRobinScheduler.split_task(test_input,
                                                      minutes(10))
 
-        answer = [Task("A", minutes(10), self.epoch),
-                  Task("A", minutes(5), self.epoch)]
+        answer = [
+                Task("A", minutes(10), self.epoch),
+                Task("A", minutes(5), self.epoch)]
 
         self.assertEqual(answer, test_output)

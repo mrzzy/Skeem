@@ -161,7 +161,6 @@ class TestDeadline(unittest.TestCase):
         self.assertEqual(answer, test_output)
 
     def test_alternate_unequally_based_on_deadline(self):
-        # Error same as no_deadline
         test_input = [
                 self.create_task("A", 2, 3),
                 self.create_task("B", 2, 5),
@@ -180,7 +179,6 @@ class TestDeadline(unittest.TestCase):
         self.assertEqual(answer, test_output)
 
     def test_deep_alternation_based_on_deadline(self):
-        # Error same as no_deadline
         test_input = [
                 self.create_task("A", 2, 3),
                 self.create_task("B", 2, 5),
