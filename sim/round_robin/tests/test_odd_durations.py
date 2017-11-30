@@ -102,3 +102,71 @@ class TestOddDurations(unittest.TestCase):
                 Task("D", minutes(10), self.epoch+minutes(160))]
 
         self.assertTrue(answer1 == test_output or answer2 == test_output)
+
+    def test_split_with_interrupts(self):
+        test_input_tasks = [
+                Task("A", minutes(30), self.epoch+minutes(80)),
+                Task("B", minutes(30), self.epoch+minutes(80))]
+
+        test_input_interrupts = [Interrupt("iA", self.epoch+minutes(10),
+                                           self.epoch+minutes(30))]
+
+        test_output = RoundRobinScheduler.schedule(
+            test_input_tasks, test_input_interrupts,
+            self.epoch, self.block_size)
+
+        answer1 = [
+                Task("A", minutes(10), self.epoch+minutes(80)),
+                Interrupt("iA", self.epoch+minutes(10),
+                          self.epoch+minutes(30)),
+                Task("B", minutes(20), self.epoch+minutes(80)),
+                Task("A", minutes(20), self.epoch+minutes(80)),
+                Task("B", minutes(10), self.epoch+minutes(80))]
+
+        answer2 = [
+                Task("B", minutes(10), self.epoch+minutes(80)),
+                Interrupt("iA", self.epoch+minutes(10),
+                          self.epoch+minutes(30)),
+                Task("A", minutes(20), self.epoch+minutes(80)),
+                Task("B", minutes(20), self.epoch+minutes(80)),
+                Task("A", minutes(10), self.epoch+minutes(80))]
+
+        self.assertTrue(answer1 == test_output or answer2 == test_output)
+
+    def test_alternate_with_interrupts(self):
+        # Test still failing
+        test_input_tasks = [
+                Task("A", minutes(30), self.epoch+minutes(100)),
+                Task("B", minutes(30), self.epoch+minutes(100))]
+
+        test_input_interrupts = [
+                Interrupt("iA", self.epoch+minutes(10),
+                          self.epoch+minutes(30)),
+                Interrupt("iB", self.epoch+minutes(40),
+                          self.epoch+minutes(60))]
+
+        test_output = RoundRobinScheduler.schedule(
+            test_input_tasks, test_input_interrupts,
+            self.epoch, self.block_size)
+
+        answer1 = [
+                Task("A", minutes(10), self.epoch+minutes(100)),
+                Interrupt("iA", self.epoch+minutes(10),
+                          self.epoch+minutes(30)),
+                Task("B", minutes(10), self.epoch+minutes(100)),
+                Interrupt("iB", self.epoch+minutes(40),
+                          self.epoch+minutes(60)),
+                Task("A", minutes(20), self.epoch+minutes(100)),
+                Task("B", minutes(20), self.epoch+minutes(100))]
+
+        answer2 = [
+                Task("B", minutes(10), self.epoch+minutes(100)),
+                Interrupt("iA", self.epoch+minutes(10),
+                          self.epoch+minutes(30)),
+                Task("A", minutes(10), self.epoch+minutes(100)),
+                Interrupt("iB", self.epoch+minutes(40),
+                          self.epoch+minutes(60)),
+                Task("B", minutes(20), self.epoch+minutes(100)),
+                Task("A", minutes(20), self.epoch+minutes(100))]
+
+        self.assertTrue(answer1 == test_output or answer2 == test_output)

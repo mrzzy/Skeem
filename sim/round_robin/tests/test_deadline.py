@@ -23,6 +23,11 @@ class TestDeadline(unittest.TestCase):
                                         self.to_time(duration_blocks),
                                         self.to_time(end_blocks))
 
+    def create_interrupt(self, name, start_blocks, end_blocks):
+        return self.factory.create_interrupt(name,
+                                             self.to_time(start_blocks),
+                                             self.to_time(end_blocks))
+
     def test_schedule_due_first(self):
         test_input = [
                 self.create_task("A", 1, 1),
@@ -34,6 +39,7 @@ class TestDeadline(unittest.TestCase):
         answer = [
                 self.create_task("A", 1, 1),
                 self.create_task("B", 1, 2)]
+
         self.assertEqual(answer, test_output)
 
     def test_schedule_due_first_despite_rating(self):
@@ -48,6 +54,7 @@ class TestDeadline(unittest.TestCase):
                 self.create_task("A", 1, 2),
                 self.create_task("A", 1, 2),
                 self.create_task("B", 1, 3)]
+
         self.assertEqual(answer, test_output)
 
     def test_schedule_multiple_due_first(self):
@@ -63,6 +70,7 @@ class TestDeadline(unittest.TestCase):
                 self.create_task("A", 1, 1),
                 self.create_task("B", 1, 2),
                 self.create_task("C", 1, 3)]
+
         self.assertEqual(answer, test_output)
 
     def test_schedule_multiple_due_first_unordered(self):
@@ -79,6 +87,7 @@ class TestDeadline(unittest.TestCase):
                 self.create_task("C", 1, 2),
                 self.create_task("A", 1, 4),
                 self.create_task("A", 1, 4)]
+
         self.assertEqual(answer, test_output)
 
     def test_split_based_on_deadline(self):
@@ -122,6 +131,7 @@ class TestDeadline(unittest.TestCase):
                 self.create_task("A", 1, 3),
                 self.create_task("B", 1, 5),
                 self.create_task("B", 1, 5)]
+
         self.assertEqual(answer, test_output)
 
     def test_double_split(self):
@@ -207,5 +217,62 @@ class TestDeadline(unittest.TestCase):
                 self.create_task("C", 1, 8),
                 self.create_task("D", 1, 8),
                 self.create_task("C", 1, 8)]
+
+        self.assertTrue(answer1 == test_output or answer2 == test_output)
+
+    def test_schedule_due_first_with_interrupts(self):
+        test_input_tasks = [
+                self.create_task("A", 2, 3),
+                self.create_task("B", 1, 5)]
+
+        test_input_interrupts = [
+                self.create_interrupt("iA", 1, 2),
+                self.create_interrupt("iB", 3, 4)]
+
+        test_output = RoundRobinScheduler.schedule(
+            test_input_tasks, test_input_interrupts,
+            self.factory.start_time, self.block_size)
+
+        answer = [
+                self.create_task("A", 1, 3),
+                self.create_interrupt("iA", 1, 2),
+                self.create_task("A", 1, 3),
+                self.create_interrupt("iB", 3, 4),
+                self.create_task("B", 1, 5)]
+
+        self.assertEqual(answer, test_output)
+
+    def test_split_based_on_deadline_with_interrupts(self):
+        test_input_tasks = [
+                self.create_task("A", 2, 4),
+                self.create_task("B", 1, 7),
+                self.create_task("C", 1, 7)]
+
+        test_input_interrupts = [
+                self.create_interrupt("iA", 1, 2),
+                self.create_interrupt("iB", 4, 5),
+                self.create_interrupt("iC", 6, 7)]
+
+        test_output = RoundRobinScheduler.schedule(
+            test_input_tasks, test_input_interrupts,
+            self.factory.start_time, self.block_size)
+
+        answer1 = [
+                self.create_task("A", 1, 4),
+                self.create_interrupt("iA", 1, 2),
+                self.create_task("B", 1, 7),
+                self.create_task("A", 1, 4),
+                self.create_interrupt("iB", 4, 5),
+                self.create_task("C", 1, 7),
+                self.create_interrupt("iC", 6, 7)]
+
+        answer2 = [
+                self.create_task("A", 1, 4),
+                self.create_interrupt("iA", 1, 2),
+                self.create_task("C", 1, 7),
+                self.create_task("A", 1, 4),
+                self.create_interrupt("iB", 4, 5),
+                self.create_task("B", 1, 7),
+                self.create_interrupt("iC", 6, 7)]
 
         self.assertTrue(answer1 == test_output or answer2 == test_output)

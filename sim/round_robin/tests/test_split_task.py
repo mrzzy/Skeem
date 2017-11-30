@@ -26,8 +26,8 @@ class TestSplitTask(unittest.TestCase):
     def test_split_without_remainder(self):
         test_input = self.create_task("A", 2, 3)
 
-        test_output = RoundRobinScheduler.split_task(test_input,
-                                                     self.block_size)
+        test_output = RoundRobinScheduler.split_task(
+            test_input, self.block_size)
 
         answer = [
                 self.create_task("A", 1, 3),
@@ -38,8 +38,8 @@ class TestSplitTask(unittest.TestCase):
     def test_split_with_remainder(self):
         test_input = Task("A", minutes(15), self.epoch)
 
-        test_output = RoundRobinScheduler.split_task(test_input,
-                                                     minutes(10))
+        test_output = RoundRobinScheduler.split_task(
+            test_input, minutes(10))
 
         answer = [
                 Task("A", minutes(10), self.epoch),
