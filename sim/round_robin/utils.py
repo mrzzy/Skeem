@@ -33,10 +33,10 @@ class Interrupt(object):
         return "Interrupt({}, {}, {})".format(self.name, self.start, self.end)
 
     def __repr__(self):
-        return __str__()
+        return self.__str__()
 
     def __eq__(self, other):
-        return isintance(other, Interrupt) and\
+        return isinstance(other, Interrupt) and\
             self.name == other.name and\
             self.start == other.start and\
             self.end == other.end and\
@@ -51,6 +51,6 @@ class Factory(object):
         return Task(name, duration, self.start_time+relative_deadline)
 
     def create_interrupt(self, name, relative_start, relative_end):
-        return Task(name,
-                    self.start_time+relative_start,
-                    self.start_time+relative_end)
+        return Interrupt(name,
+                         self.start_time+relative_start,
+                         self.start_time+relative_end)
