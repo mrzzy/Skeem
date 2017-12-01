@@ -6,6 +6,7 @@
 import datetime
 import functools
 import copy
+from algorithm import RoundRobinScheduler
 
 #Utility Functions
 def epoch_time(time=datetime.datetime.now()):
@@ -310,32 +311,37 @@ class Schedule:
         return stasks
     
     def knit(self):
-        tpointer = self.genesis
-        finterrupts = self.flat_interrupts
-        irpt_idx = 0
-        self.itinerary = []
-        
-        #Process any interrupts
-        while len(finterrupts) > irpt_idx:
-            interrupt = finterrupts[irpt_idx]
-                
-            if tpointer < interrupt.begin:
-                #Pointer before interrupt begins
-                #Schedulable time from pointer to interrupt begin 
-                result = self.schedule(tpointer, interrupt.begin)
-                if result == -1:
-                    tpointer = interrupt.begin
-                else: tpointer = result
-            elif tpointer >= interrupt.begin and tpointer < interrupt.end():
-                #Pointer is at or during the interrupt
-                #Schedule the interrupt and move pointer to end.
-                self.itinerary += [ interrupt ]
-                tpointer = interrupt.end() 
+        if isinstance(self.algorithm, SchedulingAlgorithm):
+            tpointer = self.genesis
+            finterrupts = self.flat_interrupts
+            irpt_idx = 0
+            self.itinerary = []
+            
+            #Process any interrupts
+            while len(finterrupts) > irpt_idx:
+                interrupt = finterrupts[irpt_idx]
+                    
+                if tpointer < interrupt.begin:
+                    #Pointer before interrupt begins
+                    #Schedulable time from pointer to interrupt begin 
+                    result = self.schedule(tpointer, interrupt.begin)
+                    if result == -1:
+                        tpointer = interrupt.begin
+                    else: tpointer = result
+                elif tpointer >= interrupt.begin and tpointer < interrupt.end():
+                    #Pointer is at or during the interrupt
+                    #Schedule the interrupt and move pointer to end.
+                    self.itinerary += [ interrupt ]
+                    tpointer = interrupt.end() 
 
-                irpt_idx += 1
-            else:
-                #Overlaps in Interrupts detected
-                raise AssertionError
+                    irpt_idx += 1
+                else:
+                    #Overlaps in Interrupts detected
+                    raise AssertionError
+        elif isinstance(self.algorithm, RoundRobinScheduler):
+            self.itinerary = self.algorithm.schedule(self,genesis, self.flat_tasks, self.flat_interrupts)
+        else: raise NotImplementedError #Algorithm not reconisedl.
+
             
         #Schedule any tasks left
         result = 0
