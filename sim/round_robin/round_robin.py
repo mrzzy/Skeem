@@ -68,11 +68,6 @@ class RoundRobinScheduler:
         return sum(map(RoundRobinScheduler.stddev, start_times.values()))
 
     @staticmethod
-    def calculate_rating(schedule):
-        return RoundRobinScheduler.stddev_sum(schedule) +\
-            RoundRobinScheduler.min_distance(schedule)/10.0
-
-    @staticmethod
     def min_distance(schedule):
         latest_tasks = {}
         min_dist = None
@@ -96,6 +91,23 @@ class RoundRobinScheduler:
             cum_minutes += schedulable.duration.total_seconds()//60
 
         return min_dist or 0
+
+    @staticmethod
+    def count_blocks(schedule, block_size):
+        count = 0
+        for schedulable in schedule:
+            if isinstance(schedulable, Interrupt):
+                continue
+
+            count += schedulable.duration == block_size
+
+        return count
+
+    @staticmethod
+    def calculate_rating(schedule, block_size):
+        return RoundRobinScheduler.count_blocks(schedule, block_size)*1000 +\
+                RoundRobinScheduler.stddev_sum(schedule) +\
+                RoundRobinScheduler.min_distance(schedule)/10.0
 
     @staticmethod
     def insert_interrupts(tasks, interrupts, start_time):
@@ -159,7 +171,7 @@ class RoundRobinScheduler:
             if not RoundRobinScheduler.valid(perm, start_time):
                 continue
 
-            rating = RoundRobinScheduler.calculate_rating(perm)
+            rating = RoundRobinScheduler.calculate_rating(perm, block_size)
             if rating > best_perm[1]:
                 best_perm = (perm, rating)
 

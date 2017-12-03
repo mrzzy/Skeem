@@ -134,7 +134,6 @@ class TestOddDurations(unittest.TestCase):
         self.assertTrue(answer1 == test_output or answer2 == test_output)
 
     def test_alternate_with_interrupts(self):
-        # Test still failing
         test_input_tasks = [
                 Task("A", minutes(30), self.epoch+minutes(100)),
                 Task("B", minutes(30), self.epoch+minutes(100))]
