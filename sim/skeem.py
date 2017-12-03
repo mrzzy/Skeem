@@ -3,10 +3,11 @@
 # Skeem Simulator - Skeem Model Object
 # 
 # Nov 21, 2017
+
 import datetime
 import functools
 import copy
-from algorithm import RoundRobinScheduler
+import algorithm
 
 #Utility Functions
 def epoch_time(time=datetime.datetime.now()):
@@ -110,25 +111,6 @@ class Interrupt(Schedulable):
     def end(self):
         return self.begin + self.duration 
 
-class SchedulingOrder:
-    #Ordering
-    sequential = 1 << 0
-    iterative = 1 << 1
-    #Sorting
-    nosort = 0 << 2
-    sort =  1 << 2
-    onesort = 0 << 3
-    resort = 1 << 3
-    
-class SchedulingAlgorithm: #Abstract Class
-    def order(self):
-        raise NotImplementedError
-
-    def compare(self,lhs, rhs):
-        raise NotImplementedError
-
-    def schedule(self,task, avail_time):
-        raise NotImplementedError
 
 class ScheduleIterator:
     def __init__(self, pointer):
@@ -175,6 +157,7 @@ class Schedule:
         self.itinerary = False
         self.genesis = epoch_time()
         self.ordered = False
+        self.drsn = None
 
     def switch(self, algorithm):
         self.algorithm = algorithm
@@ -229,14 +212,17 @@ class Schedule:
         return len(self.tasks) + len(self.interrupts)
 
     def duration(self):
-        total = 0
-        for task in self.tasks:
-            total += task.duration
-        for interrupt in self.interrupts:
-            total += interrupt.duration
-        return total
+        if self.drsn == None:
+            total = 0
+            for task in self.tasks:
+                total += task.duration
+            for interrupt in self.interrupts:
+                total += interrupt.duration
+            self.drsn = total
+            return total
+        else:
+            return self.drsn
 
-        
     def commit(self, genesis=epoch_time()):
         if self.itinerary == None:
 
@@ -249,7 +235,7 @@ class Schedule:
             #Create Itinenary
             self.knit()
 
-            if not len(self.itinerary) >= self.size():
+            if len(self.itinerary) < self.size():
                 #Generated itinerary had LESS scheduables than is stored
                 #This means that some of the schedulables were NOT scheduled.
                 raise AssertionError
@@ -277,6 +263,7 @@ class Schedule:
         self.itinerary = None
         self.ordered = False
         self.tidx = None
+        self.drsn = None
     
     def unroll(self):
         # Stub Implementation - Does not actually unroll schedulables
@@ -297,10 +284,10 @@ class Schedule:
             if self.algorithm.compare(lhs, rhs) == False: return 1 #Swap Position
             else: return -1 #Dont swap position
 
-        if self.algorithm.order() & SchedulingOrder.resort == 0 and self.ordered == True:
+        if self.algorithm.order() & algorithm.SchedulingOrder.resort == 0 and self.ordered == True:
             #Not resort and already sorted
             return tasks #Return unsorted tasks
-        elif self.algorithm.order() & SchedulingOrder.sort == 0:
+        elif self.algorithm.order() & algorithm.SchedulingOrder.sort == 0:
             #Sorting disabled
             return tasks #Return unsorted tasks
 
@@ -311,7 +298,7 @@ class Schedule:
         return stasks
     
     def knit(self):
-        if isinstance(self.algorithm, SchedulingAlgorithm):
+        if isinstance(self.algorithm, algorithm.SchedulingAlgorithm):
             tpointer = self.genesis
             finterrupts = self.flat_interrupts
             irpt_idx = 0
@@ -370,9 +357,9 @@ class Schedule:
             else: scheduled += 1
             
             #Determine next task based on order
-            if not self.algorithm.order() & SchedulingOrder.iterative == 0:
+            if not self.algorithm.order() & algorithm.SchedulingOrder.iterative == 0:
                 self.tidx = (self.tidx + 1) % len(self.flat_tasks)
-            if not self.algorithm.order() & SchedulingOrder.sequential == 0:
+            if not self.algorithm.order() & algorithm.SchedulingOrder.sequential == 0:
                 if task.duration > 0: pass #Remain on same task
                 else: self.tidx = (self.tidx + 1) % len(self.flat_tasks)
         

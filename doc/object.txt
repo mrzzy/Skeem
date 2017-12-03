@@ -94,7 +94,6 @@ SchedulingOrder
 
 
 SchedulingAlgorithm
-or Scheduler
 ====
 - order() - Tells the scheduler when how the tasks should to be fed to the 
             schedule() method, and whether and when to the tasks.
@@ -107,6 +106,7 @@ or Scheduler
       of the task passed will be updated to only give the tasks remaining time,
       not the entire duration of the task
 
+Scheduler
 RoundRobinScheduler
 ===
 - schedule(startTime, tasks, interrupts, blockSize) - Schedules and returns an
