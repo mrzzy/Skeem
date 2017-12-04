@@ -5,41 +5,38 @@
 #
 # Create Nov 24, 2017
 
-import skeem
-from skeem import epoch_time
+import pprint
+import multiprocessing
 import random
 import cProfile
-import multiprocessing
-import queue
+import pstats
 import os
+import sys
 import getopt
 import uuid
 import copy
-import sys 
-import pprint
-import datetime
-import cProfile
-import pstats
 import pickle
-import algorithm
+import datetime
 import time
+
+import algorithm
+import skeem
+from skeem import epoch_time
+
 
 #Utility Functions
 def pretty(arg):
     pprint.pprint(arg, indent=2)
-    
+
 def proppretty(arg):
-    pretty(dict((name, getattr(arg, name)) for name in dir(arg) if not name.startswith('__')))
+    pretty({name: getattr(arg, name)
+            for name in dir(arg) if not name.startswith('__')})
 
 def prettytime(arg):
-    print(str(datetime.timedelta(seconds=arg)))
+    print(datetime.timedelta(seconds=arg))
 
 def pdivider():
-    print("================================================================================")
-    print()
-
-def epoch_time(time=datetime.datetime.now()):
-    return int((time - datetime.datetime(1970,1,1)).total_seconds())
+    print("="*80, end="\n\n")
 
 
 #Parse Options
@@ -76,8 +73,7 @@ for opt, arg in opt_list:
 """)
         sys.exit()
     else:
-        #Unknown Argument
-        raise ValueError
+        raise ValueError("Unknown Argument")
 
 if not os.path.exists(opts["directory"]):
     os.makedirs(opts["directory"])
@@ -93,53 +89,59 @@ if opts["verbose"]:
 simulations = opts["repetitions"] * len(algorithm.algorithms)
 completed = multiprocessing.Value('i')
 
-def simulation_callback(case, schedule, profile, time):
+def simulation_callback(case, schedule, stats):
     global completed
 
     itinerary = []
     iterator = schedule.begin()
-    while not iterator == schedule.end():
-        itinerary += [ iterator.value() ]
+    while iterator != schedule.end():
+        itinerary.append(iterator.value())
         iterator = iterator.next()
     completed.value += 1
 
     #Write output
-    fname = case.name + "." + schedule.algorithm.__class__.__name__
-    with open(fname , 'wb') as f:
-        pickle.dump({"case" : case.name, "itinerary" : itinerary, "time": time}, f)
-    fname = case.name + "." + schedule.algorithm.__class__.__name__ +  "." + "profile"
-    profile.dump_stats(fname)
+    algorithm_name = schedule.algorithm.__class__.__name__
+
+    fname = case.name + "." + algorithm_name
+    with open(fname, 'wb') as f:
+        pickle.dump({"case": case.name,
+                     "itinerary": itinerary,
+                     "time": stats.total_tt}, f)
+
+    fname = case.name + "." + algorithm_name + "." + "stats"
+    stats.dump_stats(fname)
 
     if opts["verbose"]:
         print("Simulation Completed!")
         print("Simulation Completed with the following itinerary:")
         pretty(itinerary)
         print("\nSimulation Completed with the following performance stats:")
-        profile.print_stats()
+        stats.print_stats()
         pdivider()
 
-    print(("%.1f%%" % (float(completed.value) / float(simulations) * 100.0)))
+    print(("%.1f%%" % (completed.value/simulations * 100)))
 
 if opts["verbose"]:
-    print("Number of simulations:" + str(simulations))
+    print("Number of simulations:", simulations)
     pdivider()
 
-    
+
 #Algorithms
 if opts["verbose"]:
-    print("Algorithms Loaded:" + str(len(algorithm.algorithms)))
+    print("Algorithms Loaded:", len(algorithm.algorithms))
     pretty(algorithm.algorithms)
     pdivider()
 
 
 #Simulation
 class ScheduleTestCase:
-    def __init__(self, size):
+    def __init__(self, size, verbose=False):
         self.size = size
         self.name = "TestCase:" + str(uuid.uuid4())
+        self.verbose = verbose
+        random.seed()
 
     def generate(self):
-        random.seed()
         self.name = "TestCase:" + str(uuid.uuid4())
         factor = random.random()
         ntasks = int(factor * self.size)
@@ -147,14 +149,14 @@ class ScheduleTestCase:
         self.irpt_tpointer = epoch_time()
 
         #Generate random tasks and interrupts
-        self.schedule = skeem.Schedule( None)
+        self.schedule = skeem.Schedule(None)
 
         for i in range(ntasks):
             self.randomTask()
-        for i in range(ninterrupts): 
+        for i in range(ninterrupts):
             self.randomInterrupt()
-        
-        if opts["verbose"] == True:
+
+        if self.verbose:
             print("Generated Test Case:")
             pretty(self.schedule)
             print("number of tasks:" + str(ntasks))
@@ -168,30 +170,30 @@ class ScheduleTestCase:
         #Duration range 1 second to 8 hours
         #Deadline range 0 second to 1 month
         #Task Weight 0.0 to 1.0
-        random.seed()
-        duration = random.randint(1, 8 * 60 * 60) 
-        deadline = epoch_time() + duration + random.randint(0, 1 * 24 * 60 * 60)
-        task = skeem.Task("Task:" + str(uuid.uuid4()), duration,deadline)
+        duration = random.randint(1, 8 * 60 * 60)
+        deadline = epoch_time() + duration +\
+            random.randint(0, 1 * 24 * 60 * 60)
+        task = skeem.Task("Task:" + str(uuid.uuid4()), duration, deadline)
         task.weight = random.random()
-        
-        if opts["verbose"] == True:
+
+        if self.verbose:
             print("Random Task Generated:")
             pretty(task)
             proppretty(task)
             pdivider()
 
         self.schedule.add(task)
-    
+
     def randomInterrupt(self):
         #Duration range 1 second to 1 day
         #Begin range 0 second to 2 month
-        random.seed()
-        duration = random.randint(1, 24 * 60 * 60) 
+        duration = random.randint(1, 24 * 60 * 60)
         begin = self.irpt_tpointer + random.randint(1, 24 * 60 * 60)
-        interrupt = skeem.Interrupt("Interrupt:" + str(uuid.uuid4()), duration, begin)
+        interrupt = skeem.Interrupt("Interrupt:" + str(uuid.uuid4()),
+                                    duration, begin)
         self.irpt_tpointer = interrupt.end()
 
-        if opts["verbose"] == True:
+        if self.verbose:
             print("Random Interrupt Generated:")
             pretty(interrupt)
             proppretty(interrupt)
@@ -200,10 +202,8 @@ class ScheduleTestCase:
         self.schedule.add(interrupt)
 
 def simulate(alg, case):
-    global completed
     schedule = case.case()
 
-    tbegin = time.time()
     profile = cProfile.Profile()
     profile.enable()
     schedule.switch(alg)
@@ -214,30 +214,29 @@ def simulate(alg, case):
         return
 
     profile.disable()
-    
     profile.create_stats()
-    elapse = time.time() - tbegin
+    stats = pstats.Stats(profile)
 
-    
-    return simulation_callback(case, schedule, profile, elapse)
-    
+    return simulation_callback(case, schedule, stats)
+
+
 #Main
 pool = multiprocessing.Pool(processes=opts["threads"])
 try:
     print("Simulation Commencing.")
-    
-    tcase = ScheduleTestCase(opts["test_size"])
-    for repeat in range(0, opts["repetitions"]):
+
+    tcase = ScheduleTestCase(opts["test_size"], opts["verbose"])
+    for i in range(opts["repetitions"]):
         tcase.generate()
         #Write Test case
-        with open(tcase.name + ".case" , 'wb') as f:
+        with open(tcase.name + ".case", 'wb') as f:
             case = tcase.case()
-            pickle.dump({"tasks": case.tasks, "interrupts": case.interrupts}, f)
+            pickle.dump({"tasks": case.tasks,
+                         "interrupts": case.interrupts}, f)
         for alg in algorithm.algorithms:
-            pool.apply_async(simulate, args=(alg,tcase))
+            pool.apply_async(simulate, args=(alg, tcase))
             #simulate(alg, tcase)
-            
-            
+
     pool.close()
     pool.join()
 

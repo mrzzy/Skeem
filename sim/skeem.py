@@ -1,7 +1,7 @@
 #
 # skeem.py
 # Skeem Simulator - Skeem Model Object
-# 
+#
 # Nov 21, 2017
 
 import datetime
@@ -9,15 +9,17 @@ import functools
 import copy
 import algorithm
 
+
 #Utility Functions
 def epoch_time(time=datetime.datetime.now()):
-    return int((time - datetime.datetime(1970,1,1)).total_seconds())
+    return int((time - datetime.datetime.utcfromtimestamp(0)).total_seconds())
+
 
 #Prove of concept only, not actually used.
 #Rewrite required
 class Repetition:
-    def __init__(self, interval, stopdate=epoch_time(datetime.datetime.max), \
-            offset=0):
+    def __init__(self, interval, stopdate=epoch_time(datetime.datetime.max),
+                 offset=0):
         self.offset = offset
         self.interval = interval
         self.stopdate = stopdate
@@ -25,14 +27,16 @@ class Repetition:
         self.prevdate = datetime.datetime.now()
 
     #Create from days of week
-    def __init__(self, days_of_week, stopdate=epoch_time(datetime.datetime.max)):
+    def __init__(self, days_of_week,
+                 stopdate=epoch_time(datetime.datetime.max)):
         #Compute Start Offset
-        days_of_week = sorted(days_of_week)
+        days_of_week.sort()
         now = datetime.datetime.now()
         td_day = datetime.timedelta(days=1)
+
         startdate = datetime.datetime.today() + td_day
-        while not startdate.weekday() in days_of_week:
-            startdate += [ td_day ]
+        while startdate.weekday() not in days_of_week:
+            startdate.append(td_day)
         self.offset = (startdate - now).total_seconds()
 
         #Generate Interval Loop & Compute Index
@@ -52,20 +56,21 @@ class Repetition:
         return self.stopdate > datetime.datetime.now()
 
     def next_repeat(self):
-        if self.valid() == True:
+        if self.valid():
             nextdate = self.prevdate
             if not self.offset == 0:
-                nextdate += [ datetime.timedelta(seconds=self.offset) ]
+                nextdate.append(datetime.timedelta(seconds=self.offset))
                 self.offset = 0
-            nextdate += [ self.interval[self.pointer] ]
-            
-            self.pointer +=  1
+            nextdate.append(self.interval[self.pointer])
+
+            self.pointer += 1
             self.pointer = self.pointer % len(self.interval)
             self.prevdate = nextdate
 
             return epoch_time(nextdate)
-        else: 
+        else:
             return None
+
 
 class Schedulable:
     def __init__(self, name, duration, describe="", tags=[], repeat=None):
@@ -78,9 +83,10 @@ class Schedulable:
     def weigh(self):
         return 1.0
 
+
 class Task(Schedulable):
-    def __init__(self, name, duration, deadline, describe="", tags=[], \
-            repeat=None):
+    def __init__(self, name, duration, deadline, describe="", tags=[],
+                 repeat=None):
         self.name = name
         self.describe = describe
         self.duration = duration
@@ -88,19 +94,21 @@ class Task(Schedulable):
         self.tags = tags
         self.repeat = repeat
         self.weigh = 0.0
-    
+
     def weigh():
         #Computer from tags disabled: see sim.txt
         #weight = 0.0
-        #Compute weightt from Tags
+        #Compute weight from Tags
         #for tag in self.tags:
             #weight += tag.weight
         #weight /= float(len(self.tags))
         #return weight
         return self.weight
-        
+
+
 class Interrupt(Schedulable):
-    def __init__(self, name, duration, begin, describe="", tags=[], repeat=None):
+    def __init__(self, name, duration, begin, describe="", tags=[],
+                 repeat=None):
         self.name = name
         self.describe = describe
         self.duration = duration
@@ -109,7 +117,7 @@ class Interrupt(Schedulable):
         self.repeat = repeat
 
     def end(self):
-        return self.begin + self.duration 
+        return self.begin + self.duration
 
 
 class ScheduleIterator:
@@ -123,31 +131,30 @@ class ScheduleIterator:
     def iterate(cls, schedule, pointer=0):
         cls.valid = True
         cls.schedule = schedule
-        return ScheduleIterator( pointer)
-    
+        return ScheduleIterator(pointer)
+
     @classmethod
     def invalidate(cls):
         cls.valid = False
         ScheduleIterator.schedule = None
 
     def next(self):
-        if ScheduleIterator.valid == True:
+        if ScheduleIterator.valid:
             return ScheduleIterator(self.pointer + 1)
-        else: return None
 
     def prev(self):
-        if ScheduleIterator.valid == True:
+        if ScheduleIterator.valid:
             return ScheduleIterator(self.pointer - 1)
-        else: return None
 
     def value(self):
-        if ScheduleIterator.valid == True:
+        if ScheduleIterator.valid:
             return ScheduleIterator.schedule[self.pointer]
-        else: raise ValueError
+        else:
+            raise ValueError
 
 
 class Schedule:
-    def __init__(self,algorithm):
+    def __init__(self, algorithm):
         self.algorithm = algorithm
         self.tasks = []
         self.interrupts = []
@@ -165,20 +172,15 @@ class Schedule:
 
     def add(self, schedulable):
         if isinstance(schedulable, Task):
-            if not len([t for t in self.tasks if t.name == schedulable.name]) \
-                    == 0:
-                #Already has Task
-                raise ValueError
-            self.tasks += [ schedulable ]
-        elif isinstance(schedulable, Interrupt) :
-            if not len([i for i in self.tasks if i.name == schedulable.name]) \
-                    == 0:
-                #Already has Interrupt
-                raise ValueError 
-            self.interrupts += [ schedulable  ]
+            if [t for t in self.tasks if t.name == schedulable.name]:
+                raise ValueError("Already has Task")
+            self.tasks.append(schedulable)
+        elif isinstance(schedulable, Interrupt):
+            if [i for i in self.tasks if i.name == schedulable.name]:
+                raise ValueError("Already has Interrupt")
+            self.interrupts.append(schedulable)
         else:
-            #Type not supported
-            raise ValueError
+            raise ValueError("Type not supported")
         self.invalidate()
 
     def remove(self, schedulable):
@@ -187,74 +189,70 @@ class Schedule:
         elif isinstance(schedulable, Interrupt):
             self.interrupts.remove(schedulable)
         else:
-            #Schedulable not found
-            raise ValueError
+            raise ValueError("Schedulable not found")
         self.invalidate()
 
     def update(self, schedulable):
         if isinstance(schedulable, Task):
-            for i,sched in enumerate(self.tasks):
+            for i, sched in enumerate(self.tasks):
                 if sched.name == schedulable.name:
                     self.tasks[i] = schedulable
                     break
         elif isinstance(schedulable, Interrupt):
-            for i,sched in enumerate(self.interrupts):
+            for i, sched in enumerate(self.interrupts):
                 if sched.name == schedulable.name:
                     self.interrupts[i] = schedulable
                     break
         else:
-            #Schedulable not found
-            raise ValueError
+            raise ValueError("Schedulable not found")
         self.invalidate()
 
-
     def size(self):
-        return len(self.tasks) + len(self.interrupts)
+        return len(self.tasks + self.interrupts)
 
     def duration(self):
-        if self.drsn == None:
+        if self.drsn is None:
             total = 0
-            for task in self.tasks:
-                total += task.duration
-            for interrupt in self.interrupts:
-                total += interrupt.duration
+            for schedulable in (self.tasks+self.interrupts):
+                total += schedulable.duration
             self.drsn = total
             return total
         else:
             return self.drsn
 
     def commit(self, genesis=epoch_time()):
-        if self.itinerary == None:
+        if self.itinerary is None:
 
             self.genesis = genesis
             #Order State
-            self.interrupts = sorted(self.interrupts, \
-                    key=(lambda interrupt: interrupt.begin))
+            self.interrupts = sorted(self.interrupts,
+                                     key=(lambda interrupt: interrupt.begin))
             #Unroll Repeats
             self.unroll()
-            #Create Itinenary
+            #Create Itinerary
             self.knit()
 
             if len(self.itinerary) < self.size():
                 #Generated itinerary had LESS scheduables than is stored
                 #This means that some of the schedulables were NOT scheduled.
                 raise AssertionError
-            
-                
-        else: pass # Do nothing if itinerary has not been invalidated
-    
+
+        else:
+            pass #Do nothing if itinerary has not been invalidated
+
     def begin(self):
-        if not self.itinerary == None:
+        if self.itinerary:
             return ScheduleIterator.iterate(self.itinerary, 0)
-        #No itinerary to iterate
-        else: raise ValueError
+        else:
+            raise ValueError("No itinerary to iterate")
 
     def end(self):
-        if not self.itinerary == None:
+        if self.itinerary:
             #Point to one past the last on schedule
-            return ScheduleIterator.iterate(self.itinerary, len(self.itinerary)) 
-        #No itinerary to interate
-        else: raise ValueError
+            return ScheduleIterator.iterate(self.itinerary,
+                                            len(self.itinerary))
+        else:
+            raise ValueError("No itinerary to iterate")
 
     def invalidate(self):
         ScheduleIterator.valid = False
@@ -264,7 +262,7 @@ class Schedule:
         self.ordered = False
         self.tidx = None
         self.drsn = None
-    
+
     def unroll(self):
         # Stub Implementation - Does not actually unroll schedulables
         self.flat_tasks = self.tasks
@@ -281,10 +279,13 @@ class Schedule:
 
     def reorder(self, tasks):
         def cmp(lhs, rhs):
-            if self.algorithm.compare(lhs, rhs) == False: return 1 #Swap Position
-            else: return -1 #Dont swap position
+            if not self.algorithm.compare(lhs, rhs):
+                return 1 #Swap Position
+            else:
+                return -1 #Don't swap position
 
-        if self.algorithm.order() & algorithm.SchedulingOrder.resort == 0 and self.ordered == True:
+        if self.algorithm.order() & algorithm.SchedulingOrder.resort == 0 and\
+                self.ordered:
             #Not resort and already sorted
             return tasks #Return unsorted tasks
         elif self.algorithm.order() & algorithm.SchedulingOrder.sort == 0:
@@ -294,76 +295,80 @@ class Schedule:
         #Sort
         stasks = sorted(tasks, key=functools.cmp_to_key(cmp))
         self.ordered = True
-        
+
         return stasks
-    
+
     def knit(self):
         if isinstance(self.algorithm, algorithm.SchedulingAlgorithm):
             tpointer = self.genesis
             finterrupts = self.flat_interrupts
             irpt_idx = 0
             self.itinerary = []
-            
+
             #Process any interrupts
             while len(finterrupts) > irpt_idx:
                 interrupt = finterrupts[irpt_idx]
-                    
+
                 if tpointer < interrupt.begin:
                     #Pointer before interrupt begins
-                    #Schedulable time from pointer to interrupt begin 
+                    #Schedulable time from pointer to interrupt begin
                     result = self.schedule(tpointer, interrupt.begin)
                     if result == -1:
                         tpointer = interrupt.begin
-                    else: tpointer = result
-                elif tpointer >= interrupt.begin and tpointer < interrupt.end():
+                    else:
+                        tpointer = result
+                elif interrupt.begin <= tpointer < interrupt.end():
                     #Pointer is at or during the interrupt
                     #Schedule the interrupt and move pointer to end.
-                    self.itinerary += [ interrupt ]
-                    tpointer = interrupt.end() 
+                    self.itinerary.append(interrupt)
+                    tpointer = interrupt.end()
 
                     irpt_idx += 1
                 else:
-                    #Overlaps in Interrupts detected
-                    raise AssertionError
-        elif isinstance(self.algorithm, RoundRobinScheduler):
-            self.itinerary = self.algorithm.schedule(self,genesis, self.flat_tasks, self.flat_interrupts)
-        else: raise NotImplementedError #Algorithm not reconisedl.
+                    raise AssertionError("Overlaps in Interrupts detected")
+        elif isinstance(self.algorithm, algorithm.RoundRobinScheduler):
+            self.itinerary = self.algorithm.schedule(self.genesis, self.flat_tasks, self.flat_interrupts)
+        else:
+            raise NotImplementedError("Algorithm not recognised.")
 
-            
         #Schedule any tasks left
         result = 0
-        while not result == -1:
-            result =  self.schedule(tpointer, tpointer + self.duration())
-    
+        while result != -1:
+            result = self.schedule(tpointer, tpointer + self.duration())
+
     def schedule(self, begin, end):
-        if self.tidx == None:
+        if self.tidx is None:
             self.tidx = 0
-        
+
         scheduled = 0
         tpointer = begin
-        while (not end - tpointer == 0) and len(self.flat_tasks) > scheduled:
+        while (end - tpointer != 0) and len(self.flat_tasks) > scheduled:
             self.flat_tasks = self.reorder(self.flat_tasks)
             task = self.flat_tasks[self.tidx]
 
             if task.duration > 0:
                 tschedule = self.algorithm.schedule(task, end - tpointer)
-                if tschedule > end - tpointer: raise AssertionError
+                if tschedule > end - tpointer:
+                    raise AssertionError
                 subtask = copy.deepcopy(task)
                 subtask.duration = tschedule
-                self.itinerary += [ subtask ]
+                self.itinerary.append(subtask)
 
                 tpointer += tschedule
                 task.duration -= subtask.duration
-            else: scheduled += 1
-            
+            else:
+                scheduled += 1
+
             #Determine next task based on order
-            if not self.algorithm.order() & algorithm.SchedulingOrder.iterative == 0:
+            if self.algorithm.order() & algorithm.SchedulingOrder.iterative:
                 self.tidx = (self.tidx + 1) % len(self.flat_tasks)
-            if not self.algorithm.order() & algorithm.SchedulingOrder.sequential == 0:
-                if task.duration > 0: pass #Remain on same task
-                else: self.tidx = (self.tidx + 1) % len(self.flat_tasks)
-        
+            if self.algorithm.order() & algorithm.SchedulingOrder.sequential:
+                if task.duration > 0:
+                    pass #Remain on same task
+                else:
+                    self.tidx = (self.tidx + 1) % len(self.flat_tasks)
+
         if scheduled == len(self.flat_tasks): #All Tasks scheduled
             return -1
-        else: return tpointer
-
+        else:
+            return tpointer
