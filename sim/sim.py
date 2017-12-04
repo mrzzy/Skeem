@@ -36,8 +36,7 @@ def prettytime(arg):
     print(datetime.timedelta(seconds=arg))
 
 def pdivider():
-    print("="*80, end="\n\n")
-
+    print("="*80 + "\n")
 
 #Parse Options
 #Default Program Configuration
@@ -92,6 +91,7 @@ completed = multiprocessing.Value('i')
 def simulation_callback(case, schedule, stats):
     global completed
 
+    #Extrct Itinerary
     itinerary = []
     iterator = schedule.begin()
     while iterator != schedule.end():
@@ -108,7 +108,7 @@ def simulation_callback(case, schedule, stats):
                      "itinerary": itinerary,
                      "time": stats.total_tt}, f)
 
-    fname = case.name + "." + algorithm_name + "." + "stats"
+    fname = case.name + "." + algorithm_name + "." + "profile"
     stats.dump_stats(fname)
 
     if opts["verbose"]:

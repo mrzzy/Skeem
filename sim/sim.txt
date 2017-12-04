@@ -86,14 +86,13 @@ display.py
 - Interative display command with prompt and the following commands
 - l - list test cases with id
 - a - list algorithms with id 
-- t - display graph plotting time taken to schedule all test cases for each 
-      algorithm
-- s <id> - select test case
-----[Test Case Selected]-----
-- s - unselect test case
-- p <algorithm> - print perfomance profile for algorithm
-- t - display graph plotting time taken to schedule for each algorithm
+- t - display graph plotting processing time taken to schedule for each 
+     algorithm
 - w - display graph plotting weights complete for each algorithm.
 - d - display graph plotting task complete before deadline for each algorithm.
 - b - display graph plotting standard deviation^-1 between each task for each
       each algorithm.
+- s <id> - select test case
+----[Test Case Selected]-----
+- s - unselect test case
+- p <algorithm> - print perfomance profile for algorithm
