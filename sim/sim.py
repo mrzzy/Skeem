@@ -17,7 +17,7 @@ import uuid
 import copy
 import pickle
 import datetime
-import time
+import timeit
 
 import algorithm
 import skeem
@@ -88,7 +88,7 @@ if opts["verbose"]:
 simulations = opts["repetitions"] * len(algorithm.algorithms)
 completed = multiprocessing.Value('i')
 
-def simulation_callback(case, schedule, stats):
+def simulation_callback(case, schedule, stats, time):
     global completed
 
     #Extrct Itinerary
@@ -106,7 +106,7 @@ def simulation_callback(case, schedule, stats):
     with open(fname, 'wb') as f:
         pickle.dump({"case": case.name,
                      "itinerary": itinerary,
-                     "time": stats.total_tt}, f)
+                     "time": time}, f)
 
     fname = case.name + "." + algorithm_name + "." + "profile"
     stats.dump_stats(fname)
@@ -206,18 +206,19 @@ def simulate(alg, case):
 
     profile = cProfile.Profile()
     profile.enable()
+    begin = timeit.default_timer()
     schedule.switch(alg)
     try:
         schedule.commit()
     except AssertionError:
         print("Test Case Invaild:" + case.name)
         return
-
+    elapse = timeit.default_timer() - begin
     profile.disable()
     profile.create_stats()
     stats = pstats.Stats(profile)
 
-    return simulation_callback(case, schedule, stats)
+    return simulation_callback(case, schedule, stats, elapse)
 
 
 #Main
