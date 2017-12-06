@@ -93,9 +93,9 @@ class Task(Schedulable):
         self.deadline = deadline
         self.tags = tags
         self.repeat = repeat
-        self.weigh = 0.0
+        self.weight = 0.0
 
-    def weigh():
+    def weigh(self):
         #Computer from tags disabled: see sim.txt
         #weight = 0.0
         #Compute weight from Tags

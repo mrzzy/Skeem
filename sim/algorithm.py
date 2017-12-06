@@ -54,7 +54,7 @@ class HeaviestWeightAlgorithm(SchedulingAlgorithm):
         return SchedulingOrder.sort | SchedulingOrder.onesort | SchedulingOrder.sequential
     
     def compare(self, lhs, rhs):
-        return lhs.weigh >= rhs.weigh
+        return lhs.weigh() >= rhs.weigh()
 
     def schedule(self, task, available):
         return min(task.duration, available)
