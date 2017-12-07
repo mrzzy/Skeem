@@ -5,7 +5,6 @@
 #
 # Create Nov 24, 2017
 
-import pprint
 import multiprocessing
 import random
 import cProfile
@@ -20,25 +19,10 @@ import datetime
 import timeit
 import glob
 
+from utils import pretty, proppretty, prettytime, pdivider
 import algorithm
 import skeem
 from skeem import epoch_time
-
-
-#Utility Functions
-def pretty(arg):
-    pprint.pprint(arg, indent=2)
-
-def proppretty(arg):
-    pretty({name: getattr(arg, name)
-            for name in dir(arg) if not name.startswith('__')})
-
-def prettytime(arg):
-    print(datetime.timedelta(seconds=arg))
-
-def pdivider():
-    print("="*80 + "\n")
-
 
 
 #Simulation

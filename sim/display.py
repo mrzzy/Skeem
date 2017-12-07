@@ -14,24 +14,10 @@ import os
 import pickle
 import glob
 import getopt
-import pprint
 import pstats
+
+from utils import pretty, proppretty, prettytime, pdivider
 from sim import ScheduleTestCase
-
-#Utility Functinns
-def pretty(arg):
-    pprint.pprint(arg, indent=2)
-    
-def proppretty(arg):
-    pretty(dict((name, getattr(arg, name)) for name in dir(arg) if not name.startswith('__')))
-
-def prettytime(arg):
-    print(str(datetime.timedelta(seconds=arg)))
-
-def pdivider():
-    print("================================================================================")
-    print()
-
 
 
 if __name__ == "__main__":
