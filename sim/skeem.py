@@ -13,7 +13,7 @@ import algorithm
 #Utility Functions
 def epoch_time(time=datetime.now()):
     epoch = datetime.utcfromtimestamp(0)
-    return int((time-epcoch).total_seconds())
+    return int((time-epoch).total_seconds())
 
 
 #Prove of concept only, not actually used.
@@ -28,7 +28,7 @@ class Repetition:
         self.prev_date = datetime.now()
 
     #Create from days of week
-    def __init__(self, days_of_week, stopdate=epoch_time(dateime.max)):
+    def __init__(self, days_of_week, stopdate=epoch_time(datetime.max)):
         self.stopdate = stopdate
         self.prev_date = datetime.now()
 
