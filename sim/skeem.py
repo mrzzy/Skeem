@@ -4,72 +4,70 @@
 #
 # Nov 21, 2017
 
-import datetime
+from datetime import datetime, timedelta
 import functools
 import copy
 import algorithm
 
 
 #Utility Functions
-def epoch_time(time=datetime.datetime.now()):
-    return int((time - datetime.datetime.utcfromtimestamp(0)).total_seconds())
+def epoch_time(time=datetime.now()):
+    epoch = datetime.utcfromtimestamp(0)
+    return int((time-epcoch).total_seconds())
 
 
 #Prove of concept only, not actually used.
-#Rewrite required
+#Method overloading of __init__ does not actually work
 class Repetition:
-    def __init__(self, interval, stopdate=epoch_time(datetime.datetime.max),
-                 offset=0):
-        self.offset = offset
+    def __init__(self, interval, stopdate=epoch_time(datetime.max), offset=0):
         self.interval = interval
         self.stopdate = stopdate
+        self.offset = offset
+
         self.pointer = 0
-        self.prevdate = datetime.datetime.now()
+        self.prev_date = datetime.now()
 
     #Create from days of week
-    def __init__(self, days_of_week,
-                 stopdate=epoch_time(datetime.datetime.max)):
-        #Compute Start Offset
-        days_of_week.sort()
-        now = datetime.datetime.now()
-        td_day = datetime.timedelta(days=1)
-
-        startdate = datetime.datetime.today() + td_day
-        while startdate.weekday() not in days_of_week:
-            startdate.append(td_day)
-        self.offset = (startdate - now).total_seconds()
-
-        #Generate Interval Loop & Compute Index
-        interval = []
-        self.pointer = days_of_week.index(startdate.weekday())
-        prev_day = days_of_week[0]
-        for day in days:
-            diff_day = abs(day - prev_day)
-            interval += td_day * diff_day
-            prev_day = day
-        self.interval = interval
-
+    def __init__(self, days_of_week, stopdate=epoch_time(dateime.max)):
         self.stopdate = stopdate
-        self.prevdate = datetime.datetime.now()
+        self.prev_date = datetime.now()
+
+        now = self.prev_date
+        a_day = timedelta(days=1)
+        sorted_days = sorted(days_of_week)
+
+        #Find the next repetition from today
+        start_date = now + a_day
+        while start_date.weekday() not in sorted_days:
+            start_date += a_day
+        self.offset = (start_date-now).total_seconds()
+
+        self.pointer = sorted_days.index(start_date.weekday())
+
+        self.interval = []
+        prev_day = sorted_days[0]
+        for day in sorted_days:
+            diff_day = abs(day - prev_day)
+            self.interval.append(td_day * diff_day)
+            prev_day = day
 
     def valid(self):
-        return self.stopdate > datetime.datetime.now()
+        return self.stopdate > datetime.now()
 
     def next_repeat(self):
-        if self.valid():
-            nextdate = self.prevdate
-            if not self.offset == 0:
-                nextdate.append(datetime.timedelta(seconds=self.offset))
-                self.offset = 0
-            nextdate.append(self.interval[self.pointer])
+        if not self.valid():
+            return
 
-            self.pointer += 1
-            self.pointer = self.pointer % len(self.interval)
-            self.prevdate = nextdate
+        nextdate = self.prev_date
+        nextdate += timedelta(seconds=self.offset)
+        nextdate += self.interval[self.pointer]
+        self.offset = 0
 
-            return epoch_time(nextdate)
-        else:
-            return None
+        self.prev_date = nextdate
+        self.pointer += 1
+        self.pointer %= len(self.interval)
+
+        return epoch_time(nextdate)
 
 
 class Schedulable:
