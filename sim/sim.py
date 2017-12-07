@@ -94,9 +94,9 @@ class ScheduleTestCase:
 
         self.schedule.add(interrupt)
 
-invaild_case = []
+invalid_case = []
 def simulate(alg, case):
-    global invaild_case
+    global invalid_case
     schedule = case.case()
 
     profile = cProfile.Profile()
@@ -106,8 +106,8 @@ def simulate(alg, case):
     try:
         schedule.commit(case.genesis)
     except AssertionError:
-        print("Test Case Invaild:" + case.name)
-        invaild_case.append(case.name)
+        print("Test Case Invalid:" + case.name)
+        invalid_case.append(case.name)
         
         return
     elapse = timeit.default_timer() - begin
@@ -146,7 +146,7 @@ if __name__ == "__main__":
             opts["directory"] = arg
         elif opt == "-h":
             print("""Usage: sim.py [options]
-    -v Verbrose mode - debugging infomation
+    -v Verbose mode - debugging information
     -j <threads> - Number of threads to use while simulating
     -t <tests> - Number of number tests cases to test per algorithm
     -l <size> - Size of the test cases to run.
@@ -173,7 +173,7 @@ if __name__ == "__main__":
     def simulation_callback(case, schedule, stats, time):
         global completed
         
-        #Extrct Itinerary
+        #Extract Itinerary
         itinerary = []
         iterator = schedule.begin()
         while iterator != schedule.end():
@@ -232,7 +232,7 @@ if __name__ == "__main__":
         pool.close()
         pool.join()
         
-        for cname in invaild_case:
+        for cname in invalid_case:
             rmname = glob.glob(cname + ".*")
             for name in rmname:
                 os.remove(name)
