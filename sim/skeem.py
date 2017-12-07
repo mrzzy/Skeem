@@ -325,7 +325,9 @@ class Schedule:
                 else:
                     raise AssertionError("Overlaps in Interrupts detected")
         elif isinstance(self.algorithm, algorithm.RoundRobinScheduler):
-            self.itinerary = self.algorithm.schedule(self.genesis, self.flat_tasks, self.flat_interrupts)
+            self.itinerary = self.algorithm.schedule(
+                self.flat_tasks, self.flat_interrupts,
+                self.genesis, timdelta(minutes=30))
         else:
             raise NotImplementedError("Algorithm not recognised.")
 
