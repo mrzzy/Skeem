@@ -64,7 +64,7 @@ class ShortestDurationAlgorithm(SchedulingAlgorithm):
         return SchedulingOrder.sort | SchedulingOrder.onesort | SchedulingOrder.sequential
     
     def compare(self, lhs, rhs):
-        return lhs.duration <= lhs.duration
+        return lhs.duration <= rhs.duration
 
     def schedule(self, task, available):
         return min(task.duration, available)
@@ -75,7 +75,7 @@ class DynamicShortestDurationAlgorithm(SchedulingAlgorithm):
         return SchedulingOrder.sort | SchedulingOrder.resort | SchedulingOrder.sequential
     
     def compare(self, lhs, rhs):
-        return lhs.duration <= lhs.duration
+        return lhs.duration <= rhs.duration
 
     def schedule(self, task, available):
         return min(task.duration, available)
