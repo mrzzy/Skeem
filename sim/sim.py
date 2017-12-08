@@ -103,28 +103,68 @@ class ScheduleTestCase:
     def case(self):
         return copy.deepcopy(self.schedule)
 
-invalid_case = []
-def simulate(alg, case):
-    global invalid_case
-    schedule = case.case()
+
+def simulate(test_case, algorithm):
+    schedule = test_case.case()
+    schedule.switch(algorithm)
 
     profile = cProfile.Profile()
     profile.enable()
-    begin = timeit.default_timer()
-    schedule.switch(alg)
+
     try:
-        schedule.commit(case.genesis)
+        schedule.commit(test_case.genesis)
     except AssertionError:
-        print("Test Case Invalid:" + case.name)
-        invalid_case.append(case.name)
-        
-        return
-    elapse = timeit.default_timer() - begin
+        print("Test Case Invalid:", test_case.name)
+        return (None, None)
+
     profile.disable()
     profile.create_stats()
-    stats = pstats.Stats(profile)
 
-    return simulation_callback(case, schedule, stats, elapse)
+    stats = pstats.Stats(profile)
+    return (schedule, stats)
+
+def extract_itinerary(schedule):
+    itinerary = []
+    iterator = schedule.begin()
+    while iterator != schedule.end():
+        itinerary.append(iterator.value())
+        iterator = iterator.next()
+
+    return itinerary
+
+def write_algorithm_schedule(test_case_name, algorithm_name,
+                             schedule, time_taken):
+    itinerary = extract_itinerary(schedule)
+
+    with open(test_case_name + "." + algorithm_name, "wb") as f:
+        pickle.dump({"case": test_case_name,
+                     "itinerary": itinerary,
+                     "time": time_taken}, f)
+
+def simulate_and_record(test_case, algorithm, verbose=False):
+    schedule, stats = simulate(test_case, algorithm)
+
+    if stats is None:
+        return
+
+    # Write test case
+    with open(test_case.name + ".case", "wb") as f:
+        pickle.dump(test_case, f)
+
+    algorithm_name = algorithm.__class__.__name__
+    write_algorithm_schedule(test_case.name, algorithm_name,
+                             schedule, stats.total_tt)
+
+    # Write stats
+    stats.dump_stats(test_case.name + "." + algorithm_name + ".profile")
+
+    if verbose:
+        print("Simulation Completed!")
+        print("Simulation Completed with the following itinerary:")
+        pretty(itinerary)
+        print("\nSimulation Completed with the following performance stats:")
+        stats.print_stats()
+        pdivider()
 
 
 #Main
@@ -179,39 +219,6 @@ if __name__ == "__main__":
     simulations = opts["repetitions"] * len(algorithm.algorithms)
     completed = multiprocessing.Value('i')
 
-    def simulation_callback(case, schedule, stats, time):
-        global completed
-        
-        #Extract Itinerary
-        itinerary = []
-        iterator = schedule.begin()
-        while iterator != schedule.end():
-            itinerary.append(iterator.value())
-            iterator = iterator.next()
-        completed.value += 1
-
-        #Write output
-        algorithm_name = schedule.algorithm.__class__.__name__
-
-        fname = case.name + "." + algorithm_name
-        with open(fname, 'wb') as f:
-            pickle.dump({"case": case.name,
-                         "itinerary": itinerary,
-                         "time": time}, f)
-
-        fname = case.name + "." + algorithm_name + "." + "profile"
-        stats.dump_stats(fname)
-
-        print(("%.1f%%" % (completed.value/simulations * 100)))
-
-        if opts["verbose"]:
-            print("Simulation Completed!")
-            print("Simulation Completed with the following itinerary:")
-            pretty(itinerary)
-            print("\nSimulation Completed with the following performance stats:")
-            stats.print_stats()
-            pdivider()
-
 
     if opts["verbose"]:
         print("Number of simulations:", simulations)
@@ -236,16 +243,11 @@ if __name__ == "__main__":
                 pickle.dump(tcase, f)
             for alg in algorithm.algorithms:
                 #pool.apply_async(simulate, args=(alg, tcase))
-                simulate(alg, tcase)
+                simulate_and_record(tcase, alg, opts["verbose"])
 
         pool.close()
         pool.join()
-        
-        for cname in invalid_case:
-            rmname = glob.glob(cname + ".*")
-            for name in rmname:
-                os.remove(name)
-            
+
         print("Simulation Finished.")
 
     except KeyboardInterrupt:
