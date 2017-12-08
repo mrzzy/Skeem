@@ -248,7 +248,7 @@ def main():
             test_case.generate()
             #Write Test case
             with open(test_case.name + ".case", 'wb') as f:
-                pickle.dump(tcase, f)
+                pickle.dump(test_case, f)
 
             for algorithm in ALGORITHMS:
                 args = (test_case, algorithm, completed, completed_lock,
