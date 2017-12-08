@@ -35,62 +35,70 @@ class ScheduleTestCase:
 
         random.seed()
 
+    @staticmethod
+    def print_schedulable(message, schedulable):
+        print(message)
+        pretty(schedulable)
+        proppretty(schedulable)
+        pdivider()
+
     def generate(self):
         self.name = "TestCase." + str(uuid.uuid4())
         factor = random.random()
         ntasks = int(self.size * factor)
         ninterrupts = self.size - ntasks
-        self.irpt_tpointer = epoch_time()
 
         #Generate random tasks and interrupts
         self.schedule = skeem.Schedule(None)
 
         for i in range(ntasks):
-            self.randomTask()
+            task = self.generateRandomTask()
+            self.schedule.add(task)
+
+            if self.verbose:
+                self.print_schedulable("Generated Random Task:", task)
+
+        starts_after = epoch_time()
         for i in range(ninterrupts):
-            self.randomInterrupt()
+            interrupt = self.generateRandomInterrupt(starts_after)
+            self.schedule.add(interrupt)
+            starts_after = interrupt.end()
+
+            if self.verbose:
+                self.print_schedulable("Generated Random Interrupt:",
+                                       interrupt)
 
         if self.verbose:
             print("Generated Test Case:")
             pretty(self.schedule)
-            print("number of tasks:" + str(ntasks))
-            print("number of interrupts:" + str(ninterrupts))
+            print("Number of tasks:", ntasks)
+            print("Number of interrupts", ninterrupts)
             pdivider()
 
-    def randomTask(self):
-        #Duration range 1 second to 8 hours
-        #Deadline range 0 second to 1 month
+    @staticmethod
+    def generateRandomTask():
+        #Duration range: 1 second to 8 hours
+        #Deadline range: 0 seconds to 1 day
         #Task Weight 0.0 to 1.0
-        duration = random.randint(1, 8 * 60 * 60)
-        deadline = epoch_time() + duration +\
-            random.randint(0, 1 * 24 * 60 * 60)
-        task = skeem.Task("Task:" + str(uuid.uuid4()), duration, deadline)
+        duration = random.randint(1, 8*60*60)
+        deadline = epoch_time() + duration + random.randint(1, 24*60*60)
+
+        task = skeem.Task("Task." + str(uuid.uuid4()), duration, deadline)
         task.weight = random.random()
 
-        if self.verbose:
-            print("Random Task Generated:")
-            pretty(task)
-            proppretty(task)
-            pdivider()
+        return task
 
-        self.schedule.add(task)
+    @staticmethod
+    def generateRandomInterrupt(starts_after):
+        #Duration range: 1 second to 1 day
+        #Begin range: 0 seconds to 2 months
+        duration = random.randint(1, 24*60*60)
+        begin = starts_after + random.randint(1, 24*60*60)
 
-    def randomInterrupt(self):
-        #Duration range 1 second to 1 day
-        #Begin range 0 second to 2 month
-        duration = random.randint(1, 24 * 60 * 60)
-        begin = self.irpt_tpointer + random.randint(1, 24 * 60 * 60)
-        interrupt = skeem.Interrupt("Interrupt:" + str(uuid.uuid4()),
+        interrupt = skeem.Interrupt("Interrupt." + str(uuid.uuid4()),
                                     duration, begin)
-        self.irpt_tpointer = interrupt.end()
 
-        if self.verbose:
-            print("Random Interrupt Generated:")
-            pretty(interrupt)
-            proppretty(interrupt)
-            pdivider()
-
-        self.schedule.add(interrupt)
+        return interrupt
 
     def case(self):
         return copy.deepcopy(self.schedule)
