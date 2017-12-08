@@ -92,7 +92,7 @@ class ScheduleTestCase:
         begin = starts_after + random.randint(1, 24*60*60)
 
         interrupt = Interrupt("Interrupt." + str(uuid.uuid4()),
-                                    duration, begin)
+                              duration, begin)
 
         return interrupt
 
@@ -172,6 +172,7 @@ def simulate_and_record(test_case, algorithm, completed, completed_lock,
         stats.print_stats()
         pdivider()
 
+
 def main():
     #Parse Options
     #Default Program Configuration
@@ -219,6 +220,7 @@ def main():
         pretty(opts)
         pdivider()
 
+
     #Progress
     simulations = opts["repetitions"] * len(ALGORITHMS)
     m = multiprocessing.Manager()
@@ -260,6 +262,7 @@ def main():
 
     finally:
         pool.terminate()
+
 
 #Main
 if __name__ == "__main__":
