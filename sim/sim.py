@@ -15,14 +15,10 @@ import getopt
 import uuid
 import copy
 import pickle
-import datetime
-import timeit
-import glob
 
 from utils import pretty, proppretty, prettytime, pdivider
-import algorithm
-import skeem
-from skeem import epoch_time
+from skeem import epoch_time, Schedule, Task, Interrupt
+from algorithm import algorithms as ALGORITHMS
 
 
 #Simulation
@@ -49,7 +45,7 @@ class ScheduleTestCase:
         ninterrupts = self.size - ntasks
 
         #Generate random tasks and interrupts
-        self.schedule = skeem.Schedule(None)
+        self.schedule = Schedule(None)
 
         for i in range(ntasks):
             task = self.generateRandomTask()
@@ -83,7 +79,7 @@ class ScheduleTestCase:
         duration = random.randint(1, 8*60*60)
         deadline = epoch_time() + duration + random.randint(1, 24*60*60)
 
-        task = skeem.Task("Task." + str(uuid.uuid4()), duration, deadline)
+        task = Task("Task." + str(uuid.uuid4()), duration, deadline)
         task.weight = random.random()
 
         return task
@@ -95,7 +91,7 @@ class ScheduleTestCase:
         duration = random.randint(1, 24*60*60)
         begin = starts_after + random.randint(1, 24*60*60)
 
-        interrupt = skeem.Interrupt("Interrupt." + str(uuid.uuid4()),
+        interrupt = Interrupt("Interrupt." + str(uuid.uuid4()),
                                     duration, begin)
 
         return interrupt
@@ -123,6 +119,7 @@ def simulate(test_case, algorithm):
     stats = pstats.Stats(profile)
     return (schedule, stats)
 
+
 def extract_itinerary(schedule):
     itinerary = []
     iterator = schedule.begin()
@@ -131,6 +128,7 @@ def extract_itinerary(schedule):
         iterator = iterator.next()
 
     return itinerary
+
 
 def write_algorithm_schedule(test_case_name, algorithm_name,
                              schedule, time_taken):
@@ -141,8 +139,14 @@ def write_algorithm_schedule(test_case_name, algorithm_name,
                      "itinerary": itinerary,
                      "time": time_taken}, f)
 
-def simulate_and_record(test_case, algorithm, verbose=False):
+
+def simulate_and_record(test_case, algorithm, completed, completed_lock,
+                        simulations, verbose=False):
     schedule, stats = simulate(test_case, algorithm)
+
+    completed_lock.acquire()
+    completed.value += 1
+    completed_lock.release()
 
     if stats is None:
         return
@@ -158,6 +162,8 @@ def simulate_and_record(test_case, algorithm, verbose=False):
     # Write stats
     stats.dump_stats(test_case.name + "." + algorithm_name + ".profile")
 
+    print("%.1f%%" % (completed.value/simulations * 100))
+
     if verbose:
         print("Simulation Completed!")
         print("Simulation Completed with the following itinerary:")
@@ -166,11 +172,9 @@ def simulate_and_record(test_case, algorithm, verbose=False):
         stats.print_stats()
         pdivider()
 
-
-#Main
-if __name__ == "__main__":
-#Parse Options
-#Default Program Configuration
+def main():
+    #Parse Options
+    #Default Program Configuration
     opts = \
         {
             "verbose": False,
@@ -201,7 +205,7 @@ if __name__ == "__main__":
     -l <size> - Size of the test cases to run.
     -o <directory> - put the output in this directory
     """)
-            sys.exit()
+            return
         else:
             raise ValueError("Unknown Argument")
 
@@ -215,9 +219,11 @@ if __name__ == "__main__":
         pretty(opts)
         pdivider()
 
-#Progress
-    simulations = opts["repetitions"] * len(algorithm.algorithms)
-    completed = multiprocessing.Value('i')
+    #Progress
+    simulations = opts["repetitions"] * len(ALGORITHMS)
+    m = multiprocessing.Manager()
+    completed = m.Value('i', 0)
+    completed_lock = m.Lock()
 
 
     if opts["verbose"]:
@@ -225,30 +231,36 @@ if __name__ == "__main__":
         pdivider()
 
 
-#Algorithms
+    #Algorithms
     if opts["verbose"]:
-        print("Algorithms Loaded:", len(algorithm.algorithms))
-        pretty(algorithm.algorithms)
+        print("Algorithms Loaded:", len(ALGORITHMS))
+        pretty(ALGORITHMS)
         pdivider()
 
     pool = multiprocessing.Pool(processes=opts["processes"])
     try:
         print("Simulation Commencing.")
 
-        tcase = ScheduleTestCase(opts["test_size"], opts["verbose"])
+        test_case = ScheduleTestCase(opts["test_size"], opts["verbose"])
         for i in range(opts["repetitions"]):
-            tcase.generate()
+            test_case.generate()
             #Write Test case
-            with open(tcase.name + ".case", 'wb') as f:
+            with open(test_case.name + ".case", 'wb') as f:
                 pickle.dump(tcase, f)
-            for alg in algorithm.algorithms:
-                #pool.apply_async(simulate, args=(alg, tcase))
-                simulate_and_record(tcase, alg, opts["verbose"])
+
+            for algorithm in ALGORITHMS:
+                args = (test_case, algorithm, completed, completed_lock,
+                        simulations, opts["verbose"])
+                pool.apply_async(simulate_and_record, args=args)
 
         pool.close()
         pool.join()
 
         print("Simulation Finished.")
 
-    except KeyboardInterrupt:
+    finally:
         pool.terminate()
+
+#Main
+if __name__ == "__main__":
+    main()
