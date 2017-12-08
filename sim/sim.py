@@ -29,15 +29,16 @@ from skeem import epoch_time
 class ScheduleTestCase:
     def __init__(self, size, verbose=False):
         self.size = size
-        self.name = "TestCase:" + str(uuid.uuid4())
         self.verbose = verbose
+
         self.genesis = epoch_time()
+
         random.seed()
 
     def generate(self):
-        self.name = "TestCase:" + str(uuid.uuid4())
+        self.name = "TestCase." + str(uuid.uuid4())
         factor = random.random()
-        ntasks = int(factor * self.size)
+        ntasks = int(self.size * factor)
         ninterrupts = self.size - ntasks
         self.irpt_tpointer = epoch_time()
 
@@ -55,9 +56,6 @@ class ScheduleTestCase:
             print("number of tasks:" + str(ntasks))
             print("number of interrupts:" + str(ninterrupts))
             pdivider()
-
-    def case(self):
-        return copy.deepcopy(self.schedule)
 
     def randomTask(self):
         #Duration range 1 second to 8 hours
@@ -94,6 +92,9 @@ class ScheduleTestCase:
 
         self.schedule.add(interrupt)
 
+    def case(self):
+        return copy.deepcopy(self.schedule)
+
 invalid_case = []
 def simulate(alg, case):
     global invalid_case
@@ -125,7 +126,7 @@ if __name__ == "__main__":
     opts = \
         {
             "verbose": False,
-            "threads": multiprocessing.cpu_count(),
+            "processes": multiprocessing.cpu_count(),
             "repetitions": 100,
             "directory": "sim_out",
             "test_size": 100
@@ -137,7 +138,7 @@ if __name__ == "__main__":
         if opt == "-v":
             opts["verbose"] = True
         elif opt == "-j":
-            opts["threads"] = int(arg)
+            opts["processes"] = int(arg)
         elif opt == "-t":
             opts["repetitions"] = int(arg)
         elif opt == "-l":
@@ -147,7 +148,7 @@ if __name__ == "__main__":
         elif opt == "-h":
             print("""Usage: sim.py [options]
     -v Verbose mode - debugging information
-    -j <threads> - Number of threads to use while simulating
+    -p <processes> - Number of processes to use while simulating
     -t <tests> - Number of number tests cases to test per algorithm
     -l <size> - Size of the test cases to run.
     -o <directory> - put the output in this directory
@@ -215,7 +216,7 @@ if __name__ == "__main__":
         pretty(algorithm.algorithms)
         pdivider()
 
-    pool = multiprocessing.Pool(processes=opts["threads"])
+    pool = multiprocessing.Pool(processes=opts["processes"])
     try:
         print("Simulation Commencing.")
 
