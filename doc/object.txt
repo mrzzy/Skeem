@@ -70,9 +70,6 @@ ScheduleIterator
 - next() - retrieve next schedulable iterator
 - prev() -  retrieve previous schedulable iterator
 - value() - retrieve schedulable that iterator points to (ie dereference pointer)
-*Class Methods*
-+ iterate(schedule, pointer) - Return iterator that with specified pointer (ie index)
-+ invalidate() - Invalidate all Schedule Iterators
 
 SchedulingOrder
 - Defines the order (after sorting) which tasks presented to the scheduling 

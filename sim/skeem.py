@@ -119,39 +119,30 @@ class Interrupt(Schedulable):
 
 
 class ScheduleIterator:
-    def __init__(self, pointer):
+    def __init__(self, schedule, pointer=0):
         self.pointer = pointer
+        self.schedule = schedule 
 
     def __eq__(self, other):
-        return self.pointer == other.pointer
+        return self.schedule == other.schedule and\
+                self.pointer == other.pointer
 
-    #Methods to only be called from the Schedule Object
-    #to mark the status of internal state intormation
-    @classmethod
-    def iterate(cls, itinerary, pointer=0):
-        cls.valid = True
-        cls.itinerary = itinerary
-        return ScheduleIterator(pointer)
-
-    @classmethod
-    def invalidate(cls):
-        cls.valid = False
-        ScheduleIterator.itinerary = None
+    def vaild(self):
+        return self.schedule.itinerary != None
     
-    #Previous Protocol
     def next(self):
-        if ScheduleIterator.valid:
-            return ScheduleIterator(self.pointer + 1)
+        if self.vaild():
+            return ScheduleIterator(self.schedule, self.pointer + 1)
 
     def prev(self):
-        if ScheduleIterator.valid:
-            return ScheduleIterator(self.pointer - 1)
+        if self.vaild():
+            return ScheduleIterator(self.schedule, self.pointer - 1)
 
     def value(self):
-        if ScheduleIterator.valid:
-            return ScheduleIterator.itinerary[self.pointer]
+        if self.vaild():
+            return self.itinerary[self.pointer]
         else:
-            raise ValueError
+            raise ValueError("Invaild Iterator: No schedule to iterate")
 
     #Iterator Protocol
     def __next__(self):
@@ -251,15 +242,15 @@ class Schedule:
 
     def begin(self):
         if self.itinerary:
-            return ScheduleIterator.iterate(self.itinerary, 0)
+            return ScheduleIterator(self.itinerary)
         else:
             raise ValueError("No itinerary to iterate")
 
     def end(self):
         if self.itinerary:
             #Point to one past the last on schedule
-            return ScheduleIterator.iterate(self.itinerary,
-                                            len(self.itinerary))
+            return ScheduleIterator(self.itinerary,\
+                    len(self.itinerary))
         else:
             raise ValueError("No itinerary to iterate")
         
@@ -267,13 +258,12 @@ class Schedule:
     #Iterator Protocol
     def __iter__(self):
         if self.itinerary:
-            return ScheduleIterator.iterate(self.itinerary, 0)
+            return ScheduleIterator(self.itinerary)
         else:
             raise ValueError("No itinerary to iterate")
         
 
     def invalidate(self):
-        ScheduleIterator.valid = False
         self.flat_tasks = None
         self.flat_interrupts = None
         self.itinerary = None
