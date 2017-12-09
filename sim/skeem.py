@@ -125,17 +125,20 @@ class ScheduleIterator:
     def __eq__(self, other):
         return self.pointer == other.pointer
 
+    #Methods to only be called from the Schedule Object
+    #to mark the status of internal state intormation
     @classmethod
-    def iterate(cls, schedule, pointer=0):
+    def iterate(cls, itinerary, pointer=0):
         cls.valid = True
-        cls.schedule = schedule
+        cls.itinerary = itinerary
         return ScheduleIterator(pointer)
 
     @classmethod
     def invalidate(cls):
         cls.valid = False
-        ScheduleIterator.schedule = None
-
+        ScheduleIterator.itinerary = None
+    
+    #Previous Protocol
     def next(self):
         if ScheduleIterator.valid:
             return ScheduleIterator(self.pointer + 1)
@@ -146,10 +149,18 @@ class ScheduleIterator:
 
     def value(self):
         if ScheduleIterator.valid:
-            return ScheduleIterator.schedule[self.pointer]
+            return ScheduleIterator.itinerary[self.pointer]
         else:
             raise ValueError
 
+    #Iterator Protocol
+    def __next__(self):
+        if ScheduleIterator.vaild and \
+                (self.pointer + 1) < len(ScheduleIterator.itinerary):
+            self.pointer += 1
+            return ScheduleIterator.itinerary[self.pointer]
+        else:
+            raise StopIteration
 
 class Schedule:
     def __init__(self, algorithm):
@@ -159,7 +170,7 @@ class Schedule:
         self.flat_tasks = None
         self.flat_interrupts = None
         self.tidx = None
-        self.itinerary = False
+        self.itinerary = None
         self.genesis = epoch_time()
         self.ordered = False
         self.drsn = None
@@ -251,6 +262,15 @@ class Schedule:
                                             len(self.itinerary))
         else:
             raise ValueError("No itinerary to iterate")
+        
+
+    #Iterator Protocol
+    def __iter__(self):
+        if self.itinerary:
+            return ScheduleIterator.iterate(self.itinerary, 0)
+        else:
+            raise ValueError("No itinerary to iterate")
+        
 
     def invalidate(self):
         ScheduleIterator.valid = False
