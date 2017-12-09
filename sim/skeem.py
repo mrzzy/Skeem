@@ -185,7 +185,7 @@ class Schedule:
                 raise ValueError("Already has Task")
             self.tasks.append(schedulable)
         elif isinstance(schedulable, Interrupt):
-            if [i for i in self.tasks if i.name == schedulable.name]:
+            if [i for i in self.interrupts if i.name == schedulable.name]:
                 raise ValueError("Already has Interrupt")
             self.interrupts.append(schedulable)
         else:
