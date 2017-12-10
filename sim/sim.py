@@ -243,8 +243,8 @@ def main():
     try:
         print("Simulation Commencing.")
 
-        test_case = ScheduleTestCase(opts["test_size"], opts["verbose"])
         for i in range(opts["repetitions"]):
+            test_case = ScheduleTestCase(opts["test_size"], opts["verbose"])
             test_case.generate()
             #Write Test case
             with open(test_case.name + ".case", 'wb') as f:
