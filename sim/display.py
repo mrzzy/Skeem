@@ -43,8 +43,7 @@ if __name__ == "__main__":
     """)
             sys.exit()
         else:
-            #Unknown Argument
-            raise ValueError
+            raise ValueError("Unknown Argument")
 #Working Directory
     print(os.getcwd())
     if not os.path.exists(opts["directory"]):
@@ -70,7 +69,7 @@ if __name__ == "__main__":
     tcases = list(tcase_map.values())
 
     if opts["verbose"]:
-        print(("Loaded %d Test Cases" % len(tcases)))
+        print("Loaded %d Test Cases" % len(tcases))
 
 #Algorithms
     aname = [alg.__class__.__name__ for alg in algorithm.algorithms]
@@ -81,21 +80,21 @@ if __name__ == "__main__":
 
 
     for case in tcases:
-        if not case in csim_data:
+        if case not in csim_data:
             csim_data[case] = []
         for alg in algorithm.algorithms:
-            if not alg in asim_data:
+            if alg not in asim_data:
                 asim_data[alg] = []
             algname = alg.__class__.__name__
             with open(case.name + '.' + algname, 'rb') as f:
                 sdata = pickle.load(f)
-                csim_data[case] += [ sdata ]
-                asim_data[alg] += [ sdata ]
+                csim_data[case].append(sdata)
+                asim_data[alg].append(sdata)
 
                 if opts["verbose"]:
-                    print(("Loaded Simulation Data for Case %s for Algorithm %s"\
-                            % (case.name, algname)))
-        
+                    print("Loaded Simulation Data for Case %s for Algorithm %s"
+                            % (case.name, algname))
+
     if opts["verbose"]:
         print("Loaded Simulation Data")
 
@@ -106,15 +105,16 @@ if __name__ == "__main__":
             uargv = uinput.split()
 
             #List Test Cases
-            if len(uargv) == 0: pass
+            if len(uargv) == 0:
+                pass
             elif uargv[0] == 'l':
                 for i in range(0, len(tcases)):
-                    print(("[%d] %s" % (i, tcases[i].name)))
+                    print("[%d] %s" % (i, tcases[i].name))
             #List Algorithms
             elif uargv[0] == 'a':
                 for i in range(0, len(algorithm.algorithms)):
-                    print(("[%d] %s" % (i, 
-                        algorithm.algorithms[i].__class__.__name__)))
+                    print("[%d] %s" % (i,
+                        algorithm.algorithms[i].__class__.__name__))
             #Set Duration Constraint
             elif uargv[0] == 'c':
                 if len(uargv) == 2 and 0 <= int(uargv[1]) <= 100:
@@ -126,15 +126,15 @@ if __name__ == "__main__":
                 #Extract Data
                 atime = {}
                 for alg in algorithm.algorithms:
-                    if not alg in atime:
+                    if alg not in atime:
                         atime[alg] = 0
                     for sdata in asim_data[alg]:
                         atime[alg] += sdata["time"]
-                
+
                 #Plot Graph
                 y_val = range(len(algorithm.algorithms))
                 x_val = list(atime.values())
-                
+
                 plt.barh(y_val, x_val, align="center")
                 plt.yticks(y_val, aname)
                 plt.ylabel("Algorithm")
@@ -159,10 +159,10 @@ if __name__ == "__main__":
                                 if pointer <= binder:
                                     actual += schedulable.weigh()
                             pointer += schedulable.duration
-                    
+
                     #Compute Percentage
                     disp_data[alg.__class__.__name__] = actual / maximum * 100.0
-                
+
 
                 y_val = range(len(algorithm.algorithms))
                 x_val = list(disp_data.values())
@@ -173,7 +173,7 @@ if __name__ == "__main__":
                 plt.xlabel("%Weight")
                 plt.ylabel("Algorithm")
                 plt.show()
-            
+
             #Display Percentage of Deadlines Met
             elif uargv[0] == 'd':
                 disp_data = {}
@@ -194,10 +194,10 @@ if __name__ == "__main__":
                                 if pointer <= binder and pointer <= adjust_deadline:
                                     actual += 1
                             pointer += schedulable.duration
-                    
+
                     #Compute Percentage
                     disp_data[alg.__class__.__name__] = actual / maximum * 100.0
-                
+
 
                 y_val = range(len(algorithm.algorithms))
                 x_val = list(disp_data.values())
@@ -208,8 +208,8 @@ if __name__ == "__main__":
                 plt.xlabel("% Deadline met")
                 plt.ylabel("Algorithm")
                 plt.show()
-            
-            
+
+
             #Display Average Standard Deviation between Tasks
             elif uargv[0] == 'b':
                 disp_data = {}
@@ -227,7 +227,7 @@ if __name__ == "__main__":
                                     sum_dev += pointer - prev_ptr
                                     prev_ptr = pointer
                             pointer += schedulable.duration
-                    
+
                     #Compute Percentage
                     disp_data[alg.__class__.__name__] = sum_dev / len(itinerary)
 
@@ -243,7 +243,7 @@ if __name__ == "__main__":
 
             #Display Performance profile.
             elif uargv[0] == 'p':
-                if not len(uargv) == 3:
+                if len(uargv) != 3:
                     print("Usage: p <test case id> <algorithm id>.")
                     print("Run 'a' to list algorithm, Run 'l' to list test cases")
                 elif int(uargv[1]) in range(0, len(tcases)) and\
@@ -251,27 +251,27 @@ if __name__ == "__main__":
                     case = tcases[int(uargv[1])]
                     alg = algorithm.algorithms[int(uargv[2])]
                     aname = alg.__class__.__name__
-                    
-                    print(("Profile of %s running %s" % (aname, case.name)))
+
+                    print("Profile of %s running %s" % (aname, case.name))
                     pstats.Stats(case.name + "." + aname + ".profile").print_stats()
                 else:
                     print("Unknown Algorithm or Test Case")
                     print("Usage: p <test case id> <algorithm id>.")
-                    
+
             else:
                 print("Unknown subcommand")
-                print("""Usage: 
+                print("""Usage:
 - l - list test cases with id
-- a - list algorithms with id 
-- t - display graph plotting processing time taken to schedule for each 
+- a - list algorithms with id
+- t - display graph plotting processing time taken to schedule for each
      algorithm
 - w - display graph plotting weights complete for each algorithm.
 - d - display graph plotting task complete before deadline for each algorithm.
 - b - display graph plotting standard deviation^-1 between each task for each
       each algorithm.
-- p <test case> <algorithm> - print performance profile for algorithm and test 
+- p <test case> <algorithm> - print performance profile for algorithm and test
                               case.
-- i <test case> <algorithm> - print itinerary generated by algorithm from test 
+- i <test case> <algorithm> - print itinerary generated by algorithm from test
                               case.
 - c <test case> - print test case
                               case.""")
