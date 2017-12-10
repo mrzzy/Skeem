@@ -15,6 +15,7 @@ import getopt
 import uuid
 import copy
 import pickle
+import glob
 
 from utils import pretty, proppretty, prettytime, pdivider
 from skeem import epoch_time, Schedule, Task, Interrupt
@@ -149,11 +150,8 @@ def simulate_and_record(test_case, algorithm, completed, completed_lock,
     completed_lock.release()
 
     if stats is None:
+        os.remove(test_case.name + ".case")
         return
-
-    # Write test case
-    with open(test_case.name + ".case", "wb") as f:
-        pickle.dump(test_case, f)
 
     algorithm_name = algorithm.__class__.__name__
     write_algorithm_schedule(test_case.name, algorithm_name,
@@ -243,20 +241,37 @@ def main():
     try:
         print("Simulation Commencing.")
 
+        test_case_names = []
+
         for i in range(opts["repetitions"]):
             test_case = ScheduleTestCase(opts["test_size"], opts["verbose"])
             test_case.generate()
-            #Write Test case
-            with open(test_case.name + ".case", 'wb') as f:
+
+            test_case_names.append(test_case.name)
+
+            # Write test case
+            with open(test_case.name + ".case", "wb") as f:
                 pickle.dump(test_case, f)
 
             for algorithm in ALGORITHMS:
+                if not os.path.exists(test_case.name + ".case"):
+                    break
                 args = (test_case, algorithm, completed, completed_lock,
                         simulations, opts["verbose"])
                 pool.apply_async(simulate_and_record, args=args)
 
+
         pool.close()
         pool.join()
+
+        # Delete invalid test cases and related files
+        print("Cleaning up")
+        for test_case_name in test_case_names:
+            if os.path.exists(test_case_name + ".case"):
+                continue
+
+            for path in glob.glob(test_case_name + ".*"):
+                os.remove(path)
 
         print("Simulation Finished.")
 
