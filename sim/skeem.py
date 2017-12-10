@@ -121,26 +121,26 @@ class Interrupt(Schedulable):
 class ScheduleIterator:
     def __init__(self, schedule, pointer=0):
         self.pointer = pointer
-        self.schedule = schedule 
+        self.schedule = schedule
 
     def __eq__(self, other):
         return self.schedule == other.schedule and\
                 self.pointer == other.pointer
 
-    def vaild(self):
-        return self.schedule.itinerary != None
-    
+    def valid(self):
+        return self.schedule.itinerary is not None
+
     def next(self):
-        if self.vaild():
+        if self.valid():
             return ScheduleIterator(self.schedule, self.pointer + 1)
 
     def prev(self):
-        if self.vaild():
+        if self.valid():
             return ScheduleIterator(self.schedule, self.pointer - 1)
 
     def value(self):
-        if self.vaild():
-            return self.itinerary[self.pointer]
+        if self.valid():
+            return self.schedule.itinerary[self.pointer]
         else:
             raise ValueError("Invaild Iterator: No schedule to iterate")
 
@@ -242,26 +242,25 @@ class Schedule:
 
     def begin(self):
         if self.itinerary:
-            return ScheduleIterator(self.itinerary)
+            return ScheduleIterator(self)
         else:
             raise ValueError("No itinerary to iterate")
 
     def end(self):
         if self.itinerary:
             #Point to one past the last on schedule
-            return ScheduleIterator(self.itinerary,\
-                    len(self.itinerary))
+            return ScheduleIterator(self, len(self.itinerary))
         else:
             raise ValueError("No itinerary to iterate")
-        
+
 
     #Iterator Protocol
     def __iter__(self):
         if self.itinerary:
-            return ScheduleIterator(self.itinerary)
+            return ScheduleIterator(self)
         else:
             raise ValueError("No itinerary to iterate")
-        
+
 
     def invalidate(self):
         self.flat_tasks = None
