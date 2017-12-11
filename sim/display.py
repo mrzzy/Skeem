@@ -322,7 +322,7 @@ cases")
      algorithm
 - w - display graph plotting weights complete for each algorithm.
 - d - display graph plotting task complete before deadline for each algorithm.
-- b - display graph plotting standard deviation^-1 between each task for each
+- b - display graph plotting standard deviation between each task for each
       each algorithm.
 - p <test case> <algorithm> - print performance profile for algorithm and test
                               case.

@@ -89,9 +89,10 @@ display.py
 - a - list algorithms with id 
 - t - display graph plotting processing time taken to schedule for each 
      algorithm
+- T - display graph plotting average duration of the tasks ^
 - w - display graph plotting weights complete for each algorithm.
 - d - display graph plotting task complete before deadline for each algorithm.
-- b - display graph plotting standard deviation^-1 between each task for each
+- b - display graph plotting standard deviation between each task for each
       each algorithm.
 - p <test case> <algorithm> - print perfomance profile for algorithm and test 
                               case.
