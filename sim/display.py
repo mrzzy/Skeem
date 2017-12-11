@@ -140,6 +140,7 @@ def display_percentage_deadlines_met(algorithms, simulation_data,
     plt.tight_layout()
     plt.show()
 
+#TODO: Rewrite algorithm to only consider same task for deviation computation.
 def display_standard_deviation(algorithms, simulation_data, test_case_dict,\
         constraint_percent):
     x_val = []
@@ -156,8 +157,7 @@ def display_standard_deviation(algorithms, simulation_data, test_case_dict,\
             binder = case.case().duration() * (constraint_percent / 100.0)
             pointer = 0
             previous = 0
-            itinerary = data["itinerary"]
-            for schedulable in itinerary:
+            for schedulable in data["itinerary"]:
                 if isinstance(schedulable, skeem.Task):
                     if pointer <= binder:
                         deviation_sum += pointer - previous
@@ -171,7 +171,34 @@ def display_standard_deviation(algorithms, simulation_data, test_case_dict,\
     plt.barh(y_val, x_val, align="center")
     plt.yticks(y_val, y_ticks)
     plt.title("Standard Deviation")
-    plt.xlabel("Deviation")
+    plt.xlabel("Deviation (seconds)")
+    plt.ylabel("Algorithm")
+    plt.show()
+
+def display_average_duration(algorithms, simulation_data):
+    x_val = []
+    y_val = range(len(algorithms))
+    y_ticks = []
+
+    for algorithm in algorithms:
+        algorithm_name = algorithm.__class__.__name__
+        y_ticks.append(algorithm_name)
+        duration_sum = 0
+        task_count = 0
+
+        for data in simulation_data[algorithm]:
+            for schedulable in data["itinerary"]:
+                if isinstance(schedulable, skeem.Task):
+                    duration_sum += schedulable.duration
+                    task_count += 1
+        
+        #Compute Average Duration
+        x_val.append(duration_sum / task_count)
+    
+    plt.barh(y_val, x_val, align="center")
+    plt.yticks(y_val, y_ticks)
+    plt.title("Average Duration")
+    plt.xlabel("Duration (Seconds)")
     plt.ylabel("Algorithm")
     plt.show()
 
@@ -278,6 +305,8 @@ def main():
 Usage: c <percentage>")
             elif argv[0] == 't':
                 display_processing_time(ALGORITHMS, simulation_data)
+            elif argv[0] == 'T':
+                display_average_duration(ALGORITHMS, simulation_data)
             elif argv[0] == 'w':
                 display_completed_weight_percentage(
                     ALGORITHMS, simulation_data,
@@ -320,6 +349,7 @@ cases")
 - a - list algorithms with id
 - t - display graph plotting processing time taken to schedule for each
      algorithm
+- T - display graph plotting average duration of each task scheduled.
 - w - display graph plotting weights complete for each algorithm.
 - d - display graph plotting task complete before deadline for each algorithm.
 - b - display graph plotting standard deviation between each task for each

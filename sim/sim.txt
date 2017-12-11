@@ -78,7 +78,7 @@ display.py
   algorithm is optiomal for use in skeem app.
 - Display for each test case
     - Display for each algorithm
-        - Time taken to schedule -pyplot bar graph time taken/ size of test case.
+        - Time taken to schedule -pyplot bar graph time taken/ size of test case
         - Percentage of completed tasks over all weights - pyplot stopdate
         - Percentage of completed weights  - pyplot stopdate
         - Percentage of tasks completed before deadline - pyplot stopdate
@@ -89,7 +89,7 @@ display.py
 - a - list algorithms with id 
 - t - display graph plotting processing time taken to schedule for each 
      algorithm
-- T - display graph plotting average duration of the tasks ^
+- T - display graph plotting average duration of each task scheduled. 
 - w - display graph plotting weights complete for each algorithm.
 - d - display graph plotting task complete before deadline for each algorithm.
 - b - display graph plotting standard deviation between each task for each
