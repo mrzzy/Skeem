@@ -79,7 +79,6 @@ class ScheduleTestCase:
         #Task Weight 0.0 to 1.0
         duration = random.randint(1, 12*60*60)
         deadline = epoch_time() + duration + random.randint(1, 14*24*60*60)
-    
 
         task = Task("Task." + str(uuid.uuid4()), duration, deadline)
         task.weight = random.random()
@@ -256,7 +255,8 @@ def main():
 
             for algorithm in ALGORITHMS:
                 if opts["processes"] == 1: 
-                    simulate_and_record(test_case, algorithm, completed, completed_lock, simulations, opts["verbose"])
+                    simulate_and_record(test_case, algorithm, completed,\
+                            completed_lock, simulations, opts["verbose"])
                 else:
                     args = (test_case, algorithm, completed, completed_lock,
                             simulations, opts["verbose"])

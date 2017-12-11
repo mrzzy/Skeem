@@ -73,7 +73,6 @@ def completed_weight(simulation_data, test_case_dict, constraint_percent):
 
     return (actual, maximum)
 
-
 def display_completed_weight_percentage(algorithms, simulation_data,
                                         test_case_dict, constraint_percent):
     y_val = range(len(ALGORITHMS))
@@ -119,14 +118,14 @@ def deadlines_met(simulation_data, test_case_dict, constraint_percent):
 
 
 def display_percentage_deadlines_met(algorithms, simulation_data,
-                                     test_case_dict, constraint):
+                                     test_case_dict, constraint_percent):
     y_val = range(len(algorithms))
     y_ticks = []
     x_val = []
 
     for algorithm in algorithms:
         actual, maximum = deadlines_met(simulation_data[algorithm],
-                                        test_case_dict, constraint)
+                                        test_case_dict, constraint_percent)
 
         algorithm_name = algorithm.__class__.__name__
         percentage = actual/maximum * 100
@@ -141,6 +140,41 @@ def display_percentage_deadlines_met(algorithms, simulation_data,
     plt.tight_layout()
     plt.show()
 
+def display_standard_deviation(algorithms, simulation_data, test_case_dict,\
+        constraint_percent):
+    x_val = []
+    y_val = range(len(algorithms))
+    y_ticks = []
+
+    for algorithm in algorithms:
+        algorithm_name = algorithm.__class__.__name__
+        y_ticks.append(algorithm_name)
+
+        deviation_sum = 0
+        for data in simulation_data[algorithm]:
+            case = test_case_dict[data["case"]]
+            binder = case.case().duration() * (constraint_percent / 100.0)
+            pointer = 0
+            previous = 0
+            itinerary = data["itinerary"]
+            for schedulable in itinerary:
+                if isinstance(schedulable, skeem.Task):
+                    if pointer <= binder:
+                        deviation_sum += pointer - previous
+                        previous = pointer
+                pointer += schedulable.duration
+
+        print("Deviation sum %d: " % deviation_sum)
+        #Compute Standard Deviation
+        x_val.append(deviation_sum / len(itinerary))
+
+    plt.barh(y_val, x_val, align="center")
+    plt.yticks(y_val, y_ticks)
+    plt.title("Standard Deviation")
+    plt.xlabel("Deviation")
+    plt.ylabel("Algorithm")
+    plt.show()
+
 
 def main():
     #Program Options
@@ -148,7 +182,7 @@ def main():
         {
             "directory": "sim_out",
             "verbose": False,
-            "constraint": 85, #Percentage Constraint for duration
+            "constraint": 70, #Percentage Constraint for duration
         }
 
     opt_list, args = getopt.getopt(sys.argv[1:], "hvi:l:")
@@ -201,7 +235,7 @@ def main():
     algorithm_names = [x.__class__.__name__ for x in ALGORITHMS]
 
     #Read Simulation Data
-    # {algorithm_class: [test_case_data]}
+    # {algorithm_instance: [test_case_data]}
     simulation_data = {}
 
     for test_case in test_cases:
@@ -231,13 +265,12 @@ def main():
         while True:
             user_input = input("(display):")
             argv = user_input.split()
-
+            
             if argv[0] == 'l':
                 list_test_cases(test_cases)
             elif argv[0] == 'a':
                 list_algorithms(ALGORITHMS)
             elif argv[0] == 'c':
-                #Set Duration Constraint
                 if len(argv) == 2 and 0 <= int(argv[1]) <= 100:
                     opts["constraint"] = int(argv[1])
                 else:
@@ -255,35 +288,9 @@ Usage: c <percentage>")
                     test_case_dict, opts["constraint"])
             elif argv[0] == 'b':
                 #Display Average Standard Deviation between Tasks
-                disp_data = {}
-                for alg in ALGORITHMS:
-                    sum_dev = 0.0
-                    for sdata in asim_data[alg]:
-                        case = tcase_map[sdata["case"]]
-                        binder = case.case().duration() * (opts["constraint"] / 100.0)
-                        pointer = 0
-                        prev_ptr = 0
-                        itinerary = sdata["itinerary"]
-                        for schedulable in itinerary:
-                            if isinstance(schedulable, skeem.Task):
-                                if pointer <= binder:
-                                    sum_dev += pointer - prev_ptr
-                                    prev_ptr = pointer
-                            pointer += schedulable.duration
-
-                    #Compute Percentage
-                    disp_data[alg.__class__.__name__] = sum_dev / len(itinerary)
-
-                y_val = range(len(ALGORITHMS))
-                x_val = list(disp_data.values())
-
-                plt.barh(y_val, x_val, align="center")
-                plt.yticks(y_val, aname)
-                plt.title("Standard Deviation")
-                plt.xlabel("Deviation")
-                plt.ylabel("Algorithm")
-                plt.show()
-
+                display_standard_deviation(ALGORITHMS, simulation_data,\
+                        test_case_dict, opts["constraint"])
+                
             elif argv[0] == 'p':
                 #Display Performance profile.
                 if len(argv) != 3:
@@ -321,8 +328,7 @@ cases")
                               case.
 - i <test case> <algorithm> - print itinerary generated by algorithm from test
                               case.
-- c <test case> - print test case
-                              case.""")
+- c <percentage> - change time constriant to percentage of duration""")
     except EOFError:
         print()
 
