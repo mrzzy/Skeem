@@ -146,10 +146,10 @@ class ScheduleIterator:
 
     #Iterator Protocol
     def __next__(self):
-        if ScheduleIterator.vaild and \
-                (self.pointer + 1) < len(ScheduleIterator.itinerary):
+        if self.vaild() and \
+                (self.pointer + 1) < len(self.schedule.itinerary):
             self.pointer += 1
-            return ScheduleIterator.itinerary[self.pointer]
+            return self.schedule.itinerary[self.pointer]
         else:
             raise StopIteration
 
@@ -235,7 +235,7 @@ class Schedule:
             if len(self.itinerary) < self.size():
                 #Generated itinerary had LESS scheduables than is stored
                 #This means that some of the schedulables were NOT scheduled.
-                raise AssertionError
+                raise AssertionError("Internal Inconsistency Error")
 
         else:
             pass #Do nothing if itinerary has not been invalidated
@@ -358,7 +358,7 @@ class Schedule:
             if task.duration > 0:
                 tschedule = self.algorithm.schedule(task, end - tpointer)
                 if tschedule > end - tpointer:
-                    raise AssertionError
+                    raise AssertionError("Algorithm's schedule method is faulty")
                 subtask = copy.deepcopy(task)
                 subtask.duration = tschedule
                 self.itinerary.append(subtask)
