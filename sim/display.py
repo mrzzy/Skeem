@@ -6,7 +6,6 @@
 #
 
 import skeem
-import algorithm
 import matplotlib.pyplot as plt
 import sys
 import profile
@@ -16,12 +15,135 @@ import glob
 import getopt
 import pstats
 
+from functools import reduce
+
 from utils import pretty, proppretty, prettytime, pdivider
+from algorithm import algorithms as ALGORITHMS
 from sim import ScheduleTestCase
 
 
-if __name__ == "__main__":
-#Program Options
+def list_test_cases(test_cases):
+    for i, test_case in enumerate(test_cases):
+        print("[%d] %s" % (i, test_case.name))
+
+
+def list_algorithms(algorithms):
+    for i, algorithm in enumerate(algorithms):
+        algorithm_name = algorithm.__class__.__name__
+        print("[%d] %s" % (i, ALGORITHMS[i].__class__.__name__))
+
+
+def display_processing_time(algorithms, simulation_data):
+    x_val = []
+    y_val = range(len(ALGORITHMS))
+    y_ticks = []
+
+    for algorithm in algorithms:
+        data = simulation_data[algorithm]
+        total_time = reduce(lambda x, y: x + y["time"], data, 0)
+        x_val.append(total_time)
+        y_ticks.append(algorithm.__class__.__name__)
+
+    #Plot Graph
+    plt.barh(y_val, x_val, align="center")
+    plt.yticks(y_val, y_ticks)
+    plt.ylabel("Algorithm")
+    plt.xlabel("Time (seconds)")
+    plt.title("Processing Time")
+    plt.tight_layout()
+    plt.show()
+
+
+def completed_weight(simulation_data, test_case_dict, constraint_percent):
+    maximum = 0
+    actual = 0
+
+    for data in simulation_data:
+        test_case = test_case_dict[data["case"]]
+        itinerary = data["itinerary"]
+        constraint = test_case.case().duration() * (constraint_percent/100)
+
+        current_time = 0
+        for schedulable in itinerary:
+            if isinstance(schedulable, skeem.Task):
+                maximum += schedulable.weigh()
+                if current_time <= constraint:
+                    actual += schedulable.weigh()
+            current_time += schedulable.duration
+
+    return (actual, maximum)
+
+
+def display_completed_weight_percentage(algorithms, simulation_data,
+                                        test_case_dict, constraint_percent):
+    y_val = range(len(ALGORITHMS))
+    y_ticks = []
+    x_val = []
+    for algorithm in algorithms:
+        actual, maximum = completed_weight(simulation_data[algorithm],
+                                           test_case_dict, constraint_percent)
+
+        algorithm_name = algorithm.__class__.__name__
+        percentage = actual/maximum * 100
+        x_val.append(percentage)
+        y_ticks.append(algorithm_name)
+
+    plt.barh(y_val, x_val, align="center")
+    plt.yticks(y_val, y_ticks)
+    plt.title("Completed Weight")
+    plt.xlabel("% Weight")
+    plt.ylabel("Algorithm")
+    plt.tight_layout()
+    plt.show()
+
+
+def deadlines_met(simulation_data, test_case_dict, constraint_percent):
+    maximum = 0
+    actual = 0
+
+    for data in simulation_data:
+        test_case = test_case_dict[data["case"]]
+        itinerary = data["itinerary"]
+        constraint = test_case.case().duration() * (constraint_percent/100)
+
+        current_time = 0
+        for schedulable in itinerary:
+            if isinstance(schedulable, skeem.Task):
+                maximum += 1
+                relative_deadline = schedulable.deadline - test_case.genesis
+                if constraint >= current_time <= relative_deadline:
+                    actual += 1
+            current_time += schedulable.duration
+
+    return (actual, maximum)
+
+
+def display_percentage_deadlines_met(algorithms, simulation_data,
+                                     test_case_dict, constraint):
+    y_val = range(len(algorithms))
+    y_ticks = []
+    x_val = []
+
+    for algorithm in algorithms:
+        actual, maximum = deadlines_met(simulation_data[algorithm],
+                                        test_case_dict, constraint)
+
+        algorithm_name = algorithm.__class__.__name__
+        percentage = actual/maximum * 100
+        x_val.append(percentage)
+        y_ticks.append(algorithm_name)
+
+    plt.barh(y_val, x_val, align="center")
+    plt.yticks(y_val, y_ticks)
+    plt.title("Deadline Met")
+    plt.xlabel("% Deadline met")
+    plt.ylabel("Algorithm")
+    plt.tight_layout()
+    plt.show()
+
+
+def main():
+    #Program Options
     opts = \
         {
             "directory": "sim_out",
@@ -41,10 +163,11 @@ if __name__ == "__main__":
     -v Verbose mode - debugging information
     -i <directory> - read simulation data for this directory
     """)
-            sys.exit()
+            # return
         else:
             raise ValueError("Unknown Argument")
-#Working Directory
+
+    #Working Directory
     print(os.getcwd())
     if not os.path.exists(opts["directory"]):
         os.makedirs(opts["directory"])
@@ -56,164 +179,77 @@ if __name__ == "__main__":
         pretty(opts)
         pdivider()
 
-#Read Test Cases
-    tpaths = glob.glob("TestCase:*.case")
-    tcase_map = {}
-    for tpath  in tpaths:
-        with open(tpath, 'rb') as f:
-            tcase = pickle.load(f)
+    #Read Test Cases
+    test_case_paths = glob.glob("TestCase.*.case")
+    test_case_dict = {}
+    for test_case_path in test_case_paths:
+        with open(test_case_path, "rb") as f:
+            test_case = pickle.load(f)
 
             if opts["verbose"]:
-                print("Loaded Test case:" + tcase.name)
-            tcase_map[tcase.name] = tcase
-    tcases = list(tcase_map.values())
+                print("Loaded Test Case:", test_case.name)
+
+            test_case_dict[test_case.name] = test_case
+
+    test_cases = list(test_case_dict.values()) ## TODO: Try to remove
 
     if opts["verbose"]:
-        print("Loaded %d Test Cases" % len(tcases))
+        print("Loaded %d Test Cases" % len(test_cases))
 
-#Algorithms
-    aname = [alg.__class__.__name__ for alg in algorithm.algorithms]
+    #Algorithms
+    algorithm_names = [x.__class__.__name__ for x in ALGORITHMS]
 
-#Read Simulation Data
-    csim_data = {} #Test Case as key
-    asim_data = {} #Algorithm as key
+    #Read Simulation Data
+    # {algorithm_class: [test_case_data]}
+    simulation_data = {}
 
+    for test_case in test_cases:
+        for algorithm in ALGORITHMS:
+            algorithm_name = algorithm.__class__.__name__
 
-    for case in tcases:
-        if case not in csim_data:
-            csim_data[case] = []
-        for alg in algorithm.algorithms:
-            if alg not in asim_data:
-                asim_data[alg] = []
-            algname = alg.__class__.__name__
-            with open(case.name + '.' + algname, 'rb') as f:
-                sdata = pickle.load(f)
-                csim_data[case].append(sdata)
-                asim_data[alg].append(sdata)
+            with open(test_case.name + "." + algorithm_name, "rb") as f:
+                data = pickle.load(f)
+                simulation_data[algorithm] =\
+                    simulation_data.get(algorithm, []) + [data]
 
-                if opts["verbose"]:
-                    print("Loaded Simulation Data for Case %s for Algorithm %s"
-                            % (case.name, algname))
+            if opts["verbose"]:
+                print("Loaded Simulation Data for Case %s for Algorithm %s" %
+                      (test_case.name, algorithm_name))
 
     if opts["verbose"]:
         print("Loaded Simulation Data")
 
-#Interactive Command Prompt
+    #Interactive Command Prompt
     try:
         while True:
-            uinput = input("(display):")
-            uargv = uinput.split()
+            user_input = input("(display):")
+            argv = user_input.split()
 
-            #List Test Cases
-            if len(uargv) == 0:
-                pass
-            elif uargv[0] == 'l':
-                for i in range(0, len(tcases)):
-                    print("[%d] %s" % (i, tcases[i].name))
-            #List Algorithms
-            elif uargv[0] == 'a':
-                for i in range(0, len(algorithm.algorithms)):
-                    print("[%d] %s" % (i,
-                        algorithm.algorithms[i].__class__.__name__))
-            #Set Duration Constraint
-            elif uargv[0] == 'c':
-                if len(uargv) == 2 and 0 <= int(uargv[1]) <= 100:
-                    opts["constraint"] = int(uargv[1])
+            if argv[0] == 'l':
+                list_test_cases(test_cases)
+            elif argv[0] == 'a':
+                list_algorithms(ALGORITHMS)
+            elif argv[0] == 'c':
+                #Set Duration Constraint
+                if len(argv) == 2 and 0 <= int(argv[1]) <= 100:
+                    opts["constraint"] = int(argv[1])
                 else:
-                    print("Unknown constraint percentage. Usage: c <percentage>")
-            #Display Processing Time
-            elif uargv[0] == 't':
-                #Extract Data
-                atime = {}
-                for alg in algorithm.algorithms:
-                    if alg not in atime:
-                        atime[alg] = 0
-                    for sdata in asim_data[alg]:
-                        atime[alg] += sdata["time"]
-
-                #Plot Graph
-                y_val = range(len(algorithm.algorithms))
-                x_val = list(atime.values())
-
-                plt.barh(y_val, x_val, align="center")
-                plt.yticks(y_val, aname)
-                plt.ylabel("Algorithm")
-                plt.xlabel("Time (seconds)")
-                plt.title("Processing Time")
-                plt.show()
-            #Display Percentage of Completed Weight
-            elif uargv[0] == 'w':
+                    print("Unknown constraint percentage. \
+Usage: c <percentage>")
+            elif argv[0] == 't':
+                display_processing_time(ALGORITHMS, simulation_data)
+            elif argv[0] == 'w':
+                display_completed_weight_percentage(
+                    ALGORITHMS, simulation_data,
+                    test_case_dict, opts["constraint"])
+            elif argv[0] == 'd':
+                display_percentage_deadlines_met(
+                    ALGORITHMS, simulation_data,
+                    test_case_dict, opts["constraint"])
+            elif argv[0] == 'b':
+                #Display Average Standard Deviation between Tasks
                 disp_data = {}
-                for alg in algorithm.algorithms:
-                    maximum = 0
-                    actual = 0
-
-                    for sdata in asim_data[alg]:
-                        case = tcase_map[sdata["case"]]
-                        binder = case.case().duration() * (opts["constraint"] / 100.0)
-                        pointer = 0
-                        itinerary = sdata["itinerary"]
-                        for schedulable in itinerary:
-                            if isinstance(schedulable, skeem.Task):
-                                maximum += schedulable.weigh()
-                                if pointer <= binder:
-                                    actual += schedulable.weigh()
-                            pointer += schedulable.duration
-
-                    #Compute Percentage
-                    disp_data[alg.__class__.__name__] = actual / maximum * 100.0
-
-
-                y_val = range(len(algorithm.algorithms))
-                x_val = list(disp_data.values())
-
-                plt.barh(y_val, x_val, align="center")
-                plt.yticks(y_val, aname)
-                plt.title("Completed Weight")
-                plt.xlabel("%Weight")
-                plt.ylabel("Algorithm")
-                plt.show()
-
-            #Display Percentage of Deadlines Met
-            elif uargv[0] == 'd':
-                disp_data = {}
-                for alg in algorithm.algorithms:
-                    maximum = 0
-                    actual = 0
-
-                    for sdata in asim_data[alg]:
-                        case = tcase_map[sdata["case"]]
-                        binder = case.case().duration() * (opts["constraint"] / 100.0)
-                        pointer = 0
-                        itinerary = sdata["itinerary"]
-                        for schedulable in itinerary:
-                            if isinstance(schedulable, skeem.Task):
-                                maximum += 1
-                                adjust_deadline = schedulable.deadline - \
-                                        case.genesis
-                                if pointer <= binder and pointer <= adjust_deadline:
-                                    actual += 1
-                            pointer += schedulable.duration
-
-                    #Compute Percentage
-                    disp_data[alg.__class__.__name__] = actual / maximum * 100.0
-
-
-                y_val = range(len(algorithm.algorithms))
-                x_val = list(disp_data.values())
-
-                plt.barh(y_val, x_val, align="center")
-                plt.yticks(y_val, aname)
-                plt.title("Deadline Met")
-                plt.xlabel("% Deadline met")
-                plt.ylabel("Algorithm")
-                plt.show()
-
-
-            #Display Average Standard Deviation between Tasks
-            elif uargv[0] == 'b':
-                disp_data = {}
-                for alg in algorithm.algorithms:
+                for alg in ALGORITHMS:
                     sum_dev = 0.0
                     for sdata in asim_data[alg]:
                         case = tcase_map[sdata["case"]]
@@ -231,7 +267,7 @@ if __name__ == "__main__":
                     #Compute Percentage
                     disp_data[alg.__class__.__name__] = sum_dev / len(itinerary)
 
-                y_val = range(len(algorithm.algorithms))
+                y_val = range(len(ALGORITHMS))
                 x_val = list(disp_data.values())
 
                 plt.barh(y_val, x_val, align="center")
@@ -241,19 +277,24 @@ if __name__ == "__main__":
                 plt.ylabel("Algorithm")
                 plt.show()
 
-            #Display Performance profile.
-            elif uargv[0] == 'p':
-                if len(uargv) != 3:
+            elif argv[0] == 'p':
+                #Display Performance profile.
+                if len(argv) != 3:
                     print("Usage: p <test case id> <algorithm id>.")
-                    print("Run 'a' to list algorithm, Run 'l' to list test cases")
-                elif int(uargv[1]) in range(0, len(tcases)) and\
-                        int(uargv[2]) in range(0, len(algorithm.algorithms)):
-                    case = tcases[int(uargv[1])]
-                    alg = algorithm.algorithms[int(uargv[2])]
-                    aname = alg.__class__.__name__
+                    print("Run 'a' to list algorithm, Run 'l' to list test \
+cases")
+                elif int(argv[1]) in range(len(test_cases)) and\
+                        int(argv[2]) in range(len(ALGORITHMS)):
+                    test_case = test_cases[int(argv[1])]
+                    alg = ALGORITHMS[int(argv[2])]
 
-                    print("Profile of %s running %s" % (aname, case.name))
-                    pstats.Stats(case.name + "." + aname + ".profile").print_stats()
+                    algorithm_name = alg.__class__.__name__
+                    print("Profile of %s running %s" % (algorithm_name,
+                                                        test_case.name))
+
+                    stats_filename = test_case.name + "." + algorithm_name +\
+                        ".profile"
+                    pstats.Stats(stats_filename).print_stats()
                 else:
                     print("Unknown Algorithm or Test Case")
                     print("Usage: p <test case id> <algorithm id>.")
@@ -277,4 +318,7 @@ if __name__ == "__main__":
                               case.""")
     except EOFError:
         print()
-        sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()
