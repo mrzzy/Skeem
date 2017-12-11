@@ -74,11 +74,12 @@ class ScheduleTestCase:
 
     @staticmethod
     def generateRandomTask():
-        #Duration range: 1 second to 8 hours
-        #Deadline range: 0 seconds to 1 day
+        #Duration range: 1 second to 12 hours
+        #Deadline range: 0 seconds to 2 weeks
         #Task Weight 0.0 to 1.0
-        duration = random.randint(1, 8*60*60)
-        deadline = epoch_time() + duration + random.randint(1, 24*60*60)
+        duration = random.randint(1, 12*60*60)
+        deadline = epoch_time() + duration + random.randint(1, 14*24*60*60)
+    
 
         task = Task("Task." + str(uuid.uuid4()), duration, deadline)
         task.weight = random.random()
@@ -88,7 +89,7 @@ class ScheduleTestCase:
     @staticmethod
     def generateRandomInterrupt(starts_after):
         #Duration range: 1 second to 1 day
-        #Begin range: 0 seconds to 2 months
+        #Begin range: 1 seconds to 1 day after previous interrupt
         duration = random.randint(1, 24*60*60)
         begin = starts_after + random.randint(1, 24*60*60)
 
