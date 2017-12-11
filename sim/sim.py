@@ -254,11 +254,12 @@ def main():
                 pickle.dump(test_case, f)
 
             for algorithm in ALGORITHMS:
-                if not os.path.exists(test_case.name + ".case"):
-                    break
-                args = (test_case, algorithm, completed, completed_lock,
-                        simulations, opts["verbose"])
-                pool.apply_async(simulate_and_record, args=args)
+                if opts["processes"] == 1: 
+                    simulate_and_record(test_case, algorithm, completed, completed_lock, simulations, opts["verbose"])
+                else:
+                    args = (test_case, algorithm, completed, completed_lock,
+                            simulations, opts["verbose"])
+                    pool.apply_async(simulate_and_record, args=args)
 
 
         pool.close()

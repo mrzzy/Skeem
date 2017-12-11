@@ -62,6 +62,7 @@ sim.py
 -- Options --
 -v Verbrose mode - debugging infomation
 -j <threads> - Number of threads to use while simulating
+            - use -j 1 for debugging to show error messages
 -t <tests> - Number of number tests cases to test per algorithm
 -l <size> - Size of the test cases to run.
 -o <directory> - put the output in this directory, else by default, sim_out
