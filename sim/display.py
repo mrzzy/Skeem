@@ -219,6 +219,12 @@ def main():
 
     if opts["verbose"]:
         print("Loaded Simulation Data")
+        size = 0
+        for list_data in simulation_data.values():
+            size += len(list_data)
+            
+        print("Loaded %d Algorithms with %d sets of simulation data." \
+                % (len(ALGORITHMS), size))
 
     #Interactive Command Prompt
     try:
