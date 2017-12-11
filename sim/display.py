@@ -167,17 +167,18 @@ def main():
         else:
             raise ValueError("Unknown Argument")
 
-    #Working Directory
-    print(os.getcwd())
-    if not os.path.exists(opts["directory"]):
-        os.makedirs(opts["directory"])
-    os.chdir(opts["directory"])
-
     if opts["verbose"]:
         print("Skeem Display")
         print("Program options:")
         pretty(opts)
         pdivider()
+
+#Working Directory
+    if not os.path.exists(opts["directory"]):
+        os.makedirs(opts["directory"])
+    os.chdir(opts["directory"])
+    if opts["verbose"]:
+        print("Data Directory: " + os.getcwd())
 
     #Read Test Cases
     test_case_paths = glob.glob("TestCase.*.case")
