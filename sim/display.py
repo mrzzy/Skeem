@@ -16,6 +16,7 @@ import getopt
 import pstats
 
 from functools import reduce
+from datetime import timedelta,datetime
 
 from utils import pretty, proppretty, prettytime, pdivider
 from algorithm import algorithms as ALGORITHMS
@@ -202,6 +203,74 @@ def display_average_duration(algorithms, simulation_data):
     plt.ylabel("Algorithm")
     plt.show()
 
+def cprint(output, *attributes):
+    reset = '\033[0m'
+    color_black = '\033[30m'
+    color_red = '\033[31m'
+    color_yellow = '\033[33m'
+    color_green = '\033[32m'
+    color_blue = '\033[34m'
+    background_red = '\033[41m'
+    background_green = '\033[42m'
+    background_yellow = '\033[43m'
+
+    for attribute in attributes:
+        if attribute == "blue":
+            print(color_blue, end='')
+        elif attribute == "yellow":
+            print(color_yellow, end='')
+        elif attribute == "red":
+            print(color_red, end='')
+        elif attribute == "green":
+            print(color_green, end='')
+        elif attribute == "on_yellow":
+            print(background_yellow, end='')
+            print(color_black, end='')
+        elif attribute == "on_red":
+            print(background_red, end='')
+            print(color_black, end='')
+        elif attribute == "on_green":
+            print(background_green, end='')
+            print(color_black, end='')
+        else:
+            raise NotImplementedError("Color Not supported")
+
+    print(output)
+    print(reset)
+        
+
+def print_itinerary(genesis, itinerary):
+
+    epoch = datetime(1970, 1, 1)
+    start = epoch + timedelta(seconds=genesis)
+    elapse = 0
+
+    cprint("----====[Itinerary - BEGIN]====----", "on_yellow")
+    for schedulable in itinerary:
+        current_time = start + timedelta(seconds=elapse)
+        elapse += schedulable.duration
+        duration = timedelta(seconds=schedulable.duration)
+        cprint("##(Time: %s)##" % (str(current_time)), "blue")
+
+        if isinstance(schedulable, skeem.Task):
+            deadline = epoch + timedelta(seconds=schedulable.deadline)
+
+            cprint("==[Task: %s]==" % (schedulable.name), "on_green")
+            cprint("    Duration: " + str(duration), "green")
+            cprint("    Deadline: " + str(deadline), "green")
+            cprint("    Weight: " + str(schedulable.weigh()), "green")
+        elif isinstance(schedulable, skeem.Interrupt):
+            begin = epoch + timedelta(seconds=schedulable.begin)
+
+            cprint("==[Interrupt: %s]==" % (schedulable.name), "on_red")
+            cprint("    Duration: " + str(duration), "red")
+            cprint("    Begin: " + str(begin), "red")
+        else:
+            raise NotImplementedError
+    cprint("----====[Itinerary - END]====----", "on_yellow")
+    print("Genesis: " + str(start))
+    print("Elapsed: " + str(timedelta(seconds=elapse)))
+    
 
 def main():
     #Program Options
@@ -234,7 +303,7 @@ def main():
         pretty(opts)
         pdivider()
 
-#Working Directory
+    #Working Directory
     if not os.path.exists(opts["directory"]):
         os.makedirs(opts["directory"])
     os.chdir(opts["directory"])
@@ -342,6 +411,26 @@ cases")
                     print("Unknown Algorithm or Test Case")
                     print("Usage: p <test case id> <algorithm id>.")
 
+            elif argv[0] == 'i':
+                #Display Itinerary
+                if len(argv) != 3:
+                    print("Usage: i <test case id> <algorithm id>.")
+                    print("Run 'a' to list algorithm, Run 'l' to list test \
+cases")
+                elif int(argv[1]) in range(len(test_cases)) and\
+                        int(argv[2]) in range(len(ALGORITHMS)):
+                    test_case = test_cases[int(argv[1])]
+                    alg = ALGORITHMS[int(argv[2])]
+
+                    algorithm_name = alg.__class__.__name__
+                    filename = test_case.name + "." + algorithm_name 
+                    with open(filename, 'rb') as f:
+                        data = pickle.load(f)
+                        print_itinerary(data["genesis"], data["itinerary"])
+                        
+                else:
+                    print("Unknown Algorithm or Test Case")
+                    print("Usage: p <test case id> <algorithm id>.")
             else:
                 print("Unknown subcommand")
                 print("""Usage:

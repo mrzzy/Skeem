@@ -138,7 +138,8 @@ def write_algorithm_schedule(test_case_name, algorithm_name,
     with open(test_case_name + "." + algorithm_name, "wb") as f:
         pickle.dump({"case": test_case_name,
                      "itinerary": itinerary,
-                     "time": time_taken}, f)
+                     "time": time_taken,
+                     "genesis": schedule.genesis}, f)
 
 
 def simulate_and_record(test_case, algorithm, completed, completed_lock,
